@@ -51,7 +51,7 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                                     <tr>
                                         <td>Arrow</td>
                                         {summaryReport.map((elem, index) => (
-                                            <td key={index}>{value}</td>
+                                            <td key={index}>{elem}</td>
                                         ))}
                                         <td>214556467</td>
                                     </tr>
