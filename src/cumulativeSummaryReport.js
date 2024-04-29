@@ -1,14 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { API_URL } from './API';
+import axios from 'axios';
+import { priceCount } from './Components/priceCount';
 
-const CumulativeSummaryReport = () => {
+const CumulativeSummaryReport = ({ multipliedData }) => {
     const [locationView, setLocationView] = useState(false);
     const [userView, setUserView] = useState(false);
+    const [summaryReport, setSummaryReport] = useState();
+    const [prices, setPrices] = useState();
     const handleLocationView = () => {
         setLocationView(true);
     }
     const handleUserView = () => {
         setUserView(true);
     }
+    useEffect(() => {
+        const fetchSummaryReport = () => {
+            axios.get(`${API_URL}/summaryReport`)
+                .then((response) => setSummaryReport(response.data))
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
+        }
+        fetchSummaryReport();
+    }, [])
+    console.log('Summary Data', summaryReport);
+
+
     return (
         <>
             <div className='container'>
@@ -22,7 +40,6 @@ const CumulativeSummaryReport = () => {
                                         <th></th>
                                         <th>Scanned</th>
                                         <th>QC</th>
-                                        <th>Segregation</th>
                                         <th>Indexing</th>
                                         <th>Flagging</th>
                                         <th>CBSL-QA</th>
@@ -33,14 +50,10 @@ const CumulativeSummaryReport = () => {
                                 <tbody>
                                     <tr>
                                         <td>Arrow</td>
-                                        <td>1782528</td>
-                                        <td>414478</td>
-                                        <td>0</td>
-                                        <td>237903</td>
-                                        <td>555857</td>
-                                        <td>45095</td>
-                                        <td>3868</td>
-                                        <td>81239.39</td>
+                                        {summaryReport.map((elem, index) => (
+                                            <td key={index}>{value}</td>
+                                        ))}
+                                        <td>214556467</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -68,7 +81,6 @@ const CumulativeSummaryReport = () => {
                                         <th>Location Name</th>
                                         <th>Scanned</th>
                                         <th>QC</th>
-                                        <th>Segregation</th>
                                         <th>Indexing</th>
                                         <th>Flagging</th>
                                         <th>CBSL-QA</th>
@@ -83,7 +95,6 @@ const CumulativeSummaryReport = () => {
                                         <td>Agra</td>
                                         <td>1782528</td>
                                         <td>414478</td>
-                                        <td>0</td>
                                         <td>237903</td>
                                         <td>555857</td>
                                         <td>45095</td>
@@ -119,7 +130,6 @@ const CumulativeSummaryReport = () => {
                                                 <th>User Name</th>
                                                 <th>Scanned</th>
                                                 <th>QC</th>
-                                                <th>Segregation</th>
                                                 <th>Indexing</th>
                                                 <th>Flagging</th>
                                                 <th>CBSL-QA</th>
@@ -134,7 +144,6 @@ const CumulativeSummaryReport = () => {
                                                 <td>Rohit</td>
                                                 <td>1782528</td>
                                                 <td>414478</td>
-                                                <td>0</td>
                                                 <td>237903</td>
                                                 <td>555857</td>
                                                 <td>45095</td>
@@ -175,7 +184,6 @@ const CumulativeSummaryReport = () => {
                                                 <th>File Barcode</th>
                                                 <th>Scanned</th>
                                                 <th>QC</th>
-                                                <th>Segregation</th>
                                                 <th>Indexing</th>
                                                 <th>Flagging</th>
                                                 <th>CBSL-QA</th>
@@ -193,7 +201,6 @@ const CumulativeSummaryReport = () => {
                                                 <td>123423</td>
                                                 <td>1782528</td>
                                                 <td>414478</td>
-                                                <td>0</td>
                                                 <td>237903</td>
                                                 <td>555857</td>
                                                 <td>45095</td>

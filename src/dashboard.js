@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Components/Header';
 import './App.css';
 import SummaryReport from './periodicSummaryReport';
 import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
+import { priceCount } from './Components/priceCount';
+import axios from 'axios';
+import { API_URL } from './API';
 
 const Dashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -13,6 +16,7 @@ const Dashboard = () => {
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [error, setError] = useState('');
+    const [summaryReport, setSummaryReport] = useState();
 
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
@@ -51,21 +55,48 @@ const Dashboard = () => {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
-        } else if(cumulativeSelected) {
+        } else if (cumulativeSelected) {
             // If "Cumulative" is selected, show the summary report without requiring dates
-            
+
             setShowCumulativeSummary(true);
             setFromDate("");
             setToDate("");
             setShowPeriodicSummary(false);
             setError('');
         }
-        else{
+        else {
             setError('Please choose an option.')
         }
     };
+    useEffect(() => {
+        const fetchSummaryReport = () => {
+            axios.get(`${API_URL}/summaryReport`)
+            .then((response) => setSummaryReport(response.data))
+            .catch((error) => {
+                console.error("Error fetching user data:", error);
+            });
+        }
+        fetchSummaryReport();
+    },[])
+    console.log('Summary Data', summaryReport);
 
+    const multiplyData = (summaryData, priceData) => {
+        if (!summaryData || !priceData) return []; // Ensure both data arrays are provided
+    
+        return summaryData.map((report) => {
+            const multipliedValues = priceData.map((price) => {
+                const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+                return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+            });
+            return {  multipliedValues };
+        });
+    };
+    
+    const multipliedData = multiplyData(summaryReport, priceCount());
 
+    // Use multipliedData in your component as needed
+        console.log("MultipliedData", multipliedData);
+    
     return (
         <>
             <Header />
@@ -103,42 +134,36 @@ const Dashboard = () => {
                             </div>
                         </div>
                         {error && <p className='text-danger'>{error}</p>}
-                        </div>
-                        <div className='row mt-2 ms-0 me-0 search-report-card'>
-                            <table className='table-bordered mt-2'>
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Stack</th>
-                                        <th>Scanned</th>
-                                        <th>QC</th>
-                                        <th>Segregation</th>
-                                        <th>Indexing</th>
-                                        <th>Flagging</th>
-                                        <th>CBSL-QA</th>
-                                        <th>Client-QC</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Arrow</td>
-                                        <td>Set Business</td>
-                                        <td>0.032</td>
-                                        <td>0.031</td>
-                                        <td>0.011</td>
-                                        <td>0.012</td>
-                                        <td>0.013</td>
-                                        <td>0.026</td>
-                                        <td>0.025</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
-                
-            </div>
-            {showPeriodicSummary && <PeriodicSummaryReport />}
-            {showCumulativeSummary && <CumulativeSummaryReport />}
+                    <div className='row mt-2 ms-0 me-0 search-report-card'>
+                        <table className='table-bordered mt-2'>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Stack</th>
+                                    {priceCount().map((elem, index) => (
+                                        <th key={elem.id}>{elem.name}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Arrow</td>
+                                    <td>Set Business</td>
+                                    {priceCount().map((elem, index) => (
+                                        <td key={elem.id}>{elem.value}</td>
+                                    ))}
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div >
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData}/>
+            }
+            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData}/>}
         </>
     );
 };

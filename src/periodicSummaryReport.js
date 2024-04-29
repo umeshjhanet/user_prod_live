@@ -1,14 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { API_URL } from './API';
+import axios from 'axios';
+import { priceCount } from './Components/priceCount';
 
-const PeriodicSummaryReport = () => {
+const PeriodicSummaryReport = ({ multipliedData }) => {
     const [locationView, setLocationView] = useState(false);
     const [userView, setUserView] = useState(false);
+    const [summaryReport, setSummaryReport] = useState();
+    const [prices, setPrices] = useState();
     const handleLocationView = () => {
         setLocationView(true);
     }
     const handleUserView = () => {
         setUserView(true);
     }
+    useEffect(() => {
+        const fetchSummaryReport = () => {
+            axios.get(`${API_URL}/summaryReport`)
+                .then((response) => setSummaryReport(response.data))
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
+        }
+        fetchSummaryReport();
+    }, [])
+    console.log('Summary Data', summaryReport);
+
+
     return (
         <>
             <div className='container'>
@@ -22,7 +40,6 @@ const PeriodicSummaryReport = () => {
                                         <th></th>
                                         <th>Scanned</th>
                                         <th>QC</th>
-                                        <th>Segregation</th>
                                         <th>Indexing</th>
                                         <th>Flagging</th>
                                         <th>CBSL-QA</th>
@@ -33,14 +50,9 @@ const PeriodicSummaryReport = () => {
                                 <tbody>
                                     <tr>
                                         <td>Arrow</td>
-                                        <td>1782528</td>
-                                        <td>414478</td>
-                                        <td>0</td>
-                                        <td>237903</td>
-                                        <td>555857</td>
-                                        <td>45095</td>
-                                        <td>3868</td>
-                                        <td>81239.39</td>
+                                        {multipliedData.map((value, index) => (
+                                            <td key={index}>{value}</td>
+                                        ))}
                                     </tr>
                                 </tbody>
                             </table>
@@ -68,7 +80,6 @@ const PeriodicSummaryReport = () => {
                                         <th>Location Name</th>
                                         <th>Scanned</th>
                                         <th>QC</th>
-                                        <th>Segregation</th>
                                         <th>Indexing</th>
                                         <th>Flagging</th>
                                         <th>CBSL-QA</th>
@@ -83,7 +94,6 @@ const PeriodicSummaryReport = () => {
                                         <td>Agra</td>
                                         <td>1782528</td>
                                         <td>414478</td>
-                                        <td>0</td>
                                         <td>237903</td>
                                         <td>555857</td>
                                         <td>45095</td>
@@ -119,7 +129,6 @@ const PeriodicSummaryReport = () => {
                                                 <th>User Name</th>
                                                 <th>Scanned</th>
                                                 <th>QC</th>
-                                                <th>Segregation</th>
                                                 <th>Indexing</th>
                                                 <th>Flagging</th>
                                                 <th>CBSL-QA</th>
@@ -134,7 +143,6 @@ const PeriodicSummaryReport = () => {
                                                 <td>Rohit</td>
                                                 <td>1782528</td>
                                                 <td>414478</td>
-                                                <td>0</td>
                                                 <td>237903</td>
                                                 <td>555857</td>
                                                 <td>45095</td>
@@ -175,7 +183,6 @@ const PeriodicSummaryReport = () => {
                                                 <th>File Barcode</th>
                                                 <th>Scanned</th>
                                                 <th>QC</th>
-                                                <th>Segregation</th>
                                                 <th>Indexing</th>
                                                 <th>Flagging</th>
                                                 <th>CBSL-QA</th>
@@ -193,7 +200,6 @@ const PeriodicSummaryReport = () => {
                                                 <td>123423</td>
                                                 <td>1782528</td>
                                                 <td>414478</td>
-                                                <td>0</td>
                                                 <td>237903</td>
                                                 <td>555857</td>
                                                 <td>45095</td>
