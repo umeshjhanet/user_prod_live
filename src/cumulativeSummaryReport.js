@@ -3,11 +3,11 @@ import { API_URL } from './API';
 import axios from 'axios';
 import { priceCount } from './Components/priceCount';
 
-const CumulativeSummaryReport = ({ multipliedData }) => {
+const CumulativeSummaryReport = ({ multipliedData, prices }) => {
     const [locationView, setLocationView] = useState(false);
     const [userView, setUserView] = useState(false);
     const [summaryReport, setSummaryReport] = useState();
-    const [prices, setPrices] = useState();
+    const [locationReport, setLocationReport] = useState();
     const handleLocationView = () => {
         setLocationView(true);
     }
@@ -22,9 +22,18 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                     console.error("Error fetching user data:", error);
                 });
         }
+        const fetchLocationReport = () => {
+            axios.get(`${API_URL}/detailedReport`)
+                .then((response) => setLocationReport(response.data))
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
+        }
         fetchSummaryReport();
+        fetchLocationReport();
     }, [])
-    console.log('Summary Data', summaryReport);
+    console.log('Location Data', locationReport);
+    
 
 
     return (
@@ -37,7 +46,7 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                             <table className='table-bordered mt-2'>
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th>Sr.No.</th>
                                         <th>Scanned</th>
                                         <th>QC</th>
                                         <th>Indexing</th>
@@ -48,13 +57,20 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Arrow</td>
-                                        {summaryReport.map((elem, index) => (
-                                            <td key={index}>{elem}</td>
-                                        ))}
-                                        <td>214556467</td>
-                                    </tr>
+                                    {multipliedData.map((item, index) => {
+                                        // Calculate total sum for each row
+                                        const rowTotalSum = item.multipliedValues.reduce((sum, value) => sum + value, 0);
+
+                                        return (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                {item.multipliedValues.map((value, i) => (
+                                                    <td key={i}>{typeof value === 'number' ? value.toFixed(2) : 'Invalid Value'}</td>
+                                                ))}
+                                                <td>{rowTotalSum.toFixed(2)}</td> {/* Display total sum for this row */}
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
@@ -77,7 +93,7 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                             <table className='table-bordered mt-2'>
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th>Sr.No.</th>
                                         <th>Location Name</th>
                                         <th>Scanned</th>
                                         <th>QC</th>
@@ -90,18 +106,21 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr onClick={handleLocationView}>
-                                        <td>Arrow</td>
-                                        <td>Agra</td>
-                                        <td>1782528</td>
-                                        <td>414478</td>
-                                        <td>237903</td>
-                                        <td>555857</td>
-                                        <td>45095</td>
-                                        <td>3868</td>
-                                        <td>81239.39</td>
-                                        <td>Approved</td>
-                                    </tr>
+                                    {locationReport && locationReport.map((elem, index) => (
+                                        <tr onClick={handleLocationView} key={index}>
+                                            <td>{index + 1}</td>
+                                            <td>{elem.locationname || 0}</td>
+                                            <td>{elem.Total_Scanned || 0}</td>
+                                            <td>{elem.Total_QC || 0}</td>
+                                            <td>{elem.Total_Index || 0}</td>
+                                            <td>{elem.Total_Flagging || 0}</td>
+                                            <td>{elem.Total_CBSL_QA || 0}</td>
+                                            <td>{elem.Total_Client_QC || 0}</td>
+                                            <td>
+                                                {parseFloat(elem.Total_Scanned || 0) + parseFloat(elem.Total_QC || 0) + parseFloat(elem.Total_Index || 0) + parseFloat(elem.Total_Flagging || 0) + parseFloat(elem.Total_CBSL_QA || 0) + parseFloat(elem.Total_Client_QC || 0)}
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -126,7 +145,7 @@ const CumulativeSummaryReport = ({ multipliedData }) => {
                                     <table className='table-bordered mt-2'>
                                         <thead>
                                             <tr>
-                                                <th></th>
+                                                <th>Sr.No.</th>
                                                 <th>User Name</th>
                                                 <th>Scanned</th>
                                                 <th>QC</th>

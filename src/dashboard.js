@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [toDate, setToDate] = useState('');
     const [error, setError] = useState('');
     const [summaryReport, setSummaryReport] = useState();
+    const [prices, setPrices] = useState();
 
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
@@ -67,6 +68,7 @@ const Dashboard = () => {
         else {
             setError('Please choose an option.')
         }
+        setPrices(priceCount());
     };
     useEffect(() => {
         const fetchSummaryReport = () => {
@@ -151,7 +153,7 @@ const Dashboard = () => {
                                     <td>Arrow</td>
                                     <td>Set Business</td>
                                     {priceCount().map((elem, index) => (
-                                        <td key={elem.id}>{elem.value}</td>
+                                        <td key={elem.id} contentEditable>{elem.value}</td>
                                     ))}
                                 </tr>
                             </tbody>
@@ -161,9 +163,9 @@ const Dashboard = () => {
                 </div>
 
             </div >
-            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData}/>
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices}/>
             }
-            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData}/>}
+            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} prices={prices}/>}
         </>
     );
 };

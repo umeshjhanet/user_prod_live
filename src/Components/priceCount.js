@@ -21,12 +21,12 @@ export const priceCount = () => [
     },
     {
         id: 5,
-        name: 'CBSL-QA',
+        name: 'CBSL_QA',
         value: '0.026',
     },
     {
         id: 6,
-        name: 'Client-QC',
+        name: 'Client_QC',
         value: '0.025',
     },
 ]
