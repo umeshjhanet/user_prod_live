@@ -16,8 +16,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
 
   const handleLocationView = (locationName) => {
     fetchUserDetailed(locationName);
-    
     setLocationView(true);
+    setUserView(false);
   };
 
   const handleUserView = (username, locationName) => {
@@ -27,6 +27,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
     setUserView(true);
+    setLocationView(false);
   };
   
 
@@ -87,7 +88,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
 
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
@@ -106,6 +107,19 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                   </tr>
                 </thead>
                 <tbody>
+                        <tr>
+                        {summaryReport && summaryReport.map((elem,index) => (
+                            <>
+                            <td key={index}>{index + 1}</td>
+                            <td>{elem.Scanned}</td>
+                            <td>{elem.QC}</td>
+                            <td>{elem.Indexing}</td>
+                            <td>{elem.Flagging}</td>
+                            <td>{elem.CBSL_QA}</td>
+                            <td>{elem.Client_QC}</td>
+                            </>
+                              ))}
+                        </tr>
                   {multipliedData.map((item, index) => {
                     // Calculate total sum for each row
                     const rowTotalSum = item.multipliedValues.reduce(
@@ -146,7 +160,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
               </div>
             </div>
 
-            <div className="row ms-2 me-2">
+            <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">
                 <thead>
                   <tr>
@@ -207,12 +221,11 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                   </div>
                 </div>
 
-                <div className="row ms-2 me-2">
+                <div className="all-tables row ms-2 me-2">
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
                         <th></th>
-                        <th>Location</th>
                         <th>User Name</th>
                         <th>Scanned</th>
                         <th>QC</th>
@@ -229,7 +242,6 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                         detailedReportLocationWise.map((elem, index) => (
                           <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{index + 1}</td>
-                            
                             <td>{elem.user_type || 0}</td>
                             <td>{elem.Scanned || 0}</td>
                             <td>{elem.QC || 0}</td>
@@ -289,7 +301,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {detailedUserReport &&
+                      {detailedUserReport ?
                         detailedUserReport.map((elem, index) => (
                             <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{elem.locationName}</td>
@@ -306,7 +318,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                             <td>81239.39</td>
                             <td>Approved</td> 
                        </tr>
-                       ))}
+                       )) : ( <p>There is no data.</p>)}
                     </tbody>
                   </table>
                 </div>
