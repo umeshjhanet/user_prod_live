@@ -153,7 +153,7 @@ const Dashboard = () => {
                                     <td>Arrow</td>
                                     <td>Set Business</td>
                                     {priceCount().map((elem, index) => (
-                                        <td key={elem.id} contentEditable>{elem.value}</td>
+                                        <td key={elem.id} >{elem.value}</td>
                                     ))}
                                 </tr>
                             </tbody>
