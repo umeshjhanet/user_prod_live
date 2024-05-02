@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Components/Header';
 import './App.css';
-import SummaryReport from './periodicSummaryReport';
 import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
 import { priceCount } from './Components/priceCount';
@@ -18,6 +17,7 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [summaryReport, setSummaryReport] = useState();
     const [prices, setPrices] = useState();
+    const [refreshPage, setRefreshPage] = useState(false);
 
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
@@ -30,6 +30,12 @@ const Dashboard = () => {
             setCumulativeSelected(true);
         } else {
             setCumulativeSelected(false);
+        }
+        if (event.target.value === 'periodic' && cumulativeSelected) {
+            setRefreshPage(true);
+        }
+        if (event.target.value === 'cumulative' && periodicSelected) {
+            setRefreshPage(true);
         }
     };
 
@@ -52,6 +58,7 @@ const Dashboard = () => {
                 setShowPeriodicSummary(true);
                 setShowCumulativeSummary(false);
                 setError('');
+               
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
@@ -64,6 +71,7 @@ const Dashboard = () => {
             setToDate("");
             setShowPeriodicSummary(false);
             setError('');
+           
         }
         else {
             setError('Please choose an option.')
@@ -71,6 +79,10 @@ const Dashboard = () => {
         setPrices(priceCount());
     };
     useEffect(() => {
+        if (refreshPage) {
+            window.location.reload(); // Refresh the page if the flag is set
+            setRefreshPage(false); // Reset the flag
+        }
         const fetchSummaryReport = () => {
             axios.get(`${API_URL}/summaryReport`)
             .then((response) => setSummaryReport(response.data))
@@ -79,7 +91,7 @@ const Dashboard = () => {
             });
         }
         fetchSummaryReport();
-    },[])
+    },[refreshPage])
     console.log('Summary Data', summaryReport);
 
     const multiplyData = (summaryData, priceData) => {
@@ -163,9 +175,9 @@ const Dashboard = () => {
                 </div>
 
             </div >
-            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices}/>
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} startDate={fromDate} endDate={toDate}/>
             }
-            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} prices={prices}/>}
+            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} prices={prices} />}
         </>
     );
 };
