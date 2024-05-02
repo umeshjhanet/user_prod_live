@@ -3,20 +3,25 @@ import { API_URL } from "./API";
 import axios from "axios";
 import { priceCount } from "./Components/priceCount";
 
-const CumulativeSummaryReport = ({ multipliedData, prices }) => {
+const CumulativeSummaryReport = ({ multipliedData ,prices }) => {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
-  const [detailedReportLocationWise, setDetailedReportLocationWise] =
-    useState();
+  const [detailedReportLocationWise, setDetailedReportLocationWise] =useState();
     const[detailedUserReport,setDetailedUserReport]=useState();
     const [selectedUsername, setSelectedUsername] = useState('');
+    const [detailedcsv, setDetailedCsv] = useState(null);
+    const[detailedlocationwisecsv,setDetailedLocationWiseCsv]=useState(null);
+    const[userwisecsv,setUserWiseCSv]=useState(null);
+
 
   const handleLocationView = (locationName) => {
     fetchUserDetailed(locationName);
-    
+    fetchDetailedLocationWiseReportCsvFile(locationName)
     setLocationView(true);
   };
 
@@ -28,8 +33,41 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
     fetchUserDetailedReport(username, locationName);
     setUserView(true);
   };
-  
 
+  const handleDetailedExport = () => {
+    // Proceed with CSV export
+    if (detailedcsv) {
+      const link = document.createElement("a");
+      link.href = detailedcsv;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleDetailedLocationWiseExport = () => {
+    // Proceed with CSV export
+    if (detailedlocationwisecsv) {
+      const link = document.createElement("a");
+      link.href = detailedlocationwisecsv;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleUserWiseExport=()=>{
+    if (userwisecsv) {
+        const link = document.createElement("a");
+        link.href = userwisecsv;
+        link.setAttribute("download", "export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+  }
 
   const fetchUserDetailed = (locationName) => {
     axios
@@ -57,11 +95,68 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
     });
 };
 
+const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
+  const formattedStartDate = startDate ? new Date(startDate) : null;
+  const formattedEndDate = endDate ? new Date(endDate) : null;
+  const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+  };
+
+  let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+
+  if (locationName && formattedStartDate && formattedEndDate) {
+      apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  } else if (locationName) {
+      apiUrl += `?locationName=${locationName}`;
+  } else if (formattedStartDate && formattedEndDate) {
+      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  }
+
+  axios.get(apiUrl, { responseType: "blob" })
+      .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedLocationWiseCsv(url);
+      })
+      .catch((error) => {
+          console.error("Error in exporting data:", error);
+      });
+};
+
+
+const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
+  const formattedStartDate = startDate ? new Date(startDate) : null;
+  const formattedEndDate = endDate ? new Date(endDate) : null;
+  const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+  };
+
+  let apiUrl = `http://localhost:5001/userdetailedreportlocationwisecsv`;
+
+  if (username && locationName) {
+      // If locationName is an array, join its elements with commas
+      const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
+      apiUrl += `?username=${username}&locationName=${locationQueryString}`;
+  } else if (formattedStartDate && formattedEndDate) {
+      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  }
+
+  axios.get(apiUrl, { responseType: "blob" })
+      .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setUserWiseCSv(url);
+      })
+      .catch((error) => {
+          console.error("Error in exporting data:", error);
+      });
+};
+
 
   useEffect(() => {
     const fetchSummaryReport = () => {
       axios
-        .get(`${API_URL}/summaryReport`)
+        .get(`${API_URL}/summaryreport`)
         .then((response) => setSummaryReport(response.data))
         .catch((error) => {
           console.error("Error fetching user data:", error);
@@ -76,14 +171,44 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
         });
     };
 
+    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => {
+          return date.toISOString().split('T')[0];
+      };
+  
+      let apiUrl = `${API_URL}/detailedreportcsv`;
+  
+      if (formattedStartDate && formattedEndDate) {
+          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      }
+  
+      axios.get(apiUrl, { responseType: "blob" })
+          .then((response) => {
+              const blob = new Blob([response.data], { type: "text/csv" });
+              const url = window.URL.createObjectURL(blob);
+              setDetailedCsv(url);
+          })
+          .catch((error) => {
+              console.error("Error in exporting data:", error);
+          });
+  };
+  
+  
+    fetchDetailedReportCsvFile( startDate, endDate);
+    fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+    
+    fetchUserWiseReportCsvFile(selectedUsername,[locationName], startDate, endDate)
+
     fetchSummaryReport();
     fetchLocationReport();
     if (locationName) {
       fetchUserDetailed(locationName);
     }
    fetchUserDetailedReport();
-  }, [locationName]);
-  console.log("Location Data", locationReport);
+  }, [selectedUsername,locationName,startDate,endDate]);
+  // console.log("Location Data", locationReport);
 
   return (
     <>
@@ -142,7 +267,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
               </div>
               <div className="col-8"></div>
               <div className="col-2">
-                <button className="btn btn-success">Export CSV</button>
+                <button className="btn btn-success" onClick={handleDetailedExport}>Export CSV</button>
               </div>
             </div>
 
@@ -203,7 +328,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
-                    <button className="btn btn-success">Export CSV</button>
+                  <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
+
                   </div>
                 </div>
 
@@ -229,7 +355,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                         detailedReportLocationWise.map((elem, index) => (
                           <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{index + 1}</td>
-                            
+                            <td>{elem.locationName}</td>
                             <td>{elem.user_type || 0}</td>
                             <td>{elem.Scanned || 0}</td>
                             <td>{elem.QC || 0}</td>
@@ -265,7 +391,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices }) => {
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
-                    <button className="btn btn-success">Export CSV</button>
+                    <button className="btn btn-success" onClick={() =>handleUserWiseExport()}>Export CSV</button>
                   </div>
                 </div>
 
