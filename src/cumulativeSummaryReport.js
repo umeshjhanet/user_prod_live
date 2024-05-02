@@ -13,25 +13,18 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const [summaryReport, setSummaryReport] = useState();
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
-  const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
-  const [detailedUserReport, setDetailedUserReport] = useState();
-  const [selectedUsername, setSelectedUsername] = useState('');
-  const [detailedcsv, setDetailedCsv] = useState(null);
-  const [detailedlocationwisecsv, setDetailedLocationWiseCsv] = useState(null);
-  const [userwisecsv, setUserWiseCSv] = useState(null);
-  const [clickedRowIndex, setClickedRowIndex] = useState(null);
-  const ref = useRef(null);
+  const [detailedReportLocationWise, setDetailedReportLocationWise] =useState();
+    const[detailedUserReport,setDetailedUserReport]=useState();
+    const [selectedUsername, setSelectedUsername] = useState('');
+    const [detailedcsv, setDetailedCsv] = useState(null);
+    const[detailedlocationwisecsv,setDetailedLocationWiseCsv]=useState(null);
+    const[userwisecsv,setUserWiseCSv]=useState(null);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
+    const [showConfirmationUser, setShowConfirmationUser] = useState(false);
 
-  // useEffect(() => {
-  //   if (locationView || userView) {
-  //     // Scroll to the referenced div when locationView or userView changes
-  //     ref.current.scrollIntoView({ behavior: 'smooth' });
-  //   }
-  // }, [locationView, userView]);
 
-  const handleLocationView = (locationName, rowIndex) => {
-    setClickedRowIndex(rowIndex);
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  const handleLocationView = (locationName) => {
     fetchUserDetailed(locationName);
     fetchDetailedLocationWiseReportCsvFile(locationName)
     setLocationView(true);
@@ -48,24 +41,33 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     fetchUserDetailedReport(username, locationName);
 
     setUserView(true);
-    
-    // setLocationView(false);
+  };
+
+  const handleExport = () => {
+    setShowConfirmation(true);
   };
 
   const handleDetailedExport = () => {
-    // Proceed with CSV export
     if (detailedcsv) {
-      const link = document.createElement("a");
-      link.href = detailedcsv;
-      link.setAttribute("download", "export.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+          const link = document.createElement("a");
+          link.href = detailedcsv;
+          link.setAttribute("download", "export.csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+    setShowConfirmation(false);
   };
 
+  const handleCancelExport = () => {
+    setShowConfirmation(false);
+  };
+
+  const handleLocationExport=()=>{
+    setShowConfirmationLocation(true);
+  }
+
   const handleDetailedLocationWiseExport = () => {
-    // Proceed with CSV export
     if (detailedlocationwisecsv) {
       const link = document.createElement("a");
       link.href = detailedlocationwisecsv;
@@ -74,17 +76,32 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       link.click();
       document.body.removeChild(link);
     }
+    setShowConfirmationLocation(false);
   };
+
+  const handleCancelLocationExport=()=>{
+    setShowConfirmationLocation(false);
+  }
+
+  const handleUserExport=()=>{
+    setShowConfirmationUser(true);
+  }
+
 
   const handleUserWiseExport = () => {
     if (userwisecsv) {
-      const link = document.createElement("a");
-      link.href = userwisecsv;
-      link.setAttribute("download", "export.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+        const link = document.createElement("a");
+        link.href = userwisecsv;
+        link.setAttribute("download", "export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      setShowConfirmationUser(false)
+  }
+
+  const handleCancelUserExport=()=>{
+    setShowConfirmationUser(false);
   }
 
   const fetchUserDetailed = (locationName) => {
@@ -323,8 +340,17 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
               </div>
               <div className="col-8"></div>
               <div className="col-2">
-                <button className="btn btn-success" onClick={handleDetailedExport}>Export CSV</button>
+                <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
               </div>
+              {showConfirmation && (
+        <div className="confirmation-dialog">
+          <div className="confirmation-content">
+            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+          </div>
+        </div>
+      )}
             </div>
 
             <div className="all-tables row ms-2 me-2">
@@ -383,6 +409,16 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                     <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
 
                   </div>
+                  {showConfirmationLocation && (
+        <div className="confirmation-dialog">
+          <div className="confirmation-content">
+            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>Yes</button>
+            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>No</button>
+          </div>
+        </div>
+      )}
+
                 </div>
 
                 <div className="all-tables row ms-2 me-2">
@@ -409,7 +445,6 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                           return(
                           <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{index + 1}</td>
-                            <td>{elem.locationName}</td>
                             <td>{elem.user_type || 0}</td>
                             <td>{elem.Scanned || 0}</td>
                             <td>{elem.QC || 0}</td>
@@ -442,8 +477,17 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
-                    <button className="btn btn-success" onClick={() => handleUserWiseExport()}>Export CSV</button>
+                    <button className="btn btn-success" onClick={handleUserExport}>Export CSV</button>
                   </div>
+                  {showConfirmationUser && (
+        <div className="confirmation-dialog">
+          <div className="confirmation-content">
+            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+            <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>Yes</button>
+            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>No</button>
+          </div>
+        </div>
+      )}
                 </div>
 
                 <div className="all-tables row ms-2 me-2">
