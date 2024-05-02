@@ -6,7 +6,7 @@ const Login = () => {
   return (
     <>
     <Header/>
-    <div className='container-fluid'>
+    <div className='container'>
           <div className='row'>
               <div className="form">
                 <form >
