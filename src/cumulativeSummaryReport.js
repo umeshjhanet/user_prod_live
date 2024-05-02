@@ -23,6 +23,7 @@ const CumulativeSummaryReport = ({ multipliedData ,prices }) => {
     fetchUserDetailed(locationName);
     fetchDetailedLocationWiseReportCsvFile(locationName)
     setLocationView(true);
+    setUserView(false);
   };
 
   const handleUserView = (username, locationName) => {
@@ -212,7 +213,7 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
 
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
@@ -231,6 +232,19 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                   </tr>
                 </thead>
                 <tbody>
+                        <tr>
+                        {summaryReport && summaryReport.map((elem,index) => (
+                            <>
+                            <td key={index}>{index + 1}</td>
+                            <td>{elem.Scanned}</td>
+                            <td>{elem.QC}</td>
+                            <td>{elem.Indexing}</td>
+                            <td>{elem.Flagging}</td>
+                            <td>{elem.CBSL_QA}</td>
+                            <td>{elem.Client_QC}</td>
+                            </>
+                              ))}
+                        </tr>
                   {multipliedData.map((item, index) => {
                     // Calculate total sum for each row
                     const rowTotalSum = item.multipliedValues.reduce(
@@ -271,7 +285,7 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
               </div>
             </div>
 
-            <div className="row ms-2 me-2">
+            <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">
                 <thead>
                   <tr>
@@ -333,12 +347,11 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                   </div>
                 </div>
 
-                <div className="row ms-2 me-2">
+                <div className="all-tables row ms-2 me-2">
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
                         <th></th>
-                        <th>Location</th>
                         <th>User Name</th>
                         <th>Scanned</th>
                         <th>QC</th>
@@ -415,7 +428,7 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                       </tr>
                     </thead>
                     <tbody>
-                      {detailedUserReport &&
+                      {detailedUserReport ?
                         detailedUserReport.map((elem, index) => (
                             <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{elem.locationName}</td>
@@ -432,7 +445,7 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                             <td>81239.39</td>
                             <td>Approved</td> 
                        </tr>
-                       ))}
+                       )) : ( <p>There is no data.</p>)}
                     </tbody>
                   </table>
                 </div>
