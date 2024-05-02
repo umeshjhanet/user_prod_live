@@ -17,6 +17,9 @@ const [selectedUsername, setSelectedUsername] = useState('');
 const [detailedcsv, setDetailedCsv] = useState(null);
 const[detailedlocationwisecsv,setDetailedLocationWiseCsv]=useState(null);
 const[userwisecsv,setUserWiseCSv]=useState(null);
+const [showConfirmation, setShowConfirmation] = useState(false);
+const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
+const [showConfirmationUser, setShowConfirmationUser] = useState(false);
 
 
 const handleLocationView = (locationName) => {
@@ -34,39 +37,65 @@ fetchUserDetailedReport(username, locationName,startDate,endDate);
 setUserView(true);
 };
 
-const handleDetailedExport = () => {
-
-if (detailedcsv) {
-  const link = document.createElement("a");
-  link.href = detailedcsv;
-  link.setAttribute("download", "export.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+const handleExport = () => {
+  setShowConfirmation(true);
 };
+
+const handleDetailedExport = () => {
+  if (detailedcsv) {
+        const link = document.createElement("a");
+        link.href = detailedcsv;
+        link.setAttribute("download", "export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+  setShowConfirmation(false);
+};
+
+const handleCancelExport = () => {
+  setShowConfirmation(false);
+};
+
+const handleLocationExport=()=>{
+  setShowConfirmationLocation(true);
+}
 
 const handleDetailedLocationWiseExport = () => {
-
-if (detailedlocationwisecsv) {
-  const link = document.createElement("a");
-  link.href = detailedlocationwisecsv;
-  link.setAttribute("download", "export.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-};
-
-const handleUserWiseExport=()=>{
-if (userwisecsv) {
+  if (detailedlocationwisecsv) {
     const link = document.createElement("a");
-    link.href = userwisecsv;
+    link.href = detailedlocationwisecsv;
     link.setAttribute("download", "export.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
+  setShowConfirmationLocation(false);
+};
+
+const handleCancelLocationExport=()=>{
+  setShowConfirmationLocation(false);
+}
+
+const handleUserExport=()=>{
+  setShowConfirmationUser(true);
+}
+
+
+const handleUserWiseExport=()=>{
+  if (userwisecsv) {
+      const link = document.createElement("a");
+      link.href = userwisecsv;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    setShowConfirmationUser(false)
+}
+
+const handleCancelUserExport=()=>{
+  setShowConfirmationUser(false);
 }
 
 const fetchUserDetailed = (locationName, startDate, endDate) => {
@@ -321,8 +350,17 @@ return (
           </div>
           <div className="col-8"></div>
           <div className="col-2">
-            <button className="btn btn-success" onClick={handleDetailedExport}>Export CSV</button>
+                <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
+              </div>
+              {showConfirmation && (
+        <div className="confirmation-dialog">
+          <div className="confirmation-content">
+            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
           </div>
+        </div>
+      )}
         </div>
 
         <div className="row ms-2 me-2">
@@ -382,9 +420,18 @@ return (
               </div>
               <div className="col-8"></div>
               <div className="col-2">
-              <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
+                  <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
 
-              </div>
+                  </div>
+                  {showConfirmationLocation && (
+        <div className="confirmation-dialog">
+          <div className="confirmation-content">
+            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>Yes</button>
+            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>No</button>
+          </div>
+        </div>
+      )}
             </div>
 
             <div className="row ms-2 me-2">
@@ -445,8 +492,17 @@ return (
               </div>
               <div className="col-8"></div>
               <div className="col-2">
-                <button className="btn btn-success" onClick={() =>handleUserWiseExport()}>Export CSV</button>
-              </div>
+                    <button className="btn btn-success" onClick={handleUserExport}>Export CSV</button>
+                  </div>
+                  {showConfirmationUser && (
+        <div className="confirmation-dialog">
+          <div className="confirmation-content">
+            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+            <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>Yes</button>
+            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>No</button>
+          </div>
+        </div>
+      )}
             </div>
 
             <div className="row ms-2 me-2">
