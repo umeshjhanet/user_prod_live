@@ -173,22 +173,33 @@ input[type="submit"]:hover {
   margin-bottom: 20px;
 }
 
-/* .login-image {
+.login-image {
   background-image: url("/public/login-background.png");
   height: 100%;
   width: 100%;
   background-repeat: no-repeat;
   object-fit: fill;
-} */
+}
 .first-card{
   background-color: #aaa;
   padding: 10px;
   border: 1px solid #aaa;
 }
+/* CumulativeSummaryReport.css */
+
+.clicked-row {
+  background-color: #f0f0f0; /* Change background color of clicked row */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.clicked-row:hover {
+  background-color: #e0e0e0; /* Change background color of clicked row on hover */
+}
+
 
 .login-card {
   width: 400px;
-  margin: auto;
+  margin-left: 700px;
   margin-top: 250px;
   padding: 12px;
   background-color: white;
@@ -682,8 +693,8 @@ input[type="submit"] {
 }
 .login-page-container {
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  /* justify-content: center; /* Center horizontally */
+  /* align-items: center; Center vertically */ 
   height: 100vh; /* Make the container full height of the viewport */
 }
 .sign-in {

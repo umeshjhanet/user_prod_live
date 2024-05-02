@@ -3,7 +3,7 @@ import Header from './Components/Header';
 import './App.css';
 import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
-import { priceCount } from './Components/priceCount';
+import { priceCount as initialPriceCount } from './Components/priceCount'; // Import initial priceCount
 import axios from 'axios';
 import { API_URL } from './API';
 
@@ -16,27 +16,26 @@ const Dashboard = () => {
     const [toDate, setToDate] = useState('');
     const [error, setError] = useState('');
     const [summaryReport, setSummaryReport] = useState();
-    const [prices, setPrices] = useState();
+    const [prices, setPrices] = useState(initialPriceCount); // Set initial priceCount
+    const [editedPrices, setEditedPrices] = useState(initialPriceCount); // Define editedPrices state
+    const [multipliedData, setMultipliedData] = useState([]); // Define multipliedData state
     const [refreshPage, setRefreshPage] = useState(false);
 
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
         if (event.target.value === 'periodic') {
             setPeriodicSelected(true);
+            setShowCumulativeSummary(false);
         } else {
             setPeriodicSelected(false);
         }
         if (event.target.value === 'cumulative') {
             setCumulativeSelected(true);
+            setShowPeriodicSummary(false);
         } else {
             setCumulativeSelected(false);
         }
-        if (event.target.value === 'periodic' && cumulativeSelected) {
-            setRefreshPage(true);
-        }
-        if (event.target.value === 'cumulative' && periodicSelected) {
-            setRefreshPage(true);
-        }
+       
     };
 
     const handleFromDateChange = (event) => {
@@ -58,7 +57,7 @@ const Dashboard = () => {
                 setShowPeriodicSummary(true);
                 setShowCumulativeSummary(false);
                 setError('');
-               
+              
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
@@ -76,13 +75,17 @@ const Dashboard = () => {
         else {
             setError('Please choose an option.')
         }
-        setPrices(priceCount());
     };
+
+    const handleSave = () => {
+        // Update priceCount with edited prices
+        setPrices(editedPrices);
+    };
+
     useEffect(() => {
-        if (refreshPage) {
-            window.location.reload(); // Refresh the page if the flag is set
-            setRefreshPage(false); // Reset the flag
-        }
+        // Set editedPrices to initialPriceCount when component mounts
+        setEditedPrices(initialPriceCount);
+        
         const fetchSummaryReport = () => {
             axios.get(`${API_URL}/summaryReport`)
             .then((response) => setSummaryReport(response.data))
@@ -91,7 +94,7 @@ const Dashboard = () => {
             });
         }
         fetchSummaryReport();
-    },[refreshPage])
+    },[])
     console.log('Summary Data', summaryReport);
 
     const multiplyData = (summaryData, priceData) => {
@@ -102,14 +105,18 @@ const Dashboard = () => {
                 const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
                 return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
             });
-            return {  multipliedValues };
+            return { multipliedValues };
         });
     };
     
-    const multipliedData = multiplyData(summaryReport, priceCount());
+    // Update multipliedData whenever editedPrices changes
+    useEffect(() => {
+        const newMultipliedData = multiplyData(summaryReport, editedPrices);
+        setMultipliedData(newMultipliedData);
+    }, [summaryReport, editedPrices]);
 
     // Use multipliedData in your component as needed
-        console.log("MultipliedData", multipliedData);
+    console.log("MultipliedData", multipliedData);
     
     return (
         <>
@@ -155,8 +162,8 @@ const Dashboard = () => {
                                 <tr>
                                     <th></th>
                                     <th>Stack</th>
-                                    {priceCount().map((elem, index) => (
-                                        <th key={elem.id}>{elem.name}</th>
+                                    {prices.map((elem, index) => (
+                                        <th key={index}>{elem.name}</th>
                                     ))}
                                 </tr>
                             </thead>
@@ -164,20 +171,29 @@ const Dashboard = () => {
                                 <tr>
                                     <td>Arrow</td>
                                     <td>Set Business</td>
-                                    {priceCount().map((elem, index) => (
-                                        <td key={elem.id} contentEditable>{elem.value}</td>
+                                    {prices.map((elem, index) => (
+                                        <td key={index} contentEditable onBlur={(e) => {
+                                            const newPrices = [...editedPrices];
+                                            newPrices[index].value = parseFloat(e.target.innerText);
+                                            setEditedPrices(newPrices);
+                                        }}>{elem.value}</td>
                                     ))}
                                 </tr>
                             </tbody>
 
                         </table>
+                        <div className='row mt-2'>
+                            <div className='col-11'></div>
+                            <div className='col-1'> <button className="btn btn-success" onClick={handleSave}>Save</button></div>
+                        </div>
                     </div>
+                    
                 </div>
 
             </div >
-            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} startDate={fromDate} endDate={toDate}/>
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate}/>
             }
-            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} prices={prices} />}
+            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
         </>
     );
 };
