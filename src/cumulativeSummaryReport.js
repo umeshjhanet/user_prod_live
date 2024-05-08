@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { API_URL } from "./API";
 import axios from "axios";
 import { priceCount } from "./Components/priceCount";
+import { useRef } from 'react';
 
-const CumulativeSummaryReport = ({ multipliedData ,prices }) => {
+
+const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
@@ -29,12 +31,15 @@ const CumulativeSummaryReport = ({ multipliedData ,prices }) => {
     setUserView(false);
   };
 
-  const handleUserView = (username, locationName) => {
+  const handleUserView = (username, locationName, rowIndex) => {
+    setClickedRowIndex(rowIndex);
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
+
     setUserView(true);
   };
 
@@ -83,7 +88,7 @@ const CumulativeSummaryReport = ({ multipliedData ,prices }) => {
   }
 
 
-  const handleUserWiseExport=()=>{
+  const handleUserWiseExport = () => {
     if (userwisecsv) {
         const link = document.createElement("a");
         link.href = userwisecsv;
@@ -114,73 +119,117 @@ const CumulativeSummaryReport = ({ multipliedData ,prices }) => {
 
   const fetchUserDetailedReport = (username, locationName) => {
     axios.get(`${API_URL}/UserDetailedReport`, {
-        params: {
-            username: username,
-            locationName: locationName
-        }
+      params: {
+        username: username,
+        locationName: locationName
+      }
     })
-    .then((response) => setDetailedUserReport(response.data))
-    .catch((error) => {
+      .then((response) => setDetailedUserReport(response.data))
+      .catch((error) => {
         console.error("Error fetching user detailed report:", error);
-    });
-};
-
-const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
-  const formattedStartDate = startDate ? new Date(startDate) : null;
-  const formattedEndDate = endDate ? new Date(endDate) : null;
-  const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
+      });
   };
 
-  let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+  const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
+    const formattedStartDate = startDate ? new Date(startDate) : null;
+    const formattedEndDate = endDate ? new Date(endDate) : null;
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+    };
 
-  if (locationName && formattedStartDate && formattedEndDate) {
+    let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+
+    if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-  } else if (locationName) {
+    } else if (locationName) {
       apiUrl += `?locationName=${locationName}`;
-  } else if (formattedStartDate && formattedEndDate) {
+    } else if (formattedStartDate && formattedEndDate) {
       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-  }
+    }
 
-  axios.get(apiUrl, { responseType: "blob" })
+    axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
-          const blob = new Blob([response.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          setDetailedLocationWiseCsv(url);
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        setDetailedLocationWiseCsv(url);
       })
       .catch((error) => {
-          console.error("Error in exporting data:", error);
+        console.error("Error in exporting data:", error);
       });
-};
-
-
-const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
-  const formattedStartDate = startDate ? new Date(startDate) : null;
-  const formattedEndDate = endDate ? new Date(endDate) : null;
-  const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
   };
 
-  let apiUrl = `http://localhost:5001/userdetailedreportlocationwisecsv`;
 
-  if (username && locationName) {
+  const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
+    const formattedStartDate = startDate ? new Date(startDate) : null;
+    const formattedEndDate = endDate ? new Date(endDate) : null;
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+    };
+
+    let apiUrl = `http://localhost:5001/userdetailedreportlocationwisecsv`;
+
+    if (username && locationName) {
       // If locationName is an array, join its elements with commas
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
       apiUrl += `?username=${username}&locationName=${locationQueryString}`;
-  } else if (formattedStartDate && formattedEndDate) {
+    } else if (formattedStartDate && formattedEndDate) {
       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-  }
+    }
 
-  axios.get(apiUrl, { responseType: "blob" })
+    axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
-          const blob = new Blob([response.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          setUserWiseCSv(url);
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        setUserWiseCSv(url);
       })
       .catch((error) => {
-          console.error("Error in exporting data:", error);
+        console.error("Error in exporting data:", error);
       });
-};
+  };
+  const multiplyLocationData = (locationData, priceData) => {
+    if (!locationData || !priceData) return []; // Ensure both data arrays are provided
+
+    return locationData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
+
+  const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
+
+  const multiplyUserWiseData = (userWiseData, priceData) => {
+    if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
+
+    return userWiseData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
+
+  const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
+
+  const multiplyUserData = (userData, priceData) => {
+    if (!userData || !priceData) return []; // Ensure both data arrays are provided
+
+    return userData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
+
+  const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+
+  // Use multipliedData in your component as needed
+  console.log("MultipliedUserWiseData", multipliedLocationData);
 
 
   useEffect(() => {
@@ -205,39 +254,39 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
       const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
+        return date.toISOString().split('T')[0];
       };
-  
+
       let apiUrl = `${API_URL}/detailedreportcsv`;
-  
+
       if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-  
+
       axios.get(apiUrl, { responseType: "blob" })
-          .then((response) => {
-              const blob = new Blob([response.data], { type: "text/csv" });
-              const url = window.URL.createObjectURL(blob);
-              setDetailedCsv(url);
-          })
-          .catch((error) => {
-              console.error("Error in exporting data:", error);
-          });
-  };
-  
-  
-    fetchDetailedReportCsvFile( startDate, endDate);
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+        });
+    };
+
+
+    fetchDetailedReportCsvFile(startDate, endDate);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-    
-    fetchUserWiseReportCsvFile(selectedUsername,[locationName], startDate, endDate)
+
+    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
 
     fetchSummaryReport();
     fetchLocationReport();
     if (locationName) {
       fetchUserDetailed(locationName);
     }
-   fetchUserDetailedReport();
-  }, [selectedUsername,locationName,startDate,endDate]);
+    fetchUserDetailedReport();
+  }, [selectedUsername, locationName, startDate, endDate]);
   // console.log("Location Data", locationReport);
 
   return (
@@ -261,52 +310,33 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                   </tr>
                 </thead>
                 <tbody>
-                        <tr>
-                        {summaryReport && summaryReport.map((elem,index) => (
-                            <>
-                            <td key={index}>{index + 1}</td>
-                            <td>{elem.Scanned}</td>
-                            <td>{elem.QC}</td>
-                            <td>{elem.Indexing}</td>
-                            <td>{elem.Flagging}</td>
-                            <td>{elem.CBSL_QA}</td>
-                            <td>{elem.Client_QC}</td>
-                            </>
-                              ))}
-                        </tr>
-                  {multipliedData.map((item, index) => {
-                    // Calculate total sum for each row
-                    const rowTotalSum = item.multipliedValues.reduce(
-                      (sum, value) => sum + value,
-                      0
-                    );
-
-                    return (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        {item.multipliedValues.map((value, i) => (
-                          <td key={i}>
-                            {typeof value === "number"
-                              ? value.toFixed(2)
-                              : "Invalid Value"}
-                          </td>
-                        ))}
-                        <td>{rowTotalSum.toFixed(2)}</td>{" "}
-                        {/* Display total sum for this row */}
-                      </tr>
-                    );
-                  })}
+                  <tr>
+                    {summaryReport && summaryReport.map((elem, index) => (
+                      <>
+                        <td key={index}>{index + 1}</td>
+                        <td>{elem.Scanned}</td>
+                        <td>{elem.QC}</td>
+                        <td>{elem.Indexing}</td>
+                        <td>{elem.Flagging}</td>
+                        <td>{elem.CBSL_QA}</td>
+                        <td>{elem.Client_QC}</td>
+                        <td colSpan={multipliedData[0].multipliedValues.length}>
+                          {multipliedData[0].multipliedValues.reduce((sum, value) => sum + value, 0).toFixed(2)}
+                        </td>
+                      </>
+                    ))}
+                  </tr>
                 </tbody>
               </table>
             </div>
+           
           </div>
         </div>
         <div className="row mt-3">
           <div className="search-report-card">
-            <h4>Detailed Report</h4>
             <div className="row">
               <div className="col-2">
-                <p>Total row(s) affected: 1</p>
+                <h4>Detailed Report</h4>
               </div>
               <div className="col-8"></div>
               <div className="col-2">
@@ -341,29 +371,25 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                 </thead>
                 <tbody>
                   {locationReport &&
-                    locationReport.map((elem, index) => (
-                      <tr
-                        onClick={() => handleLocationView(elem.locationname)}
-                        key={index}
-                      >
-                        <td>{index + 1}</td>
-                        <td>{elem.locationname || 0}</td>
-                        <td>{elem.Scanned || 0}</td>
-                        <td>{elem.QC || 0}</td>
-                        <td>{elem.Indexing || 0}</td>
-                        <td>{elem.Flagging || 0}</td>
-                        <td>{elem.CBSL_QA || 0}</td>
-                        <td>{elem.Client_QC || 0}</td>
-                        <td>
-                          {parseFloat(elem.Scanned || 0) +
-                            parseFloat(elem.QC || 0) +
-                            parseFloat(elem.Indexing || 0) +
-                            parseFloat(elem.Flagging || 0) +
-                            parseFloat(elem.CBSL_QA || 0) +
-                            parseFloat(elem.Client_QC || 0)}
-                        </td>
-                      </tr>
-                    ))}
+                    locationReport.map((elem, index) => {
+                      const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                      return (
+                        <tr onClick={() => handleLocationView(elem.locationname)} key={index} className={clickedRowIndex === index ? "clicked-row" : ""}>
+                          <td>{index + 1}</td>
+                          <td>{elem.locationname || 0}</td>
+                          <td>{elem.Scanned || 0}</td>
+                          <td>{elem.QC || 0}</td>
+                          <td>{elem.Indexing || 0}</td>
+                          <td>{elem.Flagging || 0}</td>
+                          <td>{elem.CBSL_QA || 0}</td>
+                          <td>{elem.Client_QC || 0}</td>
+                          <td>
+                            {rowTotalSum.toFixed(2)}
+                          </td>
+                          <td></td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
@@ -371,16 +397,16 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
         </div>
         {locationView && (
           <>
-            <div className="row mt-3">
+            <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
-                <h4>Detailed Report</h4>
+                
                 <div className="row">
                   <div className="col-2">
-                    <p>Total row(s) affected: 1</p>
+                  <h4>Detailed Report</h4>
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
-                  <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
+                    <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
 
                   </div>
                   {showConfirmationLocation && (
@@ -399,7 +425,8 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
-                        <th></th>
+                        <th>Sr.No.</th>
+                        <th>Location</th>
                         <th>User Name</th>
                         <th>Scanned</th>
                         <th>QC</th>
@@ -413,7 +440,9 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                     </thead>
                     <tbody>
                       {detailedReportLocationWise &&
-                        detailedReportLocationWise.map((elem, index) => (
+                        detailedReportLocationWise.map((elem, index) => {
+                          const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          return(
                           <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{index + 1}</td>
                             <td>{elem.user_type || 0}</td>
@@ -424,15 +453,12 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                             <td>{elem.CBSL_QA || 0}</td>
                             <td>{elem.Client_QC || 0}</td>
                             <td>
-                              {parseFloat(elem.Scanned || 0) +
-                                parseFloat(elem.QC || 0) +
-                                parseFloat(elem.Indexing || 0) +
-                                parseFloat(elem.Flagging || 0) +
-                                parseFloat(elem.CBSL_QA || 0) +
-                                parseFloat(elem.Client_QC || 0)}
-                            </td>
+                            {rowTotalSum.toFixed(2)}
+                          </td>
+                          <td></td>
                           </tr>
-                        ))}
+                          )
+})}
                     </tbody>
                   </table>
                 </div>
@@ -442,12 +468,12 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
         )}
         {userView && (
           <>
-            <div className="row mt-3">
+            <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
-                <h4>Detailed Report</h4>
+                
                 <div className="row">
                   <div className="col-2">
-                    <p>Total row(s) affected: 1</p>
+                  <h4>Detailed Report</h4>
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
@@ -464,7 +490,7 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
       )}
                 </div>
 
-                <div className="row ms-2 me-2">
+                <div className="all-tables row ms-2 me-2">
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
@@ -485,8 +511,10 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                     </thead>
                     <tbody>
                       {detailedUserReport ?
-                        detailedUserReport.map((elem, index) => (
-                            <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                        detailedUserReport.map((elem, index) => {
+                          const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          return(
+                          <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                             <td>{elem.locationName}</td>
                             <td>{elem.user_type}</td>
                             <td>{elem.Date}</td>
@@ -498,10 +526,13 @@ const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) 
                             <td>{elem.Flagging ? elem.Flagging : 0}</td>
                             <td>{elem.CBSL_QA ? elem.CBSL_QA : 0}</td>
                             <td>{elem.Client_QC ? elem.Client_QC : 0}</td>
-                            <td>81239.39</td>
-                            <td>Approved</td> 
-                       </tr>
-                       )) : ( <p>There is no data.</p>)}
+                            <td>
+                            {rowTotalSum.toFixed(2)}
+                          </td>
+                          <td></td>
+                          </tr>
+                          )
+                         }) : (<p>There is no data.</p>)}
                     </tbody>
                   </table>
                 </div>

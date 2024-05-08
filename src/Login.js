@@ -127,19 +127,19 @@ const Login = () => {
   return (
     <>
    <div className="container-fluid text-center">
-        <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: '#4BC0C0', color:'white', textAlign:'center' }}>
-          <div className="container-fluid" style={{textAlign:'center'  }} >
-            <h4>CBSL DMS-Production Dashboard</h4>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          
-                
-              </div>
-            </div>
-        </nav>
-      </div>
+   <div style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL + '/login-background.png'})`,
+        height: "100vh",
+        marginTop: "0px",
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+      }}>
+      
     
     <div className="login-page-container">
-      {/* <Header /> */}
       <div className='container-fluid'>
         <div className="form">
           <form onSubmit={handleSubmit}>
@@ -177,6 +177,8 @@ const Login = () => {
           </form>
         </div>
       </div>
+    </div>
+    </div>
     </div>
         </>
   )

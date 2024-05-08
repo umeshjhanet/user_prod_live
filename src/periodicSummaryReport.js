@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { API_URL } from './API';
 import axios from 'axios';
-import DatePicker from "react-datepicker";
 import { priceCount } from './Components/priceCount';
+import { useRef } from 'react';
 
 const PeriodicSummaryReport = ({ multipliedData,startDate,endDate }) => {
 
@@ -20,12 +20,20 @@ const[userwisecsv,setUserWiseCSv]=useState(null);
 const [showConfirmation, setShowConfirmation] = useState(false);
 const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
 const [showConfirmationUser, setShowConfirmationUser] = useState(false);
+const ref = useRef(null);
 
+  useEffect(() => {
+    if (locationView || userView) {
+      // Scroll to the referenced div when locationView or userView changes
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [locationView, userView]);
 
 const handleLocationView = (locationName) => {
 fetchUserDetailed(locationName,startDate,endDate);
 fetchDetailedLocationWiseReportCsvFile(locationName,startDate,endDate)
 setLocationView(true);
+setUserView(false);
 };
 
 const handleUserView = (username, locationName) => {
@@ -298,10 +306,50 @@ useEffect(() => {
 }, [selectedUsername,locationName,startDate, endDate]);
 
 
+const multiplyLocationData = (locationData, priceData) => {
+  if (!locationData || !priceData) return []; // Ensure both data arrays are provided
+
+  return locationData.map((report) => {
+    const multipliedValues = priceData.map((price) => {
+      const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+      return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+    });
+    return { multipliedValues };
+  });
+};
+
+const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
+
+const multiplyUserWiseData = (userWiseData, priceData) => {
+  if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
+
+  return userWiseData.map((report) => {
+    const multipliedValues = priceData.map((price) => {
+      const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+      return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+    });
+    return { multipliedValues };
+  });
+};
+
+const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
+
+const multiplyUserData = (userData, priceData) => {
+  if (!userData || !priceData) return []; // Ensure both data arrays are provided
+
+  return userData.map((report) => {
+    const multipliedValues = priceData.map((price) => {
+      const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+      return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+    });
+    return { multipliedValues };
+  });
+};
+
+const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
 
 
-
-console.log("Location Data", locationReport);
+console.log("Location Data", multipliedLocationData);
 
 return (
 <>
@@ -325,40 +373,22 @@ return (
               </tr>
             </thead>
             <tbody>
-              {/* {multipliedData.map((item, index) => {
-                // Calculate total sum for each row
-                const rowTotalSum = item.multipliedValues.reduce(
-                  (sum, value) => sum + value,
-                  0
-                );
-
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    {item.multipliedValues.map((value, i) => (
-                      <td key={i}>
-                        {typeof value === "number"
-                          ? value.toFixed(2)
-                          : "Invalid Value"}
-                      </td>
+              <tr>
+            {summaryReport && summaryReport.map((elem, index) => (
+                      <>
+                        <td key={index}>{index + 1}</td>
+                        <td>{elem.Scanned}</td>
+                        <td>{elem.QC}</td>
+                        <td>{elem.Indexing}</td>
+                        <td>{elem.Flagging}</td>
+                        <td>{elem.CBSL_QA}</td>
+                        <td>{elem.Client_QC}</td>
+                        <td colSpan={multipliedData[0].multipliedValues.length}>
+                          {multipliedData[0].multipliedValues.reduce((sum, value) => sum + value, 0).toFixed(2)}
+                        </td>
+                      </>
                     ))}
-                    <td>{rowTotalSum.toFixed(2)}</td>{" "}
-                    {/* Display total sum for this row */}
-                  {/* </tr>
-                );
-              })} */} 
-               {summaryReport && summaryReport.map((elem, index) => (
-        <tr key={index}>
-          <td>{index + 1}</td>
-          <td>{elem.Scanned}</td>
-          <td>{elem.QC}</td>
-          <td>{elem.Indexing}</td>
-          <td>{elem.Flagging}</td>
-          <td>{elem.CBSL_QA}</td>
-          <td>{elem.Client_QC}</td>
-          <td>{elem["Business Value"]}</td>
-        </tr>
-      ))}
+                    </tr>
             </tbody>
           </table>
         </div>
@@ -386,66 +416,62 @@ return (
       )}
         </div>
 
-        <div className="row ms-2 me-2">
-          <table className="table-bordered mt-2">
-            <thead>
-              <tr>
-                <th>Sr.No.</th>
-                <th>Location Name</th>
-                <th>Scanned</th>
-                <th>QC</th>
-                <th>Indexing</th>
-                <th>Flagging</th>
-                <th>CBSL-QA</th>
-                <th>Client-QC</th>
-                <th>Business Value</th>
-                <th>Remarks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {locationReport &&
-                locationReport.map((elem, index) => (
-                  <tr
-                    onClick={() => handleLocationView(elem.locationname)}
-                    key={index}
-                  >
-                    <td>{index + 1}</td>
-                    <td>{elem.locationname || 0}</td>
-                    <td>{elem.Scanned || 0}</td>
-                    <td>{elem.QC || 0}</td>
-                    <td>{elem.Indexing || 0}</td>
-                    <td>{elem.Flagging || 0}</td>
-                    <td>{elem.CBSL_QA || 0}</td>
-                    <td>{elem.Client_QC || 0}</td>
-                    <td>
-                      {parseFloat(elem.Scanned || 0) +
-                        parseFloat(elem.QC || 0) +
-                        parseFloat(elem.Indexing || 0) +
-                        parseFloat(elem.Flagging || 0) +
-                        parseFloat(elem.CBSL_QA || 0) +
-                        parseFloat(elem.Client_QC || 0)}
-                    </td>
+        <div className="all-tables row ms-2 me-2">
+              <table className="table-bordered mt-2">
+                <thead>
+                  <tr>
+                    <th>Sr.No.</th>
+                    <th>Location Name</th>
+                    <th>Scanned</th>
+                    <th>QC</th>
+                    <th>Indexing</th>
+                    <th>Flagging</th>
+                    <th>CBSL-QA</th>
+                    <th>Client-QC</th>
+                    <th>Business Value</th>
+                    <th>Remarks</th>
                   </tr>
-                ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {locationReport &&
+                    locationReport.map((elem, index) => {
+                      const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                      return (
+                        <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                          <td>{index + 1}</td>
+                          <td>{elem.locationname || 0}</td>
+                          <td>{elem.Scanned || 0}</td>
+                          <td>{elem.QC || 0}</td>
+                          <td>{elem.Indexing || 0}</td>
+                          <td>{elem.Flagging || 0}</td>
+                          <td>{elem.CBSL_QA || 0}</td>
+                          <td>{elem.Client_QC || 0}</td>
+                          <td>
+                            {rowTotalSum.toFixed(2)}
+                          </td>
+                          <td></td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    {locationView && (
-      <>
-        <div className="row mt-3">
-          <div className="search-report-card">
-            <h4>Detailed Report</h4>
-            <div className="row">
-              <div className="col-2">
-                <p>Total row(s) affected: 1</p>
-              </div>
-              <div className="col-8"></div>
-              <div className="col-2">
-                  <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
-
+        {locationView && (
+          <>
+            <div className="row mt-3" ref={ref}>
+              <div className="search-report-card">
+                <h4>Detailed Report</h4>
+                <div className="row">
+                  <div className="col-2">
+                    <p>Total row(s) affected: 1</p>
                   </div>
+                  <div className="col-8"></div>
+                  <div className="col-2">
+                        <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
+
+                      </div>
                   {showConfirmationLocation && (
         <div className="confirmation-dialog">
           <div className="confirmation-content">
@@ -455,124 +481,119 @@ return (
           </div>
         </div>
       )}
-            </div>
+                </div>
 
-            <div className="row ms-2 me-2">
-              <table className="table-bordered mt-2">
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>Location</th>
-                    <th>User Name</th>
-                    <th>Scanned</th>
-                    <th>QC</th>
-                    <th>Indexing</th>
-                    <th>Flagging</th>
-                    <th>CBSL-QA</th>
-                    <th>Client-QC</th>
-                    <th>Business Value</th>
-                    <th>Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {detailedReportLocationWise &&
-                    detailedReportLocationWise.map((elem, index) => (
-                      <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                        <td>{index + 1}</td>
-                        <td>{elem.locationName}</td>
-                        <td>{elem.user_type || 0}</td>
-                        <td>{elem.Scanned || 0}</td>
-                        <td>{elem.QC || 0}</td>
-                        <td>{elem.Indexing || 0}</td>
-                        <td>{elem.Flagging || 0}</td>
-                        <td>{elem.CBSL_QA || 0}</td>
-                        <td>{elem.Client_QC || 0}</td>
-                        <td>
-                          {parseFloat(elem.Scanned || 0) +
-                            parseFloat(elem.QC || 0) +
-                            parseFloat(elem.Indexing || 0) +
-                            parseFloat(elem.Flagging || 0) +
-                            parseFloat(elem.CBSL_QA || 0) +
-                            parseFloat(elem.Client_QC || 0)}
-                        </td>
+                <div className="all-tables row ms-2 me-2">
+                  <table className="table-bordered mt-2">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Location</th>
+                        <th>User Name</th>
+                        <th>Scanned</th>
+                        <th>QC</th>
+                        <th>Indexing</th>
+                        <th>Flagging</th>
+                        <th>CBSL-QA</th>
+                        <th>Client-QC</th>
+                        <th>Business Value</th>
+                        <th>Remarks</th>
                       </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </>
-    )}
-    {userView && (
-      <>
-        <div className="row mt-3">
-          <div className="search-report-card">
-            <h4>Detailed Report</h4>
-            <div className="row">
-              <div className="col-2">
-                <p>Total row(s) affected: 1</p>
+                    </thead>
+                    <tbody>
+                      {detailedReportLocationWise &&
+                        detailedReportLocationWise.map((elem, index) => {
+                          const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          return(
+                          <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                            <td>{index + 1}</td>
+                            <td>{elem.locationName}</td>
+                            <td>{elem.user_type || 0}</td>
+                            <td>{elem.Scanned || 0}</td>
+                            <td>{elem.QC || 0}</td>
+                            <td>{elem.Indexing || 0}</td>
+                            <td>{elem.Flagging || 0}</td>
+                            <td>{elem.CBSL_QA || 0}</td>
+                            <td>{elem.Client_QC || 0}</td>
+                            <td>
+                            {rowTotalSum.toFixed(2)}
+                          </td>
+                          <td></td>
+                          </tr>
+                          )
+})}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <div className="col-8"></div>
-              <div className="col-2">
-                    <button className="btn btn-success" onClick={handleUserExport}>Export CSV</button>
+            </div>
+          </>
+        )}
+        {userView && (
+          <>
+            <div className="row mt-3" ref={ref}>
+              <div className="search-report-card">
+                <h4>Detailed Report</h4>
+                <div className="row">
+                  <div className="col-2">
+                    <p>Total row(s) affected: 1</p>
                   </div>
-                  {showConfirmationUser && (
-        <div className="confirmation-dialog">
-          <div className="confirmation-content">
-            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-            <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>Yes</button>
-            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>No</button>
-          </div>
-        </div>
-      )}
-            </div>
+                  <div className="col-8"></div>
+                  <div className="col-2">
+                    <button className="btn btn-success" onClick={() => handleUserWiseExport()}>Export CSV</button>
+                  </div>
+                </div>
 
-            <div className="row ms-2 me-2">
-              <table className="table-bordered mt-2">
-                <thead>
-                  <tr>
-                    <th>Location Name</th>
-                    <th>User Name</th>
-                    <th>Date</th>
-                    <th>LotNo</th>
-                    <th>File Barcode</th>
-                    <th>Scanned</th>
-                    <th>QC</th>
-                    <th>Indexing</th>
-                    <th>Flagging</th>
-                    <th>CBSL-QA</th>
-                    <th>Client-QC</th>
-                    <th>Business Value</th>
-                    <th>Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {detailedUserReport &&
-                    detailedUserReport.map((elem, index) => (
-                        <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                        <td>{elem.locationName}</td>
-                        <td>{elem.user_type}</td>
-                        <td>{elem.Date}</td>
-                        <td>{elem.LotNo}</td>
-                        <td>{elem.FileBarcode}</td>
-                        <td>{elem.Scanned ? elem.Scanned : 0}</td>
-                        <td>{elem.QC ? elem.QC : 0}</td>
-                        <td>{elem.Indexing ? elem.Indexing : 0}</td>
-                        <td>{elem.Flagging ? elem.Flagging : 0}</td>
-                        <td>{elem.CBSL_QA ? elem.CBSL_QA : 0}</td>
-                        <td>{elem.Client_QC ? elem.Client_QC : 0}</td>
-                        <td>81239.39</td>
-                        <td>Approved</td> 
-                   </tr>
-                   ))}
-                </tbody>
-              </table>
+                <div className="all-tables row ms-2 me-2">
+                  <table className="table-bordered mt-2">
+                    <thead>
+                      <tr>
+                        <th>Location Name</th>
+                        <th>User Name</th>
+                        <th>Date</th>
+                        <th>LotNo</th>
+                        <th>File Barcode</th>
+                        <th>Scanned</th>
+                        <th>QC</th>
+                        <th>Indexing</th>
+                        <th>Flagging</th>
+                        <th>CBSL-QA</th>
+                        <th>Client-QC</th>
+                        <th>Business Value</th>
+                        <th>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {detailedUserReport ?
+                        detailedUserReport.map((elem, index) => {
+                          const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          return(
+                          <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                            <td>{elem.locationName}</td>
+                            <td>{elem.user_type}</td>
+                            <td>{elem.Date}</td>
+                            <td>{elem.LotNo}</td>
+                            <td>{elem.FileBarcode}</td>
+                            <td>{elem.Scanned ? elem.Scanned : 0}</td>
+                            <td>{elem.QC ? elem.QC : 0}</td>
+                            <td>{elem.Indexing ? elem.Indexing : 0}</td>
+                            <td>{elem.Flagging ? elem.Flagging : 0}</td>
+                            <td>{elem.CBSL_QA ? elem.CBSL_QA : 0}</td>
+                            <td>{elem.Client_QC ? elem.Client_QC : 0}</td>
+                            <td>
+                            {rowTotalSum.toFixed(2)}
+                          </td>
+                          <td></td>
+                          </tr>
+                          )
+                         }) : (<p>There is no data.</p>)}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </>
-    )}
+          </>
+        )}
   </div>
 </>
 );
