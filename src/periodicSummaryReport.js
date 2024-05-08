@@ -98,27 +98,50 @@ const handleCancelUserExport=()=>{
   setShowConfirmationUser(false);
 }
 
+// const fetchUserDetailed = (locationName, startDate, endDate) => {
+//     const formattedStartDate = startDate ? new Date(startDate) : null;
+//     const formattedEndDate = endDate ? new Date(endDate) : null;
+//     const formatDate = (date) => {
+//       return date.toISOString().split('T')[0];
+//     };
+  
+//     axios
+//       .get(`${API_URL}/detailedreportlocationwise`, {
+//         params: {
+//           locationName: locationName,
+//           startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+//           endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+//         },
+//       })
+//       .then((response) => setDetailedReportLocationWise(response.data))
+//       .catch((error) => {
+//         console.error("Error fetching user data:", error);
+//       });
+//   };
 const fetchUserDetailed = (locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
-  
-    axios
-      .get(`${API_URL}/detailedreportlocationwise`, {
-        params: {
-          locationName: locationName,
-          startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-          endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-        },
-      })
-      .then((response) => setDetailedReportLocationWise(response.data))
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
+  const formattedStartDate = startDate ? new Date(startDate) : null;
+  const formattedEndDate = endDate ? new Date(endDate) : null;
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
   };
-  
+
+  axios
+    .get(`${API_URL}/detailedreportlocationwise`, {
+      params: {
+        locationName: locationName,
+        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+      },
+    })
+    .then((response) => {
+        // Filter out rows with empty user_type
+        const filteredData = response.data.filter(item => item.user_type.trim() !== '');
+        setDetailedReportLocationWise(filteredData);
+    })
+    .catch((error) => {
+      console.error("Error fetching user data:", error);
+    });
+};
 
 const fetchUserDetailedReport = (username, locationName,startDate,endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
