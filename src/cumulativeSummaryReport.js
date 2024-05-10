@@ -22,6 +22,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
     const [showConfirmationUser, setShowConfirmationUser] = useState(false);
+    const[clickedRowIndex,setClickedRowIndex]=useState('');
+    const ref=useRef(null);
 
 
   const handleLocationView = (locationName) => {
@@ -406,7 +408,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
-                    <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
+                    <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
 
                   </div>
                   {showConfirmationLocation && (
