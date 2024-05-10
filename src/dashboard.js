@@ -6,43 +6,80 @@ import CumulativeSummaryReport from './cumulativeSummaryReport';
 import { priceCount as initialPriceCount } from './Components/priceCount'; // Import initial priceCount
 import axios from 'axios';
 import { API_URL } from './API';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Dashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
-    const [periodicSelected, setPeriodicSelected] = useState(false);
+    const [periodicSelected, setPeriodicSelected] = useState(true);
     const [cumulativeSelected, setCumulativeSelected] = useState(false);
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [error, setError] = useState('');
     const [summaryReport, setSummaryReport] = useState();
-    const [prices, setPrices] = useState(initialPriceCount); // Set initial priceCount
+    const [prices, setPrices] = useState(); // Set initial priceCount
     const [editedPrices, setEditedPrices] = useState(initialPriceCount); // Define editedPrices state
     const [multipliedData, setMultipliedData] = useState([]); // Define multipliedData state
     const [refreshPage, setRefreshPage] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
 
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
         if (event.target.value === 'periodic') {
             setPeriodicSelected(true);
             setShowCumulativeSummary(false);
+            
         } else {
             setPeriodicSelected(false);
         }
         if (event.target.value === 'cumulative') {
             setCumulativeSelected(true);
             setShowPeriodicSummary(false);
+            
         } else {
             setCumulativeSelected(false);
         }
-       
+
     };
+
+   
+    
+
+    // const handleRadioChange = (event) => {
+    //     // Update state when the radio button is changed
+    //     if (event.target.value === 'periodic') {
+    //         setPeriodicSelected(true);
+    //         setShowCumulativeSummary(false);
+    //         setShowPeriodicSummary(true); // Additionally show the periodic summary
+    //     } else if (event.target.value === 'cumulative') {
+    //         setCumulativeSelected(true);
+    //         setShowPeriodicSummary(false);
+    //         setShowCumulativeSummary(true); // Additionally show the cumulative summary
+    //     }
+    // };
+    
 
     const handleFromDateChange = (event) => {
         // Update state when "From Date" is changed
-        setFromDate(event.target.value);
+        const selectedFromDate = event.target.value;
+        setFromDate(selectedFromDate);
+    
+        // Extract year and month from the selected date
+        const [year, month] = selectedFromDate.split('-');
+    
+        // Calculate the last day of the selected month
+        const lastDayOfMonth = new Date(year, month, 0).getDate();
+    
+        // Format the last day of the month as a date string
+        const lastDateOfMonth = `${year}-${month}-${lastDayOfMonth}`;
+    
+        // Set the toDate state to the last date of the selected month
+        setToDate(lastDateOfMonth);
     };
-
+    
+    
+    
     const handleToDateChange = (event) => {
         // Update state when "To Date" is changed
         setToDate(event.target.value);
@@ -57,7 +94,7 @@ const Dashboard = () => {
                 setShowPeriodicSummary(true);
                 setShowCumulativeSummary(false);
                 setError('');
-              
+
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
@@ -70,36 +107,81 @@ const Dashboard = () => {
             setToDate("");
             setShowPeriodicSummary(false);
             setError('');
-           
+
         }
         else {
             setError('Please choose an option.')
         }
     };
 
-    const handleSave = () => {
-        // Update priceCount with edited prices
-        setPrices(editedPrices);
+    // const handleSave = () => {
+    //     setPrices(editedPrices);
+    //     toast.success("Saved Successfully.")
+    // };
+    useEffect(() => {
+        // Set "Periodic" as selected by default when component mounts
+        setPeriodicSelected(true);
+        setCumulativeSelected(false);
+    }, []);
+    
+
+    const handleSave = async (id, index) => {
+        try {
+            const updatedPrice = prices[index];
+            const response = await axios.put(`${API_URL}/updatebusinessrate/${id}`, updatedPrice);
+            console.log(response.data);
+            const updatedPrices = [...prices];
+            updatedPrices[index] = updatedPrice; // Update the corresponding row in the local state
+            setPrices(updatedPrices); // Update the local state with the new values
+            toast.success("Updated successfully");
+    
+            // Fetch updated prices from the database
+            const updatedPricesResponse = await axios.get(`${API_URL}/businessrate`);
+            setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
+        } catch (error) {
+            console.error('Error updating business rate:', error);
+            toast.error("Failed to update business rate");
+        }
     };
+    
+    const handleEditPrice = (e, field, index) => {
+        const newPrices = [...prices];
+        newPrices[index][field] = parseFloat(e.target.innerText);
+        setPrices(newPrices);
+    };
+    
+
+
 
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
-        
+
         const fetchSummaryReport = () => {
             axios.get(`${API_URL}/summaryReport`)
-            .then((response) => setSummaryReport(response.data))
-            .catch((error) => {
-                console.error("Error fetching user data:", error);
-            });
+                .then((response) => setSummaryReport(response.data))
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
         }
+
+        const fetchBusinessRate = () => {
+            axios.get(`${API_URL}/businessrate`)
+                .then((response) => setPrices(response.data))
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
+        }
+
+
         fetchSummaryReport();
-    },[])
+        fetchBusinessRate();
+    }, [])
     console.log('Summary Data', summaryReport);
 
     const multiplyData = (summaryData, priceData) => {
         if (!summaryData || !priceData) return []; // Ensure both data arrays are provided
-    
+
         return summaryData.map((report) => {
             const multipliedValues = priceData.map((price) => {
                 const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
@@ -108,7 +190,7 @@ const Dashboard = () => {
             return { multipliedValues };
         });
     };
-    
+
     // Update multipliedData whenever editedPrices changes
     useEffect(() => {
         const newMultipliedData = multiplyData(summaryReport, editedPrices);
@@ -116,8 +198,8 @@ const Dashboard = () => {
     }, [summaryReport, editedPrices]);
 
     // Use multipliedData in your component as needed
-    console.log("MultipliedData", multipliedData);
-    
+    console.log("Business Rate", prices);
+
     return (
         <>
             <Header />
@@ -132,68 +214,96 @@ const Dashboard = () => {
                         </h6>
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
-                        <p>Filter</p>
-                        <div className='row'>
-                            <div className='col-2'>
-                                <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} />
-                                <label className='ms-1'>Cumulative</label>
+
+                        {cumulativeSelected ? (
+                            <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                                <div className='col-1'><h5>Filter</h5></div>
+                                <div className='col-2'>
+                                    <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} checked={!periodicSelected} />
+                                    <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='periodic'  name='filterType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                    <label htmlFor='periodic' className='ms-1'>Periodic</label>
+                                </div>
+                                <div className='col-6'></div>
+                                <div className='col-1'>
+                                    <button className='btn btn-success' style={{ marginTop: '-5px' }} onClick={handleSubmit}>Submit</button>
+                                </div>
                             </div>
-                            <div className='col-2'>
-                                <input type='radio' id='periodic' name='filterType' value='periodic' onChange={handleRadioChange} />
-                                <label className='ms-1'>Periodic</label>
-                            </div>
-                            <div className='col-3'>
-                                <label className='me-1'>From Date:</label>
-                                <input type='date' value={fromDate} onChange={handleFromDateChange} />
-                            </div>
-                            <div className='col-3'>
-                                <label className='me-1'>To Date:</label>
-                                <input type='date' value={toDate} onChange={handleToDateChange} />
-                            </div>
-                            <div className='col-2'>
-                                <button className='btn btn-success' onClick={handleSubmit}>Submit</button>
-                            </div>
-                        </div>
+                        ) : (
+                            <>
+                                <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                                    <div className='col-1'><h5>Filter</h5></div>
+                                    <div className='col-2'>
+                                        <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} />
+                                        <label className='ms-1'>Cumulative</label>
+                                    </div>
+                                    <div className='col-2'>
+                                        <input type='radio' id='periodic' name='filterType' value='periodic' onChange={handleRadioChange} />
+                                        <label className='ms-1'>Periodic</label>
+                                    </div>
+                                    <div className='col-3'>
+                                        <label className='me-1'>From Date:</label>
+                                        <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                                    </div>
+                                    <div className='col-3'>
+                                        <label className='me-1'>To Date:</label>
+                                        <input type='date' value={toDate} onChange={handleToDateChange} />
+                                    </div>
+                                    <div className='col-1'>
+                                        <button className='btn btn-success' style={{ marginTop: '-5px' }} onClick={handleSubmit}>Submit</button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+
                         {error && <p className='text-danger'>{error}</p>}
                     </div>
                     <div className='row mt-2 ms-0 me-0 search-report-card'>
-                        <table className='table-bordered mt-2'>
+
+                        <table className='table-bordered' style={{paddingLeft:'5px'}}>
                             <thead>
+                                <h5 style={{ marginTop: '-15px' }}>Business Rate</h5>
                                 <tr>
-                                    <th></th>
+
                                     <th>Stack</th>
-                                    {prices.map((elem, index) => (
-                                        <th key={index}>{elem.name}</th>
-                                    ))}
+                                    <th>Scanned</th>
+                                    <th>QC</th>
+                                    <th>Indexing</th>
+                                    <th>Flagging</th>
+                                    <th>CBSL_QA</th>
+                                    <th>Client_QC</th>
+                                    <th>Edit Price</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Arrow</td>
-                                    <td>Set Business</td>
-                                    {prices.map((elem, index) => (
-                                        <td key={index} contentEditable onBlur={(e) => {
-                                            const newPrices = [...editedPrices];
-                                            newPrices[index].value = parseFloat(e.target.innerText);
-                                            setEditedPrices(newPrices);
-                                        }}>{elem.value}</td>
+                                    {prices && prices.map((elem, index) => (
+                                        <tr key={index}>
+                                            <td>Set Business</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
+                                            <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
+                                        </tr>
                                     ))}
-                                </tr>
                             </tbody>
 
                         </table>
-                        <div className='row mt-2'>
-                            <div className='col-11'></div>
-                            <div className='col-1'> <button className="btn btn-success" onClick={handleSave}>Save</button></div>
-                        </div>
+
                     </div>
-                    
+
                 </div>
 
             </div >
-            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate}/>
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />
             }
             {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
+            <ToastContainer/>
         </>
     );
 };
