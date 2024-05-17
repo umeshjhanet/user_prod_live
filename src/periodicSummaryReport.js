@@ -554,7 +554,6 @@ setIsLoading(true);
                         <th>User Name</th>
                         <th>Date</th>
                         <th>LotNo</th>
-                        <th>File Barcode</th>
                         <th>Scanned</th>
                         <th>QC</th>
                         <th>Indexing</th>
@@ -575,7 +574,6 @@ setIsLoading(true);
                               <td>{elem.user_type}</td>
                               <td>{elem.Date}</td>
                               <td>{elem.LotNo}</td>
-                              <td>{elem.FileBarcode}</td>
                               <td>{elem.Scanned ? elem.Scanned : 0}</td>
                               <td>{elem.QC ? elem.QC : 0}</td>
                               <td>{elem.Indexing ? elem.Indexing : 0}</td>

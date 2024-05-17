@@ -13,6 +13,9 @@ const Dashboard = () => {
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
     const [periodicSelected, setPeriodicSelected] = useState(true);
     const [cumulativeSelected, setCumulativeSelected] = useState(false);
+    const [allSelected, setAllSelected] = useState(false);
+    const [technicalSelected, setTechnicalSelected] = useState(false);
+    const [nonTechnicalSelected, setNonTechnicalSelected] = useState(false);
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [error, setError] = useState('');
@@ -42,23 +45,19 @@ const Dashboard = () => {
         }
 
     };
-
-   
+    const handleChange = (event) => {
+        // Update state when the radio button is changed
+        if (event.target.value === 'all') {
+            setAllSelected(true);
     
+        } else  if (event.target.value === 'technical') {
+            setTechnicalSelected(true);
+        }
+         else {
+            setNonTechnicalSelected(true);
+        }
 
-    // const handleRadioChange = (event) => {
-    //     // Update state when the radio button is changed
-    //     if (event.target.value === 'periodic') {
-    //         setPeriodicSelected(true);
-    //         setShowCumulativeSummary(false);
-    //         setShowPeriodicSummary(true); // Additionally show the periodic summary
-    //     } else if (event.target.value === 'cumulative') {
-    //         setCumulativeSelected(true);
-    //         setShowPeriodicSummary(false);
-    //         setShowCumulativeSummary(true); // Additionally show the cumulative summary
-    //     }
-    // };
-    
+    };
 
     const handleFromDateChange = (event) => {
         // Update state when "From Date" is changed
@@ -122,6 +121,21 @@ const Dashboard = () => {
         // Set "Periodic" as selected by default when component mounts
         setPeriodicSelected(true);
         setCumulativeSelected(false);
+         // Get current date
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const firstDateOfMonth = `${currentYear}-${currentMonth}-01`;
+
+    // Set default "From Date" to the first date of the current month
+    setFromDate(firstDateOfMonth);
+
+    // Set default "To Date" to the current date
+    const year = String(currentDate.getFullYear());
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedCurrentDate = `${year}-${month}-${day}`;
+    setToDate(formattedCurrentDate);
     }, []);
     
 
@@ -214,16 +228,31 @@ const Dashboard = () => {
                         </h6>
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
-
-                        {cumulativeSelected ? (
-                            <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                    <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
                                 <div className='col-1'><h5>Filter</h5></div>
                                 <div className='col-2'>
-                                    <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} checked={!periodicSelected} />
+                                    <input type='radio' id='all' name='filterType' value='all' onChange={handleChange}  />
+                                    <label htmlFor='all' className='ms-1'>All</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='technical'  name='filterType' value='technical' onChange={handleChange}  />
+                                    <label htmlFor='technical' className='ms-1'>Technical</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='non-technical'  name='filterType' value='non-technical' onChange={handleChange} />
+                                    <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
+                                </div>
+                                <div className='col-6'></div>
+                            </div>
+                        {cumulativeSelected ? (
+                            <div className='row mt-4' style={{ marginBottom: '-10px' }}>
+                                <div className='col-1'></div>
+                                <div className='col-2'>
+                                    <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} checked={!periodicSelected && cumulativeSelected} />
                                     <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
                                 </div>
                                 <div className='col-2'>
-                                    <input type='radio' id='periodic'  name='filterType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                    <input type='radio' id='periodic'  name='filterType' value='periodic' onChange={handleRadioChange} checked={periodicSelected && !cumulativeSelected} />
                                     <label htmlFor='periodic' className='ms-1'>Periodic</label>
                                 </div>
                                 <div className='col-6'></div>
@@ -233,8 +262,8 @@ const Dashboard = () => {
                             </div>
                         ) : (
                             <>
-                                <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
-                                    <div className='col-1'><h5>Filter</h5></div>
+                                <div className='row mt-4' style={{ marginBottom: '-10px' }}>
+                                    
                                     <div className='col-2'>
                                         <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} />
                                         <label className='ms-1'>Cumulative</label>
@@ -265,29 +294,32 @@ const Dashboard = () => {
 
                         <table className='table-bordered' style={{paddingLeft:'5px'}}>
                             <thead>
-                                <h5 style={{ marginTop: '-15px' }}>Business Rate</h5>
+                                <h5 style={{ marginTop: '-15px' }}>Expense Rate(per image)</h5>
                                 <tr>
-
-                                    <th>Stack</th>
+                                    <th>Project</th>
+                                    <th>Location</th>
                                     <th>Scanned</th>
                                     <th>QC</th>
                                     <th>Indexing</th>
                                     <th>Flagging</th>
                                     <th>CBSL_QA</th>
                                     <th>Client_QC</th>
+                                    <th>Total Price</th>
                                     <th>Edit Price</th>
                                 </tr>
                             </thead>
                             <tbody>
                                     {prices && prices.map((elem, index) => (
                                         <tr key={index}>
-                                            <td>Set Business</td>
+                                            <td>UPDC</td>
+                                            <td>Agra</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
+                                            <td></td>
                                             <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                         </tr>
                                     ))}

@@ -94,7 +94,7 @@ const handleSubmit = async (event) => {
       const data = await response.json();
       console.log("Data received from backend:", data);
       localStorage.setItem('user', JSON.stringify(data));
-      navigate('/dashboard');
+      navigate('/projects');
     } else if (response.status === 401) {
       setErrorMessages({ password: errors.password }); // Invalid username or email
     } else if (response.status === 403) {
