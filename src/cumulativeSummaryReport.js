@@ -13,17 +13,19 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const [summaryReport, setSummaryReport] = useState();
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
-  const [detailedReportLocationWise, setDetailedReportLocationWise] =useState();
-    const[detailedUserReport,setDetailedUserReport]=useState();
-    const [selectedUsername, setSelectedUsername] = useState('');
-    const [detailedcsv, setDetailedCsv] = useState(null);
-    const[detailedlocationwisecsv,setDetailedLocationWiseCsv]=useState(null);
-    const[userwisecsv,setUserWiseCSv]=useState(null);
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
-    const [showConfirmationUser, setShowConfirmationUser] = useState(false);
-    const [clickedRowIndex,setClickedRowIndex]=useState('')
-    const ref=useRef(null)
+  const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
+  const [detailedUserReport, setDetailedUserReport] = useState();
+  const [selectedUsername, setSelectedUsername] = useState('');
+  const [detailedcsv, setDetailedCsv] = useState(null);
+  const [detailedlocationwisecsv, setDetailedLocationWiseCsv] = useState(null);
+  const [userwisecsv, setUserWiseCSv] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
+  const [showConfirmationUser, setShowConfirmationUser] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const ref = useRef(null);    
+  const[clickedRowIndex,setClickedRowIndex]=useState('');
+   
 
 
   const handleLocationView = (locationName) => {
@@ -34,7 +36,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   };
 
   const handleUserView = (username, locationName, rowIndex) => {
-    setClickedRowIndex(rowIndex);
+
     ref.current?.scrollIntoView({ behavior: 'smooth' });
     setSelectedUsername(username);
     setLocationName(locationName);
@@ -51,13 +53,13 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
 
   const handleDetailedExport = () => {
     if (detailedcsv) {
-          const link = document.createElement("a");
-          link.href = detailedcsv;
-          link.setAttribute("download", "export.csv");
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
+      const link = document.createElement("a");
+      link.href = detailedcsv;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
     setShowConfirmation(false);
   };
 
@@ -65,7 +67,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     setShowConfirmation(false);
   };
 
-  const handleLocationExport=()=>{
+  const handleLocationExport = () => {
     setShowConfirmationLocation(true);
   }
 
@@ -81,28 +83,28 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     setShowConfirmationLocation(false);
   };
 
-  const handleCancelLocationExport=()=>{
+  const handleCancelLocationExport = () => {
     setShowConfirmationLocation(false);
   }
 
-  const handleUserExport=()=>{
+  const handleUserExport = () => {
     setShowConfirmationUser(true);
   }
 
 
   const handleUserWiseExport = () => {
     if (userwisecsv) {
-        const link = document.createElement("a");
-        link.href = userwisecsv;
-        link.setAttribute("download", "export.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-      setShowConfirmationUser(false)
+      const link = document.createElement("a");
+      link.href = userwisecsv;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    setShowConfirmationUser(false)
   }
 
-  const handleCancelUserExport=()=>{
+  const handleCancelUserExport = () => {
     setShowConfirmationUser(false);
   }
 
@@ -120,7 +122,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   };
 
   const fetchUserDetailedReport = (username, locationName) => {
-    axios.get(`${API_URL}/UserDetailedReport`, {
+    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName
@@ -138,7 +140,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
-
+setIsLoading(true);
     let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
@@ -158,6 +160,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       .catch((error) => {
         console.error("Error in exporting data:", error);
       });
+      setIsLoading(false);
   };
 
 
@@ -168,7 +171,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `http://localhost:5001/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       // If locationName is an array, join its elements with commas
@@ -236,20 +239,30 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
 
   useEffect(() => {
     const fetchSummaryReport = () => {
+      setIsLoading(true); // Set loading to true when fetching data
       axios
         .get(`${API_URL}/summaryreport`)
-        .then((response) => setSummaryReport(response.data))
+        .then((response) => {
+          setSummaryReport(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
         .catch((error) => {
           console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
         });
     };
     const fetchLocationReport = () => {
+      setIsLoading(true);
       axios
         .get(`${API_URL}/detailedReport`)
-        .then((response) => setLocationReport(response.data))
+        .then((response) => { 
+          setLocationReport(response.data)
+        setIsLoading(false);})
         .catch((error) => {
           console.error("Error fetching user data:", error);
+          setIsLoading(false);
         });
+        
     };
 
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
@@ -258,7 +271,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       const formatDate = (date) => {
         return date.toISOString().split('T')[0];
       };
-
+      setIsLoading(true);
       let apiUrl = `${API_URL}/detailedreportcsv`;
 
       if (formattedStartDate && formattedEndDate) {
@@ -273,7 +286,9 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
         })
         .catch((error) => {
           console.error("Error in exporting data:", error);
+          setIsLoading(false);
         });
+        
     };
 
 
@@ -290,69 +305,76 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     fetchUserDetailedReport();
   }, [selectedUsername, locationName, startDate, endDate]);
   // console.log("Location Data", locationReport);
+  const Loader = () => (
+    <div className="loader-overlay">
+      <div className="loader"></div>
+    </div>
+  );
 
   return (
     <>
-      <div className="container mb-5">
+    {isLoading && <Loader/>}
+      <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
         <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
-              <table className="table-bordered mt-2">
-                <thead>
-                  <tr>
-                    <th>Sr.No.</th>
-                    <th>Scanned</th>
-                    <th>QC</th>
-                    <th>Indexing</th>
-                    <th>Flagging</th>
-                    <th>CBSL-QA</th>
-                    <th>Client-QC</th>
-                    <th>Business Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    {summaryReport && summaryReport.map((elem, index) => (
-                      <>
-                        <td key={index}>{index + 1}</td>
-                        <td>{elem.Scanned}</td>
-                        <td>{elem.QC}</td>
-                        <td>{elem.Indexing}</td>
-                        <td>{elem.Flagging}</td>
-                        <td>{elem.CBSL_QA}</td>
-                        <td>{elem.Client_QC}</td>
-                        <td colSpan={multipliedData[0].multipliedValues.length}>
-                          {multipliedData[0].multipliedValues.reduce((sum, value) => sum + value, 0).toFixed(2)}
-                        </td>
-                      </>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
+               <table className="table-bordered mt-2" >
+              <thead>
+                <tr>
+                  <th>Sr.No.</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Indexing</th>
+                  <th>Flagging</th>
+                  <th>CBSL-QA</th>
+                  <th>Client-QC</th>
+                  <th>Business Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {summaryReport && summaryReport.map((elem, index) => (
+                    <>
+                      <td key={index}>{index + 1}</td>
+                      <td>{elem.Scanned}</td>
+                      <td>{elem.QC}</td>
+                      <td>{elem.Indexing}</td>
+                      <td>{elem.Flagging}</td>
+                      <td>{elem.CBSL_QA}</td>
+                      <td>{elem.Client_QC}</td>
+                      <td colSpan={multipliedData[0].multipliedValues.length}>
+                        {multipliedData[0].multipliedValues.reduce((sum, value) => sum + value, 0).toFixed(2)}
+                      </td>
+                    </>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+             
             </div>
-           
+
           </div>
         </div>
         <div className="row mt-3">
           <div className="search-report-card">
             <div className="row">
-              <div className="col-2">
-                <h4>Detailed Report</h4>
+              <div className="col-6">
+                <h4>Location Wise Summary Report</h4>
               </div>
-              <div className="col-8"></div>
+              <div className="col-4"></div>
               <div className="col-2">
                 <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
               </div>
               {showConfirmation && (
-        <div className="confirmation-dialog">
-          <div className="confirmation-content">
-            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-          </div>
-        </div>
-      )}
+                <div className="confirmation-dialog">
+                  <div className="confirmation-content">
+                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="all-tables row ms-2 me-2">
@@ -376,7 +398,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                     locationReport.map((elem, index) => {
                       const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                       return (
-                        <tr onClick={() => handleLocationView(elem.locationname)} key={index} className={clickedRowIndex === index ? "clicked-row" : ""}>
+                        <tr onClick={() => handleLocationView(elem.locationname)} key={index} >
                           <td>{index + 1}</td>
                           <td>{elem.locationname || 0}</td>
                           <td>{elem.Scanned || 0}</td>
@@ -401,25 +423,25 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
           <>
             <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
-                
+
                 <div className="row">
-                  <div className="col-2">
-                  <h4>Detailed Report</h4>
+                  <div className="col-6">
+                    <h4>User Wise Summary Report</h4>
                   </div>
-                  <div className="col-8"></div>
+                  <div className="col-4"></div>
                   <div className="col-2">
-                    <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
+                    <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
 
                   </div>
                   {showConfirmationLocation && (
-        <div className="confirmation-dialog">
-          <div className="confirmation-content">
-            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>Yes</button>
-            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>No</button>
-          </div>
-        </div>
-      )}
+                    <div className="confirmation-dialog">
+                      <div className="confirmation-content">
+                        <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                        <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>Yes</button>
+                        <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>No</button>
+                      </div>
+                    </div>
+                  )}
 
                 </div>
 
@@ -444,23 +466,24 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                       {detailedReportLocationWise &&
                         detailedReportLocationWise.map((elem, index) => {
                           const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                          return(
-                          <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                            <td>{index + 1}</td>
-                            <td>{elem.user_type || 0}</td>
-                            <td>{elem.Scanned || 0}</td>
-                            <td>{elem.QC || 0}</td>
-                            <td>{elem.Indexing || 0}</td>
-                            <td>{elem.Flagging || 0}</td>
-                            <td>{elem.CBSL_QA || 0}</td>
-                            <td>{elem.Client_QC || 0}</td>
-                            <td>
-                            {rowTotalSum.toFixed(2)}
-                          </td>
-                          <td></td>
-                          </tr>
+                          return (
+                            <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <td>{index + 1}</td>
+                              <td>{elem.locationName}</td>
+                              <td>{elem.user_type || 0}</td>
+                              <td>{elem.Scanned || 0}</td>
+                              <td>{elem.QC || 0}</td>
+                              <td>{elem.Indexing || 0}</td>
+                              <td>{elem.Flagging || 0}</td>
+                              <td>{elem.CBSL_QA || 0}</td>
+                              <td>{elem.Client_QC || 0}</td>
+                              <td>
+                                {rowTotalSum.toFixed(2)}
+                              </td>
+                              <td></td>
+                            </tr>
                           )
-})}
+                        })}
                     </tbody>
                   </table>
                 </div>
@@ -472,35 +495,34 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
           <>
             <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
-                
                 <div className="row">
-                  <div className="col-2">
-                  <h4>Detailed Report</h4>
+                  <div className="col-6">
+                    <h4>User Wise Detailed Report</h4>
                   </div>
-                  <div className="col-8"></div>
+                  <div className="col-4"></div>
                   <div className="col-2">
                     <button className="btn btn-success" onClick={handleUserExport}>Export CSV</button>
                   </div>
                   {showConfirmationUser && (
-        <div className="confirmation-dialog">
-          <div className="confirmation-content">
-            <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-            <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>Yes</button>
-            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>No</button>
-          </div>
-        </div>
-      )}
+                    <div className="confirmation-dialog">
+                      <div className="confirmation-content">
+                        <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                        <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>Yes</button>
+                        <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>No</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="all-tables row ms-2 me-2">
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
+                        <th>Sr.No</th>
                         <th>Location Name</th>
                         <th>User Name</th>
                         <th>Date</th>
                         <th>LotNo</th>
-                        <th>File Barcode</th>
                         <th>Scanned</th>
                         <th>QC</th>
                         <th>Indexing</th>
@@ -512,29 +534,29 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {detailedUserReport ?
-                        detailedUserReport.map((elem, index) => {
+                      {
+                       detailedUserReport && detailedUserReport.map((elem, index) => {
                           const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                          return(
-                          <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                            <td>{elem.locationName}</td>
-                            <td>{elem.user_type}</td>
-                            <td>{elem.Date}</td>
-                            <td>{elem.LotNo}</td>
-                            <td>{elem.FileBarcode}</td>
-                            <td>{elem.Scanned ? elem.Scanned : 0}</td>
-                            <td>{elem.QC ? elem.QC : 0}</td>
-                            <td>{elem.Indexing ? elem.Indexing : 0}</td>
-                            <td>{elem.Flagging ? elem.Flagging : 0}</td>
-                            <td>{elem.CBSL_QA ? elem.CBSL_QA : 0}</td>
-                            <td>{elem.Client_QC ? elem.Client_QC : 0}</td>
-                            <td>
-                            {rowTotalSum.toFixed(2)}
-                          </td>
-                          <td></td>
-                          </tr>
+                          return (
+                            <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <td>{index+1}</td>
+                              <td>{elem.locationName}</td>
+                              <td>{elem.user_type}</td>
+                              <td>{elem.Date}</td>
+                              <td>{elem.lotno}</td>
+                              <td>{elem.Scanned ? elem.Scanned : 0}</td>
+                              <td>{elem.QC ? elem.QC : 0}</td>
+                              <td>{elem.Indexing ? elem.Indexing : 0}</td>
+                              <td>{elem.Flagging ? elem.Flagging : 0}</td>
+                              <td>{elem.CBSL_QA ? elem.CBSL_QA : 0}</td>
+                              <td>{elem.Client_QC ? elem.Client_QC : 0}</td>
+                              <td>
+                                {rowTotalSum.toFixed(2)}
+                              </td>
+                              <td></td>
+                            </tr>
                           )
-                         }) : (<p>There is no data.</p>)}
+                        }) }
                     </tbody>
                   </table>
                 </div>

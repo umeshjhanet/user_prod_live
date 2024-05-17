@@ -1,0 +1,507 @@
+2024-05-05T19:28:53.134756Z 9971 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-05T21:24:02.494931Z 9972 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:29:00.166502Z 9974 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:29:00.170822Z 9973 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:34:16.053838Z 9976 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:34:16.055547Z 9975 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:34:46.371465Z 9977 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:34:46.373460Z 9978 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:37:19.064295Z 9979 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:37:19.065933Z 9980 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:39:07.476311Z 9982 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:39:07.478059Z 9981 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:49:15.131822Z 9983 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T03:58:11.089416Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.20.04.1).
+2024-05-06T03:58:13.091817Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 9972  user: 'root'.
+2024-05-06T03:58:13.092014Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 9981  user: 'root'.
+2024-05-06T03:58:13.092132Z 0 [Warning] [MY-010909] [Server] /usr/sbin/mysqld: Forcing close of thread 9982  user: 'root'.
+2024-05-06T03:58:16.122437Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:16.695392Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 839018
+2024-05-06T03:58:16.706300Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:18.564639Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:18.580925Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:18.581216Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:18.581282Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:19.316256Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:20.068155Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 839185
+2024-05-06T03:58:20.078919Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:21.964537Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:21.977650Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:21.978007Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:21.978052Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:22.877759Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:23.583204Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 839363
+2024-05-06T03:58:23.594353Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:25.505985Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:25.522017Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:25.522447Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:25.522527Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:26.364612Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:27.066511Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 839532
+2024-05-06T03:58:27.077324Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:29.213959Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:29.224886Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:29.225183Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:29.225231Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:30.849346Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:31.575522Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 839743
+2024-05-06T03:58:31.586679Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:33.446987Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:33.464011Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:33.464366Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:33.464419Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:34.499855Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:35.327251Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 839925
+2024-05-06T03:58:35.338270Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:37.405193Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:37.430232Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:37.430594Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:37.430649Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:38.462068Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:39.325533Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 840112
+2024-05-06T03:58:39.337009Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:41.696525Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:41.716405Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T03:58:41.716807Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T03:58:41.716878Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:42.375121Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:43.062930Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 840292
+2024-05-06T03:58:43.074179Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:44.971362Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:46.649497Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:58:46.649564Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:58:46.650235Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:58:46.650263Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:58:46.650342Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:49.537328Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:50.078304Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 840614
+2024-05-06T03:58:50.089760Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:51.720908Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:52.964238Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:58:52.964315Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:58:52.965063Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:58:52.965095Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:58:52.965190Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:58:55.537232Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:58:56.303087Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 840907
+2024-05-06T03:58:56.314094Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:58:58.270543Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:58:59.331104Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:58:59.331163Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:58:59.331650Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:58:59.331671Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:58:59.331741Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:01.262749Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:02.053093Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 841192
+2024-05-06T03:59:02.064264Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:04.145215Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:05.411845Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:05.411916Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:05.412555Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:05.412581Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:05.412665Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:07.734447Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:08.575625Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 841484
+2024-05-06T03:59:08.586642Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:10.744639Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:12.136464Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:12.136545Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:12.137272Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:12.137302Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:12.137389Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:14.539065Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:15.307953Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 841801
+2024-05-06T03:59:15.319579Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:17.402702Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:19.142452Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:19.142521Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:19.143168Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:19.143194Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:19.143281Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:21.216678Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:22.078748Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 842101
+2024-05-06T03:59:22.090238Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:23.743813Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:25.499269Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:25.499350Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:25.500118Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:25.500150Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:25.500249Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:28.791366Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:29.575020Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 842460
+2024-05-06T03:59:29.585986Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:31.485097Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:32.745408Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:32.745470Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:32.746043Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:32.746066Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:32.746131Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:34.614863Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:35.321067Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 842727
+2024-05-06T03:59:35.333130Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:37.592984Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:39.198931Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:39.199008Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:39.199682Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:39.199709Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:39.199794Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:41.859604Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:42.575571Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 843063
+2024-05-06T03:59:42.586746Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:44.767649Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:45.908666Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:45.908757Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:45.909481Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:45.909508Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:45.909599Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:48.312416Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:49.088368Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 843370
+2024-05-06T03:59:49.099391Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:50.800589Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:52.300384Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:52.300469Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:52.301233Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:52.301262Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:52.301367Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T03:59:54.935907Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T03:59:55.840928Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 843677
+2024-05-06T03:59:55.852220Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T03:59:57.833472Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T03:59:59.386499Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T03:59:59.386580Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T03:59:59.387311Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T03:59:59.387341Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T03:59:59.387427Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:01.838863Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:02.574516Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 844002
+2024-05-06T04:00:02.585539Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:04.491448Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:05.933477Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T04:00:05.933554Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T04:00:05.934270Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T04:00:05.934300Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T04:00:05.934398Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:08.586879Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:09.337242Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 844319
+2024-05-06T04:00:09.349114Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:11.415992Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:12.967515Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T04:00:12.967594Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T04:00:12.968326Z 0 [ERROR] [MY-010262] [Server] Can't start server: Bind on TCP/IP port: Cannot assign requested address
+2024-05-06T04:00:12.968357Z 0 [ERROR] [MY-010257] [Server] Do you already have another mysqld server running on port: 3306 ?
+2024-05-06T04:00:12.968439Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:15.815504Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:16.574479Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 844652
+2024-05-06T04:00:16.585500Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:18.532268Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:18.542995Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:18.543322Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:18.543377Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:19.370309Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:20.067631Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 844816
+2024-05-06T04:00:20.079037Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:21.757059Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:21.773004Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:21.773355Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:21.773406Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:22.559376Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:23.330395Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 844980
+2024-05-06T04:00:23.341397Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:25.023475Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:25.034621Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:25.034938Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:25.034990Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:25.819058Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:26.367242Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 845126
+2024-05-06T04:00:26.378270Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:28.323255Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:28.333873Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:28.334312Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:28.334384Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:29.367211Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:30.078247Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 845309
+2024-05-06T04:00:30.089389Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:32.014746Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:32.024872Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:32.025182Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:32.025238Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:32.708652Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:33.494524Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 845478
+2024-05-06T04:00:33.505817Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:35.139458Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:35.149193Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:35.149493Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:35.149533Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:35.797157Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:36.583256Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 845634
+2024-05-06T04:00:36.595136Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:38.555892Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:38.573943Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:38.574324Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:38.574371Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:39.431031Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:40.321168Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 845824
+2024-05-06T04:00:40.332599Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:42.355664Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:42.365237Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:42.365532Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:42.365571Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:43.402372Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:44.069535Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846007
+2024-05-06T04:00:44.080977Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:46.105551Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:46.116091Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:46.116416Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:46.116470Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:46.871521Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:47.576091Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846168
+2024-05-06T04:00:47.587170Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:49.471935Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:49.482259Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:49.482572Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:49.482610Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:50.143334Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:50.835142Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846336
+2024-05-06T04:00:50.847297Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:52.746848Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:52.761337Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:52.761721Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:52.761777Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:53.410853Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:54.074589Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846490
+2024-05-06T04:00:54.086221Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:55.713245Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:55.728762Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:55.729102Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:55.729152Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:56.396400Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:00:57.339935Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846648
+2024-05-06T04:00:57.351225Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:00:59.121364Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:00:59.133432Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:00:59.133909Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:00:59.133984Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:00:59.926469Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:00.826670Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846826
+2024-05-06T04:01:00.838053Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:02.737792Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:02.760044Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:02.760499Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:02.760575Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:03.639557Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:04.330679Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 846987
+2024-05-06T04:01:04.341717Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:06.279231Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:06.289537Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:06.289961Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:06.290041Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:07.600338Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:08.326155Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 847182
+2024-05-06T04:01:08.337183Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:10.420686Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:10.430292Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:10.430617Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:10.430666Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:11.199889Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:12.099937Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 847363
+2024-05-06T04:01:12.116196Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:14.070556Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:14.087738Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:14.088110Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:14.088166Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:14.745788Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:15.573196Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 847537
+2024-05-06T04:01:15.584444Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:17.553504Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:17.567286Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:17.567584Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:17.567636Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:18.403251Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:19.071853Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 847706
+2024-05-06T04:01:19.083594Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:21.144991Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:21.155043Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:21.155365Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:21.155418Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:21.969930Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:22.834539Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 847889
+2024-05-06T04:01:22.846221Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:24.969909Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:24.995349Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:24.995669Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:24.995712Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:25.654268Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:26.570857Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 848072
+2024-05-06T04:01:26.582013Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:28.404947Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:28.418788Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:28.419204Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:28.419283Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:29.305266Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:30.055312Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 848247
+2024-05-06T04:01:30.066540Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:31.886173Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:32.001707Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:32.002233Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:32.002314Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:32.853111Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:33.575630Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 848414
+2024-05-06T04:01:33.586782Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:35.760895Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:35.776404Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:35.776760Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:35.776811Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:36.450546Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:37.313386Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 848593
+2024-05-06T04:01:37.324749Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:39.518877Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:39.542196Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:39.542584Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:39.542635Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:40.189776Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:41.067872Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 848765
+2024-05-06T04:01:41.079283Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:43.585456Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:43.599486Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:43.599824Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:43.606242Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:44.388249Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:45.067281Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 848966
+2024-05-06T04:01:45.078468Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:46.810273Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:46.820357Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:46.820670Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:46.820725Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:47.623145Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:48.328147Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 849127
+2024-05-06T04:01:48.339414Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:49.885075Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:49.895764Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:49.896089Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:49.896144Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:50.567660Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:51.319391Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 849280
+2024-05-06T04:01:51.330857Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:53.626393Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:53.787204Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:53.787682Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:53.787733Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:54.420440Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:55.336869Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 849467
+2024-05-06T04:01:55.348385Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:01:57.326171Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:01:57.336069Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:01:57.336460Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:01:57.336531Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:01:57.992192Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:01:58.830218Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 849641
+2024-05-06T04:01:58.841453Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:00.984327Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:01.009053Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:01.009445Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:01.009489Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:01.741251Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:02.569754Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 849808
+2024-05-06T04:02:02.581020Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:04.339098Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:04.474633Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:04.475115Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:04.475187Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:05.104029Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:05.802012Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 849975
+2024-05-06T04:02:05.813426Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:07.817262Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:07.833813Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:07.834126Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:07.834182Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:08.589317Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:09.333521Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 850154
+2024-05-06T04:02:09.345167Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:11.406785Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:11.418419Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:11.418716Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:11.418809Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:12.042327Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:12.823674Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 850311
+2024-05-06T04:02:12.834844Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:15.600183Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:15.616390Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:15.616762Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:15.616814Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:16.265114Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:17.073399Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 850511
+2024-05-06T04:02:17.085115Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:19.366530Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:19.378417Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:19.378716Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:19.378767Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:20.053059Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:20.840500Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 850694
+2024-05-06T04:02:20.851839Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:22.674663Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:22.814490Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:22.815009Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:22.815080Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:23.461448Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:24.322776Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 850873
+2024-05-06T04:02:24.334244Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:26.374445Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:26.386840Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server ('1') and data dictionary ('0').
+2024-05-06T04:02:26.387195Z 0 [ERROR] [MY-010020] [Server] Data Dictionary initialization failed.
+2024-05-06T04:02:26.387238Z 0 [ERROR] [MY-010119] [Server] Aborting
+2024-05-06T04:02:27.156763Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:27.834738Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 851045
+2024-05-06T04:02:27.846377Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:29.924416Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:31.305637Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T04:02:31.305718Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T04:02:31.347600Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-06T04:02:31.347732Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.20.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-06T04:02:31.347842Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.20.04.1).
+2024-05-06T04:02:34.279401Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:02:34.834533Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 851371
+2024-05-06T04:02:34.845889Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:02:36.498845Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:02:37.820902Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T04:02:37.820984Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T04:02:37.862612Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.20.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-06T04:02:37.862611Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-06T04:02:59.103903Z 8 [Warning] [MY-010055] [Server] IP address '192.168.10.41' could not be resolved: Name or service not known
+2024-05-06T04:03:59.522357Z 10 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:06:09.212261Z 11 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:10:12.264337Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.20.04.1).
+2024-05-06T04:10:14.625092Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:10:15.190317Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 869578
+2024-05-06T04:10:15.201793Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:10:16.922631Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:10:18.055532Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T04:10:18.055610Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T04:10:18.087610Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-06T04:10:18.087696Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.20.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-06T04:10:46.664286Z 8 [Warning] [MY-010055] [Server] IP address '192.168.10.41' could not be resolved: Name or service not known
+2024-05-06T04:13:45.299285Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.20.04.1).
+2024-05-06T04:13:47.068304Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.20.04.1)  (Ubuntu).
+2024-05-06T04:13:47.626555Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.20.04.1) starting as process 878003
+2024-05-06T04:13:47.638058Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-06T04:13:49.736099Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-06T04:13:51.177895Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-06T04:13:51.178020Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-06T04:13:51.222626Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '192.168.3.48' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-06T04:13:51.222737Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.20.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-06T04:13:54.687669Z 8 [Warning] [MY-010055] [Server] IP address '192.168.10.41' could not be resolved: Name or service not known
+2024-05-06T04:17:44.715610Z 13 [Warning] [MY-010055] [Server] IP address '61.0.244.38' could not be resolved: Name or service not known
+2024-05-06T04:17:44.715750Z 12 [Warning] [MY-010055] [Server] IP address '61.0.244.38' could not be resolved: Name or service not known
+2024-05-06T04:17:44.760816Z 13 [Warning] [MY-013360] [Server] Plugin sha256_password reported: ''sha256_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:24:39.798372Z 14 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:26:21.754527Z 16 [Warning] [MY-010058] [Server] Hostname 'cbsldms-ProLiant-DL80-Gen9' does not resolve to '192.168.3.48'.
+2024-05-06T04:30:48.649494Z 18 [Warning] [MY-010055] [Server] IP address '61.0.46.79' could not be resolved: Name or service not known
+2024-05-06T04:30:48.690492Z 19 [Warning] [MY-013360] [Server] Plugin sha256_password reported: ''sha256_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:54:26.948501Z 20 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:54:33.069895Z 21 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:54:45.870097Z 22 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:54:53.198485Z 23 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:54:56.390485Z 24 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:55:29.028460Z 25 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:55:30.816382Z 26 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:55:54.683554Z 27 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-06T04:59:39.860762Z 28 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'

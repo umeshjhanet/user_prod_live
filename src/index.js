@@ -9,6 +9,7 @@ import User_Form from './User_Form';
 import Dashboard from './dashboard';
 import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
+import Projects from './projects';
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/projects" element={<Projects />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/User_Form" element={<User_Form />} />
           <Route path="/dashboard" element={<PeriodicSummaryReport />} />
