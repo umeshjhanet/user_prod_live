@@ -140,7 +140,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
-    axios.get(`${API_URL}/UserDetailedReport`, {
+    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName,
@@ -196,7 +196,7 @@ setIsLoading(true);
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `http://localhost:5001/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
@@ -398,10 +398,10 @@ setIsLoading(true);
         </div>
         <div className="row mt-3">
           <div className="search-report-card">
-            <h4>Detailed Report</h4>
+            <h4>Location Wise Summary Report</h4>
             <div className="row">
               <div className="col-2">
-                <p>Total row(s) affected: 1</p>
+                <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
               </div>
               <div className="col-8"></div>
               <div className="col-2">
@@ -464,10 +464,10 @@ setIsLoading(true);
           <>
             <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
-                <h4>Detailed Report</h4>
+                <h4>User Wise Summary Report</h4>
                 <div className="row">
                   <div className="col-2">
-                    <p>Total row(s) affected: 1</p>
+                    <p>Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
@@ -486,7 +486,7 @@ setIsLoading(true);
                 </div>
 
                 <div className="all-tables row ms-2 me-2">
-                  <table className="table-bordered mt-2">
+                  <table className="table-bordered table-hover mt-2">
                     <thead>
                       <tr>
                         <th></th>
@@ -535,17 +535,17 @@ setIsLoading(true);
           <>
             <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
-                <h4>Detailed Report</h4>
+                <h4>User Wise Detailed Report</h4>
                 <div className="row">
                   <div className="col-2">
-                    <p>Total row(s) affected: 1</p>
+                    <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
                   </div>
                   <div className="col-8"></div>
                   <div className="col-2">
                     <button className="btn btn-success" onClick={handleUserExport}>Export CSV</button>
                   </div>
                 </div>
-                {showConfirmationLocation && (
+                {showConfirmationUser && (
         <div className="confirmation-dialog">
           <div className="confirmation-content">
             <p className="fw-bold">Are you sure you want to export the CSV file?</p>
@@ -559,11 +559,11 @@ setIsLoading(true);
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
+                        <th>Sr.No.</th>
                         <th>Location Name</th>
                         <th>User Name</th>
                         <th>Date</th>
                         <th>LotNo</th>
-                        <th>File Barcode</th>
                         <th>Scanned</th>
                         <th>QC</th>
                         <th>Indexing</th>
@@ -575,16 +575,16 @@ setIsLoading(true);
                       </tr>
                     </thead>
                     <tbody>
-                      {detailedUserReport ?
-                        detailedUserReport.map((elem, index) => {
+                      {
+                        detailedUserReport && detailedUserReport.map((elem, index) => {
                           const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                           return (
                             <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <td>{index+1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type}</td>
                               <td>{elem.Date}</td>
-                              <td>{elem.LotNo}</td>
-                              <td>{elem.FileBarcode}</td>
+                              <td>{elem.lotno}</td>
                               <td>{elem.Scanned ? elem.Scanned : 0}</td>
                               <td>{elem.QC ? elem.QC : 0}</td>
                               <td>{elem.Indexing ? elem.Indexing : 0}</td>
@@ -597,7 +597,7 @@ setIsLoading(true);
                               <td></td>
                             </tr>
                           )
-                        }) : (<p>There is no data.</p>)}
+                        })}
                     </tbody>
                   </table>
                 </div>

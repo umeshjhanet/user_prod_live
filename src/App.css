@@ -738,6 +738,10 @@ input[type="submit"] {
   display: flex;
 }
 
+.all-tables table tbody tr:hover{
+  color: #007bff;
+}
+
 .error {
   color: red;
   font-size: 12px;
