@@ -22,6 +22,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
     const [showConfirmationUser, setShowConfirmationUser] = useState(false);
+    const [clickedRowIndex,setClickedRowIndex]=useState('')
+    const ref=useRef(null)
 
 
   const handleLocationView = (locationName) => {
@@ -42,7 +44,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
 
     setUserView(true);
   };
-
+//sdfd
   const handleExport = () => {
     setShowConfirmation(true);
   };
