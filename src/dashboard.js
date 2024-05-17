@@ -265,11 +265,11 @@ const Dashboard = () => {
                                 <div className='row mt-4' style={{ marginBottom: '-10px' }}>
                                     
                                     <div className='col-2'>
-                                        <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} />
+                                        <input type='radio' id='cumulative' name='filterType' value='cumulative' onChange={handleRadioChange} checked={!periodicSelected && cumulativeSelected} />
                                         <label className='ms-1'>Cumulative</label>
                                     </div>
                                     <div className='col-2'>
-                                        <input type='radio' id='periodic' name='filterType' value='periodic' onChange={handleRadioChange} />
+                                        <input type='radio' id='periodic' name='filterType' value='periodic' onChange={handleRadioChange} checked={periodicSelected && !cumulativeSelected} />
                                         <label className='ms-1'>Periodic</label>
                                     </div>
                                     <div className='col-3'>

@@ -23,7 +23,10 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const ref = useRef(null);
+  const ref = useRef(null);    
+  const[clickedRowIndex,setClickedRowIndex]=useState('');
+   
+
 
   const handleLocationView = (locationName) => {
     fetchUserDetailed(locationName);
@@ -119,7 +122,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   };
 
   const fetchUserDetailedReport = (username, locationName) => {
-    axios.get(`${API_URL}/UserDetailedReport`, {
+    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName
@@ -168,7 +171,7 @@ setIsLoading(true);
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `http://localhost:5001/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       // If locationName is an array, join its elements with commas
@@ -316,7 +319,7 @@ setIsLoading(true);
           <div className="search-report-card">
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
-               <table className="table-bordered mt-2">
+               <table className="table-bordered mt-2" >
               <thead>
                 <tr>
                   <th>Sr.No.</th>
@@ -356,10 +359,10 @@ setIsLoading(true);
         <div className="row mt-3">
           <div className="search-report-card">
             <div className="row">
-              <div className="col-2">
-                <h4>Detailed Report</h4>
+              <div className="col-6">
+                <h4>Location Wise Summary Report</h4>
               </div>
-              <div className="col-8"></div>
+              <div className="col-4"></div>
               <div className="col-2">
                 <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
               </div>
@@ -422,12 +425,12 @@ setIsLoading(true);
               <div className="search-report-card">
 
                 <div className="row">
-                  <div className="col-2">
-                    <h4>Detailed Report</h4>
+                  <div className="col-6">
+                    <h4>User Wise Summary Report</h4>
                   </div>
-                  <div className="col-8"></div>
+                  <div className="col-4"></div>
                   <div className="col-2">
-                    <button className="btn btn-success" onClick={() => handleDetailedLocationWiseExport()}>Export CSV</button>
+                    <button className="btn btn-success" onClick={handleLocationExport}>Export CSV</button>
 
                   </div>
                   {showConfirmationLocation && (
@@ -493,10 +496,10 @@ setIsLoading(true);
             <div className="row mt-3" ref={ref}>
               <div className="search-report-card">
                 <div className="row">
-                  <div className="col-2">
-                    <h4>Detailed Report</h4>
+                  <div className="col-6">
+                    <h4>User Wise Detailed Report</h4>
                   </div>
-                  <div className="col-8"></div>
+                  <div className="col-4"></div>
                   <div className="col-2">
                     <button className="btn btn-success" onClick={handleUserExport}>Export CSV</button>
                   </div>
@@ -515,6 +518,7 @@ setIsLoading(true);
                   <table className="table-bordered mt-2">
                     <thead>
                       <tr>
+                        <th>Sr.No</th>
                         <th>Location Name</th>
                         <th>User Name</th>
                         <th>Date</th>
@@ -530,15 +534,16 @@ setIsLoading(true);
                       </tr>
                     </thead>
                     <tbody>
-                      {detailedUserReport ?
-                        detailedUserReport.map((elem, index) => {
+                      {
+                       detailedUserReport && detailedUserReport.map((elem, index) => {
                           const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                           return (
                             <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <td>{index+1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type}</td>
                               <td>{elem.Date}</td>
-                              <td>{elem.LotNo}</td>
+                              <td>{elem.lotno}</td>
                               <td>{elem.Scanned ? elem.Scanned : 0}</td>
                               <td>{elem.QC ? elem.QC : 0}</td>
                               <td>{elem.Indexing ? elem.Indexing : 0}</td>
@@ -551,7 +556,7 @@ setIsLoading(true);
                               <td></td>
                             </tr>
                           )
-                        }) : (<p>There is no data.</p>)}
+                        }) }
                     </tbody>
                   </table>
                 </div>
