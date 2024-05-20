@@ -46,7 +46,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
 
     setUserView(true);
   };
-
+//sdfd
   const handleExport = () => {
     setShowConfirmation(true);
   };
