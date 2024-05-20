@@ -11,6 +11,9 @@ import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
 import Projects from './projects';
 import PriceRateForm from './PriceRateForm';
+import NonTechForm from './nonTechForm';
+import TaskForm from './TaskForm';
+
 
 
 const App = () => {
@@ -26,6 +29,8 @@ const App = () => {
           <Route path="/dashboard" element={<PeriodicSummaryReport />} />
           <Route path="/dashboard" element={<CumulativeSummaryReport />} />
           <Route path="/PriceRateForm" element={<PriceRateForm />} />
+          <Route path="/nontechForm" element={<NonTechForm />} />
+          <Route path="/TaskForm" element={<TaskForm/>}/>
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
