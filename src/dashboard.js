@@ -7,7 +7,6 @@ import { priceCount as initialPriceCount } from './Components/priceCount'; // Im
 import axios from 'axios';
 import { API_URL } from './API';
 import { ToastContainer, toast } from 'react-toastify';
-
 const Dashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
