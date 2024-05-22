@@ -1,34 +1,38 @@
-import React, { useState, useEffect } from "react";
-import Header from "./Components/Header";
-import "./App.css";
-import PeriodicSummaryReport from "./periodicSummaryReport";
-import CumulativeSummaryReport from "./cumulativeSummaryReport";
-import { priceCount as initialPriceCount } from "./Components/priceCount"; // Import initial priceCount
-import axios from "axios";
-import { API_URL } from "./API";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useState, useEffect } from 'react';
+import Header from './Components/Header';
+import './App.css';
+import PeriodicSummaryReport from './periodicSummaryReport';
+import CumulativeSummaryReport from './cumulativeSummaryReport';
+import { priceCount as initialPriceCount } from './Components/priceCount'; // Import initial priceCount
+import axios from 'axios';
+import { API_URL } from './API';
+import { ToastContainer, toast } from 'react-toastify';
+import { TiArrowDownThick, TiArrowUpThick } from "react-icons/ti";
+import NonTechCumulative from './NonTechCumulative';
+import NonTechPeriodic from './NonTechPeriodic';
+import CalculatorModal from './Components/CalculatorModal';
+
 const Dashboard = () => {
-  const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
-  const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
-  const [periodicSelected, setPeriodicSelected] = useState(true);
-  const [cumulativeSelected, setCumulativeSelected] = useState(false);
-  const [allSelected, setAllSelected] = useState(true);
-  const [technicalSelected, setTechnicalSelected] = useState(false);
-  const [nonTechnicalSelected, setNonTechnicalSelected] = useState(false);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [error, setError] = useState("");
-  const [summaryReport, setSummaryReport] = useState();
-  const [prices, setPrices] = useState(); // Set initial priceCount
-  const [editedPrices, setEditedPrices] = useState(initialPriceCount); // Define editedPrices state
-  const [multipliedData, setMultipliedData] = useState([]); // Define multipliedData state
-  const [refreshPage, setRefreshPage] = useState(false);
-  const[location,setLocation]=useState([]);
-  const [showFullTable, setShowFullTable] = useState(false);
-  const [tableData, setTableData] = useState([]);
-  const [tableHeaders, setTableHeaders] = useState([]);
-  const [nonTechTableData, setNonTechTableData] = useState([]);
-  const [nonTechTableHeaders, setNonTechTableHeaders] = useState([]);
+    const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
+    const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
+    const [shownonTechPeriodicSummary, setShowNonTechPeriodicSummary] = useState(false);
+    const [shownonTechCumulativeSummary, setShowNonTechCumulativeSummary] = useState(false);
+    const [periodicSelected, setPeriodicSelected] = useState(true);
+    const [cumulativeSelected, setCumulativeSelected] = useState(false);
+    const [allSelected, setAllSelected] = useState(true);
+    const [technicalSelected, setTechnicalSelected] = useState(false);
+    const [nonTechnicalSelected, setNonTechnicalSelected] = useState(false);
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
+    const [error, setError] = useState('');
+    const [summaryReport, setSummaryReport] = useState();
+    const [prices, setPrices] = useState(); // Set initial priceCount
+    const [editedPrices, setEditedPrices] = useState(initialPriceCount); // Define editedPrices state
+    const [multipliedData, setMultipliedData] = useState([]); // Define multipliedData state
+    const [refreshPage, setRefreshPage] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showFullTable, setShowFullTable] = useState(false);
+    const [showCalculator, setShowCalculator] = useState(false);
 
   const handleRadioChange = (event) => {
     // Update state when the radio button is changed
@@ -75,30 +79,55 @@ const Dashboard = () => {
     setToDate(event.target.value);
   };
 
-  const handleSubmit = () => {
-    // Check if "Periodic" is selected
-    if (periodicSelected) {
-      // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-      if (fromDate && toDate) {
-        // If both dates are provided, show the summary report
-        setShowPeriodicSummary(true);
-        setShowCumulativeSummary(false);
-        setError("");
-      } else {
-        // If any date is missing, show an error message
-        setError('Please provide both "From Date" and "To Date".');
-      }
-    } else if (cumulativeSelected) {
-      // If "Cumulative" is selected, show the summary report without requiring dates
-      setShowCumulativeSummary(true);
-      setFromDate("");
-      setToDate("");
-      setShowPeriodicSummary(false);
-      setError("");
-    } else {
-      setError("Please choose an option.");
-    }
-  };
+    const handleSubmit = () => {
+        // Check if "Periodic" is selected
+        if (technicalSelected && periodicSelected) {
+            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+            if (fromDate && toDate) {
+                // If both dates are provided, show the summary report
+                setShowPeriodicSummary(true);
+                setShowCumulativeSummary(false);
+                setShowNonTechCumulativeSummary(false);
+                setShowNonTechPeriodicSummary(false);
+                setError('');
+            } else {
+                // If any date is missing, show an error message
+                setError('Please provide both "From Date" and "To Date".');
+            }
+        } else if (technicalSelected && cumulativeSelected) {
+            // If "Cumulative" is selected, show the summary report without requiring dates
+            setShowCumulativeSummary(true);
+            setFromDate("");
+            setToDate("");
+            setShowPeriodicSummary(false);
+            setShowNonTechCumulativeSummary(false);
+            setShowNonTechPeriodicSummary(false);
+            setError('');
+        } else if (nonTechnicalSelected && cumulativeSelected) {
+            setShowNonTechCumulativeSummary(true);
+            setShowCumulativeSummary(false);
+            setFromDate("");
+            setToDate("");
+            setShowPeriodicSummary(false);
+            setShowNonTechPeriodicSummary(false);
+            setError('');
+        } else if (nonTechnicalSelected && periodicSelected) {
+            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+            if (fromDate && toDate) {
+                // If both dates are provided, show the summary report
+                setShowNonTechPeriodicSummary(true);
+                setShowPeriodicSummary(false);
+                setShowCumulativeSummary(false);
+                setShowNonTechCumulativeSummary(false);
+                setError('');
+            } else {
+                // If any date is missing, show an error message
+                setError('Please provide both "From Date" and "To Date".');
+            }
+        } else {
+            setError('Please choose an option.')
+        }
+    };
 
   useEffect(() => {
     // Set "Periodic" as selected by default when component mounts
@@ -166,14 +195,14 @@ const Dashboard = () => {
         });
     };
 
-    const fetchLocation = () => {
-        axios
-          .get(`${API_URL}/locations`)
-          .then((response) => setLocation(response.data))
-          .catch((error) => {
-            console.error("Error fetching location data:", error);
-          });
-      };
+    // const fetchLocation = () => {
+    //     axios
+    //       .get(`${API_URL}/locations`)
+    //       .then((response) => setLocation(response.data))
+    //       .catch((error) => {
+    //         console.error("Error fetching location data:", error);
+    //       });
+    //   };
 
     const fetchBusinessRate = () => {
       axios
@@ -184,40 +213,40 @@ const Dashboard = () => {
         });
     };
 
-    const fetchTechData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/gettask`);
-        const data = response.data;
-        if (data.length > 0) {
-          // Assuming all objects have the same structure
-          setTableHeaders(Object.keys(data[0]));
-        }
-        setTableData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    // const fetchTechData = async () => {
+    //   try {
+    //     const response = await axios.get(`${API_URL}/gettask`);
+    //     const data = response.data;
+    //     if (data.length > 0) {
+    //       // Assuming all objects have the same structure
+    //       setTableHeaders(Object.keys(data[0]));
+    //     }
+    //     setTableData(data);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
 
-    const fetchNonTechData=async()=>{
-        try{
-            const response=await axios.get(`${API_URL}/getstaff`);
-            const data=response.data;
-            if(data.length>0){
-                setNonTechTableHeaders(Object.keys(data[0]));
-            }
-            setNonTechTableData(data);
-        } catch(error){
-            console.error("Error Fetchinf in data",error);
-        }
-    }
+    // const fetchNonTechData=async()=>{
+    //     try{
+    //         const response=await axios.get(`${API_URL}/getstaff`);
+    //         const data=response.data;
+    //         if(data.length>0){
+    //             setNonTechTableHeaders(Object.keys(data[0]));
+    //         }
+    //         setNonTechTableData(data);
+    //     } catch(error){
+    //         console.error("Error Fetchinf in data",error);
+    //     }
+    // }
 
    
 
     fetchSummaryReport();
     fetchBusinessRate();
-    fetchTechData();
-    fetchNonTechData();
-    fetchLocation();
+    // fetchTechData();
+    // fetchNonTechData();
+    // fetchLocation();
    
   }, []);
   console.log("Summary Data", summaryReport);
@@ -241,255 +270,152 @@ const Dashboard = () => {
     setMultipliedData(newMultipliedData);
   }, [summaryReport, editedPrices]);
 
-  const handleShowFullTable = () => {
-    setShowFullTable((prevState) => !prevState);
-  };
+    const handleShowFullTable = () => {
+        setShowFullTable(prevState => !prevState);
+    }
+    const handleShowCalculator = () => {
+        setShowCalculator(true);
+    }
+    const handleCloseCalculator = () => {
+        setShowCalculator(false);
+        console.log("Modal closed.")
+    }
 
   // Use multipliedData in your component as needed
   console.log("Business Rate", prices);
 
 
 
-  return (
-    <>
-      <Header />
-      <div className="container">
-        <div className="row mt-3">
-          <div
-            className="card"
-            style={{ padding: "5px", backgroundColor: "#4BC0C0" }}
-          >
-            <h6 className="" style={{ color: "white" }}>
-              Dashboard / Site Wise Production Summary Report
-            </h6>
-          </div>
-          <div className="row ms-0 mt-2 search-report-card">
-            <div
-              className="row"
-              style={{ marginTop: "0px", marginBottom: "-10px" }}
-            >
-              <div className="col-1">
-                <h5>Filter</h5>
-              </div>
-              <div className="col-2">
-                <input
-                  type="radio"
-                  id="all"
-                  name="filterType"
-                  value="all"
-                  onChange={handleChange}
-                  checked={allSelected}
-                />
-                <label htmlFor="all" className="ms-1">
-                  All
-                </label>
-              </div>
-              <div className="col-2">
-                <input
-                  type="radio"
-                  id="technical"
-                  name="filterType"
-                  value="technical"
-                  onChange={handleChange}
-                  checked={technicalSelected}
-                />
-                <label htmlFor="technical" className="ms-1">
-                  Technical
-                </label>
-              </div>
-              <div className="col-2">
-                <input
-                  type="radio"
-                  id="non-technical"
-                  name="filterType"
-                  value="non-technical"
-                  onChange={handleChange}
-                  checked={nonTechnicalSelected}
-                />
-                <label htmlFor="non-technical" className="ms-1">
-                  Non-Technical
-                </label>
-              </div>
-              <div className="col-6"></div>
-            </div>
-            <div className="row mt-4" style={{ marginBottom: "-10px" }}>
-              <div className="col-1"></div>
-              <div className="col-2">
-                <input
-                  type="radio"
-                  id="cumulative"
-                  name="reportType"
-                  value="cumulative"
-                  onChange={handleRadioChange}
-                  checked={cumulativeSelected}
-                />
-                <label htmlFor="cumulative" className="ms-1">
-                  Cumulative
-                </label>
-              </div>
-              <div className="col-2">
-                <input
-                  type="radio"
-                  id="periodic"
-                  name="reportType"
-                  value="periodic"
-                  onChange={handleRadioChange}
-                  checked={periodicSelected}
-                />
-                <label htmlFor="periodic" className="ms-1">
-                  Periodic
-                </label>
-              </div>
-              {periodicSelected && (
-                <>
-                  <div className="col-3">
-                    <label className="me-1">From Date:</label>
-                    <input
-                      type="date"
-                      value={fromDate}
-                      onChange={handleFromDateChange}
-                    />
-                  </div>
-                  <div className="col-3">
-                    <label className="me-1">To Date:</label>
-                    <input
-                      type="date"
-                      value={toDate}
-                      onChange={handleToDateChange}
-                    />
-                  </div>
-                </>
-              )}
-              <div className="col-1">
-                <button
-                  className="btn btn-success"
-                  style={{ marginTop: "-5px" }}
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-            {error && <p className="text-danger">{error}</p>}
-          </div>
-          {allSelected && (
-            <div className="row mt-2 ms-0 me-0 search-report-card">
-              <table className="table-bordered" style={{ paddingLeft: "5px" }}>
-                <thead>
-                  <h5 style={{ marginTop: "0px" ,whiteSpace: "nowrap"}}>
-                    Expense Rate(per image)
-                  </h5>
-                  <button
-                    className="btn btn-primary"
-                    style={{
-                      display: "flex",
-                      alignItems: "end",
-                      justifyContent: "end",
-                    }}
-                    onClick={handleShowFullTable}
-                  >
-                    {showFullTable ? "Hide" : "View All"}
-                  </button>
-                  <tr>
-                    <th>Location</th>
-                    {tableData.map((rowData, index) => (
-                        <th key={index}>{rowData.TaskName}</th>
-                    ))}
-                    {nonTechTableData.map((rowData, index) => (
-                        <th key={index}>{rowData.TaskName}</th>
-                    ))}
-                    <th>Total Price</th>
-                    <th>Edit Price</th>
-                  </tr>
-                </thead>
-                {showFullTable && (
-                  <tbody>
-                    {prices &&
-                      prices.map((elem, index) => (
-                        <tr key={index}>
-                          {/* <td>{elem.LocationName}</td> */}
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "ScanRate", index)
-                            }
-                          >
-                            {elem.ScanRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) => handleEditPrice(e, "QcRate", index)}
-                          >
-                            {elem.QcRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "IndexRate", index)
-                            }
-                          >
-                            {elem.IndexRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "FlagRate", index)
-                            }
-                          >
-                            {elem.FlagRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "CbslQaRate", index)
-                            }
-                          >
-                            {elem.CbslQaRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "ClientQcRate", index)
-                            }
-                          >
-                            {elem.ClientQcRate}
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <button
-                              className="btn btn-success"
-                              style={{
-                                paddingTop: "0px",
-                                paddingBottom: "0px",
-                                height: "28px",
-                              }}
-                              onClick={() => handleSave(elem.id, index)}
-                            >
-                              Save
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {location.map((loc, index) => (
-                  <tr key={index}>
-                    <td>{loc.LocationName}</td>
-                    <td colSpan={tableData.length + nonTechTableData.length + 4}></td>
-                  </tr>
-                ))}
-                  </tbody>
-                )}
-              </table>
-            </div>
-          )}
-          {technicalSelected && (<div className='row mt-2 ms-0 me-0 search-report-card'>
+    return (
+        <>
+            <Header />
+            <div className='container'>
+                <div className='row mt-3'>
+                    <div
+                        className="card"
+                        style={{ padding: "5px", backgroundColor: "#4BC0C0" }}
+                    >
+                        <h6 className="" style={{ color: "white" }}>
+                            Dashboard / Site Wise Production Summary Report
+                        </h6>
+                    </div>
+                    <div className='row ms-0 mt-2 search-report-card'>
+                        <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                            <div className='col-1'><h5>Filter</h5></div>
+                            <div className='col-2'>
+                                <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
+                                <label htmlFor='all' className='ms-1'>All</label>
+                            </div>
+                            <div className='col-2'>
+                                <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
+                                <label htmlFor='technical' className='ms-1'>Technical</label>
+                            </div>
+                            <div className='col-2'>
+                                <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
+                                <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
+                            </div>
+                            <div className='col-6'></div>
+                        </div>
+                        <div className='row mt-4' style={{ marginBottom: '-10px' }}>
+                            <div className='col-1'></div>
+                            <div className='col-2'>
+                                <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
+                                <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                            </div>
+                            <div className='col-2'>
+                                <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                <label htmlFor='periodic' className='ms-1'>Periodic</label>
+                            </div>
+                            {periodicSelected && (
+                                <>
+                                    <div className='col-3'>
+                                        <label className='me-1'>From Date:</label>
+                                        <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                                    </div>
+                                    <div className='col-3'>
+                                        <label className='me-1'>To Date:</label>
+                                        <input type='date' value={toDate} onChange={handleToDateChange} />
+                                    </div>
+                                </>
+                            )}
+                            <div className='col-1'>
+                                <button className='btn btn-success' style={{ marginTop: '-5px' }} onClick={handleSubmit}>Submit</button>
+                            </div>
+                        </div>
+                        {error && <p className='text-danger'>{error}</p>}
+                    </div>
+                    {allSelected && (
+                        <div className='row mt-2 ms-0 me-0 search-report-card'>
+                            <div className='row'>
+                                <div className='col-3'>
+                                    <h5 style={{  }}>Expense Rate(per image)</h5>
+                                </div>
+                                <div className='col-8'></div>
+                                <div className='col-1'>
+                                    <button style={{ border: 'none', backgroundColor:'white' }} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                </div>
+                            </div>
+                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Scanned</th>
+                                        <th>QC</th>
+                                        <th>Indexing</th>
+                                        <th>Flagging</th>
+                                        <th>CBSL_QA</th>
+                                        <th>Client_QC</th>
+                                        <th>Counting</th>
+                                        <th>Inventory</th>
+                                        <th>Doc Preparation</th>
+                                        <th>Guard</th>
+                                        <th>Total Price</th>
+                                        <th>Edit Price</th>
+                                    </tr>
+                                </thead>
+
+                                {showFullTable && (
+                                    <tbody>
+                                        {prices && prices.map((elem, index) => {
+                                            const totalRate =  elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.Counting + elem.Inventory + elem.DocPreparation + elem.Guard;
+                                            return (
+                                            <tr key={index}>
+                                                <td>{elem.LocationName}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'Counting', index)}>{elem.Counting}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
+                                                <td>{totalRate}</td>
+                                                <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
+                                            </tr>
+                                        )})}
+                                    </tbody>
+                                )
+                                }
+                            </table>
+                        </div>
+                    )}
+                    {technicalSelected && (<div className='row mt-2 ms-0 me-0 search-report-card'>
+                        <div className='row'>
+                            <div className='col-3'>
+                                <h5 style={{ }}>Expense Rate(per image)</h5>
+                            </div>
+                            <div className='col-8'>
+                                <button className='btn btn-primary mb-3' onClick={handleShowCalculator}>Calculate rate(on your own)</button>
+                            </div>
+                            <div className='col-1'>
+                                <button style={{ border: 'none', backgroundColor:'white' }} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                            </div>
+                        </div>
                         <table className='table-bordered' style={{ paddingLeft: '5px' }}>
                             <thead>
-                                <h5 style={{ marginTop: '-15px' }}>Expense Rate(per image)</h5>
-                                <button className='btn btn-primary' style={{ display: 'flex', alignItems: 'end', justifyContent: 'end' }} onClick={handleShowFullTable}>{showFullTable ? 'Hide' : 'View All'}</button>
-                                {/* <tr>
+                                <tr>
                                     <th>Location</th>
                                     <th>Scanned</th>
                                     <th>QC</th>
@@ -499,12 +425,12 @@ const Dashboard = () => {
                                     <th>Client_QC</th>
                                     <th>Total Price</th>
                                     <th>Edit Price</th>
-                                </tr> */}
+                                </tr> 
                                 <tr>
-                                <th>Location</th>
+                                {/* <th>Location</th>
                                 {tableData.map((rowData, index) => (
                         <th key={index}>{rowData.TaskName}</th>
-                    ))}
+                    ))} */}
                                     <th>Total Price</th>
                                     <th>Edit Price</th>
                                 </tr>
@@ -512,139 +438,81 @@ const Dashboard = () => {
           </thead>
                             {showFullTable && (
                                 <tbody>
-                                    {prices && prices.map((elem, index) => (
+                                    {prices && prices.map((elem, index) => {
+                                        const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate;
+                                        return(
                                         <tr key={index}>
                                             <td>{elem.LocationName}</td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
+                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}<sub onClick={handleShowCalculator}>CalCulate</sub></td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
                                             <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
-                                            <td></td>
+                                            <td>{totalRate}</td>
                                             <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                         </tr>
-                                    ))}
-                                     {location.map((loc, index) => (
-                  <tr key={index}>
-                    <td>{loc.LocationName}</td>
-                    <td colSpan={tableData.length + nonTechTableData.length + 4}></td>
-                  </tr>
-                ))}
+                                    )})}
                                 </tbody>
                             )
                             }
                         </table>
-           </div>)} 
+                    </div>)}
+                    {nonTechnicalSelected && (
+                        <div className='row mt-2 ms-0 me-0 search-report-card'>
+                            <div className='row'>
+                                <div className='col-3'>
+                                    <h5 style={{  }}>Expense Rate(per image)</h5>
+                                </div>
+                                <div className='col-8'></div>
+                                <div className='col-1'>
+                                    <button style={{ border: 'none', backgroundColor:'white' }} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                </div>
+                            </div>
+                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Counting</th>
+                                        <th>Inventory</th>
+                                        <th>Doc Preparation</th>
+                                        <th>Guard</th>
+                                        <th>Total Price</th>
+                                        <th>Edit Price</th>
+                                    </tr>
+                                </thead>
+                                {showFullTable && (
+                                    <tbody>
+                                        {prices && prices.map((elem, index) => {
+                                            const totalRate = elem.Counting + elem.Inventory + elem.DocPreparation + elem.Guard;
+                                            return(
+                                            <tr key={index}>
+                                                <td>{elem.LocationName}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'Counting', index)}>{elem.Counting}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
+                                                <td>{totalRate}</td>
+                                                <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
+                                            </tr>
+                                        )})}
+                                    </tbody>
+                                )
+                                }
+                            </table>
+                        </div>
+                    )}
 
-          {nonTechnicalSelected && (
-            <div className="row mt-2 ms-0 me-0 search-report-card">
-              <table className="table-bordered" style={{ paddingLeft: "5px" }}>
-                <thead>
-                  <h5 style={{ marginTop: "-15px" }}>
-                    Expense Rate(per image)
-                  </h5>
-                  <button
-                    className="btn btn-primary"
-                    style={{
-                      display: "flex",
-                      alignItems: "end",
-                      justifyContent: "end",
-                    }}
-                    onClick={handleShowFullTable}
-                  >
-                    {showFullTable ? "Hide" : "View All"}
-                  </button>
-                  <tr>
-                    <th>Location</th>
-                    {/* <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>Doc Preparation</th> */}
-                    
-{nonTechTableData.map((rowData, index) => (
-                        <th key={index}>{rowData.TaskName}</th>
-                    ))}
-                    <th>Total Price</th>
-                    <th>Edit Price</th>
-                  </tr>
-                </thead>
-                {showFullTable && (
-                  <tbody>
-                    {prices &&
-                      prices.map((elem, index) => (
-                        <tr key={index}>
-                          <td>{elem.LocationName}</td>
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "ScanRate", index)
-                            }
-                          >
-                            {elem.ScanRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) => handleEditPrice(e, "QcRate", index)}
-                          >
-                            {elem.QcRate}
-                          </td>
-                          <td
-                            contentEditable
-                            onBlur={(e) =>
-                              handleEditPrice(e, "IndexRate", index)
-                            }
-                          >
-                            {elem.IndexRate}
-                          </td>
-
-                          <td></td>
-                          <td>
-                            <button
-                              className="btn btn-success"
-                              style={{
-                                paddingTop: "0px",
-                                paddingBottom: "0px",
-                                height: "28px",
-                              }}
-                              onClick={() => handleSave(elem.id, index)}
-                            >
-                              Save
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                       {location.map((loc, index) => (
-                  <tr key={index}>
-                    <td>{loc.LocationName}</td>
-                    <td colSpan={tableData.length + nonTechTableData.length + 4}></td>
-                  </tr>
-                ))}
-                  </tbody>
-                )}
-              </table>
+                </div>
             </div>
-          )}
-        </div>
-      </div>
-      {showPeriodicSummary && (
-        <PeriodicSummaryReport
-          multipliedData={multipliedData}
-          prices={prices}
-          editedPrices={editedPrices}
-          startDate={fromDate}
-          endDate={toDate}
-        />
-      )}
-      {showCumulativeSummary && (
-        <CumulativeSummaryReport
-          multipliedData={multipliedData}
-          editedPrices={editedPrices}
-          prices={prices}
-        />
-      )}
-      <ToastContainer />
-    </>
-  );
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
+            {shownonTechCumulativeSummary && <NonTechCumulative />}
+            {shownonTechPeriodicSummary && <NonTechPeriodic />}
+            {showCalculator && <CalculatorModal onclose={handleCloseCalculator}/>}
+            <ToastContainer />
+        </>
+    );
 };
 
 export default Dashboard;

@@ -117,17 +117,17 @@ const PriceRateForm = () => {
                                 </div>
                             )}
                             <label>Scanned</label>
-                            <input type='number' name='ScanRate' onChange={handleInputChange} /><br />
+                            <input type='number' step='0.001' name='ScanRate' onChange={handleInputChange} /><br />
                             <label>QC</label>
-                            <input type='number' name='QcRate' onChange={handleInputChange} /><br />
+                            <input type='number' step='0.001' name='QcRate' onChange={handleInputChange} /><br />
                             <label>Indexing</label>
-                            <input type='number' name='IndexRate' onChange={handleInputChange} /><br />
+                            <input type='number' step='0.001' name='IndexRate' onChange={handleInputChange} /><br />
                             <label>Flagging</label>
-                            <input type='number' name='FlagRate' onChange={handleInputChange} /><br />
+                            <input type='number' step='0.001' name='FlagRate' onChange={handleInputChange} /><br />
                             <label>CBSL-QA</label>
-                            <input type='number' name='CbslQaRate' onChange={handleInputChange} /><br />
+                            <input type='number' step='0.001' name='CbslQaRate' onChange={handleInputChange} /><br />
                             <label>Client-QC</label>
-                            <input type='number' name='ClientQcRate' onChange={handleInputChange} /><br />
+                            <input type='number' step='0.001' name='ClientQcRate' onChange={handleInputChange} /><br />
                             <input type='submit' value='Submit' />
                         </div>
                     </form>

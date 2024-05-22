@@ -326,6 +326,7 @@ setIsLoading(true);
       <div className="loader"></div>
     </div>
   );
+  const totalPrice = 0.141;
 
   const handleBackToLocationView = () => {
     setLocationView(true);
@@ -365,6 +366,7 @@ setIsLoading(true);
                       <td>{elem.Flagging}</td>
                       <td>{elem.CBSL_QA}</td>
                       <td>{elem.Client_QC}</td>
+                      <td>{(totalPrice * parseFloat(elem.Client_QC)).toFixed(2)}</td>
                       <td colSpan={multipliedData[0].multipliedValues.length}>
                         {multipliedData[0].multipliedValues.reduce((sum, value) => sum + value, 0).toFixed(2)}
                       </td>
