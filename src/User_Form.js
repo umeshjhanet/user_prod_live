@@ -8,20 +8,24 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 const User_Form = () => {
-  const[group, setGroup] = useState();
-  const[email, setEmail] = useState();
-  const[location,setLocation]=useState();
-  const[privilege,setPrivilege]=useState();
-  const[storage,setStorage]=useState();
-  const[reporting,setReporting]=useState();
-  const[groupDropdown, setGroupDropdown] = useState();
-  const[locationDropdown,setLocationDropdown]=useState();
-  const[privilegeDropdown,setPrivilegeDropdown]=useState();
-  const[storageDropdown,setStorageDropdown]=useState();
-  const[reportingDropdown,setReportingDropdown]=useState();
+  const [group, setGroup] = useState();
+  const [project, setProject] = useState();
+  const [location, setLocation] = useState();
+  const [privilege, setPrivilege] = useState();
+  const [storage, setStorage] = useState();
+  const [reporting, setReporting] = useState();
+  const [groupDropdown, setGroupDropdown] = useState();
+  const [locationDropdown, setLocationDropdown] = useState();
+  const [projectDropdown, setProjectDropdown] = useState();
+  const [privilegeDropdown, setPrivilegeDropdown] = useState();
+  const [storageDropdown, setStorageDropdown] = useState();
+  const [reportingDropdown, setReportingDropdown] = useState();
   const [selectedLocationId, setSelectedLocationId] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
+  const [selectedProject, setSelectedProject] = useState(null);
   const [showLocation, setShowLocation] = useState(false);
+  const [showProject, setShowProject] = useState(false);
   const [selectedPrivilegeId, setSelectedPrivilegeId] = useState('');
   const [selectedPrivilege, setSelectedPrivilege] = useState(null);
   const [showPrivilege, setShowPrivilege] = useState(false);
@@ -36,25 +40,26 @@ const User_Form = () => {
   const [showReporting, setShowReporting] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
 
-const [formData,setFormData]=useState({
-    user_email_id:'',
-    first_name:'', 
-    middle_name:'', 
-    last_name:'', 
-    password:'',
-    confirmPassword:'',
-    designation:'',
-    phone_no:'', 
-    profile_picture:'',
-    login_disabled_date:'', 
-    emp_id:'', 
-    locations:'', 
-    user_type:'', 
-    role_id:'',
-    user_id:'',
-    group_id:'', 
-    sl_id:'',   
-});
+  const [formData, setFormData] = useState({
+    user_email_id: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
+    password: '',
+    confirmPassword: '',
+    designation: '',
+    phone_no: '',
+    profile_picture: '',
+    login_disabled_date: '',
+    emp_id: '',
+    locations: '',
+    user_type: '',
+    role_id: '',
+    user_id: '',
+    group_id: '',
+    sl_id: '',
+    projects: '',
+  });
 
 
 
@@ -62,44 +67,44 @@ const [formData,setFormData]=useState({
   useEffect(() => {
     const fetchGroup = () => {
       fetch("http://localhost:5001/group_master")
-      .then(response => response.json())
-      .then(data => setGroup(data))
-      .catch(error => console.error(error))
+        .then(response => response.json())
+        .then(data => setGroup(data))
+        .catch(error => console.error(error))
     }
     const fetchLocation = () => {
       fetch("http://localhost:5001/locations")
-      .then(response => response.json())
-      .then(data => setLocation(data))
-      .catch(error => console.error(error))
+        .then(response => response.json())
+        .then(data => setLocation(data))
+        .catch(error => console.error(error))
     }
     const fetchPrivilege = () => {
       fetch("http://localhost:5001/privilege")
-      .then(response => response.json())
-      .then(data => setPrivilege(data))
-      .catch(error => console.error(error))
+        .then(response => response.json())
+        .then(data => setPrivilege(data))
+        .catch(error => console.error(error))
     }
     const fetchStorage = () => {
       fetch("http://localhost:5001/storage")
-      .then(response => response.json())
-      .then(data => setStorage(data))
-      .catch(error => console.error(error))
+        .then(response => response.json())
+        .then(data => setStorage(data))
+        .catch(error => console.error(error))
     }
-    // const fetchEmail = () => {
-    //   fetch("http://localhost:5001/user_email")
-    //   .then(response => response.json())
-    //   .then(data => setEmail(data))
-    //   .catch(error => console.error(error))
-    // }
-   
-   
+    const fetchProject = () => {
+      fetch("http://localhost:5001/getproject")
+        .then(response => response.json())
+        .then(data => setProject(data))
+        .catch(error => console.error(error))
+    }
+
+
     const fetchReporting = () => {
       fetch("http://localhost:5001/reporting")
-      .then(response => response.json())
-      .then(data => setReporting(data))
-      .catch(error => console.error(error))
+        .then(response => response.json())
+        .then(data => setReporting(data))
+        .catch(error => console.error(error))
     }
     fetchGroup();
-    // fetchEmail();
+    fetchProject();
     fetchLocation();
     fetchPrivilege();
     fetchStorage();
@@ -108,29 +113,32 @@ const [formData,setFormData]=useState({
     fetchPrivilege();
     fetchStorage();
     fetchReporting();
-  },[])
+  }, [])
 
- 
+
 
 
   const handleGroupDropdown = () => {
     setGroupDropdown(!groupDropdown);
   }
- 
-  const handleLocationDropdown=()=>{
+
+  const handleLocationDropdown = () => {
     setLocationDropdown(!locationDropdown);
   }
 
-  const handlePrivilegeDropdown=()=>{
+  const handlePrivilegeDropdown = () => {
     setPrivilegeDropdown(!privilegeDropdown);
   }
 
-  const handleStorageDropdown=()=>{
+  const handleStorageDropdown = () => {
     setStorageDropdown(!storageDropdown);
   }
 
-  const handleReportingDropdown=()=>{
+  const handleReportingDropdown = () => {
     setReportingDropdown(!reportingDropdown);
+  }
+  const handleProjectDropdown = () => {
+    setProjectDropdown(!projectDropdown);
   }
 
   const handleSelectLocation = (id, name) => {
@@ -138,6 +146,12 @@ const [formData,setFormData]=useState({
     setSelectedLocationId(parseInt(id));
     setShowLocation(!showLocation);
     setLocationDropdown(false);
+  };
+  const handleSelectProject = (id, name) => {
+    setSelectedProject(name);
+    setSelectedProjectId(parseInt(id));
+    setShowProject(!showProject);
+    setProjectDropdown(false);
   };
   const handleSelectGroup = (id, name) => {
     setSelectedGroup(name);
@@ -167,9 +181,9 @@ const [formData,setFormData]=useState({
   console.log(formData)
 
   const handleFormSubmit = async (e) => {
-   
+
     e.preventDefault();
-  if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
@@ -178,7 +192,7 @@ const [formData,setFormData]=useState({
       console.log("Post created:", response.data);
       toast.success("User created successfully");
     } catch (error) {
-     
+
       if (error.response && error.response.status === 409) {
         alert("error creating post");
       } else {
@@ -186,17 +200,18 @@ const [formData,setFormData]=useState({
         alert("Email already exists");
       }
     }
-  
+
   }
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value, group_id: selectedGroupId, locations:selectedLocationId,role_id: selectedPrivilegeId, sl_id: selectedStorageId, user_id: selectedReportingId});
+    setFormData({ ...formData, [name]: value, group_id: selectedGroupId, locations: selectedLocationId, role_id: selectedPrivilegeId, sl_id: selectedStorageId, user_id: selectedReportingId, projects: selectedProjectId });
   }
-  console.log("group id",selectedGroupId);
-  console.log("locations",selectedLocationId);
-  console.log("role id",selectedPrivilegeId);
-  console.log("user id",selectedReportingId);
-  console.log("storage id",selectedStorageId);
+  console.log("group id", selectedGroupId);
+  console.log("locations", selectedLocationId);
+  console.log("role id", selectedPrivilegeId);
+  console.log("user id", selectedReportingId);
+  console.log("storage id", selectedStorageId);
+  console.log("storage id", selectedProjectId);
 
   return (
     <>
@@ -219,14 +234,14 @@ const [formData,setFormData]=useState({
                 <div className='col-6'>
                   <div className='user-form-card'>
                     <label>First Name<span style={{ color: 'red' }}>*</span></label><br />
-                    <input type='text' placeholder='Enter First Name' name="first_name" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange}/><br />
-                    
+                    <input type='text' placeholder='Enter First Name' name="first_name" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
+
                     <label className='mt-1'>Middle Name</label><br />
                     <input type='text' placeholder='Enter Middle Name' name="middle_name" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
                     <label className='mt-1'>Last Name<span style={{ color: 'red' }}>*</span></label><br />
                     <input type='text' placeholder='Enter Last Name' name="last_name" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
                     <label className='mt-1'>Email Address<span style={{ color: 'red' }}>*</span></label><br />
-                    <input type='email' placeholder='Enter Email Id' name="user_email_id" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange}/><br />
+                    <input type='email' placeholder='Enter Email Id' name="user_email_id" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
                     <label className='mt-1'>Employee Id</label><br />
                     <input type='text' placeholder='Enter Employee Id' name="emp_id" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
                     <label className='mt-1'>Mobile No.<span style={{ color: 'red' }}>*</span></label><br />
@@ -236,47 +251,58 @@ const [formData,setFormData]=useState({
                     <label className='mt-1'>Confirm Password<span style={{ color: 'red' }}></span></label><br />
                     <input type='password' placeholder='Confirm Password' name='confirmPassword' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
                     <label className='mt-1'>User Type</label>
-                    <select name="user_type" id="usertype" class="form-control select2" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }}  onChange={handleInputChange}>
+                    <select name="user_type" id="usertype" class="form-control select2" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange}>
                       <option value="0" selected>Select user type</option>
                       <option value="1">Record Keeper</option>
                       <option value="2">Client User</option>
                       <option value="3">Server User</option>
-                    </select>                            
-                    </div>
+                    </select>
+                  </div>
                 </div>
                 <div className='col-6'>
                   <div className='user-form-card'>
                     <label>Designation<span style={{ color: 'red' }}>*</span></label><br />
                     <input type='text' placeholder='Select Designation' name="designation" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
-                   
+
                     <label className='mt-1'>Select Group<span style={{ color: 'red' }}>*</span></label><br />
-                       <input type='text' placeholder='Select Group' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedGroup|| ''} onClick={handleGroupDropdown} onChange={handleInputChange}/>
-                      {groupDropdown && (
-                       <div className='group-dropdown'>
-                        {group && group.map((elem,index) => (
-                             <div key={index} className='group-card' onClick={() => handleSelectGroup(elem.group_id, `${elem.group_name}`)}>
+                    <input type='text' placeholder='Select Group' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedGroup || ''} onClick={handleGroupDropdown} onChange={handleInputChange} />
+                    {groupDropdown && (
+                      <div className='group-dropdown'>
+                        {group && group.map((elem, index) => (
+                          <div key={index} className='group-card' onClick={() => handleSelectGroup(elem.group_id, `${elem.group_name}`)}>
                             <p>{elem.group_name}</p>
-                                     </div>
-                                    ))}
                           </div>
-                            )}
-                          <label className='mt-1'>Select Location <span style={{ color: 'red' }}>*</span></label><br />
-                          <input type='text' placeholder='Select Location' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedLocation || ''} onClick={handleLocationDropdown} onChange={handleInputChange}/>
-                                {locationDropdown &&(
-                                <div className='group-dropdown'>
-                                  {location && location.map((elem,index)=>(
-                                <div key={index} className='group-card' onClick={() => handleSelectLocation(elem.LocationID, `${elem.LocationName}`)} >
-                                         <p>{elem.LocationName}</p>
-                                               </div>
-                                              ))}
-                                        </div>
-                                    )}
+                        ))}
+                      </div>
+                    )}
+                    <label className='mt-1'>Select Project <span style={{ color: 'red' }}>*</span></label><br />
+                    <input type='text' placeholder='Select Project' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedProject || ''} onClick={handleProjectDropdown} onChange={handleInputChange} />
+                    {projectDropdown && (
+                      <div className='group-dropdown'>
+                        {project && project.map((elem, index) => (
+                          <div key={index} className='group-card' onClick={() => handleSelectProject(elem.id, `${elem.ProjectName}`)} >
+                            <p>{elem.ProjectName}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <label className='mt-1'>Select Location <span style={{ color: 'red' }}>*</span></label><br />
+                    <input type='text' placeholder='Select Location' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedLocation || ''} onClick={handleLocationDropdown} onChange={handleInputChange} />
+                    {locationDropdown && (
+                      <div className='group-dropdown'>
+                        {location && location.map((elem, index) => (
+                          <div key={index} className='group-card' onClick={() => handleSelectLocation(elem.LocationID, `${elem.LocationName}`)} >
+                            <p>{elem.LocationName}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <label className='mt-1'>Select User's Privilege<span style={{ color: 'red' }}>*</span></label><br />
                     <input type='text' placeholder='Select Users Privilege' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedPrivilege || ''} onClick={handlePrivilegeDropdown} onChange={handleInputChange} /><br />
                     {privilegeDropdown && (
                       <div className='group-dropdown'>
-                        {privilege && privilege.map((elem,index)=>(
+                        {privilege && privilege.map((elem, index) => (
                           <div key={index} className='group-card' onClick={() => handleSelectPrivilege(elem.role_id, `${elem.user_role}`)}>
                             <p>{elem.user_role}</p>
 
@@ -287,22 +313,22 @@ const [formData,setFormData]=useState({
 
                     )}
                     <label className='mt-1'>Select Storage</label><br />
-                    <input type='text' placeholder='Select Storage' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }}value={selectedStorage || ''} onClick={handleStorageDropdown} onChange={handleInputChange} /><br />
+                    <input type='text' placeholder='Select Storage' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedStorage || ''} onClick={handleStorageDropdown} onChange={handleInputChange} /><br />
                     {storageDropdown && (
                       <div className='group-dropdown'>
-                        {storage && storage.map((elem,index)=>(
+                        {storage && storage.map((elem, index) => (
                           <div key={index} className='group-card' onClick={() => handleSelectStorage(elem.sl_id, `${elem.sl_name}`)}>
                             <p>{elem.sl_name}</p>
                           </div>
                         ))}
-                        </div>
+                      </div>
 
                     )}
                     <label className='mt-1'>Select Reporting To</label><br />
                     <input type='text' placeholder='Select Reporting To' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedReporting || ''} onClick={handleReportingDropdown} onChange={handleInputChange} />
                     {reportingDropdown && (
                       <div className='group-dropdown'>
-                        {reporting && reporting.map((elem,index)=>(
+                        {reporting && reporting.map((elem, index) => (
                           <div key={index} className='group-card' onClick={() => handleSelectReporting(elem.user_id, `${elem.first_name} ${elem.last_name} (${elem.user_email_id})`)}>
                             <p>{elem.first_name} {elem.last_name} ({elem.user_email_id})</p>
                           </div>
@@ -313,10 +339,10 @@ const [formData,setFormData]=useState({
 
                     }
                     <label className='mt-1'>Set date for disabling the user ID</label><br />
-                    <input type='date' placeholder='13-03-24' name="login_disabled_date" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange}/><br />
+                    <input type='date' placeholder='13-03-24' name="login_disabled_date" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
                     <label className='mt-1'>Profile Picture<span style={{ color: 'red' }}>*</span></label><br />
-                    <input type='file' name="profile_picture" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange}/><br />
-                    <input type='submit' className='mt-3' onClick={handleFormSubmit}  />
+                    <input type='file' name="profile_picture" style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} onChange={handleInputChange} /><br />
+                    <input type='submit' className='mt-3' onClick={handleFormSubmit} />
                   </div>
                 </div>
               </div>
