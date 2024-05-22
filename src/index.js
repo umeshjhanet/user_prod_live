@@ -10,6 +10,13 @@ import Dashboard from './dashboard';
 import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
 import Projects from './projects';
+import PriceRateForm from './PriceRateForm';
+import NonTechForm from './nonTechForm';
+import TaskForm from './TaskForm';
+import NonTechCumulative from './NonTechCumulative';
+import NonTechPeriodic from './NonTechPeriodic';
+import CalculatorModal from './Components/CalculatorModal';
+
 
 
 const App = () => {
@@ -24,6 +31,12 @@ const App = () => {
           <Route path="/User_Form" element={<User_Form />} />
           <Route path="/dashboard" element={<PeriodicSummaryReport />} />
           <Route path="/dashboard" element={<CumulativeSummaryReport />} />
+          <Route path="/dashboard" element={<NonTechCumulative />} />
+          <Route path="/dashboard" element={<NonTechPeriodic />} />
+          <Route path="/dashboard" element={<CalculatorModal />} />
+          <Route path="/PriceRateForm" element={<PriceRateForm />} />
+          <Route path="/nontechForm" element={<NonTechForm />} />
+          <Route path="/TaskForm" element={<TaskForm/>}/>
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
