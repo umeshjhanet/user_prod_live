@@ -1,8 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from './Components/Header'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+import { API_URL } from './API'
 
 const Projects = () => {
+    const[projectDetails, setProjectDetails] = useState();
+    useEffect(() => {
+        const fetchProjectDetails = () => {
+            axios.get(`${API_URL}/commonReport`)
+            .then(response => setProjectDetails(response.data))
+            .catch(error => console.error(error));
+        }
+        fetchProjectDetails();
+    },[])
+    console.log("ProjectDetails", projectDetails);
   return (
     <>
     <Header/>
