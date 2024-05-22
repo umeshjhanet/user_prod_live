@@ -946,3 +946,173 @@ input[type="submit"] {
   }
 }
 
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  overflow: hidden;
+}
+
+/* Modal Dialog */
+.modal-dialog {
+  max-width: 100%;  /* Increased width */
+  width: 100%;      /* Ensure it uses 90% of the viewport width */
+  margin: auto;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fff;
+  border-radius: 0.3rem;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Modal Title */
+.modal-title {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Close Button */
+.modal-header .close {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: none;
+  opacity: 0.5;
+  background: none;
+  border: none;
+}
+
+/* Modal Body */
+.modal-body {
+  position: relative;
+  padding: 0.5rem;
+}
+
+/* Search Report Card */
+.search-report-card {
+  width: 100%;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styles */
+.table-bordered {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  background-color: transparent;
+  border-collapse: collapse;
+}
+
+.table-bordered th,
+.table-bordered td {
+  padding: 0.35rem;
+  vertical-align: top;
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  color: #212529;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-success {
+  color: #fff;
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  color: #fff;
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.custom-modal {
+  background-color: white;
+  width: 90%; /* Adjust the width percentage as needed */
+  max-width: 1200px; /* Adjust the maximum width as needed */
+  height: 100%;
+  overflow-y: auto;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  padding: 10px;
+}
+
+.modal-body {
+  overflow-y: auto;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
