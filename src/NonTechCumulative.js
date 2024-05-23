@@ -46,7 +46,6 @@ const NonTechCumulative = () => {
                                     <tr>
                                         <th>Sr.No.</th>
                                         <th>Location</th>
-                                        <th>Date</th>
                                         <th>Counting</th>
                                         <th>Inventory</th>
                                         <th>DocPreparation</th>
@@ -60,7 +59,6 @@ const NonTechCumulative = () => {
                                             <tr onClick={() => handleLocationView(elem.locationname)} key={index} >
                                                 <td key={index}>{index + 1}</td>
                                                 <td>{elem.LocationName}</td>
-                                                <td>{elem.date}</td>
                                                 <td>{elem.Counting}</td>
                                                 <td>{elem.Inventory}</td>
                                                 <td>{elem.DocPreparation}</td>
@@ -71,9 +69,7 @@ const NonTechCumulative = () => {
                                     ))}
                                 </tbody>
                             </table>
-
                         </div>
-
                     </div>
                 </div>
                 {locationView && 

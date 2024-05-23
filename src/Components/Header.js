@@ -7,7 +7,7 @@ const Header = () => {
   const userLog = JSON.parse(localStorage.getItem('user'));
   return (
     <>
-      <div className="container-fluid text-center">
+      
         <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: '#4BC0C0', color:'white', textAlign:'center' }}>
           <div className="container-fluid" style={{textAlign:'center'  }} >
             <h4>User Production Dashboard- Powered by CBSL</h4>
@@ -19,12 +19,12 @@ const Header = () => {
                    <Link to='/'>
                     <button href='/' className="btn logout-btn" style={{ color: 'white', marginTop: '4px' }}><IoLogOut style={{ color: 'white', fontSize: '30px', marginRight: '10px' }} />LOGOUT</button>
                   </Link>
-                  <p className='ms-2' style={{ color: 'white', marginTop: '10px' }}>Welcome: {userLog ? userLog.first_name : 'Guest'}</p>
+                  <p className='ms-2' style={{ color: 'white', marginTop: '20px' }}>Welcome: {userLog ? userLog.first_name : 'Guest'}</p>
                 </form>
               </div>
             </div>
         </nav>
-      </div>
+      
       
     </>
   )
