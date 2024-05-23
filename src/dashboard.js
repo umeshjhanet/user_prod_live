@@ -34,50 +34,50 @@ const Dashboard = () => {
     const [showFullTable, setShowFullTable] = useState(false);
     const [showCalculator, setShowCalculator] = useState(false);
 
-    const handleRadioChange = (event) => {
-        // Update state when the radio button is changed
-        if (event.target.value === 'periodic') {
-            setPeriodicSelected(true);
-            setCumulativeSelected(false);
-            setShowCumulativeSummary(false);
-            setShowPeriodicSummary(false);
-        } else if (event.target.value === 'cumulative') {
-            setCumulativeSelected(true);
-            setPeriodicSelected(false);
-            setShowPeriodicSummary(false);
-            setShowCumulativeSummary(false);
-        }
-    };
+  const handleRadioChange = (event) => {
+    // Update state when the radio button is changed
+    if (event.target.value === "periodic") {
+      setPeriodicSelected(true);
+      setCumulativeSelected(false);
+      setShowCumulativeSummary(false);
+      setShowPeriodicSummary(false);
+    } else if (event.target.value === "cumulative") {
+      setCumulativeSelected(true);
+      setPeriodicSelected(false);
+      setShowPeriodicSummary(false);
+      setShowCumulativeSummary(false);
+    }
+  };
 
-    const handleChange = (event) => {
-        // Update state when the filter type is changed
-        setAllSelected(event.target.value === 'all');
-        setTechnicalSelected(event.target.value === 'technical');
-        setNonTechnicalSelected(event.target.value === 'non-technical');
-    };
+  const handleChange = (event) => {
+    // Update state when the filter type is changed
+    setAllSelected(event.target.value === "all");
+    setTechnicalSelected(event.target.value === "technical");
+    setNonTechnicalSelected(event.target.value === "non-technical");
+  };
 
-    const handleFromDateChange = (event) => {
-        // Update state when "From Date" is changed
-        const selectedFromDate = event.target.value;
-        setFromDate(selectedFromDate);
+  const handleFromDateChange = (event) => {
+    // Update state when "From Date" is changed
+    const selectedFromDate = event.target.value;
+    setFromDate(selectedFromDate);
 
-        // Extract year and month from the selected date
-        const [year, month] = selectedFromDate.split('-');
+    // Extract year and month from the selected date
+    const [year, month] = selectedFromDate.split("-");
 
-        // Calculate the last day of the selected month
-        const lastDayOfMonth = new Date(year, month, 0).getDate();
+    // Calculate the last day of the selected month
+    const lastDayOfMonth = new Date(year, month, 0).getDate();
 
-        // Format the last day of the month as a date string
-        const lastDateOfMonth = `${year}-${month}-${lastDayOfMonth}`;
+    // Format the last day of the month as a date string
+    const lastDateOfMonth = `${year}-${month}-${lastDayOfMonth}`;
 
-        // Set the toDate state to the last date of the selected month
-        setToDate(lastDateOfMonth);
-    };
+    // Set the toDate state to the last date of the selected month
+    setToDate(lastDateOfMonth);
+  };
 
-    const handleToDateChange = (event) => {
-        // Update state when "To Date" is changed
-        setToDate(event.target.value);
-    };
+  const handleToDateChange = (event) => {
+    // Update state when "To Date" is changed
+    setToDate(event.target.value);
+  };
 
     const handleSubmit = () => {
         // Check if "Periodic" is selected
@@ -129,96 +129,146 @@ const Dashboard = () => {
         }
     };
 
-    useEffect(() => {
-        // Set "Periodic" as selected by default when component mounts
-        setPeriodicSelected(true);
-        setCumulativeSelected(false);
-        setAllSelected(true);
+  useEffect(() => {
+    // Set "Periodic" as selected by default when component mounts
+    setPeriodicSelected(true);
+    setCumulativeSelected(false);
+    setAllSelected(true);
 
-        // Get current date
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const firstDateOfMonth = `${currentYear}-${currentMonth}-01`;
+    // Get current date
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const firstDateOfMonth = `${currentYear}-${currentMonth}-01`;
 
-        // Set default "From Date" to the first date of the current month
-        setFromDate(firstDateOfMonth);
+    // Set default "From Date" to the first date of the current month
+    setFromDate(firstDateOfMonth);
 
-        // Set default "To Date" to the current date
-        const year = String(currentDate.getFullYear());
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const formattedCurrentDate = `${year}-${month}-${day}`;
-        setToDate(formattedCurrentDate);
-    }, []);
+    // Set default "To Date" to the current date
+    const year = String(currentDate.getFullYear());
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const formattedCurrentDate = `${year}-${month}-${day}`;
+    setToDate(formattedCurrentDate);
+  }, []);
 
-    const handleSave = async (id, index) => {
-        try {
-            const updatedPrice = prices[index];
-            const response = await axios.put(`${API_URL}/updatebusinessrate/${id}`, updatedPrice);
-            console.log(response.data);
-            const updatedPrices = [...prices];
-            updatedPrices[index] = updatedPrice; // Update the corresponding row in the local state
-            setPrices(updatedPrices); // Update the local state with the new values
-            toast.success("Updated successfully");
+  const handleSave = async (id, index) => {
+    try {
+      const updatedPrice = prices[index];
+      const response = await axios.put(
+        `${API_URL}/updatebusinessrate/${id}`,
+        updatedPrice
+      );
+      console.log(response.data);
+      const updatedPrices = [...prices];
+      updatedPrices[index] = updatedPrice; // Update the corresponding row in the local state
+      setPrices(updatedPrices); // Update the local state with the new values
+      toast.success("Updated successfully");
 
-            // Fetch updated prices from the database
-            const updatedPricesResponse = await axios.get(`${API_URL}/getbusinessrate`);
-            setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
-        } catch (error) {
-            console.error('Error updating business rate:', error);
-            toast.error("Failed to update business rate");
-        }
-    };
+      // Fetch updated prices from the database
+      const updatedPricesResponse = await axios.get(
+        `${API_URL}/getbusinessrate`
+      );
+      setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
+    } catch (error) {
+      console.error("Error updating business rate:", error);
+      toast.error("Failed to update business rate");
+    }
+  };
 
-    const handleEditPrice = (e, field, index) => {
-        const newPrices = [...prices];
-        newPrices[index][field] = parseFloat(e.target.innerText);
-        setPrices(newPrices);
-    };
+  const handleEditPrice = (e, field, index) => {
+    const newPrices = [...prices];
+    newPrices[index][field] = parseFloat(e.target.innerText);
+    setPrices(newPrices);
+  };
 
-    useEffect(() => {
-        // Set editedPrices to initialPriceCount when component mounts
-        setEditedPrices(initialPriceCount);
+  useEffect(() => {
+    // Set editedPrices to initialPriceCount when component mounts
+    setEditedPrices(initialPriceCount);
 
-        const fetchSummaryReport = () => {
-            axios.get(`${API_URL}/summaryReport`)
-                .then((response) => setSummaryReport(response.data))
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-        }
-
-        const fetchBusinessRate = () => {
-            axios.get(`${API_URL}/getbusinessrate`)
-                .then((response) => setPrices(response.data))
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-        }
-
-        fetchSummaryReport();
-        fetchBusinessRate();
-    }, [])
-    console.log('Summary Data', summaryReport);
-
-    const multiplyData = (summaryData, priceData) => {
-        if (!summaryData || !priceData) return []; // Ensure both data arrays are provided
-
-        return summaryData.map((report) => {
-            const multipliedValues = priceData.map((price) => {
-                const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-                return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-            });
-            return { multipliedValues };
+    const fetchSummaryReport = () => {
+      axios
+        .get(`${API_URL}/summaryReport`)
+        .then((response) => setSummaryReport(response.data))
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
         });
     };
 
-    // Update multipliedData whenever editedPrices changes
-    useEffect(() => {
-        const newMultipliedData = multiplyData(summaryReport, editedPrices);
-        setMultipliedData(newMultipliedData);
-    }, [summaryReport, editedPrices]);
+    // const fetchLocation = () => {
+    //     axios
+    //       .get(`${API_URL}/locations`)
+    //       .then((response) => setLocation(response.data))
+    //       .catch((error) => {
+    //         console.error("Error fetching location data:", error);
+    //       });
+    //   };
+
+    const fetchBusinessRate = () => {
+      axios
+        .get(`${API_URL}/getbusinessrate`)
+        .then((response) => setPrices(response.data))
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    };
+
+    // const fetchTechData = async () => {
+    //   try {
+    //     const response = await axios.get(`${API_URL}/gettask`);
+    //     const data = response.data;
+    //     if (data.length > 0) {
+    //       // Assuming all objects have the same structure
+    //       setTableHeaders(Object.keys(data[0]));
+    //     }
+    //     setTableData(data);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
+
+    // const fetchNonTechData=async()=>{
+    //     try{
+    //         const response=await axios.get(`${API_URL}/getstaff`);
+    //         const data=response.data;
+    //         if(data.length>0){
+    //             setNonTechTableHeaders(Object.keys(data[0]));
+    //         }
+    //         setNonTechTableData(data);
+    //     } catch(error){
+    //         console.error("Error Fetchinf in data",error);
+    //     }
+    // }
+
+   
+
+    fetchSummaryReport();
+    fetchBusinessRate();
+    // fetchTechData();
+    // fetchNonTechData();
+    // fetchLocation();
+   
+  }, []);
+  console.log("Summary Data", summaryReport);
+
+  const multiplyData = (summaryData, priceData) => {
+    if (!summaryData || !priceData) return []; // Ensure both data arrays are provided
+
+    return summaryData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue =
+          parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
+
+  // Update multipliedData whenever editedPrices changes
+  useEffect(() => {
+    const newMultipliedData = multiplyData(summaryReport, editedPrices);
+    setMultipliedData(newMultipliedData);
+  }, [summaryReport, editedPrices]);
 
     const handleShowFullTable = () => {
         setShowFullTable(prevState => !prevState);
@@ -231,8 +281,10 @@ const Dashboard = () => {
         console.log("Modal closed.")
     }
 
-    // Use multipliedData in your component as needed
-    console.log("Business Rate", prices);
+  // Use multipliedData in your component as needed
+  console.log("Business Rate", prices);
+
+
 
     return (
         <>
@@ -373,8 +425,17 @@ const Dashboard = () => {
                                     <th>Client_QC</th>
                                     <th>Total Price</th>
                                     <th>Edit Price</th>
+                                </tr> 
+                                <tr>
+                                {/* <th>Location</th>
+                                {tableData.map((rowData, index) => (
+                        <th key={index}>{rowData.TaskName}</th>
+                    ))} */}
+                                    <th>Total Price</th>
+                                    <th>Edit Price</th>
                                 </tr>
-                            </thead>
+
+          </thead>
                             {showFullTable && (
                                 <tbody>
                                     {prices && prices.map((elem, index) => {
