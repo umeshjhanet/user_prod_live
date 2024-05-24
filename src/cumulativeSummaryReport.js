@@ -467,14 +467,14 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
-                <div className="row mt-3" ref={ref}>
+                <div className="row " ref={ref}>
                   <div className="search-report-card">
-                    <div className="row">
+                    <div className="row"style={{marginTop:'-10px'}}>
                       <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                       </div>
                       <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport}>
+                        <button className="btn btn-success" onClick={handleLocationExport} style={{padding:'2px'}}>
                           Export CSV
                         </button>
                       </div>

@@ -1073,7 +1073,7 @@ input[type="submit"] {
   width: 100%;
   padding: 1rem;
   background-color: #f8f9fa;
-  border-radius: 0.25rem;
+  border-radius: 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -1169,6 +1169,9 @@ input[type="submit"] {
 
 .modal-body {
   overflow-y: auto;
+  margin: auto;
+  width: 95%;
+
 }
 
 .close {
