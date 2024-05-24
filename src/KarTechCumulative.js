@@ -5,8 +5,7 @@ import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
-
-const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
+const KarTechCumulative = ({ multipliedData, prices, editedPrices }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
@@ -119,7 +118,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
     axios
-      .get(`${API_URL}/detailedreportlocationwise`, {
+      .get(`${API_URL}/kardetailedreportlocationwise`, {
         params: { locationName: locationName },
       })
       .then((response) => {
@@ -135,7 +134,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
 
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
-    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
+    axios.get(`${API_URL}/karuserdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName
@@ -154,7 +153,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
-    let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/kardetailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -184,7 +183,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/karuserdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       // If locationName is an array, join its elements with commas
@@ -257,7 +256,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     const fetchSummaryReport = () => {
       setIsLoading(true); // Set loading to true when fetching data
       axios
-        .get(`${API_URL}/summaryreport`)
+        .get(`${API_URL}/karsummaryreport`)
         .then((response) => {
           setSummaryReport(response.data);
           setIsLoading(false); // Set loading to false after data is fetched
@@ -270,7 +269,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     const fetchLocationReport = () => {
       setIsLoading(true);
       axios
-        .get(`${API_URL}/detailedReport`)
+        .get(`${API_URL}/kardetailedReport`)
         .then((response) => {
           setLocationReport(response.data)
           setIsLoading(false);
@@ -289,7 +288,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
         return date.toISOString().split('T')[0];
       };
       setIsLoading(true);
-      let apiUrl = `${API_URL}/detailedreportcsv`;
+      let apiUrl = `${API_URL}/kardetailedreportcsv`;
 
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -652,7 +651,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   );
 };
 
-export default CumulativeSummaryReport;
+export default KarTechCumulative;
 
 
 

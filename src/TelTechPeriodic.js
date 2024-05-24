@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { API_URL } from "./API";
-import axios from "axios";
-import { priceCount } from "./Components/priceCount";
+import React, { useEffect, useState } from 'react'
+import { API_URL } from './API';
+import axios from 'axios';
+import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
+const TelTechPeriodic = ({ multipliedData, startDate, endDate }) => {
 
-const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
-  const [showModal, setShowModal] = useState(true); // Initially set to true to show the modal
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
+  const [showModal, setShowModal] = useState(true);
   const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
   const [detailedUserReport, setDetailedUserReport] = useState();
   const [selectedUsername, setSelectedUsername] = useState('');
@@ -26,35 +24,40 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const ref = useRef(null);
-  const [clickedRowIndex, setClickedRowIndex] = useState('');
 
-
+  useEffect(() => {
+    if (locationView || userView) {
+      // Scroll to the referenced div when locationView or userView changes
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [locationView, userView]);
 
   const handleLocationView = (locationName) => {
     setShowModal(true);
-    fetchUserDetailed(locationName);
-    fetchDetailedLocationWiseReportCsvFile(locationName)
+    fetchUserDetailed(locationName, startDate, endDate);
+    fetchDetailedLocationWiseReportCsvFile(locationName, startDate, endDate)
     setLocationView(true);
     setUserView(false);
-    console.log("click on location")
-
   };
 
-
-
-  const handleUserView = (username, locationName, rowIndex) => {
+  const handleUserView = (username, locationName) => {
     setLocationView(false);
     setShowModal(true);
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName);
-
+    fetchUserDetailedReport(username, locationName, startDate, endDate);
     setUserView(true);
   };
-  //sdfd
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+  const handleBackToLocationView = () => {
+    setLocationView(true);
+    setUserView(false);
+  };
+
   const handleExport = () => {
     setShowConfirmation(true);
   };
@@ -116,34 +119,54 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     setShowConfirmationUser(false);
   }
 
-  const fetchUserDetailed = (locationName) => {
+  const fetchUserDetailed = (locationName, startDate, endDate) => {
+    const formattedStartDate = startDate ? new Date(startDate) : null;
+    const formattedEndDate = endDate ? new Date(endDate) : null;
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+    };
     setIsLoading(true);
     axios
-      .get(`${API_URL}/detailedreportlocationwise`, {
-        params: { locationName: locationName },
+      .get(`${API_URL}/teldetailedreportlocationwise`, {
+        params: {
+          locationName: locationName,
+          startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+          endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+        },
       })
       .then((response) => {
-        setDetailedReportLocationWise(response.data);
-        setIsLoading(false); // Set loading to false after data is fetched
+        setDetailedReportLocationWise(response.data)
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
-        setIsLoading(false); // Set loading to false even if there's an error
+        setIsLoading(false);
       });
   };
 
 
-  const fetchUserDetailedReport = (username, locationName) => {
+  const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
+    const formattedStartDate = startDate ? new Date(startDate) : null;
+    const formattedEndDate = endDate ? new Date(endDate) : null;
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+    };
     setIsLoading(true);
-    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
+    axios.get(`${API_URL}/teluserdetailedreportlocationwise`, {
       params: {
         username: username,
-        locationName: locationName
+        locationName: locationName,
+        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
       }
     })
-      .then((response) => setDetailedUserReport(response.data))
+      .then((response) => {
+        setDetailedUserReport(response.data)
+        setIsLoading(false);
+      })
       .catch((error) => {
         console.error("Error fetching user detailed report:", error);
+        setIsLoading(false);
       });
   };
 
@@ -153,8 +176,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
-    setIsLoading(true);
-    let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+
+    let apiUrl = `${API_URL}/teldetailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -163,17 +186,18 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     } else if (formattedStartDate && formattedEndDate) {
       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
-
+    setIsLoading(true);
     axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
         const blob = new Blob([response.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
         setDetailedLocationWiseCsv(url);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error in exporting data:", error);
+        setIsLoading(false);
       });
-    setIsLoading(false);
   };
 
 
@@ -184,26 +208,113 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/teluserdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
-      // If locationName is an array, join its elements with commas
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
       apiUrl += `?username=${username}&locationName=${locationQueryString}`;
-    } else if (formattedStartDate && formattedEndDate) {
-      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
-
+    if (formattedStartDate && formattedEndDate) {
+      const separator = apiUrl.includes('?') ? '&' : '?';
+      apiUrl += `${separator}startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    }
+    setIsLoading(true);
     axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
         const blob = new Blob([response.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
         setUserWiseCSv(url);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error in exporting data:", error);
+        setIsLoading(false);
       });
   };
+
+  useEffect(() => {
+    const fetchSummaryReport = async () => {
+      setIsLoading(true);
+      try {
+        const formattedStartDate = startDate ? new Date(startDate) : null;
+        const formattedEndDate = endDate ? new Date(endDate) : null;
+        const formatDate = (date) => {
+          return date.toISOString().split('T')[0];
+        };
+
+        let apiUrl = `${API_URL}/telsummaryreport`;
+        const queryParams = {};
+        if (formattedStartDate && formattedEndDate) {
+          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        }
+
+        const response = await axios.get(apiUrl, { params: queryParams });
+        setSummaryReport(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching summary data:", error);
+        setIsLoading(false);
+      }
+    };
+
+    const fetchLocationReport = async () => {
+      setIsLoading(true);
+      try {
+        const formattedStartDate = startDate ? new Date(startDate) : null;
+        const formattedEndDate = endDate ? new Date(endDate) : null;
+        const formatDate = (date) => {
+          return date.toISOString().split('T')[0];
+        };
+
+        let apiUrl = `${API_URL}/teldetailedreport`;
+        const queryParams = {};
+        if (formattedStartDate && formattedEndDate) {
+          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        }
+
+        const response = await axios.get(apiUrl, { params: queryParams });
+        setLocationReport(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching summary data:", error);
+        setIsLoading(false);
+      }
+    };
+
+    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => {
+        return date.toISOString().split('T')[0];
+      };
+
+      let apiUrl = `${API_URL}/teldetailedreportcsv`;
+
+      if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      }
+
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+        });
+    };
+
+
+    fetchSummaryReport();
+    fetchLocationReport();
+    fetchDetailedReportCsvFile(startDate, endDate);
+    fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
+
+  }, [selectedUsername, locationName, startDate, endDate]);
+
+
   const multiplyLocationData = (locationData, priceData) => {
     if (!locationData || !priceData) return []; // Ensure both data arrays are provided
 
@@ -245,96 +356,14 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   };
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+  const totalPrice = 0.141;
 
-  // Use multipliedData in your component as needed
-  console.log("MultipliedUserWiseData", multipliedLocationData);
-
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-
-  useEffect(() => {
-    const fetchSummaryReport = () => {
-      setIsLoading(true); // Set loading to true when fetching data
-      axios
-        .get(`${API_URL}/summaryreport`)
-        .then((response) => {
-          setSummaryReport(response.data);
-          setIsLoading(false); // Set loading to false after data is fetched
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false); // Set loading to false in case of error
-        });
-    };
-    const fetchLocationReport = () => {
-      setIsLoading(true);
-      axios
-        .get(`${API_URL}/detailedReport`)
-        .then((response) => {
-          setLocationReport(response.data)
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false);
-        });
-
-    };
-
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
-      const formattedStartDate = startDate ? new Date(startDate) : null;
-      const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
-      setIsLoading(true);
-      let apiUrl = `${API_URL}/detailedreportcsv`;
-
-      if (formattedStartDate && formattedEndDate) {
-        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-      }
-
-      axios.get(apiUrl, { responseType: "blob" })
-        .then((response) => {
-          const blob = new Blob([response.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          setDetailedCsv(url);
-        })
-        .catch((error) => {
-          console.error("Error in exporting data:", error);
-          setIsLoading(false);
-        });
-
-    };
-
-
-    fetchDetailedReportCsvFile(startDate, endDate);
-    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-
-    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-
-    fetchSummaryReport();
-    fetchLocationReport();
-    if (locationName) {
-      fetchUserDetailed(locationName);
-    }
-    fetchUserDetailedReport();
-  }, [selectedUsername, locationName, startDate, endDate]);
-  // console.log("Location Data", locationReport);
+  console.log("Location Data", multipliedLocationData);
   const Loader = () => (
     <div className="loader-overlay">
       <div className="loader"></div>
     </div>
   );
-  const totalPrice = 0.141;
-
-  const handleBackToLocationView = () => {
-    setLocationView(true);
-    setUserView(false);
-  };
-
-
   return (
     <>
       {isLoading && <Loader />}
@@ -652,8 +681,4 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   );
 };
 
-export default CumulativeSummaryReport;
-
-
-
-
+export default TelTechPeriodic;
