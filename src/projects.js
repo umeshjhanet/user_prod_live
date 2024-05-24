@@ -120,9 +120,9 @@ const Projects = () => {
             {projectDetails && projectDetails.map((elem, index) => (
     <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: colors[index % colors.length] }} key={index}>
         <div className='row text-center'>
-            <Link to={getProjectPath(elem)} style={{ textDecoration: 'none', color: colors[index % colors.length] }}>
+            {/* <Link to={getProjectPath(elem)} style={{ textDecoration: 'none', color: colors[index % colors.length] }}>
                 <h3>{elem.ProjectName}</h3>
-            </Link>
+            </Link> */}
         </div>
         <div className='row mt-2 mb-2'>
             <div className='col-1'></div>
