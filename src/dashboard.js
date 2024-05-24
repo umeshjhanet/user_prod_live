@@ -11,10 +11,13 @@ import { TiArrowDownThick, TiArrowUpThick } from "react-icons/ti";
 import NonTechCumulative from './NonTechCumulative';
 import NonTechPeriodic from './NonTechPeriodic';
 import CalculatorModal from './Components/CalculatorModal';
+import AllCummulative from './AllCummulative';
 
 const Dashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
+    const [showAllPeriodicSummary, setShowAllPeriodicSummary] = useState(false);
+    const [showAllCumulativeSummary, setShowAllCumulativeSummary] = useState(false);
     const [shownonTechPeriodicSummary, setShowNonTechPeriodicSummary] = useState(false);
     const [shownonTechCumulativeSummary, setShowNonTechCumulativeSummary] = useState(false);
     const [periodicSelected, setPeriodicSelected] = useState(true);
@@ -124,7 +127,32 @@ const Dashboard = () => {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
-        } else {
+        }  if (allSelected && periodicSelected) {
+            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+            if (fromDate && toDate) {
+                // If both dates are provided, show the summary report
+                setShowAllPeriodicSummary(true)
+                setShowPeriodicSummary(false);
+                setShowCumulativeSummary(false);
+                setShowNonTechCumulativeSummary(false);
+                setShowNonTechPeriodicSummary(false);
+                setError('');
+            } else {
+                // If any date is missing, show an error message
+                setError('Please provide both "From Date" and "To Date".');
+            }
+        } else if (allSelected && cumulativeSelected) {
+            // If "Cumulative" is selected, show the summary report without requiring dates
+            setShowAllCumulativeSummary(true)
+            setShowCumulativeSummary(false);
+            setFromDate("");
+            setToDate("");
+            setShowPeriodicSummary(false);
+            setShowNonTechCumulativeSummary(false);
+            setShowNonTechPeriodicSummary(false);
+            setError('');
+        } 
+        else {
             setError('Please choose an option.')
         }
     };
@@ -508,6 +536,7 @@ const Dashboard = () => {
             {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
             {shownonTechCumulativeSummary && <NonTechCumulative />}
             {shownonTechPeriodicSummary && <NonTechPeriodic />}
+            {showAllCumulativeSummary && <AllCummulative/>}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator}/>}
             <ToastContainer />
         </>

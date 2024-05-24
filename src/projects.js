@@ -15,35 +15,35 @@ const Projects = () => {
         fetchProjectDetails();
     }, [])
     const colors = ['#193860', '#4BC0C0', 'rgb(148, 78, 99)'];
-    const computeSums = (details) => {
-        return details.reduce((sums, project) => {
-            sums.Counting += parseInt(project.Counting) || 0;
-            sums.Inventory += parseInt(project.Inventory) || 0;
-            sums.DocPreparation += parseInt(project.DocPreparation) || 0;
-            sums.Guard += parseInt(project.Guard) || 0;
-            sums.Scanned += parseInt(project.Scanned) || 0;
-            sums.QC += parseInt(project.QC) || 0;
-            sums.Indexing += parseInt(project.Indexing) || 0;
-            sums.Flagging += parseInt(project.Flagging) || 0;
-            sums.CBSL_QA += parseInt(project.CBSL_QA) || 0;
-            sums.Client_QC += parseInt(project.Client_QC) || 0;
-            return sums;
-        }, {
-            Counting: 0,
-            Inventory: 0,
-            DocPreparation: 0,
-            Guard: 0,
-            Scanned: 0,
-            QC: 0,
-            Indexing: 0,
-            Flagging: 0,
-            CBSL_QA: 0,
-            Client_QC: 0,
-        });
-    };
+    // const computeSums = (details) => {
+    //     return details.reduce((sums, project) => {
+    //         sums.Counting += parseInt(project.Counting) || 0;
+    //         sums.Inventory += parseInt(project.Inventory) || 0;
+    //         sums.DocPreparation += parseInt(project.DocPreparation) || 0;
+    //         sums.Guard += parseInt(project.Guard) || 0;
+    //         sums.Scanned += parseInt(project.Scanned) || 0;
+    //         sums.QC += parseInt(project.QC) || 0;
+    //         sums.Indexing += parseInt(project.Indexing) || 0;
+    //         sums.Flagging += parseInt(project.Flagging) || 0;
+    //         sums.CBSL_QA += parseInt(project.CBSL_QA) || 0;
+    //         sums.Client_QC += parseInt(project.Client_QC) || 0;
+    //         return sums;
+    //     }, {
+    //         Counting: 0,
+    //         Inventory: 0,
+    //         DocPreparation: 0,
+    //         Guard: 0,
+    //         Scanned: 0,
+    //         QC: 0,
+    //         Indexing: 0,
+    //         Flagging: 0,
+    //         CBSL_QA: 0,
+    //         Client_QC: 0,
+    //     });
+    // };
     
-    // Compute the sums
-    const sums = computeSums(projectDetails);
+    // // Compute the sums
+    // const sums = computeSums(projectDetails);
 
     console.log("ProjectDetails", projectDetails);
     return (
@@ -76,7 +76,7 @@ const Projects = () => {
                         <p><b>CBSL_QA :</b></p>
                         <p><b>Client_QC :</b></p>
                     </div>
-                    <div className='col-4' style={{ padding: '0' }}>
+                    {/* <div className='col-4' style={{ padding: '0' }}>
                         <p style={{ color: '#508D69' }}><b>{sums.Counting.toLocaleString()}</b></p>
                         <p style={{ color: '#508D69' }}><b>{sums.Inventory.toLocaleString()}</b></p>
                         <p style={{ color: '#508D69' }}><b>{sums.DocPreparation.toLocaleString()}</b></p>
@@ -87,7 +87,7 @@ const Projects = () => {
                         <p style={{ color: '#65B741' }}><b>{sums.Flagging.toLocaleString()}</b></p>
                         <p style={{ color: '#65B741' }}><b>{sums.CBSL_QA.toLocaleString()}</b></p>
                         <p style={{ color: '#65B741' }}><b>{sums.Client_QC.toLocaleString()}</b></p>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

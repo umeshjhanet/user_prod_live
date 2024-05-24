@@ -16,6 +16,7 @@ import TaskForm from './TaskForm';
 import NonTechCumulative from './NonTechCumulative';
 import NonTechPeriodic from './NonTechPeriodic';
 import CalculatorModal from './Components/CalculatorModal';
+import AllCummulative from './AllCummulative';
 
 
 
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/dashboard" element={<PeriodicSummaryReport />} />
           <Route path="/dashboard" element={<CumulativeSummaryReport />} />
           <Route path="/dashboard" element={<NonTechCumulative />} />
+          <Route path="/dashboard" element={<AllCummulative />} />
           <Route path="/dashboard" element={<NonTechPeriodic />} />
           <Route path="/dashboard" element={<CalculatorModal />} />
           <Route path="/PriceRateForm" element={<PriceRateForm />} />
