@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { API_URL } from './API';
-import axios from 'axios';
-import { priceCount } from './Components/priceCount';
+import React, { useEffect, useState } from "react";
+import { API_URL } from "./API";
+import axios from "axios";
+import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
-const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
-
+const KarTechCumulative = ({ multipliedData, prices, editedPrices }) => {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
+  const [showModal, setShowModal] = useState(true); // Initially set to true to show the modal
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
-  const [showModal, setShowModal] = useState(true);
   const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
   const [detailedUserReport, setDetailedUserReport] = useState();
   const [selectedUsername, setSelectedUsername] = useState('');
@@ -24,40 +25,35 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const ref = useRef(null);
+  const [clickedRowIndex, setClickedRowIndex] = useState('');
 
-  useEffect(() => {
-    if (locationView || userView) {
-      // Scroll to the referenced div when locationView or userView changes
-      ref.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [locationView, userView]);
+
 
   const handleLocationView = (locationName) => {
     setShowModal(true);
-    fetchUserDetailed(locationName, startDate, endDate);
-    fetchDetailedLocationWiseReportCsvFile(locationName, startDate, endDate)
+    fetchUserDetailed(locationName);
+    fetchDetailedLocationWiseReportCsvFile(locationName)
     setLocationView(true);
     setUserView(false);
+    console.log("click on location")
+
   };
 
-  const handleUserView = (username, locationName) => {
+
+
+  const handleUserView = (username, locationName, rowIndex) => {
     setLocationView(false);
     setShowModal(true);
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName, startDate, endDate);
+    fetchUserDetailedReport(username, locationName);
+
     setUserView(true);
   };
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-  const handleBackToLocationView = () => {
-    setLocationView(true);
-    setUserView(false);
-  };
-
+  //sdfd
   const handleExport = () => {
     setShowConfirmation(true);
   };
@@ -119,54 +115,34 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
     setShowConfirmationUser(false);
   }
 
-  const fetchUserDetailed = (locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
+  const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
     axios
-      .get(`${API_URL}/detailedreportlocationwise`, {
-        params: {
-          locationName: locationName,
-          startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-          endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-        },
+      .get(`${API_URL}/kardetailedreportlocationwise`, {
+        params: { locationName: locationName },
       })
       .then((response) => {
-        setDetailedReportLocationWise(response.data)
-        setIsLoading(false);
+        setDetailedReportLocationWise(response.data);
+        setIsLoading(false); // Set loading to false after data is fetched
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
-        setIsLoading(false);
+        setIsLoading(false); // Set loading to false even if there's an error
       });
   };
 
 
-  const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
+  const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
-    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
+    axios.get(`${API_URL}/karuserdetailedreportlocationwise`, {
       params: {
         username: username,
-        locationName: locationName,
-        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+        locationName: locationName
       }
     })
-      .then((response) => {
-        setDetailedUserReport(response.data)
-        setIsLoading(false);
-      })
+      .then((response) => setDetailedUserReport(response.data))
       .catch((error) => {
         console.error("Error fetching user detailed report:", error);
-        setIsLoading(false);
       });
   };
 
@@ -176,8 +152,8 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
-
-    let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+    setIsLoading(true);
+    let apiUrl = `${API_URL}/kardetailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -186,18 +162,17 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
     } else if (formattedStartDate && formattedEndDate) {
       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
-    setIsLoading(true);
+
     axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
         const blob = new Blob([response.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
         setDetailedLocationWiseCsv(url);
-        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error in exporting data:", error);
-        setIsLoading(false);
       });
+    setIsLoading(false);
   };
 
 
@@ -208,113 +183,26 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/karuserdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
+      // If locationName is an array, join its elements with commas
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
       apiUrl += `?username=${username}&locationName=${locationQueryString}`;
+    } else if (formattedStartDate && formattedEndDate) {
+      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
-    if (formattedStartDate && formattedEndDate) {
-      const separator = apiUrl.includes('?') ? '&' : '?';
-      apiUrl += `${separator}startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    }
-    setIsLoading(true);
+
     axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
         const blob = new Blob([response.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
         setUserWiseCSv(url);
-        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error in exporting data:", error);
-        setIsLoading(false);
       });
   };
-
-  useEffect(() => {
-    const fetchSummaryReport = async () => {
-      setIsLoading(true);
-      try {
-        const formattedStartDate = startDate ? new Date(startDate) : null;
-        const formattedEndDate = endDate ? new Date(endDate) : null;
-        const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
-        };
-
-        let apiUrl = `${API_URL}/summaryreport`;
-        const queryParams = {};
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-        }
-
-        const response = await axios.get(apiUrl, { params: queryParams });
-        setSummaryReport(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching summary data:", error);
-        setIsLoading(false);
-      }
-    };
-
-    const fetchLocationReport = async () => {
-      setIsLoading(true);
-      try {
-        const formattedStartDate = startDate ? new Date(startDate) : null;
-        const formattedEndDate = endDate ? new Date(endDate) : null;
-        const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
-        };
-
-        let apiUrl = `${API_URL}/detailedreport`;
-        const queryParams = {};
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-        }
-
-        const response = await axios.get(apiUrl, { params: queryParams });
-        setLocationReport(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching summary data:", error);
-        setIsLoading(false);
-      }
-    };
-
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
-      const formattedStartDate = startDate ? new Date(startDate) : null;
-      const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
-
-      let apiUrl = `${API_URL}/detailedreportcsv`;
-
-      if (formattedStartDate && formattedEndDate) {
-        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-      }
-
-      axios.get(apiUrl, { responseType: "blob" })
-        .then((response) => {
-          const blob = new Blob([response.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          setDetailedCsv(url);
-        })
-        .catch((error) => {
-          console.error("Error in exporting data:", error);
-        });
-    };
-
-
-    fetchSummaryReport();
-    fetchLocationReport();
-    fetchDetailedReportCsvFile(startDate, endDate);
-    fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
-
-  }, [selectedUsername, locationName, startDate, endDate]);
-
-
   const multiplyLocationData = (locationData, priceData) => {
     if (!locationData || !priceData) return []; // Ensure both data arrays are provided
 
@@ -357,13 +245,95 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
 
-  const totalPrice = 0.141;
-  console.log("Location Data", multipliedLocationData);
+  // Use multipliedData in your component as needed
+  console.log("MultipliedUserWiseData", multipliedLocationData);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  useEffect(() => {
+    const fetchSummaryReport = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/karsummaryreport`)
+        .then((response) => {
+          setSummaryReport(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
+    const fetchLocationReport = () => {
+      setIsLoading(true);
+      axios
+        .get(`${API_URL}/kardetailedReport`)
+        .then((response) => {
+          setLocationReport(response.data)
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false);
+        });
+
+    };
+
+    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => {
+        return date.toISOString().split('T')[0];
+      };
+      setIsLoading(true);
+      let apiUrl = `${API_URL}/kardetailedreportcsv`;
+
+      if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      }
+
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+          setIsLoading(false);
+        });
+
+    };
+
+
+    fetchDetailedReportCsvFile(startDate, endDate);
+    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+
+    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
+
+    fetchSummaryReport();
+    fetchLocationReport();
+    if (locationName) {
+      fetchUserDetailed(locationName);
+    }
+    fetchUserDetailedReport();
+  }, [selectedUsername, locationName, startDate, endDate]);
+  // console.log("Location Data", locationReport);
   const Loader = () => (
     <div className="loader-overlay">
       <div className="loader"></div>
     </div>
   );
+  const totalPrice = 0.141;
+
+  const handleBackToLocationView = () => {
+    setLocationView(true);
+    setUserView(false);
+  };
+
+
   return (
     <>
       {isLoading && <Loader />}
@@ -486,13 +456,13 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         {locationView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="ms-2" style={{ color: "white" }}>
-                  User Wise Summary Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                  <h6 className="ms-2" style={{ color: "white" }}>
+                    User Wise Summary Report
+                  </h6>
+                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
                   <IoMdCloseCircle />
-                </button>
+                  </button>
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
@@ -576,23 +546,23 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         {userView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="" style={{ color: "white" }}>
+            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="" style={{ color: "white" }}>
                   User Wise Detailed Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
-                </button>
+                  </h6>
+                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                <IoMdCloseCircle />
+                  </button>
               </div>
               <div className="row">
                 <div className="col-11"></div>
-                <div className="col-1" style={{ textAlign: 'right' }}>
-                  <button className="btn btn-success" onClick={handleBackToLocationView}>
+                <div className="col-1" style={{textAlign:'right'}}>
+                <button className="btn btn-success" onClick={handleBackToLocationView}>
                     <i className="fa fa-arrow-left"></i> Back
                   </button>
                 </div>
-
-
+              
+                 
               </div>
               <div className="modal-body">
 
@@ -681,4 +651,8 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
   );
 };
 
-export default PeriodicSummaryReport
+export default KarTechCumulative;
+
+
+
+

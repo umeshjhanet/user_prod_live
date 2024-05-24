@@ -5,7 +5,7 @@ import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
-const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
+const TelTechPeriodic = ({ multipliedData, startDate, endDate }) => {
 
   const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
@@ -127,7 +127,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
     };
     setIsLoading(true);
     axios
-      .get(`${API_URL}/detailedreportlocationwise`, {
+      .get(`${API_URL}/teldetailedreportlocationwise`, {
         params: {
           locationName: locationName,
           startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
@@ -152,7 +152,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
-    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
+    axios.get(`${API_URL}/teluserdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName,
@@ -177,7 +177,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/teldetailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -208,7 +208,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/teluserdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
@@ -242,7 +242,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
-        let apiUrl = `${API_URL}/summaryreport`;
+        let apiUrl = `${API_URL}/telsummaryreport`;
         const queryParams = {};
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -266,7 +266,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
-        let apiUrl = `${API_URL}/detailedreport`;
+        let apiUrl = `${API_URL}/teldetailedreport`;
         const queryParams = {};
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -288,7 +288,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         return date.toISOString().split('T')[0];
       };
 
-      let apiUrl = `${API_URL}/detailedreportcsv`;
+      let apiUrl = `${API_URL}/teldetailedreportcsv`;
 
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -356,8 +356,8 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
   };
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
-
   const totalPrice = 0.141;
+
   console.log("Location Data", multipliedLocationData);
   const Loader = () => (
     <div className="loader-overlay">
@@ -486,13 +486,13 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         {locationView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="ms-2" style={{ color: "white" }}>
-                  User Wise Summary Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                  <h6 className="ms-2" style={{ color: "white" }}>
+                    User Wise Summary Report
+                  </h6>
+                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
                   <IoMdCloseCircle />
-                </button>
+                  </button>
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
@@ -576,23 +576,23 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         {userView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="" style={{ color: "white" }}>
+            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="" style={{ color: "white" }}>
                   User Wise Detailed Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
-                </button>
+                  </h6>
+                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                <IoMdCloseCircle />
+                  </button>
               </div>
               <div className="row">
                 <div className="col-11"></div>
-                <div className="col-1" style={{ textAlign: 'right' }}>
-                  <button className="btn btn-success" onClick={handleBackToLocationView}>
+                <div className="col-1" style={{textAlign:'right'}}>
+                <button className="btn btn-success" onClick={handleBackToLocationView}>
                     <i className="fa fa-arrow-left"></i> Back
                   </button>
                 </div>
-
-
+              
+                 
               </div>
               <div className="modal-body">
 
@@ -681,4 +681,4 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
   );
 };
 
-export default PeriodicSummaryReport
+export default TelTechPeriodic;
