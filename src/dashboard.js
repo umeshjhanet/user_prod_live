@@ -431,8 +431,7 @@ const Dashboard = () => {
                                 {tableData.map((rowData, index) => (
                         <th key={index}>{rowData.TaskName}</th>
                     ))} */}
-                                    <th>Total Price</th>
-                                    <th>Edit Price</th>
+                                   
                                 </tr>
 
           </thead>
