@@ -252,14 +252,70 @@ input[type="submit"]:hover {
   font-size: 14px;
 }
 .project-card{
-  /* border: 1px solid gray; */
-  width: 250px;
-  height: 100px;
+  border: 3px solid #46b9a6;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* background-color: white; */
+  width: 22%;
+  background-color: #FFF;
+  color: #5f5f5f;
+}
+p{
+  line-height: 0.4;
+}
+
+.allproject-card {
+  width: 22%;
+  color: #5f5f5f;
+  border-radius: 12px;
+  position: relative;
+  background-color: white;
+}
+
+.allproject-card::before,
+.allproject-card::after,
+.allproject-card .border-left,
+.allproject-card .border-right,
+.allproject-card .border-top,
+.allproject-card .border-bottom {
+  content: '';
+  position: absolute;
+  background: transparent;
+  z-index: 1;
+}
+
+.allproject-card .border-left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 12px 0 0 12px;
+  width: 4px; /* Adjust border width as needed */
+  background: linear-gradient(to bottom, #193860 60%, #4BC0C0 40%);
+}
+
+.allproject-card .border-right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: 0 12px 12px 0;
+  width: 4px; /* Adjust border width as needed */
+  background: linear-gradient(to bottom, #4BC0C0 30%, rgb(148, 78, 99) 70%);
+}
+
+.allproject-card .border-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 12px 12px 0 0;
+  height: 4px; /* Adjust border height as needed */
+  background: linear-gradient(to right, #193860 40%, #4BC0C0 60%);
+}
+
+.allproject-card .border-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0 0 12px 12px;
+  height: 4px; /* Adjust border height as needed */
+  background: linear-gradient(to right, #4BC0C0 30%, rgb(148, 78, 99) 70%);
 }
 
 
