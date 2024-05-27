@@ -19,7 +19,11 @@ import CalculatorModal from './Components/CalculatorModal';
 import AllCummulative from './AllCummulative';
 import KarDashboard from './KarDashboard';
 import TelDashboard from './TelDashboard';
-import UPDCDashboard from './UPDCDashboard';
+import AllPeriodic from './AllPeriodic';
+import TelNonTechCommulative from './TelNonTechCommulative';
+import TelNonTechPeriodic from './TelNonTechPeriodic';
+import KarNonTechCumulative from './KarNonTechCumulative';
+import KarNonTechPeriodic from './KarNonTechPeriodic';
 
 
 
@@ -33,12 +37,17 @@ const App = () => {
           <Route path="/projects" element={<Projects />} />
           <Route path="/UPDCDashboard" element={<Dashboard />} />
           <Route path="/TelDashboard" element={<TelDashboard />} />
+          <Route path="/TelDashboard" element={<TelNonTechCommulative />} />
+          <Route path="/TelDashboard" element={<TelNonTechPeriodic />} />
           <Route path="/KarDashboard" element={<KarDashboard />} />
+          <Route path="/KarDashboard" element={<KarNonTechCumulative />} />
+          <Route path="/KarDashboard" element={<KarNonTechPeriodic />} />
           <Route path="/User_Form" element={<User_Form />} />
           <Route path="/dashboard" element={<PeriodicSummaryReport />} />
           <Route path="/dashboard" element={<CumulativeSummaryReport />} />
           <Route path="/dashboard" element={<NonTechCumulative />} />
           <Route path="/dashboard" element={<AllCummulative />} />
+          <Route path="/dashboard" element={<AllPeriodic />} />
           <Route path="/dashboard" element={<NonTechPeriodic />} />
           <Route path="/dashboard" element={<CalculatorModal />} />
           <Route path="/PriceRateForm" element={<PriceRateForm />} />

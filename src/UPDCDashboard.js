@@ -14,6 +14,7 @@ import CalculatorModal from './Components/CalculatorModal';
 import { FaHome } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import AllCummulative from './AllCummulative';
+import AllPeriodic from './AllPeriodic';
 
 
 
@@ -95,75 +96,7 @@ const Dashboard = () => {
     };
 
 
-    // const handleSubmit = () => {
-    //     // Check if "Periodic" is selected
-    //     if (technicalSelected && periodicSelected) {
-    //         // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-    //         if (fromDate && toDate) {
-    //             // If both dates are provided, show the summary report
-    //             setShowPeriodicSummary(true);
-    //             setShowCumulativeSummary(false);
-    //             setShowNonTechCumulativeSummary(false);
-    //             setShowNonTechPeriodicSummary(false);
-    //             setError('');
-    //         } else {
-    //             // If any date is missing, show an error message
-    //             setError('Please provide both "From Date" and "To Date".');
-    //         }
-    //     } else if (technicalSelected && cumulativeSelected) {
-    //         // If "Cumulative" is selected, show the summary report without requiring dates
-    //         setShowCumulativeSummary(true);
-    //         setFromDate("");
-    //         setToDate("");
-    //         setShowPeriodicSummary(false);
-    //         setShowNonTechCumulativeSummary(false);
-    //         setShowNonTechPeriodicSummary(false);
-    //         setError('');
-    //     } else if (nonTechnicalSelected && cumulativeSelected) {
-    //         setShowNonTechCumulativeSummary(true);
-    //         setShowCumulativeSummary(false);
-    //         setFromDate("");
-    //         setToDate("");
-    //         setShowPeriodicSummary(false);
-    //         setShowNonTechPeriodicSummary(false);
-    //         setError('');
-    //     } else if (nonTechnicalSelected && periodicSelected) {
-    //         // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-    //         if (fromDate && toDate) {
-    //             // If both dates are provided, show the summary report
-    //             setShowNonTechPeriodicSummary(true);
-    //             setShowPeriodicSummary(false);
-    //             setShowCumulativeSummary(false);
-    //             setShowNonTechCumulativeSummary(false);
-    //             setError('');
-    //         } 
-    //     }
-    //         else if (allSelected && cumulativeSelected) {
-    //             setShowAllCumulativeSummary(true);
-    //             setShowCumulativeSummary(false);
-    //             setFromDate("");
-    //             setToDate("");
-    //             setShowPeriodicSummary(false);
-    //             setShowAllPeriodicSummary(false);
-    //             setError('');
-    //         } else if (allSelected && periodicSelected) {
-    //             // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-    //             if (fromDate && toDate) {
-    //                 // If both dates are provided, show the summary report
-    //                 setShowAllPeriodicSummary(true);
-    //                 setShowPeriodicSummary(false);
-    //                 setShowCumulativeSummary(false);
-    //                 setShowAllCumulativeSummary(false);
-    //                 setError('');
-    //             } else {
-    //             // If any date is missing, show an error message
-    //             setError('Please provide both "From Date" and "To Date".');
-    //         }
-    //     } else {
-    //         setError('Please choose an option.')
-    //     }
-    // };
-
+   
     const handleSubmit = () => {
         // Check if "Periodic" is selected
         if (technicalSelected && periodicSelected) {
@@ -645,8 +578,9 @@ const Dashboard = () => {
             {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
             {shownonTechCumulativeSummary && <NonTechCumulative />}
-            {shownonTechPeriodicSummary && <NonTechPeriodic />}
+            {shownonTechPeriodicSummary && <NonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showAllCumulativeSummary && <AllCummulative />}
+            {showAllPeriodicSummary && <AllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
             <ToastContainer />
         </>
