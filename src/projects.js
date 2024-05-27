@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { API_URL } from './API'
 
+
 const Projects = () => {
     const [projectDetails, setProjectDetails] = useState();
     useEffect(() => {
@@ -41,35 +42,23 @@ const Projects = () => {
     //         Client_QC: 0,
     //     });
     // };
-    // const computeSums = (details) => {
-    //     return details.reduce((sums, project) => {
-    //         sums.Counting += parseInt(project.Counting) || 0;
-    //         sums.Inventory += parseInt(project.Inventory) || 0;
-    //         sums.DocPreparation += parseInt(project.DocPreparation) || 0;
-    //         sums.Guard += parseInt(project.Guard) || 0;
-    //         sums.Scanned += parseInt(project.Scanned) || 0;
-    //         sums.QC += parseInt(project.QC) || 0;
-    //         sums.Indexing += parseInt(project.Indexing) || 0;
-    //         sums.Flagging += parseInt(project.Flagging) || 0;
-    //         sums.CBSL_QA += parseInt(project.CBSL_QA) || 0;
-    //         sums.Client_QC += parseInt(project.Client_QC) || 0;
-    //         return sums;
-    //     }, {
-    //         Counting: 0,
-    //         Inventory: 0,
-    //         DocPreparation: 0,
-    //         Guard: 0,
-    //         Scanned: 0,
-    //         QC: 0,
-    //         Indexing: 0,
-    //         Flagging: 0,
-    //         CBSL_QA: 0,
-    //         Client_QC: 0,
-    //     });
-    // };
     
     // // Compute the sums
     // const sums = computeSums(projectDetails);
+    const getProjectPath = (project) => {
+        if (project.ProjectName === "UPDC" && project.id === 1) {
+            return "/UPDCDashboard";
+        }
+        // Add more conditions for other projects
+        if (project.ProjectName === "Telangana" && project.id === 2) {
+            return "/TelDashboard";
+        }
+        if (project.ProjectName === "Karnataka" && project.id === 3) {
+            return "/KarDashboard";
+        }
+        return "/defaultPath";
+    };
+
 
     console.log("ProjectDetails", projectDetails);
     return (
@@ -102,8 +91,8 @@ const Projects = () => {
                         <p><b>CBSL_QA :</b></p>
                         <p><b>Client_QC :</b></p>
                     </div>
-                    {/* <div className='col-4' style={{ padding: '0' }}>
-                        <p style={{ color: '#508D69' }}><b>{sums.Counting.toLocaleString()}</b></p>
+                    <div className='col-4' style={{ padding: '0' }}>
+                        {/* <p style={{ color: '#508D69' }}><b>{sums.Counting.toLocaleString()}</b></p>
                         <p style={{ color: '#508D69' }}><b>{sums.Inventory.toLocaleString()}</b></p>
                         <p style={{ color: '#508D69' }}><b>{sums.DocPreparation.toLocaleString()}</b></p>
                         <p style={{ color: '#508D69' }}><b>{sums.Guard.toLocaleString()}</b></p>
@@ -112,17 +101,18 @@ const Projects = () => {
                         <p style={{ color: '#65B741' }}><b>{sums.Indexing.toLocaleString()}</b></p>
                         <p style={{ color: '#65B741' }}><b>{sums.Flagging.toLocaleString()}</b></p>
                         <p style={{ color: '#65B741' }}><b>{sums.CBSL_QA.toLocaleString()}</b></p>
-                        <p style={{ color: '#65B741' }}><b>{sums.Client_QC.toLocaleString()}</b></p>
-                    </div> */}
+                        <p style={{ color: '#65B741' }}><b>{sums.Client_QC.toLocaleString()}</b></p> */}
+                    </div>
                 </div>
             </div>
+
 
             {projectDetails && projectDetails.map((elem, index) => (
     <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: colors[index % colors.length] }} key={index}>
         <div className='row text-center'>
-            {/* <Link to={getProjectPath(elem)} style={{ textDecoration: 'none', color: colors[index % colors.length] }}>
+            <Link to={getProjectPath(elem)} style={{ textDecoration: 'none', color: colors[index % colors.length] }}>
                 <h3>{elem.ProjectName}</h3>
-            </Link> */}
+            </Link>
         </div>
         <div className='row mt-2 mb-2'>
             <div className='col-1'></div>
@@ -157,8 +147,10 @@ const Projects = () => {
                 </div>
             </div>
 
+
         </>
     )
 }
+
 
 export default Projects
