@@ -30,6 +30,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
      
     const handleLocationView = (locationName) => {
       setShowModal(true); 
+      console.log(locationName)
       fetchUserDetailed(locationName);
       fetchDetailedLocationWiseReportCsvFile(locationName)
       setLocationView(true);
@@ -117,6 +118,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       axios
         .get(`${API_URL}/alldetailedreportlocationwise`, {
           params: { locationName: locationName },
+         
         })
         .then((response) => {
           setDetailedReportLocationWise(response.data);
@@ -127,7 +129,24 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           setIsLoading(false); // Set loading to false even if there's an error
         });
     };
-    
+
+    // const fetchUserDetailed = (locationName) => {
+    //   console.log("Fetching detailed report for location:", locationName); // Log locationName
+    //   setIsLoading(true);
+    //   axios
+    //     .get(`${API_URL}/alldetailedreportlocationwise`, {
+    //       // params: { locationName: encodeURIComponent(locationName) }, // Encode locationName
+    //       params:'Agra District Court',
+    //     })
+    //     .then((response) => {
+    //       setDetailedReportLocationWise(response.data);
+    //       setIsLoading(false); // Set loading to false after data is fetched
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching user data:", error);
+    //       setIsLoading(false); // Set loading to false even if there's an error
+    //     });
+    // };
   
     const fetchUserDetailedReport = (username, locationName) => {
       setIsLoading(true);
@@ -150,7 +169,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         return date.toISOString().split('T')[0];
       };
   setIsLoading(true);
-      let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+      let apiUrl = `${API_URL}/alldetailedreportlocationwisecsv`;
   
       if (locationName && formattedStartDate && formattedEndDate) {
         apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -283,7 +302,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           return date.toISOString().split('T')[0];
         };
         setIsLoading(true);
-        let apiUrl = `${API_URL}/detailedreportcsv`;
+        let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
   
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -354,6 +373,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
               <th>Inventory</th>
               <th>Doc Preparation</th>
               <th>Guard</th>
+              <th>Expense Rate</th>
             </tr>
           </thead>
           <tbody>
@@ -432,7 +452,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                     <th>Inventory</th>
                     <th>DocPreparation</th>
                     <th>Guard</th>
-                      <th>Business Value</th>
+                      <th>Expense Rate</th>
                       <th>Remarks</th>
                     </tr>
                   </thead>

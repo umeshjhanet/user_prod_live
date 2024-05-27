@@ -19,6 +19,7 @@ import CalculatorModal from './Components/CalculatorModal';
 import AllCummulative from './AllCummulative';
 import KarDashboard from './KarDashboard';
 import TelDashboard from './TelDashboard';
+import UPDCDashboard from './UPDCDashboard';
 
 
 

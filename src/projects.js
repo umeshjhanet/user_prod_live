@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { API_URL } from './API'
 
+
 const Projects = () => {
     const [projectDetails, setProjectDetails] = useState([]);
     
@@ -160,4 +161,4 @@ const Projects = () => {
     );
 }
 
-export default Projects;
+export default Projects

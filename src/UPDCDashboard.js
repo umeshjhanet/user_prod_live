@@ -13,6 +13,8 @@ import NonTechPeriodic from './NonTechPeriodic';
 import CalculatorModal from './Components/CalculatorModal';
 import { FaHome } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import AllCummulative from './AllCummulative';
+
 
 
 const Dashboard = () => {
@@ -20,6 +22,8 @@ const Dashboard = () => {
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
     const [shownonTechPeriodicSummary, setShowNonTechPeriodicSummary] = useState(false);
     const [shownonTechCumulativeSummary, setShowNonTechCumulativeSummary] = useState(false);
+    const [showAllPeriodicSummary, setShowAllPeriodicSummary] = useState(false);
+    const [showAllCumulativeSummary, setShowAllCumulativeSummary] = useState(false);
     const [periodicSelected, setPeriodicSelected] = useState(true);
     const [cumulativeSelected, setCumulativeSelected] = useState(false);
     const [allSelected, setAllSelected] = useState(true);
@@ -37,6 +41,7 @@ const Dashboard = () => {
     const [showFullTable, setShowFullTable] = useState(false);
     const [showCalculator, setShowCalculator] = useState(false);
 
+
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
         if (event.target.value === "periodic") {
@@ -52,6 +57,7 @@ const Dashboard = () => {
         }
     };
 
+
     const handleChange = (event) => {
         // Update state when the filter type is changed
         setAllSelected(event.target.value === "all");
@@ -59,28 +65,104 @@ const Dashboard = () => {
         setNonTechnicalSelected(event.target.value === "non-technical");
     };
 
+
     const handleFromDateChange = (event) => {
         // Update state when "From Date" is changed
         const selectedFromDate = event.target.value;
         setFromDate(selectedFromDate);
 
+
         // Extract year and month from the selected date
         const [year, month] = selectedFromDate.split("-");
+
 
         // Calculate the last day of the selected month
         const lastDayOfMonth = new Date(year, month, 0).getDate();
 
+
         // Format the last day of the month as a date string
         const lastDateOfMonth = `${year}-${month}-${lastDayOfMonth}`;
+
 
         // Set the toDate state to the last date of the selected month
         setToDate(lastDateOfMonth);
     };
 
+
     const handleToDateChange = (event) => {
         // Update state when "To Date" is changed
         setToDate(event.target.value);
     };
+
+
+    // const handleSubmit = () => {
+    //     // Check if "Periodic" is selected
+    //     if (technicalSelected && periodicSelected) {
+    //         // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+    //         if (fromDate && toDate) {
+    //             // If both dates are provided, show the summary report
+    //             setShowPeriodicSummary(true);
+    //             setShowCumulativeSummary(false);
+    //             setShowNonTechCumulativeSummary(false);
+    //             setShowNonTechPeriodicSummary(false);
+    //             setError('');
+    //         } else {
+    //             // If any date is missing, show an error message
+    //             setError('Please provide both "From Date" and "To Date".');
+    //         }
+    //     } else if (technicalSelected && cumulativeSelected) {
+    //         // If "Cumulative" is selected, show the summary report without requiring dates
+    //         setShowCumulativeSummary(true);
+    //         setFromDate("");
+    //         setToDate("");
+    //         setShowPeriodicSummary(false);
+    //         setShowNonTechCumulativeSummary(false);
+    //         setShowNonTechPeriodicSummary(false);
+    //         setError('');
+    //     } else if (nonTechnicalSelected && cumulativeSelected) {
+    //         setShowNonTechCumulativeSummary(true);
+    //         setShowCumulativeSummary(false);
+    //         setFromDate("");
+    //         setToDate("");
+    //         setShowPeriodicSummary(false);
+    //         setShowNonTechPeriodicSummary(false);
+    //         setError('');
+    //     } else if (nonTechnicalSelected && periodicSelected) {
+    //         // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+    //         if (fromDate && toDate) {
+    //             // If both dates are provided, show the summary report
+    //             setShowNonTechPeriodicSummary(true);
+    //             setShowPeriodicSummary(false);
+    //             setShowCumulativeSummary(false);
+    //             setShowNonTechCumulativeSummary(false);
+    //             setError('');
+    //         } 
+    //     }
+    //         else if (allSelected && cumulativeSelected) {
+    //             setShowAllCumulativeSummary(true);
+    //             setShowCumulativeSummary(false);
+    //             setFromDate("");
+    //             setToDate("");
+    //             setShowPeriodicSummary(false);
+    //             setShowAllPeriodicSummary(false);
+    //             setError('');
+    //         } else if (allSelected && periodicSelected) {
+    //             // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+    //             if (fromDate && toDate) {
+    //                 // If both dates are provided, show the summary report
+    //                 setShowAllPeriodicSummary(true);
+    //                 setShowPeriodicSummary(false);
+    //                 setShowCumulativeSummary(false);
+    //                 setShowAllCumulativeSummary(false);
+    //                 setError('');
+    //             } else {
+    //             // If any date is missing, show an error message
+    //             setError('Please provide both "From Date" and "To Date".');
+    //         }
+    //     } else {
+    //         setError('Please choose an option.')
+    //     }
+    // };
 
     const handleSubmit = () => {
         // Check if "Periodic" is selected
@@ -123,14 +205,34 @@ const Dashboard = () => {
                 setShowCumulativeSummary(false);
                 setShowNonTechCumulativeSummary(false);
                 setError('');
+            } 
+        } else if (allSelected && cumulativeSelected) {
+            setShowAllCumulativeSummary(true);
+            setShowCumulativeSummary(false);
+            setFromDate("");
+            setToDate("");
+            setShowPeriodicSummary(false);
+            setShowAllPeriodicSummary(false);
+            setError('');
+        } else if (allSelected && periodicSelected) {
+            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+            if (fromDate && toDate) {
+                // If both dates are provided, show the summary report
+                setShowAllPeriodicSummary(true);
+                setShowPeriodicSummary(false);
+                setShowCumulativeSummary(false);
+                setShowAllCumulativeSummary(false);
+                setError('');
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
         } else {
-            setError('Please choose an option.')
+            setError('Please choose an option.');
         }
     };
+    
+
 
     useEffect(() => {
         // Set "Periodic" as selected by default when component mounts
@@ -138,14 +240,17 @@ const Dashboard = () => {
         setCumulativeSelected(false);
         setAllSelected(true);
 
+
         // Get current date
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
         const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
         const firstDateOfMonth = `${currentYear}-${currentMonth}-01`;
 
+
         // Set default "From Date" to the first date of the current month
         setFromDate(firstDateOfMonth);
+
 
         // Set default "To Date" to the current date
         const year = String(currentDate.getFullYear());
@@ -154,6 +259,7 @@ const Dashboard = () => {
         const formattedCurrentDate = `${year}-${month}-${day}`;
         setToDate(formattedCurrentDate);
     }, []);
+
 
     const handleSave = async (id, index) => {
         try {
@@ -168,6 +274,7 @@ const Dashboard = () => {
             setPrices(updatedPrices); // Update the local state with the new values
             toast.success("Updated successfully");
 
+
             // Fetch updated prices from the database
             const updatedPricesResponse = await axios.get(
                 `${API_URL}/getbusinessrate`
@@ -179,15 +286,18 @@ const Dashboard = () => {
         }
     };
 
+
     const handleEditPrice = (e, field, index) => {
         const newPrices = [...prices];
         newPrices[index][field] = parseFloat(e.target.innerText);
         setPrices(newPrices);
     };
 
+
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
+
 
         const fetchSummaryReport = () => {
             axios
@@ -198,6 +308,7 @@ const Dashboard = () => {
                 });
         };
 
+
         // const fetchLocation = () => {
         //     axios
         //       .get(`${API_URL}/locations`)
@@ -207,6 +318,7 @@ const Dashboard = () => {
         //       });
         //   };
 
+
         const fetchBusinessRate = () => {
             axios
                 .get(`${API_URL}/getbusinessrate`)
@@ -215,6 +327,7 @@ const Dashboard = () => {
                     console.error("Error fetching user data:", error);
                 });
         };
+
 
         // const fetchTechData = async () => {
         //   try {
@@ -229,6 +342,7 @@ const Dashboard = () => {
         //     console.error("Error fetching data:", error);
         //   }
         // };
+
 
         // const fetchNonTechData=async()=>{
         //     try{
@@ -245,17 +359,21 @@ const Dashboard = () => {
 
 
 
+
         fetchSummaryReport();
         fetchBusinessRate();
         // fetchTechData();
         // fetchNonTechData();
         // fetchLocation();
 
+
     }, []);
     console.log("Summary Data", summaryReport);
 
+
     const multiplyData = (summaryData, priceData) => {
         if (!summaryData || !priceData) return []; // Ensure both data arrays are provided
+
 
         return summaryData.map((report) => {
             const multipliedValues = priceData.map((price) => {
@@ -267,11 +385,13 @@ const Dashboard = () => {
         });
     };
 
+
     // Update multipliedData whenever editedPrices changes
     useEffect(() => {
         const newMultipliedData = multiplyData(summaryReport, editedPrices);
         setMultipliedData(newMultipliedData);
     }, [summaryReport, editedPrices]);
+
 
     const handleShowFullTable = () => {
         setShowFullTable(prevState => !prevState);
@@ -282,11 +402,13 @@ const Dashboard = () => {
         console.log("Modal closed.")
     }
 
+
     const handleShowCalculator = (rate, rateType) => {
         // setSelectedRate(rate);
         // setSelectedRateType(rateType);
         setShowCalculator(true);
     }
+
 
     const handleSaveCalculatedRate = (newRate, rateType) => {
         const updatedPrices = [...prices];
@@ -298,8 +420,10 @@ const Dashboard = () => {
         setShowCalculator(false);
     }
 
+
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
+
 
 
 
@@ -390,6 +514,7 @@ const Dashboard = () => {
                                         <th>Edit Price</th>
                                     </tr>
                                 </thead>
+
 
                                 {showFullTable && (
                                     <tbody>
@@ -514,16 +639,19 @@ const Dashboard = () => {
                         </div>
                     )}
 
+
                 </div>
             </div>
             {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
             {shownonTechCumulativeSummary && <NonTechCumulative />}
             {shownonTechPeriodicSummary && <NonTechPeriodic />}
+            {showAllCumulativeSummary && <AllCummulative />}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
             <ToastContainer />
         </>
     );
 };
+
 
 export default Dashboard;
