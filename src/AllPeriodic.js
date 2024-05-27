@@ -5,8 +5,8 @@ import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
-const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
-  const [locationView, setLocationView] = useState(false);
+const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
+    const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState(null);
   const [locationReport, setLocationReport] = useState();
@@ -126,7 +126,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
     };
     setIsLoading(true);
     axios
-      .get(`${API_URL}/alldetailedreportlocationwisenontech`, {
+      .get(`${API_URL}/alldetailedreportlocationwise`, {
         params: {
           locationName: locationName,
           startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
@@ -151,7 +151,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
-    axios.get(`${API_URL}/alluserdetailedreportlocationwisenontech`, {
+    axios.get(`${API_URL}/alluserdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName,
@@ -176,7 +176,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontech`;
+    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -207,7 +207,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontech`;
+    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
@@ -241,7 +241,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
-        let apiUrl = `${API_URL}/summaryreportnontech`;
+        let apiUrl = `${API_URL}/summaryreportcummulative`;
         const queryParams = {};
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -265,7 +265,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
-        let apiUrl = `${API_URL}/detailedreportcummulativenontech`;
+        let apiUrl = `${API_URL}/detailedreportcummulative`;
         const queryParams = {};
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -287,7 +287,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         return date.toISOString().split('T')[0];
       };
 
-      let apiUrl = `${API_URL}/detailedreportcummulativecsvnontech`;
+      let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
 
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -377,6 +377,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           <thead>
             <tr>
               <th>Sr.No.</th>
+              <th>Scanning ADF</th>
+              <th>Image QC</th>
+              <th>Flagging</th>
+              <th>Indexing</th>
+              <th>CBSL QA</th>
+              <th>Client QA</th>
               <th>Counting</th>
               <th>Inventory</th>
               <th>Doc Preparation</th>
@@ -387,6 +393,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           <tbody>
             <tr>
               <td>1</td>
+              <td>{summaryReport.Scanned}</td>
+              <td>{summaryReport.QC}</td>
+              <td>{summaryReport.Flagging}</td>
+              <td>{summaryReport.Indexing}</td>
+              <td>{summaryReport.CBSL_QA}</td>
+              <td>{summaryReport.Client_QC}</td>
               <td>{summaryReport.Counting}</td>
               <td>{summaryReport.Inventory}</td>
               <td>{summaryReport.DocPreparation}</td>
@@ -444,6 +456,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                 <tr>
                   <th>Sr.No.</th>
                   <th>Location Name</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Indexing</th>
+                  <th>Flagging</th>
+                  <th>CBSL-QA</th>
+                  <th>Client-QC</th>
                   <th>Counting</th>
                   <th>Inventory</th>
                   <th>DocPreparation</th>
@@ -460,6 +478,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
                         <td>{index + 1}</td>
                         <td>{elem.LocationName || 0}</td>
+                        <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                         <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
@@ -523,6 +547,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                           <th>Sr.No.</th>
                           <th>Location</th>
                           <th>User Name</th>
+                          <th>Scanned</th>
+                          <th>QC</th>
+                          <th>Indexing</th>
+                          <th>Flagging</th>
+                          <th>CBSL-QA</th>
+                          <th>Client-QC</th>
                           <th>Counting</th>
                           <th>Inventory</th>
                           <th>DocPreparation</th>
@@ -539,6 +569,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                               <td>{index + 1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type || 0}</td>
+                              <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                               <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
@@ -674,7 +710,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
     </div>
   </>
   )
-
 }
 
-export default NonTechPeriodic
+export default AllPeriodic

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { API_URL } from "./API";
-import axios from "axios";
-
-import { priceCount } from "./Components/priceCount";
+import React, { useEffect, useState } from 'react'
+import { API_URL } from './API';
+import axios from 'axios';
+import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
+import { IoMdCloseCircle } from "react-icons/io";
 
-const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
+const KarNonTechCommulative = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [locationView, setLocationView] = useState(false);
@@ -116,7 +116,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     const fetchUserDetailed = (locationName) => {
       setIsLoading(true);
       axios
-        .get(`${API_URL}/alldetailedreportlocationwise`, {
+        .get(`${API_URL}/alldetailedreportlocationwisenontechkarnataka`, {
           params: { locationName: locationName },
          
         })
@@ -132,7 +132,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
 
     const fetchUserDetailedReport = (username, locationName) => {
       setIsLoading(true);
-      axios.get(`${API_URL}/alluserdetailedreportlocationwise`, {
+      axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechkarnataka`, {
         params: {
           username: username,
           locationName: locationName
@@ -151,7 +151,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         return date.toISOString().split('T')[0];
       };
   setIsLoading(true);
-      let apiUrl = `${API_URL}/alldetailedreportlocationwisecsv`;
+      let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontechkarnataka`;
   
       if (locationName && formattedStartDate && formattedEndDate) {
         apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -181,7 +181,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         return date.toISOString().split('T')[0];
       };
   
-      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsv`;
+      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvkarnataka`;
   
       if (username && locationName) {
         // If locationName is an array, join its elements with commas
@@ -201,50 +201,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           console.error("Error in exporting data:", error);
         });
     };
-    const multiplyLocationData = (locationData, priceData) => {
-      if (!locationData || !priceData) return []; // Ensure both data arrays are provided
   
-      return locationData.map((report) => {
-        const multipliedValues = priceData.map((price) => {
-          const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-          return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-        });
-        return { multipliedValues };
-      });
-    };
-  
-    const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
-  
-    const multiplyUserWiseData = (userWiseData, priceData) => {
-      if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
-  
-      return userWiseData.map((report) => {
-        const multipliedValues = priceData.map((price) => {
-          const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-          return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-        });
-        return { multipliedValues };
-      });
-    };
-  
-    const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
-  
-    const multiplyUserData = (userData, priceData) => {
-      if (!userData || !priceData) return []; // Ensure both data arrays are provided
-  
-      return userData.map((report) => {
-        const multipliedValues = priceData.map((price) => {
-          const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-          return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-        });
-        return { multipliedValues };
-      });
-    };
-  
-    const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
-  
-    // Use multipliedData in your component as needed
-    console.log("MultipliedUserWiseData", multipliedLocationData);
   
     const toggleModal = () => {
       setShowModal(!showModal);
@@ -253,7 +210,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     useEffect(() => {
         const fetchSummaryReport = () => {
             setIsLoading(true);
-            axios.get(`${API_URL}/summaryreportcummulative`)
+            axios.get(`${API_URL}/summaryreportnontechkarnataka`)
               .then((response) => {
                 setSummaryReport(response.data);
                 setIsLoading(false);
@@ -266,7 +223,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       const fetchLocationReport = () => {
         setIsLoading(true);
         axios
-          .get(`${API_URL}/detailedreportcummulative`)
+          .get(`${API_URL}/detailedreportcummulativenontechkarnataka`)
           .then((response) => { 
             setLocationReport(response.data)
           setIsLoading(false);})
@@ -284,7 +241,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           return date.toISOString().split('T')[0];
         };
         setIsLoading(true);
-        let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
+        let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechkarnataka`;
   
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -345,12 +302,6 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           <thead>
             <tr>
               <th>Sr.No.</th>
-              <th>Scanning ADF</th>
-              <th>Image QC</th>
-              <th>Flagging</th>
-              <th>Indexing</th>
-              <th>CBSL QA</th>
-              <th>Client QA</th>
               <th>Counting</th>
               <th>Inventory</th>
               <th>Doc Preparation</th>
@@ -361,12 +312,6 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           <tbody>
             <tr>
               <td>1</td>
-              <td>{summaryReport.Scanned}</td>
-              <td>{summaryReport.QC}</td>
-              <td>{summaryReport.Flagging}</td>
-              <td>{summaryReport.Indexing}</td>
-              <td>{summaryReport.CBSL_QA}</td>
-              <td>{summaryReport.Client_QC}</td>
               <td>{summaryReport.Counting}</td>
               <td>{summaryReport.Inventory}</td>
               <td>{summaryReport.DocPreparation}</td>
@@ -424,12 +369,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                     <tr>
                       <th>Sr.No.</th>
                       <th>Location Name</th>
-                      <th>Scanned</th>
-                      <th>QC</th>
-                      <th>Indexing</th>
-                      <th>Flagging</th>
-                      <th>CBSL-QA</th>
-                      <th>Client-QC</th>
+                      
                       <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
@@ -441,24 +381,17 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                   <tbody>
                     {locationReport &&
                       locationReport.map((elem, index) => {
-                        const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                        
                         return (
                           <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
                             <td>{index + 1}</td>
                             <td>{elem.LocationName || 0}</td>
-                            <td>{elem.Scanned || 0}</td>
-                            <td>{elem.QC || 0}</td>
-                            <td>{elem.Indexing || 0}</td>
-                            <td>{elem.Flagging || 0}</td>
-                            <td>{elem.CBSL_QA || 0}</td>
-                            <td>{elem.Client_QC || 0}</td>
+                           
                             <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
                         <td>{elem.Guard || 0}</td>
-                            <td>
-                              {rowTotalSum.toFixed(2)}
-                            </td>
+                           
                             <td></td>
                           </tr>
                         );
@@ -517,12 +450,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                       <th>Sr.No.</th>
                       <th>Location</th>
                       <th>User Name</th>
-                      <th>Scanned</th>
-                      <th>QC</th>
-                      <th>Indexing</th>
-                      <th>Flagging</th>
-                      <th>CBSL-QA</th>
-                      <th>Client-QC</th>
+                      
                       <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
@@ -533,23 +461,18 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                   </thead>
                   <tbody>
                     {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                      const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                     
                       return (
                         <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
                           <td>{elem.user_type || 0}</td>
-                          <td>{elem.Scanned || 0}</td>
-                          <td>{elem.QC || 0}</td>
-                          <td>{elem.Indexing || 0}</td>
-                          <td>{elem.Flagging || 0}</td>
-                          <td>{elem.CBSL_QA || 0}</td>
-                          <td>{elem.Client_QC || 0}</td>
+                          
                           <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
                         <td>{elem.Guard || 0}</td>
-                          <td>{rowTotalSum.toFixed(2)}</td>
+                          
                           <td></td>
                         </tr>
                       );
@@ -619,13 +542,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                       <th>Location</th>
                       <th>User Name</th>
                       <th>Date</th>
-                      <th>Lot No</th>
-                      <th>Scanned</th>
-                      <th>QC</th>
-                      <th>Indexing</th>
-                      <th>Flagging</th>
-                      <th>CBSL-QA</th>
-                      <th>Client-QC</th>
+                      
                       <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
@@ -636,25 +553,18 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                   </thead>
                   <tbody>
                     {detailedUserReport && detailedUserReport.map((elem, index) => {
-                      const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                      
                       return (
                         <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
                           <td>{elem.user_type || 0}</td>
                           <td>{elem.Date}</td>
-                                <td>{elem.lotno}</td>
-                          <td>{elem.Scanned || 0}</td>
-                          <td>{elem.QC || 0}</td>
-                          <td>{elem.Indexing || 0}</td>
-                          <td>{elem.Flagging || 0}</td>
-                          <td>{elem.CBSL_QA || 0}</td>
-                          <td>{elem.Client_QC || 0}</td>
                           <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
                         <td>{elem.Guard || 0}</td>
-                          <td>{rowTotalSum.toFixed(2)}</td>
+                         
                           <td></td>
                         </tr>
                       );
@@ -674,4 +584,4 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     );
 }
 
-export default AllCummulative
+export default KarNonTechCommulative

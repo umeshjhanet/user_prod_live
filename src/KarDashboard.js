@@ -15,6 +15,8 @@ import KarTechPeriodic from './KarTechPeriodic';
 import KarTechCumulative from './KarTechCumulative';
 import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
+import KarNonTechCumulative from './KarNonTechCumulative';
+import KarNonTechPeriodic from './KarNonTechPeriodic';
 
 const KarDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -519,8 +521,8 @@ const KarDashboard = () => {
             </div>
             {showPeriodicSummary && <KarTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCumulativeSummary && <KarTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <NonTechCumulative />}
-            {shownonTechPeriodicSummary && <NonTechPeriodic />}
+            {shownonTechCumulativeSummary && <KarNonTechCumulative />}
+            {shownonTechPeriodicSummary && <KarNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
             <ToastContainer />
         </>

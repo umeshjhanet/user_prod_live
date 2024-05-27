@@ -15,6 +15,8 @@ import TelTechPeriodic from './TelTechPeriodic';
 import TelTechCumulative from './TelTechCumulative';
 import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
+import TelNonTechCommulative from './TelNonTechCommulative';
+import TelNonTechPeriodic from './TelNonTechPeriodic';
 
 const TelDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -519,8 +521,8 @@ const TelDashboard = () => {
             </div>
             {showPeriodicSummary && <TelTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCumulativeSummary && <TelTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <NonTechCumulative />}
-            {shownonTechPeriodicSummary && <NonTechPeriodic />}
+            {shownonTechCumulativeSummary && <TelNonTechCommulative />}
+            {shownonTechPeriodicSummary && <TelNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate}/>}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
             <ToastContainer />
         </>
