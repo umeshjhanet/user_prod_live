@@ -3,23 +3,34 @@ import Header from './Components/Header';
 import axios from 'axios';
 import { API_URL } from './API';
 
+
 const NonTechForm = () => {
   const [showLocation, setShowLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedLocationId, setSelectedLocationId] = useState("");
   const [showProject, setShowProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState("");
+  const [selectedProjectId, setSelectedProjectId] = useState("");
   const dropdownRef = useRef(null);
   const projectDropdownRef = useRef(null);
   const [location, setLocation] = useState([]);
   const [project, setProject] = useState([]);
-  const [formData, setFormData] = useState({
+  const [errorMessage, setErrorMessage] = useState('');
+  const[excelData,setExcelData]=useState(null);
+  const [newFormData, setNewFormData] = useState({
     ProjectId: '',
-    LocationId: '',
+    ProjectName:'',
+    LocationID: '',
+    LocationName:'',
     StaffName: '',
     Date: '',
-    TaskName: '',
-    Volume: '',
+    Counting: '',
+    Inventory: '',
+    DocPreparation: '',
+    Guard: '',
+    
   });
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -28,12 +39,15 @@ const NonTechForm = () => {
       }
     };
 
+
     document.addEventListener('click', handleClickOutside);
+
 
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [dropdownRef]);
+
 
   useEffect(() => {
     const fetchLocationData = async () => {
@@ -56,60 +70,120 @@ const NonTechForm = () => {
     fetchLocationData();
   }, []);
 
+
   const handleSelectLocation = (id, name) => {
     setSelectedLocation(name);
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      LocationId: parseInt(id)
-    }));
+    // setFormData(prevFormData => ({
+    //   ...prevFormData,
+    //   LocationID: parseInt(id),
+    //   LocationName:name
+    // }));
+    setSelectedLocationId(parseInt(id))
     setShowLocation(false);
+    console.log("location",name)
+    console.log("location",id)
   };
+
 
   const handleShowLocation = (e) => {
     e.stopPropagation();
     setShowLocation(!showLocation);
   };
 
+
   const handleSelectProject = (id, name) => {
     setSelectedProject(name);
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      ProjectId: parseInt(id)
-    }));
+    setSelectedProjectId(parseInt(id))
     setShowProject(false);
+    
   };
+
 
   const handleShowProject = (e) => {
     e.stopPropagation();
     setShowProject(!showProject);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+
+  //   try {
+  //     const response = await axios.post(`${API_URL}/createstaff`, formData);
+  //     console.log("Non-tech staff created:", response.data);
+  //   } catch (error) {
+  //     console.error("Error creating non-tech staff:", error);
+  //   }
+  // };
+
+
+
+  const handleForm = async () => {
+    const formData = new FormData();
+    formData.append('file', excelData);
+  
+   
+    formData.append('ProjectId', selectedProjectId );
+    formData.append('ProjectName',selectedProject);
+    formData.append('LocationID',selectedLocationId);
+    formData.append('LocationName', selectedLocation);
+    
+    if (!excelData) {
+      Object.entries(formData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
+  
     try {
-      const response = await axios.post(`${API_URL}/createstaff`, formData);
-      console.log("Non-tech staff created:", response.data);
+      if (excelData) {
+       
+        const response = await axios.post(`${API_URL}/uploadExcel`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log("Data from Excel file submitted:", response.data);
+      } else {
+        
+        const response = await axios.post(`${API_URL}/createstaff`, newFormData);
+        console.log("Data from input fields submitted:", response.data);
+      }
+      setErrorMessage('');
     } catch (error) {
-      console.error("Error creating non-tech staff:", error);
+      setErrorMessage('Error submitting data. Please try again.');
+      console.error("Error submitting data:", error);
     }
   };
+  
+  
+  const handleFileUpload = (e) => {
+    setExcelData(e.target.files[0]);
+};
+
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setNewFormData(prevFormData => ({
+  //     ...prevFormData,
+  //     [name]: value
+  //   }));
+  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: value
-    }));
-  };
+    setNewFormData({ ...newFormData, [name]: value, ProjectId: selectedProjectId, ProjectName: selectedProject, LocationID: selectedLocationId, LocationName: selectedLocation});
+  }
+
 
   return (
     <>
       <Header />
       <div className='container'>
         <div className='row'>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleForm}>
             <div className="row mt-2 me-1 search-report-card">
+              <label>Select Project</label>
               <input
                 type='text'
                 placeholder='Project'
@@ -127,6 +201,7 @@ const NonTechForm = () => {
                   ))}
                 </div>
               )}
+              <label>Select Location</label>
               <input
                 type='text'
                 placeholder='Location'
@@ -144,15 +219,21 @@ const NonTechForm = () => {
                   ))}
                 </div>
               )}
+              <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
               <label>Staff Name</label>
               <input type='text' name='StaffName' onChange={handleInputChange} /><br />
-              <label>Task Name</label>
-              <input type='text' name='TaskName' onChange={handleInputChange} /><br />
-              <label>Volume</label>
-              <input type='number' name='Volume' onChange={handleInputChange} /><br />
+              <label>Counting</label>
+              <input type='text' name='Counting' onChange={handleInputChange} /><br />
+              <label>Inventory</label>
+              <input type='text' name='Inventory' onChange={handleInputChange} /><br />
+              <label>DocPreparation</label>
+              <input type='text' name='DocPreparation' onChange={handleInputChange} /><br />
+              <label>Guard</label>
+              <input type='text' name='Guard' onChange={handleInputChange} /><br />
+              
               <label>Date</label>
               <input type='date' name='Date' onChange={handleInputChange} /><br />
-              <input type='submit' value='Submit' />
+              <input type='submit' value='Submit'  />
             </div>
           </form>
         </div>
@@ -160,5 +241,6 @@ const NonTechForm = () => {
     </>
   );
 }
+
 
 export default NonTechForm;
