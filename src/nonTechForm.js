@@ -151,7 +151,7 @@ const NonTechForm = () => {
               <label>Volume</label>
               <input type='number' name='Volume' onChange={handleInputChange} /><br />
               <label>Date</label>
-              <input type='date' name='Date' onChange={handleInputChange} /><br />
+              <input type='date' name='Dat' onChange={handleInputChange} /><br />
               <input type='submit' value='Submit' />
             </div>
           </form>
