@@ -17,6 +17,8 @@ import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import TelNonTechCommulative from './TelNonTechCommulative';
 import TelNonTechPeriodic from './TelNonTechPeriodic';
+import TelAllCumulative from './TelAllCumulative';
+import TelAllPeriodic from './TelAllPeriodic';
 
 const TelDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -25,6 +27,8 @@ const TelDashboard = () => {
     const [shownonTechCumulativeSummary, setShowNonTechCumulativeSummary] = useState(false);
     const [periodicSelected, setPeriodicSelected] = useState(true);
     const [cumulativeSelected, setCumulativeSelected] = useState(false);
+    const [showAllPeriodicSummary, setShowAllPeriodicSummary] = useState(false);
+    const [showAllCumulativeSummary, setShowAllCumulativeSummary] = useState(false);
     const [allSelected, setAllSelected] = useState(true);
     const [technicalSelected, setTechnicalSelected] = useState(false);
     const [nonTechnicalSelected, setNonTechnicalSelected] = useState(false);
@@ -126,12 +130,30 @@ const TelDashboard = () => {
                 setShowCumulativeSummary(false);
                 setShowNonTechCumulativeSummary(false);
                 setError('');
+            } 
+        } else if (allSelected && cumulativeSelected) {
+            setShowAllCumulativeSummary(true);
+            setShowCumulativeSummary(false);
+            setFromDate("");
+            setToDate("");
+            setShowPeriodicSummary(false);
+            setShowAllPeriodicSummary(false);
+            setError('');
+        } else if (allSelected && periodicSelected) {
+            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+            if (fromDate && toDate) {
+                // If both dates are provided, show the summary report
+                setShowAllPeriodicSummary(true);
+                setShowPeriodicSummary(false);
+                setShowCumulativeSummary(false);
+                setShowAllCumulativeSummary(false);
+                setError('');
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
         } else {
-            setError('Please choose an option.')
+            setError('Please choose an option.');
         }
     };
 
@@ -523,6 +545,8 @@ const TelDashboard = () => {
             {showCumulativeSummary && <TelTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
             {shownonTechCumulativeSummary && <TelNonTechCommulative />}
             {shownonTechPeriodicSummary && <TelNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate}/>}
+            {showAllCumulativeSummary && <TelAllCumulative />}
+            {showAllPeriodicSummary && <TelAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
             <ToastContainer />
         </>

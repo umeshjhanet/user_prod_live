@@ -401,69 +401,70 @@ const KarNonTechCommulative = () => {
               </div>
             </div>
           </div>
-  {locationView && showModal && (
-    <div className="custom-modal-overlay">
-      <div className="custom-modal">
-        <div className="modal-header">
-          <h4 className="modal-title">User Wise Summary Report</h4>
-          <div className="modal-footer">
-          <button type="button" className="btn btn-danger" onClick={toggleModal}>
-            Close
-          </button>
-        </div>
-          <button type="button" className="close" onClick={toggleModal}>&times;</button>
-        </div>
-        <div className="modal-body">
-          <div className="row mt-3" ref={ref}>
-            <div className="search-report-card">
-              <div className="row">
-              <div className="col-10 d-flex align-items-center">
-                      <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
-                    </div>
-                <div className="col-2">
-                  <button className="btn btn-success" onClick={handleLocationExport}>
-                    Export CSV
+          {locationView && showModal && (
+          <div className="custom-modal-overlay">
+            <div className="custom-modal">
+              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                  <h6 className="ms-2" style={{ color: "white" }}>
+                    User Wise Summary Report
+                  </h6>
+                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                  <IoMdCloseCircle />
                   </button>
-                </div>
-                <div className="col-md-8 text-end">
-                  {showConfirmationLocation && (
-                    <div className="confirmation-dialog">
-                      <div className="confirmation-content">
-                        <p className="fw-bold">
-                          Are you sure you want to export the CSV file?
-                        </p>
-                        <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
-                          Yes
-                        </button>
-                        <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
-                          No
+                <button type="button" className="close" onClick={toggleModal}>&times;</button>
+              </div>
+              <div className="modal-body">
+                <div className="row " ref={ref}>
+                  <div className="search-report-card">
+                    <div className="row"style={{marginTop:'-10px'}}>
+                      <div className="col-10 d-flex align-items-center">
+                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                      </div>
+                      <div className="col-2">
+                        <button className="btn btn-success" onClick={handleLocationExport} style={{padding:'2px'}}>
+                          Export CSV
                         </button>
                       </div>
+                      <div className="col-md-8 text-end">
+                        {showConfirmationLocation && (
+                          <div className="confirmation-dialog">
+                            <div className="confirmation-content">
+                              <p className="fw-bold">
+                                Are you sure you want to export the CSV file?
+                              </p>
+                              <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
+                                Yes
+                              </button>
+                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
+                                No
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="all-tables row ms-2 me-2">
-                <table className="table-bordered mt-2">
-                  <thead>
-                    <tr>
-                      <th>Sr.No.</th>
-                      <th>Location</th>
-                      <th>User Name</th>
-                      
-                      <th>Counting</th>
+                    <div className="modal-table row ms-2 me-2">
+                      <table className="table-bordered mt-2">
+                        <thead>
+                          <tr>
+                            <th>Sr.No.</th>
+                            <th>Location</th>
+                            <th>User Name</th>
+                            <th>Scanned</th>
+                            
+                            <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
                     <th>Guard</th>
-                      <th>Business Value</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                     
-                      return (
-                        <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                            <th>Expense Rate</th>
+                            <th>Remarks</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                           
+                            return (
+                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
                           <td>{elem.user_type || 0}</td>
@@ -475,110 +476,118 @@ const KarNonTechCommulative = () => {
                           
                           <td></td>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
-        </div>
-        
-      </div>
-    </div>
-  )}
+        )}
   
-  
-  {userView && showModal && (
-    <div className="custom-modal-overlay">
-      <div className="custom-modal">
-        <div className="modal-header">
-          <h4 className="modal-title">User Wise Detailed Report</h4>
-          <div className="modal-footer">
-          <button type="button" className="btn btn-danger" onClick={toggleModal}>
-            Close
-          </button>
-        </div>
-          <button type="button" className="close" onClick={toggleModal}>&times;</button>
-        </div>
-        <div className="modal-body">
-        <button className="back-arrow-btn" onClick={handleBackToLocationView}>
+{userView && showModal && (
+          <div className="custom-modal-overlay">
+            <div className="custom-modal">
+            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="" style={{ color: "white" }}>
+                  User Wise Detailed Report
+                  </h6>
+                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                <IoMdCloseCircle />
+                  </button>
+              </div>
+              <div className="row">
+                <div className="col-11"></div>
+                <div className="col-1" style={{textAlign:'right'}}>
+                <button className="btn btn-success" onClick={handleBackToLocationView}>
                     <i className="fa fa-arrow-left"></i> Back
                   </button>
-          <div className="row mt-3" ref={ref}>
-            <div className="search-report-card">
-              <div className="row">
-              <div className="col-2">
-                      <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
-                    </div>
-                <div className="col-md-6">
-                  <button className="btn btn-success" onClick={handleUserExport}>
-                    Export CSV
-                  </button>
                 </div>
-                <div className="col-md-6 text-end">
-                  {showConfirmationUser && (
-                    <div className="confirmation-dialog">
-                      <div className="confirmation-content">
-                        <p className="fw-bold">
-                          Are you sure you want to export the CSV file?
-                        </p>
-                        <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
-                          Yes
-                        </button>
-                        <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
-                          No
+              
+                 
+              </div>
+              <div className="modal-body">
+
+                <div className="row mt-3" ref={ref}>
+                  <div className="search-report-card">
+                    <div className="row">
+                      <div className="col-2">
+                        <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
+                      </div>
+                      <div className="col-8"></div>
+                      <div className="col-md-2">
+                        <button className="btn btn-success" onClick={handleUserExport}>
+                          Export CSV
                         </button>
                       </div>
+                      <div className="col-md-6 text-end">
+                        {showConfirmationUser && (
+                          <div className="confirmation-dialog">
+                            <div className="confirmation-content">
+                              <p className="fw-bold">
+                                Are you sure you want to export the CSV file?
+                              </p>
+                              <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
+                                Yes
+                              </button>
+                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
+                                No
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="all-tables row ms-2 me-2">
-                <table className="table-bordered mt-2">
-                  <thead>
-                    <tr>
-                      <th>Sr.No.</th>
-                      <th>Location</th>
-                      <th>User Name</th>
-                      <th>Date</th>
-                      
-                      <th>Counting</th>
+                    <div className="modal-table row ms-2 me-2">
+                      <table className="table-bordered mt-2">
+                        <thead>
+                          <tr>
+                            <th>Sr.No.</th>
+                            <th>Location</th>
+                            <th>User Name</th>
+                            <th>Date</th>
+                            
+                            <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
                     <th>Guard</th>
-                      <th>Business Value</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detailedUserReport && detailedUserReport.map((elem, index) => {
-                      
-                      return (
-                        <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                          <td>{index + 1}</td>
-                          <td>{elem.locationName}</td>
-                          <td>{elem.user_type || 0}</td>
-                          <td>{elem.Date}</td>
-                          <td>{elem.Counting || 0}</td>
-                        <td>{elem.Inventory || 0}</td>
-                        <td>{elem.DocPreparation || 0}</td>
-                        <td>{elem.Guard || 0}</td>
-                         
-                          <td></td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                            <th>Expense Rate</th>
+                            <th>Remarks</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {detailedUserReport && detailedUserReport.map((elem, index) => {
+                           
+                            return (
+                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <td>{index + 1}</td>
+                              <td>{elem.locationName}</td>
+                              <td>{elem.user_type || 0}</td>
+                              <td>{elem.Date}</td>
+                                    
+                              <td>{elem.Counting || 0}</td>
+                            <td>{elem.Inventory || 0}</td>
+                            <td>{elem.DocPreparation || 0}</td>
+                            <td>{elem.Guard || 0}</td>
+                              
+                              <td></td>
+                            </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
-        </div>
-       
-      </div>
-    </div>
-  )}
+        )}
         </div>
       </>
     );

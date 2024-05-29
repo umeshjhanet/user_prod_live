@@ -5,8 +5,8 @@ import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
-const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
-  const [locationView, setLocationView] = useState(false);
+const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
+    const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState(null);
   const [locationReport, setLocationReport] = useState();
@@ -126,7 +126,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
     };
     setIsLoading(true);
     axios
-      .get(`${API_URL}/alldetailedreportlocationwisenontech`, {
+      .get(`${API_URL}/alldetailedreportlocationwisekarnataka`, {
         params: {
           locationName: locationName,
           startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
@@ -151,7 +151,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
-    axios.get(`${API_URL}/alluserdetailedreportlocationwisenontech`, {
+    axios.get(`${API_URL}/alluserdetailedreportlocationwisekarnataka`, {
       params: {
         username: username,
         locationName: locationName,
@@ -176,7 +176,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontech`;
+    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvkarnataka`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -207,7 +207,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontech`;
+    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvkarnataka`;
 
     if (username && locationName) {
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
@@ -241,7 +241,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
-        let apiUrl = `${API_URL}/summaryreportnontech`;
+        let apiUrl = `${API_URL}/summaryreportcummulativekarnataka`;
         const queryParams = {};
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -265,7 +265,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
-        let apiUrl = `${API_URL}/detailedreportcummulativenontech`;
+        let apiUrl = `${API_URL}/detailedreportcummulativekarnataka`;
         const queryParams = {};
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -287,7 +287,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         return date.toISOString().split('T')[0];
       };
 
-      let apiUrl = `${API_URL}/detailedreportcummulativecsvnontech`;
+      let apiUrl = `${API_URL}/detailedreportcummulativecsvkarnataka`;
 
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -377,6 +377,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           <thead>
             <tr>
               <th>Sr.No.</th>
+              <th>Scanning ADF</th>
+              <th>Image QC</th>
+              <th>Flagging</th>
+              <th>Indexing</th>
+              <th>CBSL QA</th>
+              <th>Client QC</th>
               <th>Counting</th>
               <th>Inventory</th>
               <th>Doc Preparation</th>
@@ -387,10 +393,16 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           <tbody>
             <tr>
               <td>1</td>
-              <td>{summaryReport.Counting}</td>
-              <td>{summaryReport.Inventory}</td>
-              <td>{summaryReport.DocPreparation}</td>
-              <td>{summaryReport.Guard}</td>
+              <td>{summaryReport.Scanned || 0}</td>
+              <td>{summaryReport.QC || 0}</td>
+              <td>{summaryReport.Flagging || 0}</td>
+              <td>{summaryReport.Indexing || 0}</td>
+              <td>{summaryReport.CBSL_QA || 0}</td>
+              <td>{summaryReport.Client_QC || 0}</td>
+              <td>{summaryReport.Counting || 0}</td>
+              <td>{summaryReport.Inventory || 0}</td>
+              <td>{summaryReport.DocPreparation || 0}</td>
+              <td>{summaryReport.Guard || 0}</td>
             </tr>
           </tbody>
         </table>
@@ -444,6 +456,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                 <tr>
                   <th>Sr.No.</th>
                   <th>Location Name</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Indexing</th>
+                  <th>Flagging</th>
+                  <th>CBSL QA</th>
+                  <th>Client QC</th>
                   <th>Counting</th>
                   <th>Inventory</th>
                   <th>DocPreparation</th>
@@ -460,6 +478,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
                         <td>{index + 1}</td>
                         <td>{elem.LocationName || 0}</td>
+                        <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                         <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
@@ -475,197 +499,217 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         </div>
       </div>
       {locationView && showModal && (
-          <div className="custom-modal-overlay">
-            <div className="custom-modal">
-              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                  <h6 className="ms-2" style={{ color: "white" }}>
-                    User Wise Summary Report
-                  </h6>
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
-                  </button>
-                <button type="button" className="close" onClick={toggleModal}>&times;</button>
-              </div>
-              <div className="modal-body">
-                <div className="row " ref={ref}>
-                  <div className="search-report-card">
-                    <div className="row"style={{marginTop:'-10px'}}>
-                      <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
-                      </div>
-                      <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport} style={{padding:'2px'}}>
-                          Export CSV
-                        </button>
-                      </div>
-                      <div className="col-md-8 text-end">
-                        {showConfirmationLocation && (
-                          <div className="confirmation-dialog">
-                            <div className="confirmation-content">
-                              <p className="fw-bold">
-                                Are you sure you want to export the CSV file?
-                              </p>
-                              <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
-                                Yes
-                              </button>
-                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
-                                No
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+        <div className="custom-modal-overlay">
+          <div className="custom-modal">
+            <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="ms-2" style={{ color: "white" }}>
+                User Wise Summary Report
+              </h6>
+              <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                <IoMdCloseCircle />
+              </button>
+              <button type="button" className="close" onClick={toggleModal}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="row mt-3" ref={ref}>
+                <div className="search-report-card">
+                  <div className="row">
+                    <div className="col-10 d-flex align-items-center">
+                      <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                     </div>
-                    <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
-                        <thead>
-                          <tr>
-                            <th>Sr.No.</th>
-                            <th>Location</th>
-                            <th>User Name</th>
-                            <th>Scanned</th>
-                            
-                            <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
-                            <th>Expense Rate</th>
-                            <th>Remarks</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                           
-                            return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                          <td>{index + 1}</td>
-                          <td>{elem.locationName}</td>
-                          <td>{elem.user_type || 0}</td>
-                          
-                          <td>{elem.Counting || 0}</td>
+                    <div className="col-2">
+                      <button className="btn btn-success" onClick={handleLocationExport}>
+                        Export CSV
+                      </button>
+                    </div>
+                    <div className="col-md-8 text-end">
+                      {showConfirmationLocation && (
+                        <div className="confirmation-dialog">
+                          <div className="confirmation-content">
+                            <p className="fw-bold">
+                              Are you sure you want to export the CSV file?
+                            </p>
+                            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
+                              Yes
+                            </button>
+                            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
+                              No
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="modal-table row ms-2 me-2">
+                    <table className="table-bordered mt-2">
+                      <thead>
+                        <tr>
+                          <th>Sr.No.</th>
+                          <th>Location</th>
+                          <th>User Name</th>
+                          <th>Scanned</th>
+                          <th>QC</th>
+                          <th>Indexing</th>
+                          <th>Flagging</th>
+                          <th>CBSL-QA</th>
+                          <th>Client-QC</th>
+                          <th>Counting</th>
+                          <th>Inventory</th>
+                          <th>DocPreparation</th>
+                          <th>Guard</th>
+                          <th>Expense Rate</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                          const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          return (
+                            <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <td>{index + 1}</td>
+                              <td>{elem.locationName}</td>
+                              <td>{elem.user_type || 0}</td>
+                              <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                              <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
                         <td>{elem.Guard || 0}</td>
-                          
-                          <td></td>
-                        </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                              <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                              <td></td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+
+      {userView && showModal && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal">
+            <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="" style={{ color: "white" }}>
+                User Wise Detailed Report
+              </h6>
+              <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                <IoMdCloseCircle />
+              </button>
+            </div>
+            <div className="row">
+              <div className="col-11"></div>
+              <div className="col-1" style={{ textAlign: 'right' }}>
+                <button className="btn btn-success" onClick={handleBackToLocationView}>
+                  <i className="fa fa-arrow-left"></i> Back
+                </button>
+              </div>
+
 
             </div>
-          </div>
-        )}
+            <div className="modal-body">
 
-
-{userView && showModal && (
-          <div className="custom-modal-overlay">
-            <div className="custom-modal">
-            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-              <h6 className="" style={{ color: "white" }}>
-                  User Wise Detailed Report
-                  </h6>
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                <IoMdCloseCircle />
-                  </button>
-              </div>
-              <div className="row">
-                <div className="col-11"></div>
-                <div className="col-1" style={{textAlign:'right'}}>
-                <button className="btn btn-success" onClick={handleBackToLocationView}>
-                    <i className="fa fa-arrow-left"></i> Back
-                  </button>
-                </div>
-              
-                 
-              </div>
-              <div className="modal-body">
-
-                <div className="row mt-3" ref={ref}>
-                  <div className="search-report-card">
-                    <div className="row">
-                      <div className="col-2">
-                        <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
-                      </div>
-                      <div className="col-8"></div>
-                      <div className="col-md-2">
-                        <button className="btn btn-success" onClick={handleUserExport}>
-                          Export CSV
-                        </button>
-                      </div>
-                      <div className="col-md-6 text-end">
-                        {showConfirmationUser && (
-                          <div className="confirmation-dialog">
-                            <div className="confirmation-content">
-                              <p className="fw-bold">
-                                Are you sure you want to export the CSV file?
-                              </p>
-                              <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
-                                Yes
-                              </button>
-                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
-                                No
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+              <div className="row mt-3" ref={ref}>
+                <div className="search-report-card">
+                  <div className="row">
+                    <div className="col-2">
+                      <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
                     </div>
-                    <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
-                        <thead>
-                          <tr>
-                            <th>Sr.No.</th>
-                            <th>Location</th>
-                            <th>User Name</th>
-                            <th>Date</th>
-                            
-                            <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
-                            <th>Expense Rate</th>
-                            <th>Remarks</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {detailedUserReport && detailedUserReport.map((elem, index) => {
-                           
-                            return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                    <div className="col-8"></div>
+                    <div className="col-md-2">
+                      <button className="btn btn-success" onClick={handleUserExport}>
+                        Export CSV
+                      </button>
+                    </div>
+                    <div className="col-md-6 text-end">
+                      {showConfirmationUser && (
+                        <div className="confirmation-dialog">
+                          <div className="confirmation-content">
+                            <p className="fw-bold">
+                              Are you sure you want to export the CSV file?
+                            </p>
+                            <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
+                              Yes
+                            </button>
+                            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
+                              No
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="modal-table row ms-2 me-2">
+                    <table className="table-bordered mt-2">
+                      <thead>
+                        <tr>
+                          <th>Sr.No.</th>
+                          <th>Location</th>
+                          <th>User Name</th>
+                          <th>Date</th>
+                          <th>Lot No</th>
+                          <th>Scanned</th>
+                          <th>QC</th>
+                          <th>Indexing</th>
+                          <th>Flagging</th>
+                          <th>CBSL-QA</th>
+                          <th>Client-QC</th>
+                          <th>Counting</th>
+                          <th>Inventory</th>
+                          <th>DocPreparation</th>
+                          <th>Guard</th>
+                          <th>Expense Rate</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detailedUserReport && detailedUserReport.map((elem, index) => {
+                          const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          return (
+                            <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                               <td>{index + 1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type || 0}</td>
                               <td>{elem.Date}</td>
-                                    
+                              <td>{elem.lotno}</td>
+                              <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                               <td>{elem.Counting || 0}</td>
-                            <td>{elem.Inventory || 0}</td>
-                            <td>{elem.DocPreparation || 0}</td>
-                            <td>{elem.Guard || 0}</td>
-                              
+                        <td>{elem.Inventory || 0}</td>
+                        <td>{elem.DocPreparation || 0}</td>
+                        <td>{elem.Guard || 0}</td>
+                              <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
                               <td></td>
                             </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
-
             </div>
+
           </div>
-        )}
+        </div>
+      )}
     </div>
   </>
   )
-
 }
 
-export default NonTechPeriodic
+export default KarAllPeriodic

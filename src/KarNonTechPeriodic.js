@@ -207,7 +207,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         return date.toISOString().split('T')[0];
       };
   
-      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvkarnataka`;
+      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontechkarnataka`;
   
       if (username && locationName) {
         const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
