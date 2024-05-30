@@ -6,15 +6,20 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 
 
-const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
+const CumulativeSummaryReport = ({ editedPrice }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
   const [showModal, setShowModal] = useState(true); // Initially set to true to show the modal
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
-  const [locationReport, setLocationReport] = useState();
+  const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
+  const [lastColumnTotal, setLastColumnTotal] = useState(0);
+  const [locationReport, setLocationReport] = useState([]);
+  const [price, setPrice] = useState([]);
+  const[enhancedLocationReport,setEnhancedLocationReport] = useState([]);
   const [locationName, setLocationName] = useState("");
+  const [multipliedData, setMultipliedData] = useState();
   const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
   const [detailedUserReport, setDetailedUserReport] = useState();
   const [selectedUsername, setSelectedUsername] = useState('');
@@ -25,11 +30,9 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
   const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [multipliedLocationData, setMultipliedLocationData] = useState([]);
   const ref = useRef(null);
   const [clickedRowIndex, setClickedRowIndex] = useState('');
-
-
-
   const handleLocationView = (locationName) => {
     setShowModal(true);
     fetchUserDetailed(locationName);
@@ -37,10 +40,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
     setLocationView(true);
     setUserView(false);
     console.log("click on location")
-
   };
-
-
 
   const handleUserView = (username, locationName, rowIndex) => {
     setLocationView(false);
@@ -204,50 +204,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
         console.error("Error in exporting data:", error);
       });
   };
-  const multiplyLocationData = (locationData, priceData) => {
-    if (!locationData || !priceData) return []; // Ensure both data arrays are provided
 
-    return locationData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
 
-  const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
-
-  const multiplyUserWiseData = (userWiseData, priceData) => {
-    if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
-
-    return userWiseData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
-
-  const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
-
-  const multiplyUserData = (userData, priceData) => {
-    if (!userData || !priceData) return []; // Ensure both data arrays are provided
-
-    return userData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
-
-  const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
-
-  // Use multipliedData in your component as needed
-  console.log("MultipliedUserWiseData", multipliedLocationData);
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -260,6 +218,19 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
         .get(`${API_URL}/summaryreport`)
         .then((response) => {
           setSummaryReport(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/getbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
           setIsLoading(false); // Set loading to false after data is fetched
         })
         .catch((error) => {
@@ -311,9 +282,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
 
     fetchDetailedReportCsvFile(startDate, endDate);
     // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-
+    fetchPrices();
     fetchSummaryReport();
     fetchLocationReport();
     if (locationName) {
@@ -327,13 +297,74 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
       <div className="loader"></div>
     </div>
   );
-  const totalPrice = 0.141;
 
   const handleBackToLocationView = () => {
     setLocationView(true);
     setUserView(false);
   };
+  const totExp = "";
 
+  console.log("LocationsTotal", locationReport);
+  useEffect(() => {
+    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+      const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
+
+      const multipliedData = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.locationname);
+
+        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+
+        if (prices) {
+          const multipliedLocation = {
+            ...location,
+            Scanned: Number(location.Scanned) * prices.ScanRate,
+            QC: Number(location.QC) * prices.QcRate,
+            Client_QC: Number(location.Client_QC) * prices.ClientQcRate,
+            Flagging: Number(location.Flagging) * prices.FlagRate,
+            Indexing: Number(location.Indexing) * prices.IndexRate,
+            CBSL_QA: Number(location.CBSL_QA) * prices.CbslQaRate,
+          };
+
+          const rowSum =
+            multipliedLocation.Scanned +
+            multipliedLocation.QC +
+            multipliedLocation.Client_QC +
+            multipliedLocation.Flagging +
+            multipliedLocation.Indexing +
+            multipliedLocation.CBSL_QA;
+
+          multipliedLocation.rowSum = rowSum;
+
+          return multipliedLocation;
+        } else {
+          console.error(`No matching price found for location: ${location.locationname}`);
+          return location;
+        }
+      });
+
+      // Enhance locationReport with rowSum from multipliedData
+      const enhancedLocationReport = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.locationname);
+        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.locationname) === normalizedLocationName);
+        return {
+          ...location,
+          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+          
+        };
+      });
+
+      setEnhancedLocationReport(enhancedLocationReport);
+      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setSecondLastColumnTotal(sumOfRowSums);
+      console.log(enhancedLocationReport);
+    }
+  }, [price, locationReport]);
+  useEffect(() => {
+    if (summaryReport && summaryReport.length > 0) {
+      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setLastColumnTotal(sumOfLastColumn);
+    }
+  }, [summaryReport]);
 
   return (
     <>
@@ -367,7 +398,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                         <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                        <td>{isNaN(parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2))) ? 0 : parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2)).toLocaleString()}</td>
+                        <td>{lastColumnTotal.toLocaleString()}</td>
                       </>
                     ))}
                   </tr>
@@ -431,24 +462,20 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {locationReport &&
-                    locationReport.map((elem, index) => {
-                      const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                      return (
-                        <tr onClick={() => handleLocationView(elem.locationname)} key={index} >
-                          <td>{index + 1}</td>
-                          <td>{elem.locationname || 0}</td>
-                          <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                          <td>{isNaN(parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2))) ? 0 : parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2)).toLocaleString()}</td>
-                          <td></td>
-                        </tr>
-                      );
-                    })}
+                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                      <td>{index + 1}</td>
+                      <td>{elem.locationname || 0}</td>
+                      <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                      <td></td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -457,24 +484,24 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
         {locationView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                  <h6 className="ms-2" style={{ color: "white" }}>
-                    User Wise Summary Report
-                  </h6>
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="ms-2" style={{ color: "white" }}>
+                  User Wise Summary Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
                   <IoMdCloseCircle />
-                  </button>
+                </button>
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
                 <div className="row " ref={ref}>
                   <div className="search-report-card">
-                    <div className="row"style={{marginTop:'-10px'}}>
+                    <div className="row" style={{ marginTop: '-10px' }}>
                       <div className="col-10 d-flex align-items-center">
                         <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                       </div>
                       <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport} style={{padding:'2px'}}>
+                        <button className="btn btn-success" onClick={handleLocationExport} style={{ padding: '2px' }}>
                           Export CSV
                         </button>
                       </div>
@@ -515,20 +542,19 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                            // const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
                               <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>
-                                <td>{elem.date}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                                {/* <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td> */}
                                 <td></td>
                               </tr>
                             );
@@ -548,23 +574,23 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
         {userView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-              <h6 className="" style={{ color: "white" }}>
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="" style={{ color: "white" }}>
                   User Wise Detailed Report
-                  </h6>
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                <IoMdCloseCircle />
-                  </button>
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                  <IoMdCloseCircle />
+                </button>
               </div>
               <div className="row">
                 <div className="col-11"></div>
-                <div className="col-1" style={{textAlign:'right'}}>
-                <button className="btn btn-success" onClick={handleBackToLocationView}>
+                <div className="col-1" style={{ textAlign: 'right' }}>
+                  <button className="btn btn-success" onClick={handleBackToLocationView}>
                     <i className="fa fa-arrow-left"></i> Back
                   </button>
                 </div>
-              
-                 
+
+
               </div>
               <div className="modal-body">
 
@@ -619,7 +645,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                            // const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
                               <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                                 <td>{index + 1}</td>
@@ -633,7 +659,7 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                                {/* <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td> */}
                                 <td></td>
                               </tr>
                             );

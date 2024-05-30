@@ -22,6 +22,10 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
+  const [lastColumnTotal, setLastColumnTotal] = useState(0);
+  const [price, setPrice] = useState([]);
+  const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -356,7 +360,75 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
 
-  const totalPrice = 0.141;
+  useEffect(() => {
+    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+      const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
+
+      const multipliedData = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.LocationName);
+
+        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+
+        if (prices) {
+          const multipliedLocation = {
+            ...location,
+            Scanned: Number(location.Scanned) * prices.ScanRate,
+            QC: Number(location.QC) * prices.QcRate,
+            Client_QC: Number(location.Client_QC) * prices.ClientQcRate,
+            Flagging: Number(location.Flagging) * prices.FlagRate,
+            Indexing: Number(location.Indexing) * prices.IndexRate,
+            CBSL_QA: Number(location.CBSL_QA) * prices.CbslQaRate,
+            Counting: Number(location.Counting || 0) * (prices.Counting || 0),
+            Inventory: Number(location.Inventory || 0) * (prices.Inventory || 0),
+            DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparation || 0),
+            Guard: Number(location.Guard || 0) * (prices.Guard || 0),
+          };
+
+          const rowSum =
+            multipliedLocation.Scanned +
+            multipliedLocation.QC +
+            multipliedLocation.Client_QC +
+            multipliedLocation.Flagging +
+            multipliedLocation.Indexing +
+            multipliedLocation.CBSL_QA +
+            multipliedLocation.Counting +
+            multipliedLocation.Inventory +
+            multipliedLocation.DocPreparation +
+            multipliedLocation.Guard;
+
+          multipliedLocation.rowSum = rowSum;
+
+          return multipliedLocation;
+        } else {
+          console.error(`No matching price found for location: ${location.LocationName}`);
+          return location;
+        }
+      });
+
+      // Enhance locationReport with rowSum from multipliedData
+      const enhancedLocationReport = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.LocationName);
+        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
+        return {
+          ...location,
+          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+        };
+      });
+
+      setEnhancedLocationReport(enhancedLocationReport);
+      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setSecondLastColumnTotal(sumOfRowSums);
+      console.log("Total", sumOfRowSums);
+      console.log(enhancedLocationReport);
+    }
+  }, [price, locationReport]);
+
+  useEffect(() => {
+    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
+      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setLastColumnTotal(sumOfLastColumn);
+    }
+  }, [enhancedLocationReport, summaryReport]);
   console.log("Location Data", multipliedLocationData);
   const Loader = () => (
     <div className="loader-overlay">
@@ -372,7 +444,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
               <h4>Summary Report</h4>
               <div className="row ms-2 me-2">
 
-              {summaryReport ? (
+              {summaryReport && (
         <table className="table-bordered mt-2">
           <thead>
             <tr>
@@ -403,11 +475,11 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
               <td>{summaryReport.Inventory}</td>
               <td>{summaryReport.DocPreparation}</td>
               <td>{summaryReport.Guard}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
-      ) : (
-        <p>No data available</p>
+     
       )}
                
               </div>
@@ -471,28 +543,24 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                 </tr>
               </thead>
               <tbody>
-                {locationReport &&
-                  locationReport.map((elem, index) => {
-                    const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                    return (
-                      <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
-                        <td>{index + 1}</td>
-                        <td>{elem.LocationName || 0}</td>
-                        <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                        <td>{elem.Counting || 0}</td>
-                        <td>{elem.Inventory || 0}</td>
-                        <td>{elem.DocPreparation || 0}</td>
-                        <td>{elem.Guard || 0}</td>
-                        <td>{isNaN(parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2))) ? 0 : parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2)).toLocaleString()}</td>
-                        <td></td>
-                      </tr>
-                    );
-                  })}
+              {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    <tr onClick={() => handleLocationView(elem.LocationName)} key={index}>
+                      <td>{index + 1}</td>
+                      <td>{elem.LocationName || 0}</td>
+                      <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
+                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                      <td></td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

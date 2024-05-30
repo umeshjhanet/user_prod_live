@@ -22,6 +22,10 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
   const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
+  const [lastColumnTotal, setLastColumnTotal] = useState(0);
+  const [price, setPrice] = useState([]);
+  const [enhancedLocationReport, setEnhancedLocationReport] = useState();
   const ref = useRef(null);
 
   useEffect(() => {
@@ -199,7 +203,19 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       });
   };
 
-
+  const fetchPrices = () => {
+    setIsLoading(true); // Set loading to true when fetching data
+    axios
+      .get(`${API_URL}/getbusinessrate`)
+      .then((response) => {
+        setPrice(response.data);
+        setIsLoading(false); // Set loading to false after data is fetched
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setIsLoading(false); // Set loading to false in case of error
+      });
+  };
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -304,7 +320,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         });
     };
 
-
+    fetchPrices();
     fetchSummaryReport();
     fetchLocationReport();
     fetchDetailedReportCsvFile(startDate, endDate);
@@ -355,8 +371,64 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
   };
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+  useEffect(() => {
+    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+      const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
 
-  const totalPrice = 0.141;
+      const multipliedData = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.LocationName);
+
+        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+
+        if (prices) {
+          const multipliedLocation = {
+            ...location,
+            Counting: Number(location.Counting) * prices.Counting,
+            Inventory: Number(location.Inventory) * prices.Inventory,
+            DocPreparation: Number(location.DocPreparation) * prices.DocPreparation,
+            Guard: Number(location.Guard) * prices.Guard,
+          };
+
+          const rowSum =
+            multipliedLocation.Counting +
+            multipliedLocation.Inventory +
+            multipliedLocation.DocPreparation +
+            multipliedLocation.Guard;
+
+          multipliedLocation.rowSum = rowSum;
+
+          return multipliedLocation;
+        } else {
+          console.error(`No matching price found for location: ${location.LocationName}`);
+          return location;
+        }
+      });
+
+      // Enhance locationReport with rowSum from multipliedData
+      const enhancedLocationReport = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.LocationName);
+        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
+        return {
+          ...location,
+          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+
+        };
+      });
+
+      setEnhancedLocationReport(enhancedLocationReport);
+      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setSecondLastColumnTotal(sumOfRowSums);
+      console.log("Total",secondLastColumnTotal);
+      console.log(enhancedLocationReport);
+    }
+  }, [price, locationReport]);
+  useEffect(() => {
+    if (summaryReport && summaryReport.length > 0) {
+      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setLastColumnTotal(sumOfLastColumn);
+    }
+  }, [summaryReport]);
+
   console.log("Location Data", multipliedLocationData);
   const Loader = () => (
     <div className="loader-overlay">
@@ -391,6 +463,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
               <td>{summaryReport.Inventory}</td>
               <td>{summaryReport.DocPreparation}</td>
               <td>{summaryReport.Guard}</td>
+              <td>{lastColumnTotal.toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
@@ -453,22 +526,19 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                 </tr>
               </thead>
               <tbody>
-                {locationReport &&
-                  locationReport.map((elem, index) => {
-                    const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                    return (
-                      <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
-                        <td>{index + 1}</td>
-                        <td>{elem.LocationName || 0}</td>
-                        <td>{elem.Counting || 0}</td>
-                        <td>{elem.Inventory || 0}</td>
-                        <td>{elem.DocPreparation || 0}</td>
-                        <td>{elem.Guard || 0}</td>
-                        <td>{isNaN(parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2))) ? 0 : parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2)).toLocaleString()}</td>
-                        <td></td>
-                      </tr>
-                    );
-                  })}
+               {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                      <td>{index + 1}</td>
+                      <td>{elem.LocationName || 0}</td>
+                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
+                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                      <td></td>
+                    </tr>
+                  ))}
+                  
               </tbody>
             </table>
           </div>

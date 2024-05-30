@@ -96,7 +96,7 @@ const Dashboard = () => {
     };
 
 
-   
+
     const handleSubmit = () => {
         // Check if "Periodic" is selected
         if (technicalSelected && periodicSelected) {
@@ -123,6 +123,8 @@ const Dashboard = () => {
             setError('');
         } else if (nonTechnicalSelected && cumulativeSelected) {
             setShowNonTechCumulativeSummary(true);
+            setShowAllPeriodicSummary(false);
+            setShowAllCumulativeSummary(false);
             setShowCumulativeSummary(false);
             setFromDate("");
             setToDate("");
@@ -134,11 +136,13 @@ const Dashboard = () => {
             if (fromDate && toDate) {
                 // If both dates are provided, show the summary report
                 setShowNonTechPeriodicSummary(true);
+                setShowAllPeriodicSummary(false);
+                setShowAllCumulativeSummary(false);
                 setShowPeriodicSummary(false);
                 setShowCumulativeSummary(false);
                 setShowNonTechCumulativeSummary(false);
                 setError('');
-            } 
+            }
         } else if (allSelected && cumulativeSelected) {
             setShowAllCumulativeSummary(true);
             setShowCumulativeSummary(false);
@@ -164,7 +168,7 @@ const Dashboard = () => {
             setError('Please choose an option.');
         }
     };
-    
+
 
 
     useEffect(() => {
@@ -329,7 +333,7 @@ const Dashboard = () => {
     const handleShowFullTable = () => {
         setShowFullTable(prevState => !prevState);
     }
-    
+
     const handleCloseCalculator = () => {
         setShowCalculator(!showCalculator);
         console.log("Modal closed.")
@@ -370,7 +374,7 @@ const Dashboard = () => {
                         style={{ padding: "5px", backgroundColor: "#4BC0C0" }}
                     >
                         <h6 className="ms-2" style={{ color: "white" }}>
-                        <Link to='/projects' style={{color:'white'}}><FaHome style={{marginTop:'-2px'}}/></Link> / Uttar Pradesh Courts
+                            <Link to='/projects' style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></Link> / Uttar Pradesh Courts
                         </h6>
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
@@ -509,16 +513,16 @@ const Dashboard = () => {
                                         const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate;
                                         return (
                                             <tr key={index}>
-                                            <td>{elem.LocationName}</td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}<sub onClick={() => handleShowCalculator(elem.ScanRate, 'ScanRate')}>Calculate</sub></td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}<sub onClick={() => handleShowCalculator(elem.QcRate, 'QcRate')}>Calculate</sub></td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}<sub onClick={() => handleShowCalculator(elem.IndexRate, 'IndexRate')}>Calculate</sub></td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}<sub onClick={() => handleShowCalculator(elem.FlagRate, 'FlagRate')}>Calculate</sub></td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}<sub onClick={() => handleShowCalculator(elem.CbslQaRate, 'CbslQaRate')}>Calculate</sub></td>
-                                            <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}<sub onClick={() => handleShowCalculator(elem.ClientQcRate, 'ClientQcRate')}>Calculate</sub></td>
-                                            <td>{totalRate}</td>
-                                            <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                        </tr>
+                                                <td>{elem.LocationName}</td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}<sub onClick={() => handleShowCalculator(elem.ScanRate, 'ScanRate')}>Calculate</sub></td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}<sub onClick={() => handleShowCalculator(elem.QcRate, 'QcRate')}>Calculate</sub></td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}<sub onClick={() => handleShowCalculator(elem.IndexRate, 'IndexRate')}>Calculate</sub></td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}<sub onClick={() => handleShowCalculator(elem.FlagRate, 'FlagRate')}>Calculate</sub></td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}<sub onClick={() => handleShowCalculator(elem.CbslQaRate, 'CbslQaRate')}>Calculate</sub></td>
+                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}<sub onClick={() => handleShowCalculator(elem.ClientQcRate, 'ClientQcRate')}>Calculate</sub></td>
+                                                <td>{totalRate}</td>
+                                                <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
+                                            </tr>
                                         )
                                     })}
                                 </tbody>
