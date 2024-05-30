@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { API_URL } from './API';
-import axios from 'axios';
-import { priceCount } from './Components/priceCount';
-import { useRef } from 'react';
+import React, { useEffect, useState } from "react";
+import { API_URL } from "./API";
+import axios from "axios";
 import { IoMdCloseCircle } from "react-icons/io";
+import { priceCount } from "./Components/priceCount";
+import { useRef } from 'react';
 
-const TelNonTechCommulative = () => {
+const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [locationView, setLocationView] = useState(false);
@@ -25,10 +25,6 @@ const TelNonTechCommulative = () => {
     const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
     const [showConfirmationUser, setShowConfirmationUser] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
-  const [lastColumnTotal, setLastColumnTotal] = useState(0);
-  const [price, setPrice] = useState([]);
-  const [enhancedLocationReport, setEnhancedLocationReport] = useState();
     const ref = useRef(null);    
     const[clickedRowIndex,setClickedRowIndex]=useState('');
      
@@ -120,7 +116,7 @@ const TelNonTechCommulative = () => {
     const fetchUserDetailed = (locationName) => {
       setIsLoading(true);
       axios
-        .get(`${API_URL}/alldetailedreportlocationwisenontechtelangana`, {
+        .get(`${API_URL}/alldetailedreportlocationwisetelangana`, {
           params: { locationName: locationName },
          
         })
@@ -133,10 +129,10 @@ const TelNonTechCommulative = () => {
           setIsLoading(false); // Set loading to false even if there's an error
         });
     };
-   
+
     const fetchUserDetailedReport = (username, locationName) => {
       setIsLoading(true);
-      axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechtelangana`, {
+      axios.get(`${API_URL}/alluserdetailedreportlocationwisetelangana`, {
         params: {
           username: username,
           locationName: locationName
@@ -155,7 +151,7 @@ const TelNonTechCommulative = () => {
         return date.toISOString().split('T')[0];
       };
   setIsLoading(true);
-      let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontechtelangana`;
+      let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvtelangana`;
   
       if (locationName && formattedStartDate && formattedEndDate) {
         apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -205,7 +201,50 @@ const TelNonTechCommulative = () => {
           console.error("Error in exporting data:", error);
         });
     };
+    const multiplyLocationData = (locationData, priceData) => {
+      if (!locationData || !priceData) return []; // Ensure both data arrays are provided
   
+      return locationData.map((report) => {
+        const multipliedValues = priceData.map((price) => {
+          const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+          return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+        });
+        return { multipliedValues };
+      });
+    };
+  
+    const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
+  
+    const multiplyUserWiseData = (userWiseData, priceData) => {
+      if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
+  
+      return userWiseData.map((report) => {
+        const multipliedValues = priceData.map((price) => {
+          const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+          return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+        });
+        return { multipliedValues };
+      });
+    };
+  
+    const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
+  
+    const multiplyUserData = (userData, priceData) => {
+      if (!userData || !priceData) return []; // Ensure both data arrays are provided
+  
+      return userData.map((report) => {
+        const multipliedValues = priceData.map((price) => {
+          const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+          return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+        });
+        return { multipliedValues };
+      });
+    };
+  
+    const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+  
+    // Use multipliedData in your component as needed
+    console.log("MultipliedUserWiseData", multipliedLocationData);
   
     const toggleModal = () => {
       setShowModal(!showModal);
@@ -214,7 +253,7 @@ const TelNonTechCommulative = () => {
     useEffect(() => {
         const fetchSummaryReport = () => {
             setIsLoading(true);
-            axios.get(`${API_URL}/summaryreportnontechtelangana`)
+            axios.get(`${API_URL}/summaryreportcummulativetelangana`)
               .then((response) => {
                 setSummaryReport(response.data);
                 setIsLoading(false);
@@ -227,7 +266,7 @@ const TelNonTechCommulative = () => {
       const fetchLocationReport = () => {
         setIsLoading(true);
         axios
-          .get(`${API_URL}/detailedreportcummulativenontechtelangana`)
+          .get(`${API_URL}/detailedreportcummulativetelangana`)
           .then((response) => { 
             setLocationReport(response.data)
           setIsLoading(false);})
@@ -237,19 +276,7 @@ const TelNonTechCommulative = () => {
           });
           
       };
-      const fetchPrices = () => {
-        setIsLoading(true); // Set loading to true when fetching data
-        axios
-          .get(`${API_URL}/telgetbusinessrate`)
-          .then((response) => {
-            setPrice(response.data);
-            setIsLoading(false); // Set loading to false after data is fetched
-          })
-          .catch((error) => {
-            console.error("Error fetching user data:", error);
-            setIsLoading(false); // Set loading to false in case of error
-          });
-      };
+  
       const fetchDetailedReportCsvFile = (startDate, endDate) => {
         const formattedStartDate = startDate ? new Date(startDate) : null;
         const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -257,7 +284,7 @@ const TelNonTechCommulative = () => {
           return date.toISOString().split('T')[0];
         };
         setIsLoading(true);
-        let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechtelangana`;
+        let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
   
         if (formattedStartDate && formattedEndDate) {
           apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -281,7 +308,7 @@ const TelNonTechCommulative = () => {
       // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
   
       fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-  fetchPrices();
+  
       fetchSummaryReport();
       fetchLocationReport();
       if (locationName) {
@@ -295,71 +322,14 @@ const TelNonTechCommulative = () => {
         <div className="loader"></div>
       </div>
     );
-    useEffect(() => {
-      if (price && locationReport && price.length > 0 && locationReport.length > 0) {
-        const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
-  
-        const multipliedData = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
-  
-          const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
-  
-          if (prices) {
-            const multipliedLocation = {
-              ...location,
-              Counting: Number(location.Counting) * prices.Counting,
-              Inventory: Number(location.Inventory) * prices.Inventory,
-              DocPreparation: Number(location.DocPreparation) * prices.DocPreparation,
-              Guard: Number(location.Guard) * prices.Guard,
-            };
-  
-            const rowSum =
-              multipliedLocation.Counting +
-              multipliedLocation.Inventory +
-              multipliedLocation.DocPreparation +
-              multipliedLocation.Guard;
-  
-            multipliedLocation.rowSum = rowSum;
-  
-            return multipliedLocation;
-          } else {
-            console.error(`No matching price found for location: ${location.LocationName}`);
-            return location;
-          }
-        });
-  
-        // Enhance locationReport with rowSum from multipliedData
-        const enhancedLocationReport = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
-          const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
-          return {
-            ...location,
-            rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-  
-          };
-        });
-  
-        setEnhancedLocationReport(enhancedLocationReport);
-        const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
-        setSecondLastColumnTotal(sumOfRowSums);
-        console.log("Total",secondLastColumnTotal);
-        console.log(enhancedLocationReport);
-      }
-    }, [price, locationReport]);
-    useEffect(() => {
-      if (summaryReport && summaryReport.length > 0) {
-        const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
-        setLastColumnTotal(sumOfLastColumn);
-      }
-    }, [summaryReport]);
+    const totalPrice = 0.141;
   
     const handleBackToLocationView = () => {
       setLocationView(true);
       setUserView(false);
     };
   
-  console.log("Locations",locationReport);
-  console.log("Prices",price);
+  console.log("summary report",summaryReport)
   //console.log("Scanned Value", summaryReport.Scanned)
     return (
       <>
@@ -375,6 +345,12 @@ const TelNonTechCommulative = () => {
           <thead>
             <tr>
               <th>Sr.No.</th>
+              <th>Scanning ADF</th>
+              <th>Image QC</th>
+              <th>Flagging</th>
+              <th>Indexing</th>
+              <th>CBSL QA</th>
+              <th>Client QC</th>
               <th>Counting</th>
               <th>Inventory</th>
               <th>Doc Preparation</th>
@@ -385,11 +361,16 @@ const TelNonTechCommulative = () => {
           <tbody>
             <tr>
               <td>1</td>
-              <td>{summaryReport.Counting}</td>
-              <td>{summaryReport.Inventory}</td>
-              <td>{summaryReport.DocPreparation}</td>
-              <td>{summaryReport.Guard}</td>
-              <td>{lastColumnTotal.toLocaleString()}</td>
+              <td>{summaryReport.Scanned}</td>
+              <td>{summaryReport.QC}</td>
+              <td>{summaryReport.Flagging}</td>
+              <td>{summaryReport.Indexing}</td>
+              <td>{summaryReport.CBSL_QA}</td>
+              <td>{summaryReport.Client_QC}</td>
+              <td>{summaryReport.Counting || 0}</td>
+              <td>{summaryReport.Inventory || 0}</td>
+              <td>{summaryReport.DocPreparation || 0}</td>
+              <td>{summaryReport.Guard || 0}</td>
             </tr>
           </tbody>
         </table>
@@ -443,7 +424,12 @@ const TelNonTechCommulative = () => {
                     <tr>
                       <th>Sr.No.</th>
                       <th>Location Name</th>
-                      
+                      <th>Scanned</th>
+                      <th>QC</th>
+                      <th>Indexing</th>
+                      <th>Flagging</th>
+                      <th>CBSL-QA</th>
+                      <th>Client-QC</th>
                       <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
@@ -453,18 +439,30 @@ const TelNonTechCommulative = () => {
                     </tr>
                   </thead>
                   <tbody>
-                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
-                      <td>{index + 1}</td>
-                      <td>{elem.LocationName || 0}</td>
-                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
-                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
-                      <td></td>
-                    </tr>
-                  ))}
+                    {locationReport &&
+                      locationReport.map((elem, index) => {
+                        const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                        return (
+                          <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
+                            <td>{index + 1}</td>
+                            <td>{elem.LocationName || 0}</td>
+                            <td>{elem.Scanned || 0}</td>
+                            <td>{elem.QC || 0}</td>
+                            <td>{elem.Indexing || 0}</td>
+                            <td>{elem.Flagging || 0}</td>
+                            <td>{elem.CBSL_QA || 0}</td>
+                            <td>{elem.Client_QC || 0}</td>
+                            <td>{elem.Counting || 0}</td>
+                        <td>{elem.Inventory || 0}</td>
+                        <td>{elem.DocPreparation || 0}</td>
+                        <td>{elem.Guard || 0}</td>
+                            <td>
+                              {rowTotalSum.toFixed(2)}
+                            </td>
+                            <td></td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
@@ -520,7 +518,11 @@ const TelNonTechCommulative = () => {
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Scanned</th>
-                            
+                            <th>QC</th>
+                            <th>Indexing</th>
+                            <th>Flagging</th>
+                            <th>CBSL-QA</th>
+                            <th>Client-QC</th>
                             <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
@@ -531,18 +533,23 @@ const TelNonTechCommulative = () => {
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                           
+                            const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
                               <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
                           <td>{elem.user_type || 0}</td>
-                          
+                          <td>{elem.Scanned || 0}</td>
+                          <td>{elem.QC || 0}</td>
+                          <td>{elem.Indexing || 0}</td>
+                          <td>{elem.Flagging || 0}</td>
+                          <td>{elem.CBSL_QA || 0}</td>
+                          <td>{elem.Client_QC || 0}</td>
                           <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
                         <td>{elem.DocPreparation || 0}</td>
                         <td>{elem.Guard || 0}</td>
-                          
+                          <td>{rowTotalSum.toFixed(2)}</td>
                           <td></td>
                         </tr>
                             );
@@ -558,6 +565,8 @@ const TelNonTechCommulative = () => {
           </div>
         )}
   
+ 
+
 {userView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
@@ -619,7 +628,13 @@ const TelNonTechCommulative = () => {
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Date</th>
-                            
+                            <th>Lot No</th>
+                            <th>Scanned</th>
+                            <th>QC</th>
+                            <th>Indexing</th>
+                            <th>Flagging</th>
+                            <th>CBSL-QA</th>
+                            <th>Client-QC</th>
                             <th>Counting</th>
                     <th>Inventory</th>
                     <th>DocPreparation</th>
@@ -630,19 +645,25 @@ const TelNonTechCommulative = () => {
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                           
+                            const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
                               <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                               <td>{index + 1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type || 0}</td>
                               <td>{elem.Date}</td>
-                                    
+                                    <td>{elem.lotno}</td>
+                              <td>{elem.Scanned || 0}</td>
+                              <td>{elem.QC || 0}</td>
+                              <td>{elem.Indexing || 0}</td>
+                              <td>{elem.Flagging || 0}</td>
+                              <td>{elem.CBSL_QA || 0}</td>
+                              <td>{elem.Client_QC || 0}</td>
                               <td>{elem.Counting || 0}</td>
                             <td>{elem.Inventory || 0}</td>
                             <td>{elem.DocPreparation || 0}</td>
                             <td>{elem.Guard || 0}</td>
-                              
+                              <td>{rowTotalSum.toFixed(2)}</td>
                               <td></td>
                             </tr>
                             );
@@ -662,4 +683,4 @@ const TelNonTechCommulative = () => {
     );
 }
 
-export default TelNonTechCommulative
+export default TelAllCumulative

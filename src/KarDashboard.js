@@ -17,12 +17,16 @@ import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import KarNonTechCumulative from './KarNonTechCumulative';
 import KarNonTechPeriodic from './KarNonTechPeriodic';
+import KarAllCumulative from './KarAllCumulative';
+import KarAllPeriodic from './KarAllPeriodic';
 
 const KarDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
     const [shownonTechPeriodicSummary, setShowNonTechPeriodicSummary] = useState(false);
     const [shownonTechCumulativeSummary, setShowNonTechCumulativeSummary] = useState(false);
+    const [showAllPeriodicSummary, setShowAllPeriodicSummary] = useState(false);
+    const [showAllCumulativeSummary, setShowAllCumulativeSummary] = useState(false);
     const [periodicSelected, setPeriodicSelected] = useState(true);
     const [cumulativeSelected, setCumulativeSelected] = useState(false);
     const [allSelected, setAllSelected] = useState(true);
@@ -126,12 +130,30 @@ const KarDashboard = () => {
                 setShowCumulativeSummary(false);
                 setShowNonTechCumulativeSummary(false);
                 setError('');
+            } 
+        } else if (allSelected && cumulativeSelected) {
+            setShowAllCumulativeSummary(true);
+            setShowCumulativeSummary(false);
+            setFromDate("");
+            setToDate("");
+            setShowPeriodicSummary(false);
+            setShowAllPeriodicSummary(false);
+            setError('');
+        } else if (allSelected && periodicSelected) {
+            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+            if (fromDate && toDate) {
+                // If both dates are provided, show the summary report
+                setShowAllPeriodicSummary(true);
+                setShowPeriodicSummary(false);
+                setShowCumulativeSummary(false);
+                setShowAllCumulativeSummary(false);
+                setError('');
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
         } else {
-            setError('Please choose an option.')
+            setError('Please choose an option.');
         }
     };
 
@@ -523,6 +545,8 @@ const KarDashboard = () => {
             {showCumulativeSummary && <KarTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
             {shownonTechCumulativeSummary && <KarNonTechCumulative />}
             {shownonTechPeriodicSummary && <KarNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showAllCumulativeSummary && <KarAllCumulative />}
+            {showAllPeriodicSummary && <KarAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
             <ToastContainer />
         </>

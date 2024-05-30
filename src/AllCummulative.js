@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "./API";
 import axios from "axios";
+import { IoMdCloseCircle } from "react-icons/io";
 
 import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
