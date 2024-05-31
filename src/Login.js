@@ -94,7 +94,17 @@ const handleSubmit = async (event) => {
       const data = await response.json();
       console.log("Data received from backend:", data);
       localStorage.setItem('user', JSON.stringify(data));
-      navigate('/projects');
+      if (data.projects && data.projects.includes(1)) {
+        navigate('/UPDCDashboard');
+      } else if (data.projects && data.projects.includes(2)) {
+        navigate('/TelDashboard');
+      } else if (data.projects && data.projects.includes(3)) {
+        navigate('/KarDashboard');
+      } 
+      else {
+        navigate('/projects');
+      }
+      // navigate('/projects');
     } else if (response.status === 401) {
       setErrorMessages({ password: errors.password }); // Invalid username or email
     } else if (response.status === 403) {

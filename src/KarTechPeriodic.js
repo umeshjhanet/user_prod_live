@@ -417,33 +417,47 @@ fetchPrices();
           return multipliedLocation;
         } else {
           console.error(`No matching price found for location: ${location.locationname}`);
-          return location;
+          return {
+            ...location,
+            Scanned: 0,
+            QC: 0,
+            Client_QC: 0,
+            Flagging: 0,
+            Indexing: 0,
+            CBSL_QA: 0,
+            Counting: 0,
+            Inventory: 0,
+            DocPreparation: 0,
+            Guard: 0,
+            rowSum: 0,
+          };
         }
       });
 
-      // Enhance locationReport with rowSum from multipliedData
       const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.locationname);
         const correspondingMultiplied = multipliedData.find(m => normalizeName(m.locationname) === normalizedLocationName);
         return {
           ...location,
           rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-          
         };
       });
 
       setEnhancedLocationReport(enhancedLocationReport);
       const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       setSecondLastColumnTotal(sumOfRowSums);
+      console.log("Total", sumOfRowSums);
       console.log(enhancedLocationReport);
     }
   }, [price, locationReport]);
+
   useEffect(() => {
-    if (summaryReport && summaryReport.length > 0) {
+    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
       const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      console.log("Sum of Last Column", sumOfLastColumn);
       setLastColumnTotal(sumOfLastColumn);
     }
-  }, [summaryReport]);
+  }, [enhancedLocationReport]);
 
   return (
     <>

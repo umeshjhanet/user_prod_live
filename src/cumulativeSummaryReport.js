@@ -17,7 +17,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
   const [lastColumnTotal, setLastColumnTotal] = useState(0);
   const [locationReport, setLocationReport] = useState([]);
   const [price, setPrice] = useState([]);
-  const[enhancedLocationReport,setEnhancedLocationReport] = useState([]);
+  const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
   const [locationName, setLocationName] = useState("");
   const [multipliedData, setMultipliedData] = useState();
   const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
@@ -31,6 +31,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [multipliedLocationData, setMultipliedLocationData] = useState([]);
+  const [enhanceddetailedReportLocationWise, setEnhanceddetailedReportLocationWise] = useState([]);
   const ref = useRef(null);
   const [clickedRowIndex, setClickedRowIndex] = useState('');
   const handleLocationView = (locationName) => {
@@ -338,34 +339,127 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
           return multipliedLocation;
         } else {
           console.error(`No matching price found for location: ${location.locationname}`);
-          return location;
+          return {
+            ...location,
+            Scanned: 0,
+            QC: 0,
+            Client_QC: 0,
+            Flagging: 0,
+            Indexing: 0,
+            CBSL_QA: 0,
+
+            rowSum: 0,
+          };
         }
       });
 
-      // Enhance locationReport with rowSum from multipliedData
       const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.locationname);
         const correspondingMultiplied = multipliedData.find(m => normalizeName(m.locationname) === normalizedLocationName);
         return {
           ...location,
           rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-          
         };
       });
 
       setEnhancedLocationReport(enhancedLocationReport);
       const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       setSecondLastColumnTotal(sumOfRowSums);
+      console.log("Total", sumOfRowSums);
       console.log(enhancedLocationReport);
     }
   }, [price, locationReport]);
+
   useEffect(() => {
-    if (summaryReport && summaryReport.length > 0) {
+    if (price && detailedReportLocationWise && price.length > 0 && detailedReportLocationWise.length > 0) {
+      const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim().toLowerCase() : '');
+  
+      const multipliedLocationData = detailedReportLocationWise.map(location => {
+        const normalizedLocationName = normalizeName(location.locationName);
+        console.log(`Normalized Location Name: ${normalizedLocationName}`);
+  
+        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+        console.log(`Matching Prices for ${normalizedLocationName}: `, prices);
+  
+        if (prices) {
+          const scannedValue = Number(location.Scanned);
+          const qcValue = Number(location.QC);
+          const clientQcValue = Number(location.Client_QC);
+          const flaggingValue = Number(location.Flagging);
+          const indexingValue = Number(location.Indexing);
+          const cbslQaValue = Number(location.CBSL_QA);
+  
+          const multipliedLocation = {
+            ...location,
+            Scanned: scannedValue * prices.ScanRate,
+            QC: qcValue * prices.QcRate,
+            Client_QC: clientQcValue * prices.ClientQcRate,
+            Flagging: flaggingValue * prices.FlagRate,
+            Indexing: indexingValue * prices.IndexRate,
+            CBSL_QA: cbslQaValue * prices.CbslQaRate,
+          };
+  
+          const rowSum =
+            multipliedLocation.Scanned +
+            multipliedLocation.QC +
+            multipliedLocation.Client_QC +
+            multipliedLocation.Flagging +
+            multipliedLocation.Indexing +
+            multipliedLocation.CBSL_QA;
+  
+          multipliedLocation.rowSum = rowSum;
+  
+          console.log(`Multiplied Location Data: `, multipliedLocation);
+  
+          return multipliedLocation;
+        } else {
+          console.error(`No matching price found for location: ${location.locationName}`);
+          return {
+            ...location,
+            Scanned: 0,
+            QC: 0,
+            Client_QC: 0,
+            Flagging: 0,
+            Indexing: 0,
+            CBSL_QA: 0,
+            rowSum: 0,
+          };
+        }
+      });
+  
+      console.log("Multiplied Location Data Array: ", multipliedLocationData);
+  
+      const enhanceddetailedReportLocationWise = detailedReportLocationWise.map(location => {
+        const normalizedLocationName = normalizeName(location.locationName);
+        const correspondingMultiplied = multipliedLocationData.find(m => normalizeName(m.locationName) === normalizedLocationName);
+  
+        if (correspondingMultiplied) {
+          console.log(`Location: ${location.locationName}, Computed Row Sum: ${correspondingMultiplied.rowSum}`);
+        } else {
+          console.log(`No corresponding multiplied data found for: ${location.locationName}`);
+        }
+  
+        return {
+          ...location,
+          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+        };
+      });
+  
+      console.log("Enhanced Detailed Report Location Wise before state update: ", enhanceddetailedReportLocationWise);
+      setEnhanceddetailedReportLocationWise(enhanceddetailedReportLocationWise);
+      console.log("State updated with Enhanced Detailed Report Location Wise.");
+    }
+  }, [price, detailedReportLocationWise]);
+  
+  useEffect(() => {
+    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
       const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      console.log("Sum of Last Column", sumOfLastColumn);
       setLastColumnTotal(sumOfLastColumn);
     }
-  }, [summaryReport]);
-
+  }, [enhancedLocationReport]);
+  console.log("Prices", price);
+  console.log("LocationWiseUsers", detailedReportLocationWise);
   return (
     <>
       {isLoading && <Loader />}
@@ -541,8 +635,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            // const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                          {enhanceddetailedReportLocationWise && console.log("Rendering Data: ", enhanceddetailedReportLocationWise)}
+                          {enhanceddetailedReportLocationWise && enhanceddetailedReportLocationWise.map((elem, index) => {
                             return (
                               <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                                 <td>{index + 1}</td>
@@ -554,7 +648,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                {/* <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td> */}
+                                <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
                                 <td></td>
                               </tr>
                             );

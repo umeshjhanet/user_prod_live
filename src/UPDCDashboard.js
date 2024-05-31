@@ -15,6 +15,7 @@ import { FaHome } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import AllCummulative from './AllCummulative';
 import AllPeriodic from './AllPeriodic';
+import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 
 
 
@@ -41,7 +42,15 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showFullTable, setShowFullTable] = useState(false);
     const [showCalculator, setShowCalculator] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
+    const [userData, setUserData] = useState(null);
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUserData(JSON.parse(storedUser));
+        }
+    }, []);
 
     const handleRadioChange = (event) => {
         // Update state when the radio button is changed
@@ -105,6 +114,8 @@ const Dashboard = () => {
                 // If both dates are provided, show the summary report
                 setShowPeriodicSummary(true);
                 setShowCumulativeSummary(false);
+                setShowAllPeriodicSummary(false);
+                setShowAllCumulativeSummary(false);
                 setShowNonTechCumulativeSummary(false);
                 setShowNonTechPeriodicSummary(false);
                 setError('');
@@ -118,6 +129,8 @@ const Dashboard = () => {
             setFromDate("");
             setToDate("");
             setShowPeriodicSummary(false);
+            setShowAllPeriodicSummary(false);
+            setShowAllCumulativeSummary(false);
             setShowNonTechCumulativeSummary(false);
             setShowNonTechPeriodicSummary(false);
             setError('');
@@ -150,6 +163,8 @@ const Dashboard = () => {
             setToDate("");
             setShowPeriodicSummary(false);
             setShowAllPeriodicSummary(false);
+            setShowNonTechPeriodicSummary(false);
+            setShowNonTechCumulativeSummary(false);
             setError('');
         } else if (allSelected && periodicSelected) {
             // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
@@ -159,6 +174,8 @@ const Dashboard = () => {
                 setShowPeriodicSummary(false);
                 setShowCumulativeSummary(false);
                 setShowAllCumulativeSummary(false);
+                setShowNonTechPeriodicSummary(false);
+                setShowNonTechCumulativeSummary(false);
                 setError('');
             } else {
                 // If any date is missing, show an error message
@@ -245,17 +262,6 @@ const Dashboard = () => {
                 });
         };
 
-
-        // const fetchLocation = () => {
-        //     axios
-        //       .get(`${API_URL}/locations`)
-        //       .then((response) => setLocation(response.data))
-        //       .catch((error) => {
-        //         console.error("Error fetching location data:", error);
-        //       });
-        //   };
-
-
         const fetchBusinessRate = () => {
             axios
                 .get(`${API_URL}/getbusinessrate`)
@@ -265,44 +271,8 @@ const Dashboard = () => {
                 });
         };
 
-
-        // const fetchTechData = async () => {
-        //   try {
-        //     const response = await axios.get(`${API_URL}/gettask`);
-        //     const data = response.data;
-        //     if (data.length > 0) {
-        //       // Assuming all objects have the same structure
-        //       setTableHeaders(Object.keys(data[0]));
-        //     }
-        //     setTableData(data);
-        //   } catch (error) {
-        //     console.error("Error fetching data:", error);
-        //   }
-        // };
-
-
-        // const fetchNonTechData=async()=>{
-        //     try{
-        //         const response=await axios.get(`${API_URL}/getstaff`);
-        //         const data=response.data;
-        //         if(data.length>0){
-        //             setNonTechTableHeaders(Object.keys(data[0]));
-        //         }
-        //         setNonTechTableData(data);
-        //     } catch(error){
-        //         console.error("Error Fetchinf in data",error);
-        //     }
-        // }
-
-
-
-
         fetchSummaryReport();
         fetchBusinessRate();
-        // fetchTechData();
-        // fetchNonTechData();
-        // fetchLocation();
-
 
     }, []);
     console.log("Summary Data", summaryReport);
@@ -356,6 +326,9 @@ const Dashboard = () => {
         }
         setShowCalculator(false);
     }
+    const handleShowFilter = () => {
+        setShowFilter(prevState => !prevState);
+    }
 
 
     // Use multipliedData in your component as needed
@@ -369,57 +342,67 @@ const Dashboard = () => {
             <Header />
             <div className='container'>
                 <div className='row mt-3'>
-                    <div
-                        className="card"
-                        style={{ padding: "5px", backgroundColor: "#4BC0C0" }}
-                    >
+                    <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                         <h6 className="ms-2" style={{ color: "white" }}>
-                            <Link to='/projects' style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></Link> / Uttar Pradesh Courts
+                            {userData && userData.projects && userData.projects.includes(1) ? (
+                                <span style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></span>
+                            ) : (
+                                <Link to='/projects' style={{ color: 'white' }}>
+                                    <FaHome style={{ marginTop: '-2px' }} />
+                                </Link>
+                            )} / Uttar Pradesh Courts
                         </h6>
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
                         <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
                             <div className='col-1'><h5>Filter</h5></div>
-                            <div className='col-2'>
-                                <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
-                                <label htmlFor='all' className='ms-1'>All</label>
-                            </div>
-                            <div className='col-2'>
-                                <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
-                                <label htmlFor='technical' className='ms-1'>Technical</label>
-                            </div>
-                            <div className='col-2'>
-                                <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
-                                <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
-                            </div>
-                            <div className='col-6'></div>
+                            <div className='col-11'><button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button></div>
                         </div>
-                        <div className='row mt-4' style={{ marginBottom: '-10px' }}>
-                            <div className='col-1'></div>
-                            <div className='col-2'>
-                                <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
-                                <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                        {showFilter && (<>
+                            <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}>
+                                <div className='col-1'></div>
+                                <div className='col-2'>
+                                    <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
+                                    <label htmlFor='all' className='ms-1'>All</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
+                                    <label htmlFor='technical' className='ms-1'>Technical</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
+                                    <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
+                                </div>
+                                <div className='col-6'></div>
                             </div>
-                            <div className='col-2'>
-                                <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
-                                <label htmlFor='periodic' className='ms-1'>Periodic</label>
+
+                            <div className='row mt-4' style={{ marginBottom: '-10px' }}>
+                                <div className='col-1'></div>
+                                <div className='col-2'>
+                                    <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
+                                    <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                    <label htmlFor='periodic' className='ms-1'>Periodic</label>
+                                </div>
+                                {periodicSelected && (
+                                    <>
+                                        <div className='col-3'>
+                                            <label className='me-1'>From Date:</label>
+                                            <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                                        </div>
+                                        <div className='col-3'>
+                                            <label className='me-1'>To Date:</label>
+                                            <input type='date' value={toDate} onChange={handleToDateChange} />
+                                        </div>
+                                    </>
+                                )}
+                                <div className='col-1'>
+                                    <button className='btn btn-success' style={{ marginTop: '-5px' }} onClick={handleSubmit}>Submit</button>
+                                </div>
                             </div>
-                            {periodicSelected && (
-                                <>
-                                    <div className='col-3'>
-                                        <label className='me-1'>From Date:</label>
-                                        <input type='date' value={fromDate} onChange={handleFromDateChange} />
-                                    </div>
-                                    <div className='col-3'>
-                                        <label className='me-1'>To Date:</label>
-                                        <input type='date' value={toDate} onChange={handleToDateChange} />
-                                    </div>
-                                </>
-                            )}
-                            <div className='col-1'>
-                                <button className='btn btn-success' style={{ marginTop: '-5px' }} onClick={handleSubmit}>Submit</button>
-                            </div>
-                        </div>
+                        </>)}
                         {error && <p className='text-danger'>{error}</p>}
                     </div>
                     {allSelected && (
@@ -433,27 +416,25 @@ const Dashboard = () => {
                                     <button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
                                 </div>
                             </div>
-                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Location</th>
-                                        <th>Scanned</th>
-                                        <th>QC</th>
-                                        <th>Indexing</th>
-                                        <th>Flagging</th>
-                                        <th>CBSL_QA</th>
-                                        <th>Client_QC</th>
-                                        <th>Counting</th>
-                                        <th>Inventory</th>
-                                        <th>Doc Preparation</th>
-                                        <th>Guard</th>
-                                        <th>Total Price</th>
-                                        <th>Edit Price</th>
-                                    </tr>
-                                </thead>
-
-
-                                {showFullTable && (
+                            {showFullTable && (
+                                <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                    <thead>
+                                        <tr>
+                                            <th>Location</th>
+                                            <th>Scanned</th>
+                                            <th>QC</th>
+                                            <th>Indexing</th>
+                                            <th>Flagging</th>
+                                            <th>CBSL_QA</th>
+                                            <th>Client_QC</th>
+                                            <th>Counting</th>
+                                            <th>Inventory</th>
+                                            <th>Doc Preparation</th>
+                                            <th>Guard</th>
+                                            <th>Total Price</th>
+                                            <th>Edit Price</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         {prices && prices.map((elem, index) => {
                                             const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.Counting + elem.Inventory + elem.DocPreparation + elem.Guard;
@@ -476,9 +457,9 @@ const Dashboard = () => {
                                             )
                                         })}
                                     </tbody>
-                                )
-                                }
-                            </table>
+                                </table>
+                            )
+                            }
                         </div>
                     )}
                     {technicalSelected && (<div className='row mt-2 ms-0 me-0 search-report-card'>
@@ -493,21 +474,22 @@ const Dashboard = () => {
                                 <button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
                             </div>
                         </div>
-                        <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                            <thead>
-                                <tr>
-                                    <th>Location</th>
-                                    <th>Scanned</th>
-                                    <th>QC</th>
-                                    <th>Indexing</th>
-                                    <th>Flagging</th>
-                                    <th>CBSL_QA</th>
-                                    <th>Client_QC</th>
-                                    <th>Total Price</th>
-                                    <th>Edit Price</th>
-                                </tr>
-                            </thead>
-                            {showFullTable && (
+                        {showFullTable && (
+                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Scanned</th>
+                                        <th>QC</th>
+                                        <th>Indexing</th>
+                                        <th>Flagging</th>
+                                        <th>CBSL_QA</th>
+                                        <th>Client_QC</th>
+                                        <th>Total Price</th>
+                                        <th>Edit Price</th>
+                                    </tr>
+                                </thead>
+
                                 <tbody>
                                     {prices && prices.map((elem, index) => {
                                         const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate;
@@ -526,9 +508,10 @@ const Dashboard = () => {
                                         )
                                     })}
                                 </tbody>
-                            )
-                            }
-                        </table>
+
+                            </table>
+                        )
+                        }
                     </div>)}
                     {nonTechnicalSelected && (
                         <div className='row mt-2 ms-0 me-0 search-report-card'>
@@ -541,19 +524,20 @@ const Dashboard = () => {
                                     <button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
                                 </div>
                             </div>
-                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Location</th>
-                                        <th>Counting</th>
-                                        <th>Inventory</th>
-                                        <th>Doc Preparation</th>
-                                        <th>Guard</th>
-                                        <th>Total Price</th>
-                                        <th>Edit Price</th>
-                                    </tr>
-                                </thead>
-                                {showFullTable && (
+                            {showFullTable && (
+                                <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                    <thead>
+                                        <tr>
+                                            <th>Location</th>
+                                            <th>Counting</th>
+                                            <th>Inventory</th>
+                                            <th>Doc Preparation</th>
+                                            <th>Guard</th>
+                                            <th>Total Price</th>
+                                            <th>Edit Price</th>
+                                        </tr>
+                                    </thead>
+
                                     <tbody>
                                         {prices && prices.map((elem, index) => {
                                             const totalRate = elem.Counting + elem.Inventory + elem.DocPreparation + elem.Guard;
@@ -570,9 +554,10 @@ const Dashboard = () => {
                                             )
                                         })}
                                     </tbody>
-                                )
-                                }
-                            </table>
+
+                                </table>
+                            )
+                            }
                         </div>
                     )}
 

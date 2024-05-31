@@ -307,7 +307,20 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           console.error("Error in exporting data:", error);
         });
     };
-
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/getbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
+    fetchPrices();
 
     fetchSummaryReport();
     fetchLocationReport();
@@ -359,7 +372,6 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   };
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
-
   useEffect(() => {
     if (price && locationReport && price.length > 0 && locationReport.length > 0) {
       const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
@@ -372,12 +384,12 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         if (prices) {
           const multipliedLocation = {
             ...location,
-            Scanned: Number(location.Scanned) * prices.ScanRate,
-            QC: Number(location.QC) * prices.QcRate,
-            Client_QC: Number(location.Client_QC) * prices.ClientQcRate,
-            Flagging: Number(location.Flagging) * prices.FlagRate,
-            Indexing: Number(location.Indexing) * prices.IndexRate,
-            CBSL_QA: Number(location.CBSL_QA) * prices.CbslQaRate,
+            Scanned: Number(location.Scanned || 0) * (prices.ScanRate || 0),
+            QC: Number(location.QC || 0) * (prices.QcRate || 0),
+            Client_QC: Number(location.Client_QC || 0) * (prices.ClientQcRate || 0),
+            Flagging: Number(location.Flagging || 0) * (prices.FlagRate || 0),
+            Indexing: Number(location.Indexing || 0) * (prices.IndexRate || 0),
+            CBSL_QA: Number(location.CBSL_QA || 0) * (prices.CbslQaRate || 0),
             Counting: Number(location.Counting || 0) * (prices.Counting || 0),
             Inventory: Number(location.Inventory || 0) * (prices.Inventory || 0),
             DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparation || 0),
@@ -401,11 +413,23 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           return multipliedLocation;
         } else {
           console.error(`No matching price found for location: ${location.LocationName}`);
-          return location;
+          return {
+            ...location,
+            Scanned: 0,
+            QC: 0,
+            Client_QC: 0,
+            Flagging: 0,
+            Indexing: 0,
+            CBSL_QA: 0,
+            Counting: 0,
+            Inventory: 0,
+            DocPreparation: 0,
+            Guard: 0,
+            rowSum: 0,
+          };
         }
       });
 
-      // Enhance locationReport with rowSum from multipliedData
       const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
         const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
@@ -426,10 +450,11 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   useEffect(() => {
     if (enhancedLocationReport && enhancedLocationReport.length > 0) {
       const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      console.log("Sum of Last Column", sumOfLastColumn);
       setLastColumnTotal(sumOfLastColumn);
     }
-  }, [enhancedLocationReport, summaryReport]);
-  console.log("Location Data", multipliedLocationData);
+  }, [enhancedLocationReport]);
+  console.log("Location Data", enhancedLocationReport);
   const Loader = () => (
     <div className="loader-overlay">
       <div className="loader"></div>
@@ -465,17 +490,17 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           <tbody>
             <tr>
               <td>1</td>
-              <td>{summaryReport.Scanned}</td>
-              <td>{summaryReport.QC}</td>
-              <td>{summaryReport.Flagging}</td>
-              <td>{summaryReport.Indexing}</td>
-              <td>{summaryReport.CBSL_QA}</td>
-              <td>{summaryReport.Client_QC}</td>
-              <td>{summaryReport.Counting}</td>
-              <td>{summaryReport.Inventory}</td>
-              <td>{summaryReport.DocPreparation}</td>
-              <td>{summaryReport.Guard}</td>
-              <td></td>
+              <td>{isNaN(parseInt(summaryReport.Scanned)) ? 0 : parseInt(summaryReport.Scanned).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.QC)) ? 0 : parseInt(summaryReport.QC).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.Flagging)) ? 0 : parseInt(summaryReport.Flagging).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.Indexing)) ? 0 : parseInt(summaryReport.Indexing).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.CBSL_QA)) ? 0 : parseInt(summaryReport.CBSL_QA).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.Client_QC)) ? 0 : parseInt(summaryReport.Client_QC).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.Counting)) ? 0 : parseInt(summaryReport.Counting).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.Inventory)) ? 0 : parseInt(summaryReport.Inventory).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.DocPreparation)) ? 0 : parseInt(summaryReport.DocPreparation).toLocaleString()}</td>
+              <td>{isNaN(parseInt(summaryReport.Guard)) ? 0 : parseInt(summaryReport.Guard).toLocaleString()}</td>
+              <td>{lastColumnTotal.toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
