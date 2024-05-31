@@ -45,44 +45,50 @@ const Projects = () => {
     }, []);
 
     const computeSums = (details) => {
-        if (!Array.isArray(details)) {
-            console.error("Expected details to be an array, but got:", details);
-            return {};
-        }
-        return details.reduce((sums, project) => {
-            Object.keys(project).forEach(key => {
-                sums[key] = (sums[key] || 0) + (parseInt(project[key]) || 0);
-            });
-            return sums;
-        }, {});
+        const categories = ["NonTech", "Tech"];
+        const sum = {
+            Counting: 0,
+            Inventory: 0,
+            DocPreparation: 0,
+            Guard: 0,
+            Scanned: 0,
+            QC: 0,
+            Indexing: 0,
+            Flagging: 0,
+            CBSL_QA: 0,
+            Client_QC: 0
+        };
+
+        categories.forEach(category => {
+            if (details[category]) {
+                details[category].forEach(project => {
+                    Object.keys(project).forEach(key => {
+                        sum[key] = (sum[key] || 0) + (parseInt(project[key], 10) || 0);
+                    });
+                });
+            }
+        });
+
+        return sum;
     };
 
-    const updcSums = updcprojectDetails;
-    const telSums = telprojectDetails;
-    const karSums = karprojectDetails;
+    const updcSums = computeSums(updcprojectDetails);
+    const telSums = computeSums(telprojectDetails);
+    const karSums = computeSums(karprojectDetails);
 
-    const allSums = {
-        Counting: (updcSums.Counting || 0) + (telSums.Counting || 0) + (karSums.Counting || 0),
-        Inventory: (updcSums.Inventory || 0) + (telSums.Inventory || 0) + (karSums.Inventory || 0),
-        DocPreparation: (updcSums.DocPreparation || 0) + (telSums.DocPreparation || 0) + (karSums.DocPreparation || 0),
-        Guard: (updcSums.Guard || 0) + (telSums.Guard || 0) + (karSums.Guard || 0),
-        Scanned: (updcSums.Scanned || 0) + (telSums.Scanned || 0) + (karSums.Scanned || 0),
-        QC: (updcSums.QC || 0) + (telSums.QC || 0) + (karSums.QC || 0),
-        Indexing: (updcSums.Indexing || 0) + (telSums.Indexing || 0) + (karSums.Indexing || 0),
-        Flagging: (updcSums.Flagging || 0) + (telSums.Flagging || 0) + (karSums.Flagging || 0),
-        CBSL_QA: (updcSums.CBSL_QA || 0) + (telSums.CBSL_QA || 0) + (karSums.CBSL_QA || 0),
-        Client_QC: (updcSums.Client_QC || 0) + (telSums.Client_QC || 0) + (karSums.Client_QC || 0),
-    };
+    const allSums = {};
+    const categories = [
+        "Counting", "Inventory", "DocPreparation", "Guard", "Scanned", 
+        "QC", "Indexing", "Flagging", "CBSL_QA", "Client_QC"
+    ];
 
-    console.log("UPDC Project Details:", updcprojectDetails);
-    console.log("Telangana Project Details:", telprojectDetails);
-    console.log("Karnataka Project Details:", karprojectDetails);
-    console.log("Computed Sums:", { updcSums, telSums, karSums, allSums });
+    categories.forEach(category => {
+        allSums[category] = 
+            (updcSums[category] || 0) + 
+            (telSums[category] || 0) + 
+            (karSums[category] || 0);
+    });
 
-    console.log("ProjectDetails", updcprojectDetails);
-    if (!isLoggedIn) {
-        return <Navigate to="/" />;
-    }
     return (
         
         <>
@@ -96,35 +102,23 @@ const Projects = () => {
                         <div className="border-top"></div>
                         <div className="border-bottom"></div>
                         <div className='row text-center'>
-                            <Link to="/dashboard" style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to="#" style={{ textDecoration: 'none', color: 'black' }}>
                                 <h3 style={{ textDecoration: 'none', color: 'black' }}>All Projects</h3>
                             </Link>
                         </div>
                         <div className='row mt-2 mb-2'>
                             <div className='col-1'></div>
                             <div className='col-6' style={{ textAlign: 'right' }}>
-                                <p><b>Counting :</b></p>
-                                <p><b>Inventory :</b></p>
-                                <p><b>DocPrepared :</b></p>
-                                <p><b>Guard :</b></p>
-                                <p><b>Scanned :</b></p>
-                                <p><b>QC :</b></p>
-                                <p><b>Indexing :</b></p>
-                                <p><b>Flagging :</b></p>
-                                <p><b>CBSL_QA :</b></p>
-                                <p><b>Client_QC :</b></p>
+                                {categories.map(category => (
+                                    <p key={category}><b>{category}:</b></p>
+                                ))}
                             </div>
                             <div className='col-4' style={{ padding: '0' }}>
-                                <p style={{ color: '#508D69' }}><b>{allSums.Counting.toLocaleString()}</b></p>
-                                <p style={{ color: '#508D69' }}><b>{allSums.Inventory.toLocaleString()}</b></p>
-                                <p style={{ color: '#508D69' }}><b>{allSums.DocPreparation.toLocaleString()}</b></p>
-                                <p style={{ color: '#508D69' }}><b>{allSums.Guard.toLocaleString()}</b></p>
-                                <p style={{ color: '#65B741' }}><b>{allSums.Scanned.toLocaleString()}</b></p>
-                                <p style={{ color: '#65B741' }}><b>{allSums.QC.toLocaleString()}</b></p>
-                                <p style={{ color: '#65B741' }}><b>{allSums.Indexing.toLocaleString()}</b></p>
-                                <p style={{ color: '#65B741' }}><b>{allSums.Flagging.toLocaleString()}</b></p>
-                                <p style={{ color: '#65B741' }}><b>{allSums.CBSL_QA.toLocaleString()}</b></p>
-                                <p style={{ color: '#65B741' }}><b>{allSums.Client_QC.toLocaleString()}</b></p>
+                                {categories.map(category => (
+                                    <p key={category} style={{ color: '#508D69' }}>
+                                        <b>{allSums[category].toLocaleString()}</b>
+                                    </p>
+                                ))}
                             </div>
                         </div>
                     </div>

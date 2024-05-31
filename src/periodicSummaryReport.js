@@ -10,6 +10,8 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
   const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
+  const [price, setPrice] = useState([]);
+  const[enhancedLocationReport,setEnhancedLocationReport] = useState([]);
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
   const [showModal, setShowModal] = useState(true);
@@ -23,6 +25,8 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
   const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
+  const [lastColumnTotal, setLastColumnTotal] = useState(0);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -256,6 +260,19 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       }
     };
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/getbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
 
     const fetchLocationReport = async () => {
       setIsLoading(true);
@@ -305,7 +322,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
         });
     };
 
-
+fetchPrices();
     fetchSummaryReport();
     fetchLocationReport();
     fetchDetailedReportCsvFile(startDate, endDate);
@@ -364,6 +381,77 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
       <div className="loader"></div>
     </div>
   );
+  useEffect(() => {
+    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+      const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
+
+      const multipliedData = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.locationname);
+
+        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+
+        if (prices) {
+          const multipliedLocation = {
+            ...location,
+            Scanned: Number(location.Scanned) * prices.ScanRate,
+            QC: Number(location.QC) * prices.QcRate,
+            Client_QC: Number(location.Client_QC) * prices.ClientQcRate,
+            Flagging: Number(location.Flagging) * prices.FlagRate,
+            Indexing: Number(location.Indexing) * prices.IndexRate,
+            CBSL_QA: Number(location.CBSL_QA) * prices.CbslQaRate,
+          };
+
+          const rowSum =
+            multipliedLocation.Scanned +
+            multipliedLocation.QC +
+            multipliedLocation.Client_QC +
+            multipliedLocation.Flagging +
+            multipliedLocation.Indexing +
+            multipliedLocation.CBSL_QA;
+
+          multipliedLocation.rowSum = rowSum;
+
+          return multipliedLocation;
+        } else {
+          console.error(`No matching price found for location: ${location.locationname}`);
+          return {
+            ...location,
+            Scanned: 0,
+            QC: 0,
+            Client_QC: 0,
+            Flagging: 0,
+            Indexing: 0,
+            CBSL_QA: 0,
+            rowSum: 0,
+          };
+        }
+      });
+
+      const enhancedLocationReport = locationReport.map(location => {
+        const normalizedLocationName = normalizeName(location.locationname);
+        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.locationname) === normalizedLocationName);
+        return {
+          ...location,
+          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+        };
+      });
+
+      setEnhancedLocationReport(enhancedLocationReport);
+      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setSecondLastColumnTotal(sumOfRowSums);
+      console.log("Total", sumOfRowSums);
+      console.log(enhancedLocationReport);
+    }
+  }, [price, locationReport]);
+
+  useEffect(() => {
+    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
+      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      console.log("Sum of Last Column", sumOfLastColumn);
+      setLastColumnTotal(sumOfLastColumn);
+    }
+  }, [enhancedLocationReport]);
+
   return (
     <>
       {isLoading && <Loader />}
@@ -396,7 +484,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
                         <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                        <td>{isNaN(parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2))) ? 0 : parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2)).toLocaleString()}</td>
+                        <td>{lastColumnTotal.toLocaleString()}</td>
                       </>
                     ))}
                   </tr>
@@ -460,24 +548,20 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {locationReport &&
-                    locationReport.map((elem, index) => {
-                      const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                      return (
-                        <tr onClick={() => handleLocationView(elem.locationname)} key={index} >
-                          <td>{index + 1}</td>
-                          <td>{elem.locationname || 0}</td>
-                          <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                          <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                          <td>{isNaN(parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2))) ? 0 : parseInt((totalPrice * parseFloat(elem.Client_QC)).toFixed(2)).toLocaleString()}</td>
-                          <td></td>
-                        </tr>
-                      );
-                    })}
+                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                      <td>{index + 1}</td>
+                      <td>{elem.locationname || 0}</td>
+                      <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                      <td></td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import Header from './Components/Header';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { API_URL } from './API';
+
 
 const User_Form = () => {
   const [group, setGroup] = useState([]);
@@ -50,6 +50,7 @@ const User_Form = () => {
   const [showProject, setShowProject] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+
   const [formData, setFormData] = useState({
     user_email_id: '',
     first_name: '',
@@ -71,12 +72,14 @@ const User_Form = () => {
     projects:'',
   });
 
+
   const groupDropdownRef = useRef(null);
   const locationDropdownRef = useRef(null);
   const privilegeDropdownRef = useRef(null);
   const storageDropdownRef = useRef(null);
   const reportingDropdownRef = useRef(null);
   const projectDropdownRef = useRef(null);
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -124,11 +127,13 @@ const User_Form = () => {
       }
     };
 
+
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 8 && !e.target.value) {
@@ -159,11 +164,13 @@ const User_Form = () => {
     }
   };
 
+
   const filteredReporting = reporting.filter((elem) =>
     `${elem.first_name} ${elem.last_name} (${elem.user_email_id})`
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
+
 
   useEffect(() => {
     const fetchGroup = () => {
@@ -197,12 +204,14 @@ const User_Form = () => {
     //     .catch(error => console.error(error))
     // }
 
+
     const fetchReporting = async () => {
       // Replace with your API call to fetch reporting data
       const response = await fetch(`${API_URL}/reporting`); // Replace with actual API endpoint
       const data = await response.json();
       setReporting(data);
     };
+
 
     const fetchProject = () => {
             fetch("http://localhost:5001/getproject")
@@ -218,21 +227,26 @@ const User_Form = () => {
     fetchReporting();
   }, [])
 
+
   const handleGroupDropdown = () => {
     setGroupDropdown(!groupDropdown);
   }
+
 
   const handleLocationDropdown = () => {
     setLocationDropdown(!locationDropdown);
   }
 
+
   const handlePrivilegeDropdown = () => {
     setPrivilegeDropdown(!privilegeDropdown);
   }
 
+
   const handleStorageDropdown = () => {
     setStorageDropdown(!storageDropdown);
   }
+
 
   const handleReportingDropdown = () => {
     setReportingDropdown(!reportingDropdown);
@@ -240,6 +254,7 @@ const User_Form = () => {
   const handleProjectDropdown = () => {
         setProjectDropdown(!projectDropdown);
       }
+
 
   const handleSelectLocation = (id, name) => {
     const index = selectedLocations.findIndex(loc => loc.id === id);
@@ -257,6 +272,7 @@ const User_Form = () => {
         setShowProject(!showProject);
         setProjectDropdown(false);
       };
+
 
 
   const handleSelectGroup = (id, name) => {
@@ -285,12 +301,14 @@ const User_Form = () => {
     setSearchQuery(name);
   };
 
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
       return;
     }
+
 
     if (formData.password !== formData.confirmPassword) {
       setPasswordMatch(false);
@@ -317,8 +335,10 @@ const User_Form = () => {
   };
 
 
+
   const validateForm = () => {
     let valid = true;
+
 
     if (!formData.first_name) {
       setFirstNameError(true);
@@ -327,12 +347,14 @@ const User_Form = () => {
       setFirstNameError(false);
     }
 
+
     if (!formData.last_name) {
       setLastNameError(true);
       valid = false;
     } else {
       setLastNameError(false);
     }
+
 
     if (!formData.user_email_id) {
       setEmailError(true);
@@ -341,6 +363,7 @@ const User_Form = () => {
       setEmailError(false);
     }
 
+
     if (!formData.phone_no) {
       setPhoneNoError(true);
       valid = false;
@@ -348,12 +371,14 @@ const User_Form = () => {
       setPhoneNoError(false);
     }
 
+
     if (!formData.password) {
       setPasswordError(true);
       valid = false;
     } else {
       setPasswordError(false);
     }
+
 
     if (!formData.confirmPassword) {
       setConfirmPasswordError(true);
@@ -369,8 +394,10 @@ const User_Form = () => {
     }
    
 
+
     return valid;
   }
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -380,9 +407,11 @@ const User_Form = () => {
       handleSelectLocation(id, locationName);
     } else {
 
+
       setFormData({ ...formData, [name]: value, group_id: selectedGroupId, locations: selectedLocationId, role_id: selectedPrivilegeId, sl_id: selectedStorageId, user_id: selectedReportingId, projects: selectedProjectId });
     }
   }
+
 
   const handleInputChangeReporting = (e) => {
     setSearchQuery(e.target.value);
@@ -390,13 +419,16 @@ const User_Form = () => {
     setReportingDropdown(true); // Open the dropdown when user types
   };
 
+
   const handleInputChangePrivilege = (e) => {
     setSelectedPrivilege(e.target.value); // Allow user to clear the input
   };
 
+
   const handleInputChangeGroup = (e) => {
     setSelectedGroup(e.target.value); // Allow user to clear the input
   };
+
 
   const handleInputChangeProject = (e) => {
     setSelectedProject(e.target.value); // Allow user to clear the input
@@ -404,6 +436,7 @@ const User_Form = () => {
   const handleInputChangeStorage = (e) => {
     setSelectedStorage(e.target.value); // Allow user to clear the input
   };
+
 
   return (
     <>
@@ -526,6 +559,7 @@ const User_Form = () => {
                       </div>
                     )}
 
+
                     <label className='mt-1'>Select User's Privilege<span style={{ color: 'red' }}>*</span></label><br />
                     <input ref={privilegeDropdownRef} type='text' placeholder='Select Users Privilege' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedPrivilege || ''} onClick={handlePrivilegeDropdown} onChange={handleInputChangePrivilege} onKeyDown={handleKeyDown} /><br />
                     {privilegeError && <span style={{ color: 'red' }}>Privilege is required<br /></span>}
@@ -535,10 +569,13 @@ const User_Form = () => {
                           <div key={index} className='group-card' onClick={() => handleSelectPrivilege(elem.role_id, `${elem.user_role}`)}>
                             <p>{elem.user_role}</p>
 
+
                           </div>
                         ))}
 
+
                       </div>
+
 
                     )}
                     <label className='mt-1'>Select Storage</label><br />
@@ -551,6 +588,7 @@ const User_Form = () => {
                           </div>
                         ))}
                       </div>
+
 
                     )}
                     <label className='mt-1'>Select Reporting To</label><br />
@@ -583,10 +621,6 @@ const User_Form = () => {
 }
 
 
+
 export default User_Form
-
-
-
-
-
 
