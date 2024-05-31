@@ -351,7 +351,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
               <th>Flagging</th>
               <th>Indexing</th>
               <th>CBSL QA</th>
-              <th>Client QA</th>
+              <th>Client QC</th>
               <th>Counting</th>
               <th>Inventory</th>
               <th>Doc Preparation</th>
@@ -444,9 +444,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                       locationReport.map((elem, index) => {
                         const rowTotalSum = multipliedLocationData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                         return (
-                          <tr onClick={() => handleLocationView(elem.LocationName)} key={index} >
+                          <tr  key={index} >
                             <td>{index + 1}</td>
-                            <td>{elem.LocationName || 0}</td>
+                            <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                             <td>{elem.Scanned || 0}</td>
                             <td>{elem.QC || 0}</td>
                             <td>{elem.Indexing || 0}</td>
@@ -470,33 +470,45 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
             </div>
           </div>
  
-  
-  {locationView && showModal && (
+ 
+
+{locationView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                  <h6 className="ms-2" style={{ color: "white" }}>
-                    User Wise Summary Report
+            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="" style={{ color: "white" }}>
+              User Wise Summary Report
                   </h6>
                   <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
+                <IoMdCloseCircle />
                   </button>
-                <button type="button" className="close" onClick={toggleModal}>&times;</button>
+              </div>
+              <div className="row">
+                <div className="col-11"></div>
+                <div className="col-1" style={{textAlign:'right'}}>
+                <button className="btn btn-success" onClick={handleBackToLocationView}>
+                    <i className="fa fa-arrow-left"></i> Back
+                  </button>
+                </div>
+              
+                 
               </div>
               <div className="modal-body">
-                <div className="row " ref={ref}>
+
+                <div className="row mt-3" ref={ref}>
                   <div className="search-report-card">
-                    <div className="row"style={{marginTop:'-10px'}}>
-                      <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
-                      </div>
+                    <div className="row">
                       <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport} style={{padding:'2px'}}>
+                        <p>Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                      </div>
+                      <div className="col-8"></div>
+                      <div className="col-md-2">
+                        <button className="btn btn-success" onClick={handleLocationExport}>
                           Export CSV
                         </button>
                       </div>
-                      <div className="col-md-8 text-end">
-                        {showConfirmationLocation && (
+                      <div className="col-md-6 text-end">
+                        {showConfirmationUser && (
                           <div className="confirmation-dialog">
                             <div className="confirmation-content">
                               <p className="fw-bold">
@@ -517,7 +529,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                       <table className="table-bordered mt-2">
                         <thead>
                           <tr>
-                            <th>Sr.No.</th>
+                          <th>Sr.No.</th>
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Scanned</th>
@@ -527,9 +539,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
+                            <th>Inventory</th>
+                           <th>DocPreparation</th>
+                            <th>Guard</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>
                           </tr>
@@ -538,10 +550,10 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
                             const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr  key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
-                          <td>{elem.user_type || 0}</td>
+                          <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                           <td>{elem.Scanned || 0}</td>
                           <td>{elem.QC || 0}</td>
                           <td>{elem.Indexing || 0}</td>
@@ -650,7 +662,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
                             const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr key={index}>
                               <td>{index + 1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type || 0}</td>

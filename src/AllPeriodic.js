@@ -24,12 +24,12 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   const [isLoading, setIsLoading] = useState(true);
   const ref = useRef(null);
 
-  useEffect(() => {
-    if (locationView || userView) {
-      // Scroll to the referenced div when locationView or userView changes
-      ref.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [locationView, userView]);
+  // useEffect(() => {
+  //   if (locationView || userView) {
+  //     // Scroll to the referenced div when locationView or userView changes
+  //     ref.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [locationView, userView]);
 
   const handleLocationView = (locationName) => {
     setShowModal(true);

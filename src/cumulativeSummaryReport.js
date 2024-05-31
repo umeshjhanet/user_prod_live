@@ -404,9 +404,9 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                 )}
               </div>
               {showConfirmation && (
-                <div className="confirmation-dialog">
+                <div className="confirmation-dialog ">
                   <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                    <p className="confirmation-text fw-bold ">Are you sure you want to export the CSV file?</p>
                     <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
                     <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
                   </div>
@@ -496,8 +496,8 @@ const CumulativeSummaryReport = ({ multipliedData, prices, editedPrices }) => {
                         )}
                       </div>
                     </div>
-                    <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                    <div className="modal-table row ms-2 me-2 mb-5">
+                      <table className="table-bordered mt-2 mb-5">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
