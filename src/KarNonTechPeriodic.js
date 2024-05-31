@@ -539,9 +539,9 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                 </thead>
                 <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                    <tr  key={index}>
                       <td>{index + 1}</td>
-                      <td>{elem.LocationName || 0}</td>
+                      <td onClick={() => handleLocationView(elem.locationname)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
@@ -619,7 +619,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                               <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
+                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{elem.Counting || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
@@ -721,7 +721,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
                             const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>

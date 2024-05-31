@@ -467,9 +467,9 @@ const TelNonTechCommulative = () => {
                   </thead>
                   <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                    <tr  key={index}>
                       <td>{index + 1}</td>
-                      <td>{elem.LocationName || 0}</td>
+                      <td onClick={() => handleLocationView(elem.locationname)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
@@ -546,10 +546,10 @@ const TelNonTechCommulative = () => {
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
                            
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr  key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
-                          <td>{elem.user_type || 0}</td>
+                          <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                           
                           <td>{elem.Counting || 0}</td>
                         <td>{elem.Inventory || 0}</td>
@@ -645,7 +645,7 @@ const TelNonTechCommulative = () => {
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
                            
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr key={index}>
                               <td>{index + 1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type || 0}</td>

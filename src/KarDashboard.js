@@ -208,7 +208,7 @@ const KarDashboard = () => {
         try {
             const updatedPrice = prices[index];
             const response = await axios.put(
-                `${API_URL}/updatebusinessrate/${id}`,
+                `${API_URL}/karupdatebusinessrate/${id}`,
                 updatedPrice
             );
             console.log(response.data);
@@ -219,7 +219,7 @@ const KarDashboard = () => {
 
             // Fetch updated prices from the database
             const updatedPricesResponse = await axios.get(
-                `${API_URL}/getbusinessrate`
+                `${API_URL}/kargetbusinessrate`
             );
             setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
         } catch (error) {
@@ -466,7 +466,7 @@ const KarDashboard = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
-                                                    <td>{totalRate}</td>
+                                                    <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
                                             )
@@ -517,7 +517,7 @@ const KarDashboard = () => {
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}<sub onClick={() => handleShowCalculator(elem.FlagRate, 'FlagRate')}>Calculate</sub></td>
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}<sub onClick={() => handleShowCalculator(elem.CbslQaRate, 'CbslQaRate')}>Calculate</sub></td>
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}<sub onClick={() => handleShowCalculator(elem.ClientQcRate, 'ClientQcRate')}>Calculate</sub></td>
-                                                <td>{totalRate}</td>
+                                                <td>{totalRate.toFixed(3)}</td>
                                                 <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                             </tr>
                                         )
@@ -563,7 +563,7 @@ const KarDashboard = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
-                                                    <td>{totalRate}</td>
+                                                    <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
                                             )

@@ -538,9 +538,9 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                   </thead>
                   <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr onClick={() => handleLocationView(elem.LocationName)} key={index}>
+                    <tr  key={index}>
                       <td>{index + 1}</td>
-                      <td>{elem.LocationName || 0}</td>
+                      <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
@@ -627,10 +627,10 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
                             const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr  key={index}>
                           <td>{index + 1}</td>
                           <td>{elem.locationName}</td>
-                          <td>{elem.user_type || 0}</td>
+                          <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                           <td>{elem.Scanned || 0}</td>
                           <td>{elem.QC || 0}</td>
                           <td>{elem.Indexing || 0}</td>
@@ -739,7 +739,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
                             const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr  key={index}>
                               <td>{index + 1}</td>
                               <td>{elem.locationName}</td>
                               <td>{elem.user_type || 0}</td>

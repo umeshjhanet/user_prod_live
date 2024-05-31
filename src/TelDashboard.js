@@ -207,7 +207,7 @@ const TelDashboard = () => {
         try {
             const updatedPrice = prices[index];
             const response = await axios.put(
-                `${API_URL}/updatebusinessrate/${id}`,
+                `${API_URL}/telupdatebusinessrate/${id}`,
                 updatedPrice
             );
             console.log(response.data);
@@ -218,7 +218,7 @@ const TelDashboard = () => {
 
             // Fetch updated prices from the database
             const updatedPricesResponse = await axios.get(
-                `${API_URL}/getbusinessrate`
+                `${API_URL}/telgetbusinessrate`
             );
             setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
         } catch (error) {
@@ -226,6 +226,12 @@ const TelDashboard = () => {
             toast.error("Failed to update business rate");
         }
     };
+
+
+
+    
+    
+
 
     const handleEditPrice = (e, field, index) => {
         const newPrices = [...prices];
@@ -246,14 +252,7 @@ const TelDashboard = () => {
                 });
         };
 
-        // const fetchLocation = () => {
-        //     axios
-        //       .get(`${API_URL}/locations`)
-        //       .then((response) => setLocation(response.data))
-        //       .catch((error) => {
-        //         console.error("Error fetching location data:", error);
-        //       });
-        //   };
+       
 
         const fetchBusinessRate = () => {
             axios
@@ -264,41 +263,8 @@ const TelDashboard = () => {
                 });
         };
 
-        // const fetchTechData = async () => {
-        //   try {
-        //     const response = await axios.get(`${API_URL}/gettask`);
-        //     const data = response.data;
-        //     if (data.length > 0) {
-        //       // Assuming all objects have the same structure
-        //       setTableHeaders(Object.keys(data[0]));
-        //     }
-        //     setTableData(data);
-        //   } catch (error) {
-        //     console.error("Error fetching data:", error);
-        //   }
-        // };
-
-        // const fetchNonTechData=async()=>{
-        //     try{
-        //         const response=await axios.get(`${API_URL}/getstaff`);
-        //         const data=response.data;
-        //         if(data.length>0){
-        //             setNonTechTableHeaders(Object.keys(data[0]));
-        //         }
-        //         setNonTechTableData(data);
-        //     } catch(error){
-        //         console.error("Error Fetchinf in data",error);
-        //     }
-        // }
-
-
-
         fetchSummaryReport();
         fetchBusinessRate();
-        // fetchTechData();
-        // fetchNonTechData();
-        // fetchLocation();
-
     }, []);
     console.log("Summary Data", summaryReport);
 
@@ -315,7 +281,7 @@ const TelDashboard = () => {
         });
     };
 
-    // Update multipliedData whenever editedPrices changes
+ 
     useEffect(() => {
         const newMultipliedData = multiplyData(summaryReport, editedPrices);
         setMultipliedData(newMultipliedData);
@@ -467,7 +433,7 @@ const TelDashboard = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
-                                                    <td>{totalRate}</td>
+                                                    <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
                                             )
@@ -519,7 +485,7 @@ const TelDashboard = () => {
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}<sub onClick={() => handleShowCalculator(elem.FlagRate, 'FlagRate')}>Calculate</sub></td>
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}<sub onClick={() => handleShowCalculator(elem.CbslQaRate, 'CbslQaRate')}>Calculate</sub></td>
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}<sub onClick={() => handleShowCalculator(elem.ClientQcRate, 'ClientQcRate')}>Calculate</sub></td>
-                                                <td>{totalRate}</td>
+                                                <td>{totalRate.toFixed(3)}</td>
                                                 <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                             </tr>
                                         )
@@ -565,7 +531,7 @@ const TelDashboard = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
-                                                    <td>{totalRate}</td>
+                                                    <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
                                             )
