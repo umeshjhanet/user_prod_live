@@ -4,6 +4,7 @@ import axios from "axios";
 import { IoMdCloseCircle } from "react-icons/io";
 import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
+import { IoArrowBackCircle } from "react-icons/io5";
 
 const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
     const [startDate, setStartDate] = useState('');
@@ -46,7 +47,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
     const handleUserView = (username, locationName, rowIndex) => {
       setLocationView(false);
       setShowModal(true);
-      ref.current?.scrollIntoView({ behavior: 'smooth' });
+
       setSelectedUsername(username);
       setLocationName(locationName);
       console.log("LocationName Fetched", locationName);
@@ -428,16 +429,16 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
   
   console.log("summary report",summaryReport)
   //console.log("Scanned Value", summaryReport.Scanned)
-    return (
-      <>
-      {isLoading && <Loader/>}
-        <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
-          <div className="row mt-3">
-            <div className="search-report-card">
+  return (
+    <>
+    {isLoading && <Loader />}
+    <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
+      <div className="row mt-3">
+      <div className="search-report-card">
               <h4>Summary Report</h4>
               <div className="row ms-2 me-2">
 
-              {summaryReport ? (
+              {summaryReport && (
         <table className="table-bordered mt-2">
           <thead>
             <tr>
@@ -447,7 +448,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
               <th>Flagging</th>
               <th>Indexing</th>
               <th>CBSL QA</th>
-              <th>Client QC</th>
+              <th>Client QA</th>
               <th>Counting</th>
               <th>Inventory</th>
               <th>Doc Preparation</th>
@@ -472,75 +473,74 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
             </tr>
           </tbody>
         </table>
-      ) : (
-        <p>No data available</p>
+     
       )}
                
               </div>
   
             </div>
+      </div>
+      <div className="row mt-3">
+        <div className="search-report-card">
+          <div className="row">
+            <div className="col-6">
+              <h4>Location Wise Summary Report</h4>
+            </div>
+
+            <div className="row">
+              <div className="col-2">
+                <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
+              </div>
+              <div className="col-8"></div>
+              <div className="col-2">
+                <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
+              </div>
+              {showConfirmation && (
+                <div className="confirmation-dialog">
+                  <div className="confirmation-content">
+                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                  </div>
+                </div>
+              )}
+            </div>
+            {showConfirmation && (
+              <div className="confirmation-dialog">
+                <div className="confirmation-content">
+                  <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                  <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                  <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="row mt-3">
-            <div className="search-report-card">
-              <div className="row">
-                <div className="col-6">
-                  <h4>Location Wise Summary Report</h4>
-                </div>
-                
-                <div className="row">
-                <div className="col-2">
-                  <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
-                </div>
-                <div className="col-8"></div>
-                <div className="col-2">
-                  <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
-                </div>
-                {showConfirmation && (
-                  <div className="confirmation-dialog">
-                    <div className="confirmation-content">
-                      <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                      <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                      <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-                {showConfirmation && (
-                  <div className="confirmation-dialog">
-                    <div className="confirmation-content">
-                      <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                      <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                      <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-             
-              <div className="all-tables row ms-2 me-2">
-                <table className="table-bordered mt-2">
-                  <thead>
-                    <tr>
-                      <th>Sr.No.</th>
-                      <th>Location Name</th>
-                      <th>Scanned</th>
-                      <th>QC</th>
-                      <th>Indexing</th>
-                      <th>Flagging</th>
-                      <th>CBSL-QA</th>
-                      <th>Client-QC</th>
-                      <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
-                      <th>Expense Rate</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr onClick={() => handleLocationView(elem.LocationName)} key={index}>
+
+          <div className="all-tables row ms-2 me-2">
+            <table className="table-bordered mt-2">
+              <thead>
+                <tr>
+                  <th>Sr.No.</th>
+                  <th>Location Name</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Indexing</th>
+                  <th>Flagging</th>
+                  <th>CBSL-QA</th>
+                  <th>Client-QC</th>
+                  <th>Counting</th>
+                  <th>Inventory</th>
+                  <th>DocPreparation</th>
+                  <th>Guard</th>
+                  <th>Expense Rate</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+              {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    <tr >
                       <td>{index + 1}</td>
-                      <td>{elem.LocationName || 0}</td>
+                      <td onClick={() => handleLocationView(elem.LocationName)} key={index}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
@@ -555,32 +555,32 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                       <td></td>
                     </tr>
                   ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+              </tbody>
+            </table>
           </div>
-          {locationView && showModal && (
+        </div>
+      </div>
+      {locationView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                  <h6 className="ms-2" style={{ color: "white" }}>
-                    User Wise Summary Report
-                  </h6>
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="ms-2" style={{ color: "white" }}>
+                  User Wise Summary Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
                   <IoMdCloseCircle />
-                  </button>
+                </button>
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
-                <div className="row " ref={ref}>
+                <div className="row mt-3" ref={ref}>
                   <div className="search-report-card">
-                    <div className="row"style={{marginTop:'-10px'}}>
+                    <div className="row">
                       <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                        <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                       </div>
                       <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport} style={{padding:'2px'}}>
+                        <button className="btn btn-success" onClick={handleLocationExport}>
                           Export CSV
                         </button>
                       </div>
@@ -603,7 +603,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -616,34 +616,32 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
+                            <th>Inventory</th>
+                            <th>DocPreparation</th>
+                            <th>Other</th>
                             <th>Expense Rate</th>
-                            <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
                             const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                          <td>{index + 1}</td>
-                          <td>{elem.locationName}</td>
-                          <td>{elem.user_type || 0}</td>
-                          <td>{elem.Scanned || 0}</td>
-                          <td>{elem.QC || 0}</td>
-                          <td>{elem.Indexing || 0}</td>
-                          <td>{elem.Flagging || 0}</td>
-                          <td>{elem.CBSL_QA || 0}</td>
-                          <td>{elem.Client_QC || 0}</td>
-                          <td>{elem.Counting || 0}</td>
-                        <td>{elem.Inventory || 0}</td>
-                        <td>{elem.DocPreparation || 0}</td>
-                        <td>{elem.Guard || 0}</td>
-                          <td>{rowTotalSum.toFixed(2)}</td>
-                          <td></td>
-                        </tr>
+                              <tr  key={index}>
+                                <td>{index + 1}</td>
+                                <td>{elem.locationName}</td>
+                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                                <td>{elem.Counting || 0}</td>
+                                <td>{elem.Inventory || 0}</td>
+                                <td>{elem.DocPreparation || 0}</td>
+                                <td>{elem.Guard || 0}</td>
+                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                              </tr>
                             );
                           })}
                         </tbody>
@@ -656,30 +654,24 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
             </div>
           </div>
         )}
-  
- 
 
-{userView && showModal && (
+
+        {userView && showModal && (
           <div className="custom-modal-overlay">
-            <div className="custom-modal">
-            <div className="modal-header"style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+          <div className="custom-modal">
+            <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
               <h6 className="" style={{ color: "white" }}>
-                  User Wise Detailed Report
-                  </h6>
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                User Wise Detailed Report
+              </h6>
+              <button type="button" className="btn btn-danger" onClick={toggleModal}>
                 <IoMdCloseCircle />
-                  </button>
+              </button>
+            </div>
+            <div className="row">
+            <div className="col-1">  
+              <IoArrowBackCircle style={{height:'30px',width:'30px'}} onClick={handleBackToLocationView}/>
               </div>
-              <div className="row">
-                <div className="col-11"></div>
-                <div className="col-1" style={{textAlign:'right'}}>
-                <button className="btn btn-success" onClick={handleBackToLocationView}>
-                    <i className="fa fa-arrow-left"></i> Back
-                  </button>
-                </div>
-              
-                 
-              </div>
+          </div>
               <div className="modal-body">
 
                 <div className="row mt-3" ref={ref}>
@@ -713,7 +705,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -728,36 +720,36 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Counting</th>
-                    <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
+                            <th>Inventory</th>
+                            <th>DocPreparation</th>
+                            <th>Other</th>
                             <th>Expense Rate</th>
-                            <th>Remarks</th>
+
                           </tr>
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
                             const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
-                              <td>{index + 1}</td>
-                              <td>{elem.locationName}</td>
-                              <td>{elem.user_type || 0}</td>
-                              <td>{elem.Date}</td>
-                                    <td>{elem.lotno}</td>
-                              <td>{elem.Scanned || 0}</td>
-                              <td>{elem.QC || 0}</td>
-                              <td>{elem.Indexing || 0}</td>
-                              <td>{elem.Flagging || 0}</td>
-                              <td>{elem.CBSL_QA || 0}</td>
-                              <td>{elem.Client_QC || 0}</td>
-                              <td>{elem.Counting || 0}</td>
-                            <td>{elem.Inventory || 0}</td>
-                            <td>{elem.DocPreparation || 0}</td>
-                            <td>{elem.Guard || 0}</td>
-                              <td>{rowTotalSum.toFixed(2)}</td>
-                              <td></td>
-                            </tr>
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{elem.locationName}</td>
+                                <td>{elem.user_type || 0}</td>
+                                <td>{elem.Date}</td>
+                                <td>{elem.lotno}</td>
+                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                                <td>{elem.Counting || 0}</td>
+                                <td>{elem.Inventory || 0}</td>
+                                <td>{elem.DocPreparation || 0}</td>
+                                <td>{elem.Guard || 0}</td>
+                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+
+                              </tr>
                             );
                           })}
                         </tbody>
@@ -770,9 +762,9 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices }) => {
             </div>
           </div>
         )}
-        </div>
-      </>
-    );
+    </div>
+  </>
+  )
 }
 
 export default KarAllCumulative

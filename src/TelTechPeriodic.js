@@ -29,12 +29,7 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate }) => {
   const [lastColumnTotal, setLastColumnTotal] = useState(0);
   const ref = useRef(null);
 
-  useEffect(() => {
-    if (locationView || userView) {
-      // Scroll to the referenced div when locationView or userView changes
-      ref.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [locationView, userView]);
+  
 
   const handleLocationView = (locationName) => {
     setShowModal(true);
@@ -620,7 +615,7 @@ fetchPrices();
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -721,7 +716,7 @@ fetchPrices();
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>

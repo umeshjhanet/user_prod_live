@@ -35,9 +35,9 @@ const Projects = () => {
     const computeSums = (details) => {
         const categories = ["NonTech", "Tech"];
         const sum = {
-            Counting: 0,
             Inventory: 0,
-            DocPreparation: 0,
+            Counting: 0,
+            Doc_Pre: 0,
             Guard: 0,
             Scanned: 0,
             QC: 0,
@@ -66,7 +66,7 @@ const Projects = () => {
 
     const allSums = {};
     const categories = [
-        "Counting", "Inventory", "DocPreparation", "Guard", "Scanned", 
+        "Inventory", "Counting", "Doc_Pre", "Guard", "Scanned", 
         "QC", "Indexing", "Flagging", "CBSL_QA", "Client_QC"
     ];
 

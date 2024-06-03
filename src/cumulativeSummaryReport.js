@@ -4,7 +4,7 @@ import axios from "axios";
 import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
-
+import { IoArrowBackCircle } from "react-icons/io5";
 
 const CumulativeSummaryReport = ({ editedPrice }) => {
   const [startDate, setStartDate] = useState('');
@@ -46,7 +46,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
   const handleUserView = (username, locationName, rowIndex) => {
     setLocationView(false);
     setShowModal(true);
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
+
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
@@ -557,9 +557,9 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                 </thead>
                 <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr onClick={() => handleLocationView(elem.locationname)} key={index}>
+                    <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{elem.locationname || 0}</td>
+                      <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
@@ -618,7 +618,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -638,10 +638,10 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                           {enhanceddetailedReportLocationWise && console.log("Rendering Data: ", enhanceddetailedReportLocationWise)}
                           {enhanceddetailedReportLocationWise && enhanceddetailedReportLocationWise.map((elem, index) => {
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr  key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
+                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
@@ -677,15 +677,10 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                 </button>
               </div>
               <div className="row">
-                <div className="col-11"></div>
-                <div className="col-1" style={{ textAlign: 'right' }}>
-                  <button className="btn btn-success" onClick={handleBackToLocationView}>
-                    <i className="fa fa-arrow-left"></i> Back
-                  </button>
+              <div className="col-1">  
+                <IoArrowBackCircle style={{height:'30px',width:'30px'}} onClick={handleBackToLocationView}/>
                 </div>
-
-
-              </div>
+            </div>
               <div className="modal-body">
 
                 <div className="row mt-3" ref={ref}>
@@ -719,7 +714,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -741,7 +736,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
                             // const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
                             return (
-                              <tr onClick={() => handleUserView(elem.user_type, elem.locationName)} key={index}>
+                              <tr  key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>

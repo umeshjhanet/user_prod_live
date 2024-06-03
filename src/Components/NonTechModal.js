@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Header from './Components/Header';
+import React, {useState, useEffect,useRef} from 'react'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css' 
+import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
-import { API_URL } from './API';
+import { API_URL } from '../API';
 
-
-const NonTechForm = () => {
-  const [showLocation, setShowLocation] = useState(false);
+const NonTechModal = ({onClose}) => {
+    const [showLocation, setShowLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedLocationId, setSelectedLocationId] = useState("");
   const [showProject, setShowProject] = useState(false);
@@ -34,25 +35,24 @@ const NonTechForm = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if ( (dropdownRef.current && !dropdownRef.current.contains(event.target)) && 
+      (projectDropdownRef.current && !projectDropdownRef.current.contains(event.target))
+     ) {
         setShowLocation(false);
+        setShowProject(false);
       }
     };
 
-
     document.addEventListener('click', handleClickOutside);
-
-
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [dropdownRef]);
-
+  }, [dropdownRef,projectDropdownRef]);
 
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/locations`);
+        const response = await axios.get(`${API_URL}/alllocations`);
         setLocation(response.data);
       } catch (error) {
         console.error(error);
@@ -73,11 +73,6 @@ const NonTechForm = () => {
 
   const handleSelectLocation = (id, name) => {
     setSelectedLocation(name);
-    // setFormData(prevFormData => ({
-    //   ...prevFormData,
-    //   LocationID: parseInt(id),
-    //   LocationName:name
-    // }));
     setSelectedLocationId(parseInt(id))
     setShowLocation(false);
     console.log("location",name)
@@ -104,26 +99,9 @@ const NonTechForm = () => {
     setShowProject(!showProject);
   };
 
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-
-  //   try {
-  //     const response = await axios.post(`${API_URL}/createstaff`, formData);
-  //     console.log("Non-tech staff created:", response.data);
-  //   } catch (error) {
-  //     console.error("Error creating non-tech staff:", error);
-  //   }
-  // };
-
-
-
   const handleForm = async () => {
     const formData = new FormData();
     formData.append('file', excelData);
-  
-   
     formData.append('ProjectId', selectedProjectId );
     formData.append('ProjectName',selectedProject);
     formData.append('LocationID',selectedLocationId);
@@ -165,17 +143,26 @@ const NonTechForm = () => {
     const { name, value } = e.target;
     setNewFormData({ ...newFormData, [name]: value, ProjectId: selectedProjectId, ProjectName: selectedProject, LocationID: selectedLocationId, LocationName: selectedLocation});
   }
-
-
-  return (
-    <>
-      <Header />
-      <div className='container'>
-        <div className='row'>
+    return (
+        <>
+          <ToastContainer />
+          <div className="custom-modal-overlay">
+            <div className="custom-modal">
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="ms-2" style={{ color: "white" }}>
+                  User Wise Summary Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={onclose}>
+                  <IoMdCloseCircle />
+                </button>
+              </div>
+              <div className="modal-body">
+              <div className='row'>
           <form onSubmit={handleForm}>
             <div className="row mt-2 me-1 search-report-card">
-              <label>Select Project</label>
+              <label className='mt-2'>Select Project</label>
               <input
+              className='form-input'
                 type='text'
                 placeholder='Project'
                 name='Project'
@@ -192,7 +179,7 @@ const NonTechForm = () => {
                   ))}
                 </div>
               )}
-              <label>Select Location</label>
+              <label className='mt-2'>Select Location</label>
               <input
                 type='text'
                 placeholder='Location'
@@ -210,28 +197,30 @@ const NonTechForm = () => {
                   ))}
                 </div>
               )}
+              <label className='mt-2'>Upload Excel</label>
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-              <label>Staff Name</label>
+              <label className='mt-2'>Staff Name</label>
               <input type='text' name='StaffName' onChange={handleInputChange} /><br />
-              <label>Counting</label>
+              <label className='mt-2'>Counting</label>
               <input type='text' name='Counting' onChange={handleInputChange} /><br />
-              <label>Inventory</label>
+              <label className='mt-2'>Inventory</label>
               <input type='text' name='Inventory' onChange={handleInputChange} /><br />
-              <label>DocPreparation</label>
+              <label className='mt-2'>DocPreparation</label>
               <input type='text' name='DocPreparation' onChange={handleInputChange} /><br />
-              <label>Guard</label>
+              <label className='mt-2'>Other</label>
               <input type='text' name='Guard' onChange={handleInputChange} /><br />
-              
-              <label>Date</label>
+              <label className='mt-2'>Date</label>
               <input type='date' name='Date' onChange={handleInputChange} /><br />
               <input type='submit' value='Submit'  />
             </div>
           </form>
         </div>
-      </div>
-    </>
-  );
+              </div>
+
+            </div>
+          </div>
+        </>
+      )
 }
 
-
-export default NonTechForm;
+export default NonTechModal
