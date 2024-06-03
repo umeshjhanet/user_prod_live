@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from './Components/Header'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import axios from 'axios'
 import { API_URL } from './API'
 
@@ -9,8 +9,20 @@ const Projects = () => {
     const [updcprojectDetails, setUPDCProjectDetails] = useState([]);
     const [telprojectDetails, setTelProjectDetails] = useState([]);
     const [karprojectDetails, setKarProjectDetails] = useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+    
 
     useEffect(() => {
+
+        const userLog = JSON.parse(localStorage.getItem("user"));
+        if (!userLog) {
+            setIsLoggedIn(false);  // If user is not logged in, update the state
+            return;
+        }
+
+        console.log("User's Info", userLog);
+
         const fetchUPDCProjectDetails = () => {
             axios.get(`${API_URL}/updcSummary`)
                 .then(response => setUPDCProjectDetails(response.data))
@@ -78,7 +90,9 @@ const Projects = () => {
     });
 
     return (
+        
         <>
+        
             <Header />
             <div className='container'>
                 <div className='row mt-5 mb-2'>
@@ -204,3 +218,5 @@ const Projects = () => {
 }
 
 export default Projects
+
+

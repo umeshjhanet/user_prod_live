@@ -214,7 +214,7 @@ const User_Form = () => {
 
 
     const fetchProject = () => {
-            fetch(`${API_URL}/getproject`)
+            fetch("http://localhost:5001/getproject")
               .then(response => response.json())
               .then(data => setProject(data))
               .catch(error => console.error(error))
@@ -623,3 +623,4 @@ const User_Form = () => {
 
 
 export default User_Form
+

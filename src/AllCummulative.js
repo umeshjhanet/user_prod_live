@@ -6,6 +6,7 @@ import { IoArrowBackCircle } from "react-icons/io5";
 import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
 
+
 const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -33,6 +34,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
   const ref = useRef(null);
   const [clickedRowIndex, setClickedRowIndex] = useState('');
 
+
   const handleLocationView = (locationName) => {
     setShowModal(true);
     console.log(locationName)
@@ -42,7 +44,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     setUserView(false);
     console.log("click on location")
 
+
   };
+
 
   const handleUserView = (username, locationName, rowIndex) => {
     setLocationView(false);
@@ -54,12 +58,15 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
 
+
     setUserView(true);
   };
+
 
   const handleExport = () => {
     setShowConfirmation(true);
   };
+
 
   const handleDetailedExport = () => {
     if (detailedcsv) {
@@ -73,13 +80,16 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     setShowConfirmation(false);
   };
 
+
   const handleCancelExport = () => {
     setShowConfirmation(false);
   };
 
+
   const handleLocationExport = () => {
     setShowConfirmationLocation(true);
   }
+
 
   const handleDetailedLocationWiseExport = () => {
     if (detailedlocationwisecsv) {
@@ -93,13 +103,16 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     setShowConfirmationLocation(false);
   };
 
+
   const handleCancelLocationExport = () => {
     setShowConfirmationLocation(false);
   }
 
+
   const handleUserExport = () => {
     setShowConfirmationUser(true);
   }
+
 
 
   const handleUserWiseExport = () => {
@@ -114,15 +127,18 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     setShowConfirmationUser(false)
   }
 
+
   const handleCancelUserExport = () => {
     setShowConfirmationUser(false);
   }
+
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
     axios
       .get(`${API_URL}/alldetailedreportlocationwise`, {
         params: { locationName: locationName },
+
 
       })
       .then((response) => {
@@ -134,6 +150,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         setIsLoading(false); // Set loading to false even if there's an error
       });
   };
+
 
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
@@ -149,6 +166,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       });
   };
 
+
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -158,6 +176,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     setIsLoading(true);
     let apiUrl = `${API_URL}/alldetailedreportlocationwisecsv`;
 
+
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     } else if (locationName) {
@@ -165,6 +184,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     } else if (formattedStartDate && formattedEndDate) {
       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
+
 
     axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
@@ -179,6 +199,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
   };
 
 
+
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -186,7 +207,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       return date.toISOString().split('T')[0];
     };
 
+
     let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsv`;
+
 
     if (username && locationName) {
       // If locationName is an array, join its elements with commas
@@ -195,6 +218,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     } else if (formattedStartDate && formattedEndDate) {
       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
+
 
     axios.get(apiUrl, { responseType: "blob" })
       .then((response) => {
@@ -209,6 +233,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
   const multiplyLocationData = (locationData, priceData) => {
     if (!locationData || !priceData) return []; // Ensure both data arrays are provided
 
+
     return locationData.map((report) => {
       const multipliedValues = priceData.map((price) => {
         const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
@@ -218,10 +243,13 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     });
   };
 
+
   const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
+
 
   const multiplyUserWiseData = (userWiseData, priceData) => {
     if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
+
 
     return userWiseData.map((report) => {
       const multipliedValues = priceData.map((price) => {
@@ -232,10 +260,13 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     });
   };
 
+
   const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
+
 
   const multiplyUserData = (userData, priceData) => {
     if (!userData || !priceData) return []; // Ensure both data arrays are provided
+
 
     return userData.map((report) => {
       const multipliedValues = priceData.map((price) => {
@@ -246,14 +277,18 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     });
   };
 
+
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+
 
   // Use multipliedData in your component as needed
   console.log("MultipliedUserWiseData", multipliedLocationData);
 
+
   const toggleModal = () => {
     setShowModal(!showModal);
   };
+
 
   useEffect(() => {
     const fetchSummaryReport = () => {
@@ -281,7 +316,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           setIsLoading(false);
         });
 
+
     };
+
 
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -292,9 +329,11 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       setIsLoading(true);
       let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
 
+
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
+
 
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
@@ -306,6 +345,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
           console.error("Error in exporting data:", error);
           setIsLoading(false);
         });
+
 
     };
     const fetchPrices = () => {
@@ -324,10 +364,13 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     fetchPrices();
 
 
+
     fetchDetailedReportCsvFile(startDate, endDate);
     // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
 
+
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
+
 
     fetchSummaryReport();
     fetchLocationReport();
@@ -346,10 +389,13 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     if (price && locationReport && price.length > 0 && locationReport.length > 0) {
       const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
 
+
       const multipliedData = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
 
+
         const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+
 
         if (prices) {
           const multipliedLocation = {
@@ -366,6 +412,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
             Guard: Number(location.Guard || 0) * (prices.Guard || 0),
           };
 
+
           const rowSum =
             multipliedLocation.Scanned +
             multipliedLocation.QC +
@@ -378,7 +425,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
             multipliedLocation.DocPreparation +
             multipliedLocation.Guard;
 
+
           multipliedLocation.rowSum = rowSum;
+
 
           return multipliedLocation;
         } else {
@@ -400,6 +449,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         }
       });
 
+
       const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
         const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
@@ -409,6 +459,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         };
       });
 
+
       setEnhancedLocationReport(enhancedLocationReport);
       const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       setSecondLastColumnTotal(sumOfRowSums);
@@ -416,6 +467,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       console.log(enhancedLocationReport);
     }
   }, [price, locationReport]);
+
 
   useEffect(() => {
     if (enhancedLocationReport && enhancedLocationReport.length > 0) {
@@ -433,6 +485,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
     setUserView(false);
   };
 
+
   console.log("summary report", summaryReport)
   //console.log("Scanned Value", summaryReport.Scanned)
   return (
@@ -443,6 +496,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
       <div className="search-report-card">
               <h4>Summary Report</h4>
               <div className="row ms-2 me-2">
+
 
               {summaryReport && (
         <table className="table-bordered mt-2">
@@ -493,6 +547,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
               <h4>Location Wise Summary Report</h4>
             </div>
 
+
             <div className="row">
               <div className="col-2">
                 <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
@@ -522,6 +577,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
             )}
           </div>
 
+
           <div className="all-tables row ms-2 me-2">
             <table className="table-bordered mt-2">
               <thead>
@@ -544,9 +600,9 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
               </thead>
               <tbody>
               {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr >
+                    <tr  key={index}>
                       <td>{index + 1}</td>
-                      <td onClick={() => handleLocationView(elem.LocationName)} key={index}>{elem.LocationName || 0}</td>
+                      <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
@@ -662,6 +718,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
         )}
 
 
+
         {userView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
@@ -772,5 +829,6 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
   </>
   )
 }
+
 
 export default AllCummulative

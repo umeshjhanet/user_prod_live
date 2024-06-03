@@ -539,6 +539,16 @@ input[type="submit"]:hover {
   width: 80%;
   max-width: 300px;
   height: 150px;
+ 
+  
+}
+
+.confirmation-text {
+  /* Add your desired styles for the paragraph */
+  font-weight: bold;  /* Since you have fw-bold class */
+  margin-bottom: 30px; /* Ensure there's space below the text */
+  font-size: 1.2rem;   /* Increase font size for better readability */
+  color: #333;        /* Change color as needed */
 }
 
 .location-card {

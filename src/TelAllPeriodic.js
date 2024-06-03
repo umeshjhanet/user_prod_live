@@ -566,7 +566,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate }) => {
               </thead>
               <tbody>
               {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr >
+                    <tr  key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.LocationName)} key={index}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>

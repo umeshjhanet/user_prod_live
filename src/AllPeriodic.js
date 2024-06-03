@@ -29,12 +29,12 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
   const ref = useRef(null);
 
-  useEffect(() => {
-    if (locationView || userView) {
-      // Scroll to the referenced div when locationView or userView changes
-      ref.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [locationView, userView]);
+  // useEffect(() => {
+  //   if (locationView || userView) {
+  //     // Scroll to the referenced div when locationView or userView changes
+  //     ref.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [locationView, userView]);
 
   const handleLocationView = (locationName) => {
     setShowModal(true);
@@ -570,9 +570,9 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
               </thead>
               <tbody>
               {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr >
+                    <tr  key={index}>
                       <td>{index + 1}</td>
-                      <td onClick={() => handleLocationView(elem.LocationName)} key={index}>{elem.LocationName || 0}</td>
+                      <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>

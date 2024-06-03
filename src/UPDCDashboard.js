@@ -205,13 +205,14 @@ const Dashboard = () => {
                 `${API_URL}/updatebusinessrate/${id}`,
                 updatedPrice
             );
-            console.log(response.data);
+    
+            console.log("Update Response:", response.data); // Log the response for debugging
+    
             const updatedPrices = [...prices];
             updatedPrices[index] = updatedPrice; // Update the corresponding row in the local state
             setPrices(updatedPrices); // Update the local state with the new values
             toast.success("Updated successfully");
-
-
+    
             // Fetch updated prices from the database
             const updatedPricesResponse = await axios.get(
                 `${API_URL}/getbusinessrate`
@@ -222,7 +223,6 @@ const Dashboard = () => {
             toast.error("Failed to update business rate");
         }
     };
-
 
     const handleEditPrice = (e, field, index) => {
         const newPrices = [...prices];
@@ -454,7 +454,7 @@ const handleCloseModal = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
-                                                    <td>{totalRate}</td>
+                                                    <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
                                             )
@@ -507,7 +507,7 @@ const handleCloseModal = () => {
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}<sub onClick={() => handleShowCalculator(elem.FlagRate, 'FlagRate')}>Calculate</sub></td>
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}<sub onClick={() => handleShowCalculator(elem.CbslQaRate, 'CbslQaRate')}>Calculate</sub></td>
                                                 <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}<sub onClick={() => handleShowCalculator(elem.ClientQcRate, 'ClientQcRate')}>Calculate</sub></td>
-                                                <td>{totalRate}</td>
+                                                <td>{totalRate.toFixed(3)}</td>
                                                 <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                             </tr>
                                         )
@@ -553,7 +553,7 @@ const handleCloseModal = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
-                                                    <td>{totalRate}</td>
+                                                    <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
                                             )

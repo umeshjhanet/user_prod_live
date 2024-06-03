@@ -30,6 +30,8 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
   const [lastColumnTotal, setLastColumnTotal] = useState(0);
   const [price, setPrice] = useState([]);
   const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
+
+
     const ref = useRef(null);    
     const[clickedRowIndex,setClickedRowIndex]=useState('');
      
@@ -341,13 +343,97 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
         <div className="loader"></div>
       </div>
     );
+    // useEffect(() => {
+    //   if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+    //     const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
+  
+    //     const multipliedData = locationReport.map(location => {
+    //       const normalizedLocationName = normalizeName(location.LocationName);
+  
+    //       const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+  
+    //       if (prices) {
+    //         const multipliedLocation = {
+    //           ...location,
+    //           Scanned: Number(location.Scanned || 0) * (prices.ScanRate || 0),
+    //           QC: Number(location.QC || 0) * (prices.QcRate || 0),
+    //           Client_QC: Number(location.Client_QC || 0) * (prices.ClientQcRate || 0),
+    //           Flagging: Number(location.Flagging || 0) * (prices.FlagRate || 0),
+    //           Indexing: Number(location.Indexing || 0) * (prices.IndexRate || 0),
+    //           CBSL_QA: Number(location.CBSL_QA || 0) * (prices.CbslQaRate || 0),
+    //           Counting: Number(location.Counting || 0) * (prices.Counting || 0),
+    //           Inventory: Number(location.Inventory || 0) * (prices.Inventory || 0),
+    //           DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparation || 0),
+    //           Guard: Number(location.Guard || 0) * (prices.Guard || 0),
+    //         };
+  
+    //         const rowSum =
+    //           multipliedLocation.Scanned +
+    //           multipliedLocation.QC +
+    //           multipliedLocation.Client_QC +
+    //           multipliedLocation.Flagging +
+    //           multipliedLocation.Indexing +
+    //           multipliedLocation.CBSL_QA +
+    //           multipliedLocation.Counting +
+    //           multipliedLocation.Inventory +
+    //           multipliedLocation.DocPreparation +
+    //           multipliedLocation.Guard;
+  
+    //         multipliedLocation.rowSum = rowSum;
+  
+    //         return multipliedLocation;
+    //       } else {
+    //         console.error(`No matching price found for location: ${location.LocationName}`);
+    //         return {
+    //           ...location,
+    //           Scanned: 0,
+    //           QC: 0,
+    //           Client_QC: 0,
+    //           Flagging: 0,
+    //           Indexing: 0,
+    //           CBSL_QA: 0,
+    //           Counting: 0,
+    //           Inventory: 0,
+    //           DocPreparation: 0,
+    //           Guard: 0,
+    //           rowSum: 0,
+    //         };
+    //       }
+    //     });
+  
+    //     const enhancedLocationReport = locationReport.map(location => {
+    //       const normalizedLocationName = normalizeName(location.LocationName);
+    //       const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
+    //       return {
+    //         ...location,
+    //         rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+    //       };
+    //     });
+  
+    //     setEnhancedLocationReport(enhancedLocationReport);
+    //     const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+    //     setSecondLastColumnTotal(sumOfRowSums);
+    //     console.log("Total", sumOfRowSums);
+    //     console.log("prices",price)
+    //     console.log(enhancedLocationReport);
+    //   }
+    // }, [price, locationReport]);
+  
+    // useEffect(() => {
+    //   if (enhancedLocationReport && enhancedLocationReport.length > 0) {
+    //     const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+    //     console.log("Sum of Last Column", sumOfLastColumn);
+    //     setLastColumnTotal(sumOfLastColumn);
+    //   }
+    // }, [enhancedLocationReport]);
+   
+   
     useEffect(() => {
       if (price && locationReport && price.length > 0 && locationReport.length > 0) {
         const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
   
         const multipliedData = locationReport.map(location => {
           const normalizedLocationName = normalizeName(location.LocationName);
-  
           const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
   
           if (prices) {
@@ -399,20 +485,17 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
           }
         });
   
-        const enhancedLocationReport = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
-          const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
-          return {
-            ...location,
-            rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-          };
-        });
+        // Update state with the calculated data
+        setEnhancedLocationReport(multipliedData);
   
-        setEnhancedLocationReport(enhancedLocationReport);
-        const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+        // Calculate the total sum of the row sums
+        const sumOfRowSums = multipliedData.reduce((acc, curr) => acc + curr.rowSum, 0);
         setSecondLastColumnTotal(sumOfRowSums);
+  
+        // Log for debugging
         console.log("Total", sumOfRowSums);
-        console.log(enhancedLocationReport);
+        console.log("Prices", price);
+        console.log("Multiplied Data", multipliedData);
       }
     }, [price, locationReport]);
   
@@ -423,6 +506,12 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
         setLastColumnTotal(sumOfLastColumn);
       }
     }, [enhancedLocationReport]);
+   
+   
+   
+   
+   
+   
     const handleBackToLocationView = () => {
       setLocationView(true);
       setUserView(false);
