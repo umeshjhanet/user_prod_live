@@ -185,7 +185,7 @@ const KarNonTechCommulative = () => {
         return date.toISOString().split('T')[0];
       };
   
-      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvkarnataka`;
+      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontechkarnataka`;
   
       if (username && locationName) {
         // If locationName is an array, join its elements with commas
@@ -468,7 +468,7 @@ const KarNonTechCommulative = () => {
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td >{index + 1}</td>
-                      <td  onClick={() => handleLocationView(elem.locationname)}>{elem.LocationName || 0}</td>
+                      <td  onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
