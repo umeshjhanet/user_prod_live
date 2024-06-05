@@ -4,6 +4,7 @@ import axios from 'axios';
 import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
+import { IoArrowBackCircle } from "react-icons/io5";
 
 const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
     const [locationView, setLocationView] = useState(false);
@@ -28,12 +29,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
   const [enhancedLocationReport, setEnhancedLocationReport] = useState();
     const ref = useRef(null);
   
-    useEffect(() => {
-      if (locationView || userView) {
-        // Scroll to the referenced div when locationView or userView changes
-        ref.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, [locationView, userView]);
+   
   
     const handleLocationView = (locationName) => {
       setShowModal(true);
@@ -465,8 +461,8 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                 <th>Sr.No.</th>
                 <th>Counting</th>
                 <th>Inventory</th>
-                <th>Doc Preparation</th>
-                <th>Guard</th>
+                <th>Doc Prepared</th>
+                <th>Other</th>
                 <th>Expense Rate</th>
               </tr>
             </thead>
@@ -533,14 +529,15 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                     <th>Location Name</th>
                     <th>Counting</th>
                     <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
+                    <th>Doc Prepared</th>
+                    <th>Other</th>
                     <th>Expense Rate</th>
                     <th>Remarks</th>
                   </tr>
                 </thead>
                 <tbody>
                 {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    
                     <tr  key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
@@ -600,7 +597,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -608,8 +605,8 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>User Name</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
-                            <th>Guard</th>
+                            <th>Doc Prepared</th>
+                            <th>Other</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>
                           </tr>
@@ -644,26 +641,21 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
   
   
         {userView && showModal && (
-          <div className="custom-modal-overlay">
-            <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="" style={{ color: "white" }}>
-                  User Wise Detailed Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
-                </button>
-              </div>
-              <div className="row">
-                <div className="col-11"></div>
-                <div className="col-1" style={{ textAlign: 'right' }}>
-                  <button className="btn btn-success" onClick={handleBackToLocationView}>
-                    <i className="fa fa-arrow-left"></i> Back
-                  </button>
-                </div>
-  
-  
-              </div>
+           <div className="custom-modal-overlay">
+           <div className="custom-modal">
+             <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+               <h6 className="" style={{ color: "white" }}>
+                 User Wise Detailed Report
+               </h6>
+               <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                 <IoMdCloseCircle />
+               </button>
+             </div>
+             <div className="row">
+               <div className="col-1">
+                 <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
+               </div>
+             </div>
               <div className="modal-body">
   
                 <div className="row mt-3" ref={ref}>
@@ -697,7 +689,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -706,8 +698,8 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Date</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
-                            <th>Guard</th>
+                            <th>Doc Prepared</th>
+                            <th>Other</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>
                           </tr>

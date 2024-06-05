@@ -20,6 +20,7 @@ import TelNonTechPeriodic from './TelNonTechPeriodic';
 import TelAllCumulative from './TelAllCumulative';
 import TelAllPeriodic from './TelAllPeriodic';
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
+import NonTechModal from './Components/NonTechModal';
 
 const TelDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -44,8 +45,9 @@ const TelDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showFullTable, setShowFullTable] = useState(false);
     const [showCalculator, setShowCalculator] = useState(false);
-    const [showFilter, setShowFilter] = useState(false);
+    const [showFilter, setShowFilter] = useState(true);
     const [userData, setUserData] = useState(null);
+    const [isModalOpen,setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -311,6 +313,12 @@ const TelDashboard = () => {
         }
         setShowCalculator(false);
     }
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    }
+    const handleCloseModal = () => {
+        setIsModalOpen(!isModalOpen);
+    }
 
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
@@ -335,53 +343,61 @@ const TelDashboard = () => {
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
                         <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
-                            <div className='col-1'><h5>Filter</h5></div>
-                            <div className='col-11'><button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button></div>
+                            <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
+                            {/* <div className='col-11'></div> */}
+                            {/* </div> */}
+                           
+                            {/* <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}> */}
+                            {/* <div className='col-1'></div> */}
+                            <div className='col-1'>
+                                <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
+                                <label htmlFor='all' className='ms-1'>All</label>
+                            </div>
+                            <div className='col-1'>
+                                <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
+                                <label htmlFor='technical' className='ms-1'>Technical</label>
+                            </div>
+                            <div className='col-2'>
+                                <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
+                                <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
+                            </div>
+                            {nonTechnicalSelected && userData && userData.user_roles && userData.user_roles.includes("CBSL Site User") ? (
+                                <div className='col-2'>
+                                <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleOpenModal}>Upload</button>
+                            </div>
+                            ) : (
+                                <div className='col-5'></div>
+                            )}
+                            
+                            
                         </div>
                         {showFilter && (<>
-                            <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}>
-                                <div className='col-1'></div>
-                                <div className='col-2'>
-                                    <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
-                                    <label htmlFor='all' className='ms-1'>All</label>
-                                </div>
-                                <div className='col-2'>
-                                    <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
-                                    <label htmlFor='technical' className='ms-1'>Technical</label>
-                                </div>
-                                <div className='col-2'>
-                                    <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
-                                    <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
-                                </div>
-                                <div className='col-6'></div>
+                        <div className='row mt-2' style={{ marginBottom: '-10px' }}>
+                            <div className='col-1'></div>
+                            <div className='col-2'>
+                                <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
+                                <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
                             </div>
-
-                            <div className='row mt-4' style={{ marginBottom: '-10px' }}>
-                                <div className='col-1'></div>
-                                <div className='col-2'>
-                                    <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
-                                    <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
-                                </div>
-                                <div className='col-2'>
-                                    <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
-                                    <label htmlFor='periodic' className='ms-1'>Periodic</label>
-                                </div>
-                                {periodicSelected && (
-                                    <>
-                                        <div className='col-3'>
-                                            <label className='me-1'>From Date:</label>
-                                            <input type='date' value={fromDate} onChange={handleFromDateChange} />
-                                        </div>
-                                        <div className='col-3'>
-                                            <label className='me-1'>To Date:</label>
-                                            <input type='date' value={toDate} onChange={handleToDateChange} />
-                                        </div>
-                                    </>
-                                )}
-                                <div className='col-1'>
-                                    <button className='btn btn-success' style={{ marginTop: '-5px' }} onClick={handleSubmit}>Submit</button>
-                                </div>
+                            <div className='col-2'>
+                                <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                <label htmlFor='periodic' className='ms-1'>Periodic</label>
                             </div>
+                            {periodicSelected && (
+                                <>
+                                    <div className='col-3'>
+                                        <label className='me-1'>From Date:</label>
+                                        <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                                    </div>
+                                    <div className='col-3'>
+                                        <label className='me-1'>To Date:</label>
+                                        <input type='date' value={toDate} onChange={handleToDateChange} />
+                                    </div>
+                                </>
+                            )}
+                            <div className='col-1'>
+                                <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleSubmit}>Submit</button>
+                            </div>
+                        </div>
                         </>)}
                         {error && <p className='text-danger'>{error}</p>}
                     </div>
@@ -409,8 +425,8 @@ const TelDashboard = () => {
                                             <th>Client_QC</th>
                                             <th>Counting</th>
                                             <th>Inventory</th>
-                                            <th>Doc Preparation</th>
-                                            <th>Guard</th>
+                                            <th>Doc Prepared</th>
+                                            <th>Other</th>
                                             <th>Total Price</th>
                                             <th>Edit Price</th>
                                         </tr>
@@ -514,8 +530,8 @@ const TelDashboard = () => {
                                             <th>Location</th>
                                             <th>Counting</th>
                                             <th>Inventory</th>
-                                            <th>Doc Preparation</th>
-                                            <th>Guard</th>
+                                            <th>Doc Prepared</th>
+                                            <th>Other</th>
                                             <th>Total Price</th>
                                             <th>Edit Price</th>
                                         </tr>
@@ -553,6 +569,7 @@ const TelDashboard = () => {
             {showAllCumulativeSummary && <TelAllCumulative />}
             {showAllPeriodicSummary && <TelAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
+            {isModalOpen && <NonTechModal onclose={handleCloseModal}/>}
             <ToastContainer />
         </>
     );

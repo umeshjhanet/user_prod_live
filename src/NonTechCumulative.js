@@ -4,6 +4,7 @@ import axios from 'axios';
 import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
+import { IoArrowBackCircle } from "react-icons/io5";
 
 
 const NonTechCumulative = () => {
@@ -47,7 +48,7 @@ const NonTechCumulative = () => {
   const handleUserView = (username, locationName, rowIndex) => {
     setLocationView(false);
     setShowModal(true);
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
+
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
@@ -400,8 +401,8 @@ fetchPrices();
                       <th>Sr.No.</th>
                       <th>Counting</th>
                       <th>Inventory</th>
-                      <th>Doc Preparation</th>
-                      <th>Guard</th>
+                      <th>Doc Prepared</th>
+                      <th>Other</th>
                       <th>Expense Rate</th>
                     </tr>
                   </thead>
@@ -460,8 +461,8 @@ fetchPrices();
                     <th>Location Name</th>
                     <th>Counting</th>
                     <th>Inventory</th>
-                    <th>DocPreparation</th>
-                    <th>Guard</th>
+                    <th>Doc Prepared</th>
+                    <th>Other</th>
                     <th>Expense Rate</th>
                     <th>Remarks</th>
                   </tr>
@@ -528,7 +529,7 @@ fetchPrices();
                       </div>
                     </div>
                     <div className="all-tables row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -537,8 +538,8 @@ fetchPrices();
 
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
-                            <th>Guard</th>
+                            <th>Doc Prepared</th>
+                            <th>Other</th>
                             <th>Business Value</th>
                             <th>Remarks</th>
                           </tr>
@@ -550,7 +551,7 @@ fetchPrices();
                               <tr  key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}> {elem.user_type || 0}</td>
+                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
 
                                 <td>{elem.Counting || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
@@ -574,17 +575,21 @@ fetchPrices();
 
 
         {userView && showModal && (
-          <div className="custom-modal-overlay">
-            <div className="custom-modal">
-              <div className="modal-header">
-                <h4 className="modal-title">User Wise Detailed Report</h4>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                    Close
-                  </button>
-                </div>
-                <button type="button" className="close" onClick={toggleModal}>&times;</button>
-              </div>
+           <div className="custom-modal-overlay">
+           <div className="custom-modal">
+             <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+               <h6 className="" style={{ color: "white" }}>
+                 User Wise Detailed Report
+               </h6>
+               <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                 <IoMdCloseCircle />
+               </button>
+             </div>
+             <div className="row">
+               <div className="col-1">
+                 <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
+               </div>
+             </div>
               <div className="modal-body">
                 <button className="back-arrow-btn" onClick={handleBackToLocationView}>
                   <i className="fa fa-arrow-left"></i> Back
@@ -619,7 +624,7 @@ fetchPrices();
                       </div>
                     </div>
                     <div className="all-tables row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -628,8 +633,8 @@ fetchPrices();
                             <th>Date</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
-                            <th>Guard</th>
+                            <th>Doc Prepared</th>
+                            <th>Other</th>
                             <th>Business Value</th>
                             <th>Remarks</th>
                           </tr>

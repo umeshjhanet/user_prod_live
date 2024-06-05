@@ -180,7 +180,7 @@ const User_Form = () => {
         .catch(error => console.error(error))
     }
     const fetchLocation = () => {
-      fetch(`${API_URL}/locations`)
+      fetch(`${API_URL}/alllocations`)
         .then(response => response.json())
         .then(data => setLocation(data))
         .catch(error => console.error(error))

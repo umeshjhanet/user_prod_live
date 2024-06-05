@@ -43,7 +43,6 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices }) => {
   const handleUserView = (username, locationName, rowIndex) => {
     setLocationView(false);
     setShowModal(true);
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
@@ -580,7 +579,7 @@ console.log("LOCations",locationReport);
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -681,7 +680,7 @@ console.log("LOCations",locationReport);
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-bordered mt-2">
+                      <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>

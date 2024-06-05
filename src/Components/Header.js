@@ -17,7 +17,7 @@ const Header = () => {
                 </ul>
                 <form className="d-flex">
                    <Link to='/'>
-                    <button href='/' className="btn logout-btn" style={{ color: 'white', marginTop: '4px' }}><IoLogOut style={{ color: 'white', fontSize: '30px', marginRight: '10px' }} />LOGOUT</button>
+                    <button href='/' className="btn logout-btn" style={{ color: 'white', marginTop: '0px' }}><IoLogOut style={{ color: 'white', fontSize: '30px', marginRight: '10px' }} />LOGOUT</button>
                   </Link>
                   <p className='ms-2' style={{ color: 'white', marginTop: '20px' }}>Welcome: {userLog ? userLog.first_name : 'Guest'}</p>
                 </form>

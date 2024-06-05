@@ -28,9 +28,7 @@ import TelAllCumulative from './TelAllCumulative';
 import TelAllPeriodic from './TelAllPeriodic';
 import KarAllCumulative from './KarAllCumulative';
 import KarAllPeriodic from './KarAllPeriodic';
-
-
-
+import NonTechModal from './Components/NonTechModal';
 
 const App = () => {
  
@@ -41,6 +39,7 @@ const App = () => {
           <Route path="/" element={<Login />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/UPDCDashboard" element={<Dashboard />} />
+          <Route path="/UPDCDashboard" element={<NonTechModal />} />
           <Route path="/TelDashboard" element={<TelDashboard />} />
           <Route path="/TelDashboard" element={<TelNonTechCommulative />} />
           <Route path="/TelDashboard" element={<TelNonTechPeriodic />} />
