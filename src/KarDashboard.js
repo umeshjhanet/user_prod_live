@@ -21,6 +21,7 @@ import KarAllCumulative from './KarAllCumulative';
 import KarAllPeriodic from './KarAllPeriodic';
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
+import KarNonTechModal from './Components/KarNonTechModal';
 
 
 const KarDashboard = () => {
@@ -600,8 +601,8 @@ const KarDashboard = () => {
             {shownonTechPeriodicSummary && <KarNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showAllCumulativeSummary && <KarAllCumulative />}
             {showAllPeriodicSummary && <KarAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
-            {isModalOpen && <NonTechModal onclose={handleCloseModal}/>}
+            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {isModalOpen && <KarNonTechModal onClose={handleCloseModal} userInfo={userData}/>}
             <ToastContainer />
         </>
     );

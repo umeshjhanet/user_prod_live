@@ -19,7 +19,6 @@ import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
 
 
-
 const Dashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
@@ -301,14 +300,11 @@ const handleOpenModal = () => {
     setIsModalOpen(true);
 }
 const handleCloseModal = () => {
-    setIsModalOpen(!isModalOpen);
+    setIsModalOpen(false);
 }
 
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
-
-
-
 
     return (
         <>
@@ -575,8 +571,8 @@ const handleCloseModal = () => {
             {shownonTechPeriodicSummary && <NonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showAllCumulativeSummary && <AllCummulative />}
             {showAllPeriodicSummary && <AllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
-            {isModalOpen && <NonTechModal onclose={handleCloseModal}/>}
+            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {isModalOpen && <NonTechModal onClose={handleCloseModal} userInfo={userData}/>}
             <ToastContainer />
         </>
     );
