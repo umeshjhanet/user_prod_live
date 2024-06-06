@@ -635,7 +635,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {enhanceddetailedReportLocationWise && console.log("Rendering Data: ", enhanceddetailedReportLocationWise)}
+                          {/* {enhanceddetailedReportLocationWise && console.log("Rendering Data: ", enhanceddetailedReportLocationWise)}
                           {enhanceddetailedReportLocationWise && enhanceddetailedReportLocationWise.map((elem, index) => {
                             return (
                               <tr  key={index}>
@@ -649,6 +649,43 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                                 <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                                <td></td>
+                              </tr>
+                            );
+                          })} */}
+
+{detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                           const normalizeName = (name) =>
+                            name ? name.replace(/district court/gi, "").trim() : "";
+                          const normalizedLocationName = normalizeName(elem.locationName);
+                          console.log("Normalized Location Name:", normalizedLocationName);
+                      
+                          const priceData = price.find(
+                            (price) => normalizeName(price.LocationName) === normalizedLocationName
+                          );
+
+                            // Calculate rates for each activity
+                            const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                            const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                            const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                            const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                            const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                            const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+                          
+                            // Calculate total expense rate
+                            const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
+                            return (
+                              <tr  key={index}>
+                                <td>{index + 1}</td>
+                                <td>{elem.locationName}</td>
+                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                                <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );
@@ -733,8 +770,26 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            // const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                        {detailedUserReport && detailedUserReport.map((elem, index) => {
+                             const normalizeName = (name) =>
+                              name ? name.replace(/district court/gi, "").trim() : "";
+                            const normalizedLocationName = normalizeName(elem.locationName);
+                            console.log("Normalized Location Name:", normalizedLocationName);
+                        
+                            const priceData = price.find(
+                              (price) => normalizeName(price.LocationName) === normalizedLocationName
+                            );
+
+                            // Calculate rates for each activity
+                            const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                            const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                            const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                            const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                            const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                            const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+                          
+                            // Calculate total expense rate
+                            const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
@@ -748,7 +803,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                {/* <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td> */}
+                                <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );

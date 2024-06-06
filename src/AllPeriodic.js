@@ -376,12 +376,12 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   useEffect(() => {
     if (price && locationReport && price.length > 0 && locationReport.length > 0) {
       const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
-
+  
       const multipliedData = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
-
+  
         const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
-
+  
         if (prices) {
           const multipliedLocation = {
             ...location,
@@ -391,12 +391,12 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
             Flagging: Number(location.Flagging || 0) * (prices.FlagRate || 0),
             Indexing: Number(location.Indexing || 0) * (prices.IndexRate || 0),
             CBSL_QA: Number(location.CBSL_QA || 0) * (prices.CbslQaRate || 0),
-            Counting: Number(location.Counting || 0) * (prices.Counting || 0),
-            Inventory: Number(location.Inventory || 0) * (prices.Inventory || 0),
-            DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparation || 0),
-            Guard: Number(location.Guard || 0) * (prices.Guard || 0),
+            Counting: Number(location.Counting || 0) * (prices.CountingRate || 0),  // Ensure the property is correct
+            Inventory: Number(location.Inventory || 0) * (prices.InventoryRate || 0),  // Ensure the property is correct
+            DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparationRate || 0),  // Ensure the property is correct
+            Guard: Number(location.Guard || 0) * (prices.GuardRate || 0),  // Ensure the property is correct
           };
-
+  
           const rowSum =
             multipliedLocation.Scanned +
             multipliedLocation.QC +
@@ -408,9 +408,9 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
             multipliedLocation.Inventory +
             multipliedLocation.DocPreparation +
             multipliedLocation.Guard;
-
+  
           multipliedLocation.rowSum = rowSum;
-
+  
           return multipliedLocation;
         } else {
           console.error(`No matching price found for location: ${location.LocationName}`);
@@ -430,7 +430,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           };
         }
       });
-
+  
       const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
         const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
@@ -439,7 +439,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
         };
       });
-
+  
       setEnhancedLocationReport(enhancedLocationReport);
       const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       setSecondLastColumnTotal(sumOfRowSums);
@@ -447,7 +447,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
       console.log(enhancedLocationReport);
     }
   }, [price, locationReport]);
-
+  
   useEffect(() => {
     if (enhancedLocationReport && enhancedLocationReport.length > 0) {
       const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
@@ -655,24 +655,72 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                        {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                             const normalizeName = (name) =>
+                              name ? name.replace(/district court/gi, "").trim() : "";
+                            const normalizedLocationName = normalizeName(elem.locationName);
+                            console.log("Normalized Location Name:", normalizedLocationName);
+                        
+                            const priceData = price.find(
+                              (price) => normalizeName(price.LocationName) === normalizedLocationName
+                            );
+
+                            // Fallback values for rates if priceData is undefined or does not have the required properties
+                            const scanRate = priceData?.ScanRate || 0;
+                            const qcRate = priceData?.QcRate || 0;
+                            const indexRate = priceData?.IndexRate || 0;
+                            const flagRate = priceData?.FlagRate || 0;
+                            const cbslQaRate = priceData?.CbslQaRate || 0;
+                            const clientQcRate = priceData?.ClientQcRate || 0;
+                            const countingRate = priceData?.CountingRate || 0;
+                            const inventoryRate = priceData?.InventoryRate || 0;
+                            const docPreparationRate = priceData?.DocPreparationRate || 0;
+                            const guardRate = priceData?.GuardRate || 0;
+        
+                            // Convert values to numbers and ensure they are valid numbers
+                            const scanned = isNaN(Number(elem.Scanned)) ? 0 : Number(elem.Scanned);
+                            const qc = isNaN(Number(elem.QC)) ? 0 : Number(elem.QC);
+                            const indexing = isNaN(Number(elem.Indexing)) ? 0 : Number(elem.Indexing);
+                            const flagging = isNaN(Number(elem.Flagging)) ? 0 : Number(elem.Flagging);
+                            const cbslQa = isNaN(Number(elem.CBSL_QA)) ? 0 : Number(elem.CBSL_QA);
+                            const clientQc = isNaN(Number(elem.Client_QC)) ? 0 : Number(elem.Client_QC);
+                            const counting = isNaN(Number(elem.Counting)) ? 0 : Number(elem.Counting);
+                            const inventory = isNaN(Number(elem.Inventory)) ? 0 : Number(elem.Inventory);
+                            const docPreparation = isNaN(Number(elem.DocPreparation)) ? 0 : Number(elem.DocPreparation);
+                            const guard = isNaN(Number(elem.Guard)) ? 0 : Number(elem.Guard);
+        
+                            // Calculate rates for each activity
+                            const scannedRate = scanned * scanRate;
+                            const qcRateTotal = qc * qcRate;
+                            const indexRateTotal = indexing * indexRate;
+                            const flagRateTotal = flagging * flagRate;
+                            const cbslQaRateTotal = cbslQa * cbslQaRate;
+                            const clientQcRateTotal = clientQc * clientQcRate;
+                            const countingRateTotal = counting * countingRate;
+                            const inventoryRateTotal = inventory * inventoryRate;
+                            const docPreparationRateTotal = docPreparation * docPreparationRate;
+                            const otherRate = guard * guardRate;
+        
+                            // Calculate total expense rate
+                            const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+        
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
-                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{elem.Counting || 0}</td>
-                                <td>{elem.Inventory || 0}</td>
-                                <td>{elem.DocPreparation || 0}</td>
-                                <td>{elem.Guard || 0}</td>
-                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                                
+                                <td>{scanned.toLocaleString()}</td>
+                                <td>{qc.toLocaleString()}</td>
+                                <td>{indexing.toLocaleString()}</td>
+                                <td>{flagging.toLocaleString()}</td>
+                                <td>{cbslQa.toLocaleString()}</td>
+                                <td>{clientQc.toLocaleString()}</td>
+                                <td>{counting.toLocaleString()}</td>
+                                <td>{inventory.toLocaleString()}</td>
+                                <td>{docPreparation.toLocaleString()}</td>
+                                <td>{guard.toLocaleString()}</td>
+                                <td>{totalRate.toLocaleString()}</td>
                               </tr>
                             );
                           })}
@@ -760,28 +808,74 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
-                            return (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
-                                <td>{elem.Date}</td>
-                                <td>{elem.lotno}</td>
-                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{elem.Counting || 0}</td>
-                                <td>{elem.Inventory || 0}</td>
-                                <td>{elem.DocPreparation || 0}</td>
-                                <td>{elem.Guard || 0}</td>
-                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                        {detailedUserReport && detailedUserReport.map((elem, index) => {
+                           const normalizeName = (name) =>
+                            name ? name.replace(/district court/gi, "").trim() : "";
+                          const normalizedLocationName = normalizeName(elem.locationName);
+                          console.log("Normalized Location Name:", normalizedLocationName);
+                      
+                          const priceData = price.find(
+                            (price) => normalizeName(price.LocationName) === normalizedLocationName
+                          );
 
-                              </tr>
+                           // Fallback values for rates if priceData is undefined or does not have the required properties
+                           const scanRate = priceData?.ScanRate || 0;
+                           const qcRate = priceData?.QcRate || 0;
+                           const indexRate = priceData?.IndexRate || 0;
+                           const flagRate = priceData?.FlagRate || 0;
+                           const cbslQaRate = priceData?.CbslQaRate || 0;
+                           const clientQcRate = priceData?.ClientQcRate || 0;
+                           const countingRate = priceData?.CountingRate || 0;
+                           const inventoryRate = priceData?.InventoryRate || 0;
+                           const docPreparationRate = priceData?.DocPreparationRate || 0;
+                           const guardRate = priceData?.GuardRate || 0;
+       
+                           // Convert values to numbers and ensure they are valid numbers
+                           const scanned = isNaN(Number(elem.Scanned)) ? 0 : Number(elem.Scanned);
+                           const qc = isNaN(Number(elem.QC)) ? 0 : Number(elem.QC);
+                           const indexing = isNaN(Number(elem.Indexing)) ? 0 : Number(elem.Indexing);
+                           const flagging = isNaN(Number(elem.Flagging)) ? 0 : Number(elem.Flagging);
+                           const cbslQa = isNaN(Number(elem.CBSL_QA)) ? 0 : Number(elem.CBSL_QA);
+                           const clientQc = isNaN(Number(elem.Client_QC)) ? 0 : Number(elem.Client_QC);
+                           const counting = isNaN(Number(elem.Counting)) ? 0 : Number(elem.Counting);
+                           const inventory = isNaN(Number(elem.Inventory)) ? 0 : Number(elem.Inventory);
+                           const docPreparation = isNaN(Number(elem.DocPreparation)) ? 0 : Number(elem.DocPreparation);
+                           const guard = isNaN(Number(elem.Guard)) ? 0 : Number(elem.Guard);
+       
+                           // Calculate rates for each activity
+                           const scannedRate = scanned * scanRate;
+                           const qcRateTotal = qc * qcRate;
+                           const indexRateTotal = indexing * indexRate;
+                           const flagRateTotal = flagging * flagRate;
+                           const cbslQaRateTotal = cbslQa * cbslQaRate;
+                           const clientQcRateTotal = clientQc * clientQcRate;
+                           const countingRateTotal = counting * countingRate;
+                           const inventoryRateTotal = inventory * inventoryRate;
+                           const docPreparationRateTotal = docPreparation * docPreparationRate;
+                           const otherRate = guard * guardRate;
+       
+                           // Calculate total expense rate
+                           const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+       
+                           return (
+                             <tr key={index}>
+                               <td>{index + 1}</td>
+                               <td>{elem.locationName}</td>
+                               <td>{elem.user_type || 0}</td>
+                               <td>{elem.Date}</td>
+                               <td>{elem.lotno}</td>
+                               <td>{scanned.toLocaleString()}</td>
+                               <td>{qc.toLocaleString()}</td>
+                               <td>{indexing.toLocaleString()}</td>
+                               <td>{flagging.toLocaleString()}</td>
+                               <td>{cbslQa.toLocaleString()}</td>
+                               <td>{clientQc.toLocaleString()}</td>
+                               <td>{counting.toLocaleString()}</td>
+                               <td>{inventory.toLocaleString()}</td>
+                               <td>{docPreparation.toLocaleString()}</td>
+                               <td>{guard.toLocaleString()}</td>
+                               <td>{totalRate.toLocaleString()}</td>
+                             </tr>
                             );
                           })}
                         </tbody>

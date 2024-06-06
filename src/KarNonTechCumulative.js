@@ -298,20 +298,20 @@ const KarNonTechCommulative = () => {
     );
     useEffect(() => {
       if (price && locationReport && price.length > 0 && locationReport.length > 0) {
-        const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
+        // const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
   
         const multipliedData = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
+          const normalizedLocationName = location.LocationName;
   
-          const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+          const prices = price.find(p => p.LocationName === normalizedLocationName);
   
           if (prices) {
             const multipliedLocation = {
               ...location,
-              Counting: Number(location.Counting) * prices.Counting,
-              Inventory: Number(location.Inventory) * prices.Inventory,
-              DocPreparation: Number(location.DocPreparation) * prices.DocPreparation,
-              Guard: Number(location.Guard) * prices.Guard,
+              Counting: Number(location.Counting) * prices.CountingRate,
+              Inventory: Number(location.Inventory) * prices.InventoryRate,
+              DocPreparation: Number(location.DocPreparation) * prices.DocPreparationRate,
+              Guard: Number(location.Guard) * prices.GuardRate,
             };
   
             const rowSum =
@@ -343,8 +343,8 @@ const KarNonTechCommulative = () => {
         });
   
         const enhancedLocationReport = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
-          const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
+          const normalizedLocationName = location.LocationName;
+          const correspondingMultiplied = multipliedData.find(m => m.LocationName === normalizedLocationName);
           return {
             ...location,
             rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
@@ -383,32 +383,47 @@ const KarNonTechCommulative = () => {
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
 
-              {summaryReport ? (
-                <table className="table-bordered mt-2">
-                  <thead>
-                    <tr>
-                      <th>Sr.No.</th>
-                      <th>Counting</th>
-                      <th>Inventory</th>
-                      <th>Doc Prepared</th>
-                      <th>Other</th>
-                      <th>Expense Rate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>{summaryReport.Counting}</td>
-                      <td>{summaryReport.Inventory}</td>
-                      <td>{summaryReport.DocPreparation}</td>
-                      <td>{summaryReport.Guard}</td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              ) : (
-                <p>No data available</p>
-              )}
+            {summaryReport ? (
+  <table className="table-bordered mt-2">
+    <thead>
+      <tr>
+        <th>Sr.No.</th>
+        <th>Counting</th>
+        <th>Inventory</th>
+        <th>Doc Prepared</th>
+        <th>Other</th>
+        <th>Expense Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>{summaryReport.Counting}</td>
+        <td>{summaryReport.Inventory}</td>
+        <td>{summaryReport.DocPreparation}</td>
+        <td>{summaryReport.Guard}</td>
+        <td>
+          {(() => {
+            // Assuming `price` data contains a single set of rates for the summary report
+            const priceData = price[0]; // Adjust this line as per your data structure
+
+            // Calculate rates for each activity
+            const countingRate = summaryReport.Counting * (priceData ? priceData.CountingRate : 0);
+            const inventoryRate = summaryReport.Inventory * (priceData ? priceData.InventoryRate : 0);
+            const docPreparationRate = summaryReport.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+            const otherRate = summaryReport.Guard * (priceData ? priceData.GuardRate : 0);
+
+            // Calculate total expense rate
+            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+
+            // Display the total expense rate
+            return totalRate.toLocaleString();
+          })()}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+) : null}
 
             </div>
 
@@ -541,7 +556,7 @@ const KarNonTechCommulative = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                          {/* {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
 
                             return (
                               <tr  key={index}>
@@ -552,11 +567,40 @@ const KarNonTechCommulative = () => {
                                 <td>{elem.Inventory || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
                                 <td>{elem.Guard || 0}</td>
-                                <td></td>
+                                <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
                                 <td></td>
                               </tr>
                             );
-                          })}
+                          })} */}
+
+{detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+  // Find corresponding price data based on location name
+  const priceData = price.find(price => price.LocationName === elem.locationName);
+
+  // Calculate rates for each activity
+  const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+  const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+  const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+  const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
+
+  // Calculate total expense rate
+  const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+
+  return (
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td>{elem.locationName}</td>
+      <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+      <td>{elem.Counting || 0}</td>
+      <td>{elem.Inventory || 0}</td>
+      <td>{elem.DocPreparation || 0}</td>
+      <td>{elem.Guard || 0}</td>
+      <td>{totalRate.toLocaleString()}</td>
+      <td></td>
+    </tr>
+  );
+})}
+
                         </tbody>
                       </table>
                     </div>
@@ -635,6 +679,17 @@ const KarNonTechCommulative = () => {
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
 
+const priceData = price.find(price => price.LocationName === elem.locationName);
+
+// Calculate rates for each activity
+const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
+
+// Calculate total expense rate
+const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
@@ -646,7 +701,7 @@ const KarNonTechCommulative = () => {
                                 <td>{elem.Inventory || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
                                 <td>{elem.Guard || 0}</td>
-
+                                <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );

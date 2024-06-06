@@ -352,12 +352,12 @@ fetchPrices();
   };
   useEffect(() => {
     if (price && locationReport && price.length > 0 && locationReport.length > 0) {
-      const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
+      
 
       const multipliedData = locationReport.map(location => {
-        const normalizedLocationName = normalizeName(location.locationname);
+        const normalizedLocationName = location.locationname;
 
-        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+        const prices = price.find(p => p.LocationName === normalizedLocationName);
 
         if (prices) {
           const multipliedLocation = {
@@ -401,8 +401,8 @@ fetchPrices();
       });
 
       const enhancedLocationReport = locationReport.map(location => {
-        const normalizedLocationName = normalizeName(location.locationname);
-        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.locationname) === normalizedLocationName);
+        const normalizedLocationName = location.locationname;
+        const correspondingMultiplied = multipliedData.find(m => m.locationname === normalizedLocationName);
         return {
           ...location,
           rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
@@ -601,7 +601,18 @@ fetchPrices();
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            // const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                           const priceData = price.find(price => price.LocationName === elem.locationName);
+
+                           // Calculate rates for each activity
+                           const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                           const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                           const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                           const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                           const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                           const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+                         
+                           // Calculate total expense rate
+                           const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
@@ -613,7 +624,7 @@ fetchPrices();
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                {/* <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td> */}
+                                <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );
@@ -704,7 +715,18 @@ fetchPrices();
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            // const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                           const priceData = price.find(price => price.LocationName === elem.locationName);
+
+                           // Calculate rates for each activity
+                           const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                           const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                           const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                           const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                           const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                           const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+                         
+                           // Calculate total expense rate
+                           const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
@@ -718,7 +740,7 @@ fetchPrices();
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                {/* <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td> */}
+                                <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );

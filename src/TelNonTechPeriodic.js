@@ -370,20 +370,20 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
   
     useEffect(() => {
       if (price && locationReport && price.length > 0 && locationReport.length > 0) {
-        const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
+        // const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
   
         const multipliedData = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
+          const normalizedLocationName = location.LocationName;
   
-          const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+          const prices = price.find(p => p.LocationName === normalizedLocationName);
   
           if (prices) {
             const multipliedLocation = {
               ...location,
-              Counting: Number(location.Counting) * prices.Counting,
-              Inventory: Number(location.Inventory) * prices.Inventory,
-              DocPreparation: Number(location.DocPreparation) * prices.DocPreparation,
-              Guard: Number(location.Guard) * prices.Guard,
+              Counting: Number(location.Counting) * prices.CountingRate,
+              Inventory: Number(location.Inventory) * prices.InventoryRate,
+              DocPreparation: Number(location.DocPreparation) * prices.DocPreparationRate,
+              Guard: Number(location.Guard) * prices.GuardRate,
             };
   
             const rowSum =
@@ -415,8 +415,8 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         });
   
         const enhancedLocationReport = locationReport.map(location => {
-          const normalizedLocationName = normalizeName(location.LocationName);
-          const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
+          const normalizedLocationName = location.LocationName;
+          const correspondingMultiplied = multipliedData.find(m => m.LocationName === normalizedLocationName);
           return {
             ...location,
             rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
@@ -613,7 +613,16 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const rowTotalSum = multipliedUserWiseData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                            const priceData = price.find(price => price.LocationName === elem.locationName);
+
+                            // Calculate rates for each activity
+                            const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+                            const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+                            const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+                            const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
+                          
+                            // Calculate total expense rate
+                            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
@@ -623,7 +632,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                           <td>{elem.Inventory || 0}</td>
                           <td>{elem.DocPreparation || 0}</td>
                           <td>{elem.Guard || 0}</td>
-                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                          <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );
@@ -706,7 +715,16 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const rowTotalSum = multipliedUserData[index].multipliedValues.reduce((sum, value) => sum + value, 0);
+                           const priceData = price.find(price => price.LocationName === elem.locationName);
+
+                           // Calculate rates for each activity
+                           const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+                           const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+                           const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+                           const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
+                         
+                           // Calculate total expense rate
+                           const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
@@ -718,7 +736,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                           <td>{elem.Inventory || 0}</td>
                           <td>{elem.DocPreparation || 0}</td>
                           <td>{elem.Guard || 0}</td>
-                                <td>{isNaN(parseInt(rowTotalSum.toFixed(2))) ? 0 : parseInt(rowTotalSum.toFixed(2)).toLocaleString()}</td>
+                          <td>{totalRate.toLocaleString()}</td>
                                 <td></td>
                               </tr>
                             );
