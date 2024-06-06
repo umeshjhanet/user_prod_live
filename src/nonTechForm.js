@@ -98,7 +98,6 @@ const NonTechForm = () => {
     
   };
 
-
   const handleShowProject = (e) => {
     e.stopPropagation();
     setShowProject(!showProject);
