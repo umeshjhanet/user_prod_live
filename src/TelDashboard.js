@@ -436,7 +436,7 @@ const TelDashboard = () => {
 
                                     <tbody>
                                         {prices && prices.map((elem, index) => {
-                                            const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.Counting + elem.Inventory + elem.DocPreparation + elem.Guard;
+                                            const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
                                             return (
                                                 <tr key={index}>
                                                     <td>{elem.LocationName}</td>
@@ -446,10 +446,10 @@ const TelDashboard = () => {
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
                                                     <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'Counting', index)}>{elem.Counting}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'CountingRate', index)}>{elem.CountingRate}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'InventoryRate', index)}>{elem.InventoryRate}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparationRate', index)}>{elem.DocPreparationRate}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'GuardRate', index)}>{elem.GuardRate}</td>
                                                     <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>
@@ -540,14 +540,14 @@ const TelDashboard = () => {
 
                                     <tbody>
                                         {prices && prices.map((elem, index) => {
-                                            const totalRate = elem.Counting + elem.Inventory + elem.DocPreparation + elem.Guard;
+                                            const totalRate = elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
                                             return (
                                                 <tr key={index}>
                                                     <td>{elem.LocationName}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'Counting', index)}>{elem.Counting}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'Inventory', index)}>{elem.Inventory}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparation', index)}>{elem.DocPreparation}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'Guard', index)}>{elem.Guard}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'CountingRate', index)}>{elem.CountingRate}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'InventoryRate', index)}>{elem.InventoryRate}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparationRate', index)}>{elem.DocPreparationRate}</td>
+                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'GuardRate', index)}>{elem.GuardRate}</td>
                                                     <td>{totalRate.toFixed(3)}</td>
                                                     <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
                                                 </tr>

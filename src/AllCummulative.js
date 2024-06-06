@@ -486,7 +486,7 @@ const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
   };
 
 
-  console.log("summary report", summaryReport)
+console.log("summary report", summaryReport)
   //console.log("Scanned Value", summaryReport.Scanned)
   return (
     <>

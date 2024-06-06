@@ -503,6 +503,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
       if (enhancedLocationReport && enhancedLocationReport.length > 0) {
         const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
         console.log("Sum of Last Column", sumOfLastColumn);
+        console.log("Enhanced Data",enhancedLocationReport);
         setLastColumnTotal(sumOfLastColumn);
       }
     }, [enhancedLocationReport]);

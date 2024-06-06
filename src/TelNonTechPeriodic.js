@@ -696,13 +696,6 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Date</th>
-                            <th>Lot No</th>
-                            <th>Scanned</th>
-                            <th>QC</th>
-                            <th>Indexing</th>
-                            <th>Flagging</th>
-                            <th>CBSL-QA</th>
-                            <th>Client-QC</th>
                             <th>Counting</th>
                             <th>Inventory</th>
                             <th>Doc Prepared</th>
@@ -720,13 +713,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>
                                 <td>{elem.Date}</td>
-                                <td>{elem.lotno}</td>
-                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                                
                                 <td>{elem.Counting || 0}</td>
                           <td>{elem.Inventory || 0}</td>
                           <td>{elem.DocPreparation || 0}</td>

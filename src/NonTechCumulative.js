@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
+
 const NonTechCumulative = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -264,9 +265,13 @@ const NonTechCumulative = () => {
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
+      
+      
 
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
+         
+     
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
           setDetailedCsv(url);
@@ -279,8 +284,11 @@ const NonTechCumulative = () => {
     };
 
 
+   
+    
+
     fetchDetailedReportCsvFile(startDate, endDate);
-    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+    fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
 
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
 fetchPrices();
@@ -442,15 +450,7 @@ fetchPrices();
                   </div>
                 )}
               </div>
-              {showConfirmation && (
-                <div className="confirmation-dialog">
-                  <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                  </div>
-                </div>
-              )}
+             
             </div>
 
             <div className="all-tables row ms-2 me-2">
@@ -459,7 +459,6 @@ fetchPrices();
                   <tr>
                     <th>Sr.No.</th>
                     <th>Location Name</th>
-
                     <th>Counting</th>
                     <th>Inventory</th>
                     <th>Doc Prepared</th>
@@ -632,7 +631,6 @@ fetchPrices();
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Date</th>
-
                             <th>Counting</th>
                             <th>Inventory</th>
                             <th>Doc Prepared</th>
@@ -675,3 +673,6 @@ fetchPrices();
 }
 
 export default NonTechCumulative
+
+
+
