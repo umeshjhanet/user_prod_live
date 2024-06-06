@@ -5,7 +5,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
 import { API_URL } from '../API';
 
-const NonTechModal = ({ onClose, userInfo }) => {
+const TelNonTechModal = ({ onClose, userInfo }) => {
   const { projects = [], locations = [] } = userInfo;
   const projectId = projects[0];
   
@@ -50,7 +50,7 @@ const NonTechModal = ({ onClose, userInfo }) => {
 
     try {
       if (excelData) {
-        const response = await axios.post(`${API_URL}/uploadExcel`, formData, {
+        const response = await axios.post(`${API_URL}/teluploadExcel`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -58,7 +58,7 @@ const NonTechModal = ({ onClose, userInfo }) => {
         console.log("Data from Excel file submitted:", response.data);
         toast.success("File Uploaded Successfully");
       } else {
-        const response = await axios.post(`${API_URL}/createstaff`, newFormData);
+        const response = await axios.post(`${API_URL}/telcreatestaff`, newFormData);
         console.log("Data from input fields submitted:", response.data);
         toast.success("Entry created Successfully");
       }
@@ -197,4 +197,4 @@ const NonTechModal = ({ onClose, userInfo }) => {
   );
 }
 
-export default NonTechModal;
+export default TelNonTechModal;

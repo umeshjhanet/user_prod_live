@@ -469,7 +469,7 @@ const TelNonTechCommulative = () => {
                 </thead>
                 <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr  key={index}>
+                    
                     <tr  key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>

@@ -29,6 +29,8 @@ import TelAllPeriodic from './TelAllPeriodic';
 import KarAllCumulative from './KarAllCumulative';
 import KarAllPeriodic from './KarAllPeriodic';
 import NonTechModal from './Components/NonTechModal';
+import TelNonTechModal from './Components/TelNonTechModal';
+import KarNonTechModal from './Components/KarNonTechModal';
 
 const App = () => {
  
@@ -41,6 +43,7 @@ const App = () => {
           <Route path="/UPDCDashboard" element={<Dashboard />} />
           <Route path="/UPDCDashboard" element={<NonTechModal />} />
           <Route path="/TelDashboard" element={<TelDashboard />} />
+          <Route path="/TelDashboard" element={<TelNonTechModal />} />
           <Route path="/TelDashboard" element={<TelNonTechCommulative />} />
           <Route path="/TelDashboard" element={<TelNonTechPeriodic />} />
           <Route path="/TelDashboard" element={<TelAllCumulative />} />
@@ -50,6 +53,7 @@ const App = () => {
           <Route path="/KarDashboard" element={<KarNonTechPeriodic />} />
           <Route path="/KarDashboard" element={<KarAllCumulative />} />
           <Route path="/KarDashboard" element={<KarAllPeriodic />} />
+          <Route path="/KarDashboard" element={<KarNonTechModal />} />
           <Route path="/User_Form" element={<User_Form />} />
           <Route path="/dashboard" element={<PeriodicSummaryReport />} />
           <Route path="/dashboard" element={<CumulativeSummaryReport />} />

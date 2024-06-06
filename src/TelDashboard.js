@@ -21,6 +21,7 @@ import TelAllCumulative from './TelAllCumulative';
 import TelAllPeriodic from './TelAllPeriodic';
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
+import TelNonTechModal from './Components/TelNonTechModal';
 
 const TelDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -568,8 +569,8 @@ const TelDashboard = () => {
             {shownonTechPeriodicSummary && <TelNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showAllCumulativeSummary && <TelAllCumulative />}
             {showAllPeriodicSummary && <TelAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onclose={handleCloseCalculator} />}
-            {isModalOpen && <NonTechModal onclose={handleCloseModal}/>}
+            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData}/>}
             <ToastContainer />
         </>
     );

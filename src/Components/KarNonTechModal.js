@@ -5,16 +5,16 @@ import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
 import { API_URL } from '../API';
 
-const NonTechModal = ({ onClose, userInfo }) => {
+const KarNonTechModal = ({ onClose, userInfo = {} }) => {
   const { projects = [], locations = [] } = userInfo;
   const projectId = projects[0];
-  
-  const selectedLocation = projectId === 1 || projectId === 2 ? `${locations[0].name} District Court` 
-                        : projectId === 3 ? locations[1].name 
-                        : "";
-  const selectedLocationId = projectId === 1 || projectId === 2 ? locations[0].id 
-                        : projectId === 3 ? locations[1].id 
-                        : "";
+
+  const selectedLocation = projectId === 1 || projectId === 2 ? `${locations[0]?.name || ''} District Court`
+    : projectId === 3 ? locations[1]?.name || ''
+    : "";
+  const selectedLocationId = projectId === 1 || projectId === 2 ? locations[0]?.id || ''
+    : projectId === 3 ? locations[1]?.id || ''
+    : "";
 
   const [excelSelected, setExcelSelected] = useState(true);
   const [manualSelected, setManualSelected] = useState(false);
@@ -30,7 +30,6 @@ const NonTechModal = ({ onClose, userInfo }) => {
     DocPreparation: '',
     Guard: '',
   });
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +37,7 @@ const NonTechModal = ({ onClose, userInfo }) => {
     const formData = new FormData();
     formData.append('file', excelData);
     formData.append('ProjectId', projectId);
-    formData.append('ProjectName', projectId === 1 ? "Project 1" : projectId === 3 ? "Project 3" : "");
+    formData.append('ProjectName', projectId === 1 ? "Project 1" : projectId === 2 ? "Project 2" : projectId === 3 ? "Project 3" : "");
     formData.append('LocationID', selectedLocationId);
     formData.append('LocationName', selectedLocation);
 
@@ -50,7 +49,7 @@ const NonTechModal = ({ onClose, userInfo }) => {
 
     try {
       if (excelData) {
-        const response = await axios.post(`${API_URL}/uploadExcel`, formData, {
+        const response = await axios.post(`${API_URL}/karuploadExcel`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -58,7 +57,7 @@ const NonTechModal = ({ onClose, userInfo }) => {
         console.log("Data from Excel file submitted:", response.data);
         toast.success("File Uploaded Successfully");
       } else {
-        const response = await axios.post(`${API_URL}/createstaff`, newFormData);
+        const response = await axios.post(`${API_URL}/karcreatestaff`, newFormData);
         console.log("Data from input fields submitted:", response.data);
         toast.success("Entry created Successfully");
       }
@@ -89,7 +88,7 @@ const NonTechModal = ({ onClose, userInfo }) => {
     <>
       <ToastContainer />
       <div className="custom-modal-overlay">
-        <div className="custom-modal" style={{overflowY:'auto'}}>
+        <div className="custom-modal" style={{ overflowY: 'auto' }}>
           <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
             <h6 className="ms-2" style={{ color: "white" }}>
               User Wise Summary Report
@@ -117,76 +116,76 @@ const NonTechModal = ({ onClose, userInfo }) => {
                   </div>
 
                   {excelSelected && <>
-                  <div className='row mt-2'>
-                    <div className='col-2'>
-                    <label className='mt-2'>Upload Excel:</label>
+                    <div className='row mt-2'>
+                      <div className='col-2'>
+                        <label className='mt-2'>Upload Excel:</label>
+                      </div>
+                      <div className='col-10 mt-2'>
+                        <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+                      </div>
                     </div>
-                    <div className='col-10 mt-2'>
-                    <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+                    <div className='row mt-3 ms-4'>
+                      <button type='submit'>Submit</button>
                     </div>
-                  </div>
-                    <div className='row mt-3 ms-4'>                   
-                    <button type='submit'>Submit</button>
-                  </div>
                   </>}
                   {manualSelected && <>
-                  <div className='row'>
-                    <div className='col-3'>
-                    <label className='mt-2 ms-0'>Staff Name</label>
+                    <div className='row'>
+                      <div className='col-3'>
+                        <label className='mt-2 ms-0'>Staff Name</label>
+                      </div>
+                      <div className='col-9'>
+                        <input type='text' name='StaffName' onChange={handleInputChange} />
+                      </div>
                     </div>
-                    <div className='col-9'>
-                    <input type='text' name='StaffName' onChange={handleInputChange} />
+                    <div className='row mt-2'>
+                      <div className='col-3'>
+                        <label className='mt-2'>Counting</label>
+                      </div>
+                      <div className='col-9'>
+                        <input type='number' name='Counting' onChange={handleInputChange} />
+                      </div>
                     </div>
-                  </div>
-                  <div className='row mt-2'>
-                    <div className='col-3'>
-                    <label className='mt-2'>Counting</label>
+                    <div className='row mt-2'>
+                      <div className='col-3'>
+                        <label className='mt-2'>Inventory</label>
+                      </div>
+                      <div className='col-9'>
+                        <input type='number' name='Inventory' onChange={handleInputChange} />
+                      </div>
                     </div>
-                    <div className='col-9'>
-                    <input type='number' name='Counting' onChange={handleInputChange} />
+                    <div className='row mt-2'>
+                      <div className='col-3'>
+                        <label className='mt-2'>DocPreparation</label>
+                      </div>
+                      <div className='col-9'>
+                        <input type='number' name='DocPreparation' onChange={handleInputChange} />
+                      </div>
                     </div>
-                  </div>
-                  <div className='row mt-2'>
-                    <div className='col-3'>
-                    <label className='mt-2'>Inventory</label>
+                    <div className='row mt-2'>
+                      <div className='col-3'>
+                        <label className='mt-2'>Other</label>
+                      </div>
+                      <div className='col-9'>
+                        <input type='number' name='Guard' onChange={handleInputChange} />
+                      </div>
                     </div>
-                    <div className='col-9'>
-                    <input type='number' name='Inventory' onChange={handleInputChange} />
+                    <div className='row mt-2'>
+                      <div className='col-3'>
+                        <label className='mt-2'>Date</label>
+                      </div>
+                      <div className='col-9'>
+                        <input type='date' name='Date' onChange={handleInputChange} />
+                      </div>
                     </div>
-                  </div>
-                  <div className='row mt-2'>
-                    <div className='col-3'>
-                    <label className='mt-2'>DocPreparation</label>
+                    <div className='row mt-2'>
+                      <div className='col-3'></div>
+                      <div className='col-9'>
+                        <button type='submit'>Submit</button>
+                      </div>
                     </div>
-                    <div className='col-9'>
-                    <input type='number' name='DocPreparation' onChange={handleInputChange} />
-                    </div>
-                  </div>
-                  <div className='row mt-2'>
-                    <div className='col-3'>
-                    <label className='mt-2'>Other</label>
-                    </div>
-                    <div className='col-9'>
-                    <input type='number' name='Guard' onChange={handleInputChange} />
-                    </div>
-                  </div>
-                  <div className='row mt-2'>
-                    <div className='col-3'>
-                    <label className='mt-2'>Date</label>
-                    </div>
-                    <div className='col-9'>
-                    <input type='date' name='Date' onChange={handleInputChange} />
-                    </div>
-                  </div>
-                  <div className='row mt-2'>
-                  <div className='col-3'></div>
-                    <div className='col-9'>
-                    <button type='submit'>Submit</button>
-                    </div>
-                  </div>
                   </>}
-                  
-                  
+
+
                 </div>
               </form>
             </div>
@@ -197,4 +196,4 @@ const NonTechModal = ({ onClose, userInfo }) => {
   );
 }
 
-export default NonTechModal;
+export default KarNonTechModal;
