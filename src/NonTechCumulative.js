@@ -714,12 +714,9 @@ const NonTechCumulative = () => {
                 </div>
               </div>
               <div className="modal-body">
-                <button
-                  className="back-arrow-btn"
-                  onClick={handleBackToLocationView}
-                >
-                  <i className="fa fa-arrow-left"></i> Back
-                </button>
+                
+                 
+               
                 <div className="row mt-3" ref={ref}>
                   <div className="search-report-card">
                     <div className="row">

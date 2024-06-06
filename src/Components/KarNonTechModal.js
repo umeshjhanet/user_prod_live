@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
 import { API_URL } from '../API';
+import { FiDownload } from 'react-icons/fi';
 
 const KarNonTechModal = ({ onClose, userInfo = {} }) => {
   const { projects = [], locations = [] } = userInfo;
@@ -20,6 +21,7 @@ const KarNonTechModal = ({ onClose, userInfo = {} }) => {
   const [manualSelected, setManualSelected] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [excelData, setExcelData] = useState(null);
+  const [downloadExcel,setDownloadExcel]=useState(null);
   const [newFormData, setNewFormData] = useState({
     LocationID: selectedLocationId,
     LocationName: selectedLocation,
@@ -30,6 +32,34 @@ const KarNonTechModal = ({ onClose, userInfo = {} }) => {
     DocPreparation: '',
     Guard: '',
   });
+
+  const handleDownloadFormat = (e) => {
+    e.preventDefault();
+    if (downloadExcel) {
+      const link = document.createElement("a");
+      link.href = downloadExcel;
+      link.setAttribute("download", "ExcelFormat.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  useEffect(() => {
+    const fetchDownloadExcel = () => {
+      let apiUrl = `${API_URL}/downloadformat`;
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+          const url = window.URL.createObjectURL(blob);
+          setDownloadExcel(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+        });
+    };
+    fetchDownloadExcel();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,6 +146,11 @@ const KarNonTechModal = ({ onClose, userInfo = {} }) => {
                   </div>
 
                   {excelSelected && <>
+                    <div className="row ms-2 justify-content-end">
+                      <button className="non-tech mt-1 d-flex align-items-center" onClick={handleDownloadFormat}>
+                        <FiDownload className="me-2" />Format
+                      </button>
+                    </div>
                     <div className='row mt-2'>
                       <div className='col-2'>
                         <label className='mt-2'>Upload Excel:</label>

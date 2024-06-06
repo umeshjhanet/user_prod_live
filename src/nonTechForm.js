@@ -18,8 +18,6 @@ const NonTechForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const[excelData,setExcelData]=useState(null);
   const [newFormData, setNewFormData] = useState({
-    ProjectId: '',
-    ProjectName:'',
     LocationID: '',
     LocationName:'',
     StaffName: '',
@@ -102,20 +100,6 @@ const NonTechForm = () => {
     e.stopPropagation();
     setShowProject(!showProject);
   };
-
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-
-  //   try {
-  //     const response = await axios.post(`${API_URL}/createstaff`, formData);
-  //     console.log("Non-tech staff created:", response.data);
-  //   } catch (error) {
-  //     console.error("Error creating non-tech staff:", error);
-  //   }
-  // };
-
 
 
   const handleForm = async () => {

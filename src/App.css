@@ -254,12 +254,18 @@ input[type="submit"]:hover {
   height: 30px;
 }
 .non-tech button{
-  width: 200px;
+  width: 100px;
   background-color: #4BC0C0;
   border: none;
   height: 40px;
 }
 
+.non-tech-excel button{
+  width: 200px;
+  background-color: #4BC0C0;
+  border: none;
+
+}
 .password-inputbox:focus {
   border-bottom: 1px solid #007bff;
 }

@@ -5,6 +5,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
+import { FiDownload } from 'react-icons/fi';
 
 
 const AllCummulative = ({ multipliedData, prices, editedPrices }) => {
@@ -636,7 +637,9 @@ console.log("summary report", summaryReport)
               </div>
               <div className="col-8"></div>
               <div className="col-2">
-                <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
+                <button className="btn btn-success" onClick={handleExport}>
+                <FiDownload className="me-2" />Export Csv
+                  </button>
               </div>
               {showConfirmation && (
                 <div className="confirmation-dialog">

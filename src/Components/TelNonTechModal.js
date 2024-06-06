@@ -4,14 +4,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
 import { API_URL } from '../API';
+import { FiDownload } from 'react-icons/fi';
 
 const TelNonTechModal = ({ onClose, userInfo }) => {
   const { projects = [], locations = [] } = userInfo;
   const projectId = projects[0];
   
-  const selectedLocation = projectId === 1 || projectId === 2 ? `${locations[0].name} District Court` 
+  const selectedLocation = projectId === 1 ? `${locations[0].name} District Court` 
+                        : projectId === 2 ? locations[0].name.toUpperCase()
                         : projectId === 3 ? locations[1].name 
                         : "";
+
   const selectedLocationId = projectId === 1 || projectId === 2 ? locations[0].id 
                         : projectId === 3 ? locations[1].id 
                         : "";
@@ -20,6 +23,7 @@ const TelNonTechModal = ({ onClose, userInfo }) => {
   const [manualSelected, setManualSelected] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [excelData, setExcelData] = useState(null);
+  const [downloadExcel,setDownloadExcel]=useState(null);
   const [newFormData, setNewFormData] = useState({
     LocationID: selectedLocationId,
     LocationName: selectedLocation,
@@ -31,6 +35,33 @@ const TelNonTechModal = ({ onClose, userInfo }) => {
     Guard: '',
   });
   
+  const handleDownloadFormat = (e) => {
+    e.preventDefault();
+    if (downloadExcel) {
+      const link = document.createElement("a");
+      link.href = downloadExcel;
+      link.setAttribute("download", "ExcelFormat.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  useEffect(() => {
+    const fetchDownloadExcel = () => {
+      let apiUrl = `${API_URL}/downloadformat`;
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+          const url = window.URL.createObjectURL(blob);
+          setDownloadExcel(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+        });
+    };
+    fetchDownloadExcel();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,8 +146,13 @@ const TelNonTechModal = ({ onClose, userInfo }) => {
                       <label htmlFor='manual' className='ms-1'>Manually</label>
                     </div>
                   </div>
-
+                 
                   {excelSelected && <>
+                    <div className="row ms-2 justify-content-end">
+                      <button className="non-tech mt-1 d-flex align-items-center" onClick={handleDownloadFormat}>
+                        <FiDownload className="me-2" />Format
+                      </button>
+                    </div>
                   <div className='row mt-2'>
                     <div className='col-2'>
                     <label className='mt-2'>Upload Excel:</label>
@@ -124,6 +160,7 @@ const TelNonTechModal = ({ onClose, userInfo }) => {
                     <div className='col-10 mt-2'>
                     <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
                     </div>
+                    
                   </div>
                     <div className='row mt-3 ms-4'>                   
                     <button type='submit'>Submit</button>
