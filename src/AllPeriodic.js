@@ -801,7 +801,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Client-QC</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
+                            <th>DocPre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
 

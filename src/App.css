@@ -1061,6 +1061,7 @@ input[type="submit"] {
   max-width: 100%;  /* Increased width */
   width: 100%;      /* Ensure it uses 90% of the viewport width */
   margin: auto;
+  overflow-x: auto;
 }
 
 /* Modal Content */
@@ -1068,6 +1069,7 @@ input[type="submit"] {
   background-color: #fff;
   border-radius: 0.3rem;
   box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  overflow-x: auto;
 }
 
 /* Modal Header */
@@ -1101,6 +1103,7 @@ input[type="submit"] {
 .modal-body {
   position: relative;
   padding: 0.5rem;
+  overflow-x: auto;
 }
 
 /* Search Report Card */
@@ -1112,7 +1115,8 @@ input[type="submit"] {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .table-modal{
-  width: 100%;
+  width: 99%;
+  overflow-x: auto;
   margin-bottom: 20rem;
   color: #212529;
   background-color: transparent;
