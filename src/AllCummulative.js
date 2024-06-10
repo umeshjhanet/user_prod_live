@@ -850,8 +850,6 @@ console.log("summary report", summaryReport)
           </div>
         )}
 
-
-
         {userView && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
@@ -907,7 +905,7 @@ console.log("summary report", summaryReport)
                             <th>Sr.No.</th>
                             <th>Location</th>
                             <th>User Name</th>
-                            <th>Date</th>
+                            <th style={{width:'200px'}}>Date</th>
                             <th>Lot No</th>
                             <th>Scanned</th>
                             <th>QC</th>
@@ -978,7 +976,7 @@ console.log("summary report", summaryReport)
                                <td>{index + 1}</td>
                                <td>{elem.locationName}</td>
                                <td>{elem.user_type || 0}</td>
-                               <td>{elem.Date}</td>
+                               <td >{elem.Date}</td>
                                <td>{elem.lotno}</td>
                                <td>{scanned.toLocaleString()}</td>
                                <td>{qc.toLocaleString()}</td>

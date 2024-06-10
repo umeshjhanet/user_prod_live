@@ -324,7 +324,7 @@ const handleCloseModal = () => {
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
                         <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
-                            <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white' }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
+                            <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white',padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
                             {/* <div className='col-11'></div> */}
                             {/* </div> */}
                            
@@ -334,11 +334,11 @@ const handleCloseModal = () => {
                                 <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
                                 <label htmlFor='all' className='ms-1'>All</label>
                             </div>
-                            <div className='col-1'>
+                            <div className='col-2'>
                                 <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
                                 <label htmlFor='technical' className='ms-1'>Technical</label>
                             </div>
-                            <div className='col-2'>
+                            <div className='col-2' style={{marginLeft:'-20px'}}>
                                 <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
                                 <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
                             </div>
@@ -347,7 +347,7 @@ const handleCloseModal = () => {
                                 <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleOpenModal}>Upload</button>
                             </div>
                             ) : (
-                                <div className='col-5'></div>
+                                <div className='col-4'></div>
                             )}
                             
                             
