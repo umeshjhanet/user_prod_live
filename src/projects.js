@@ -12,7 +12,6 @@ const Projects = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     
-
     useEffect(() => {
 
         const userLog = JSON.parse(localStorage.getItem("user"));
@@ -49,7 +48,7 @@ const Projects = () => {
         const sum = {
             Inventory: 0,
             Counting: 0,
-            Doc_Pre: 0,
+            DocPre: 0,
             Guard: 0,
             Scanned: 0,
             QC: 0,
@@ -78,7 +77,7 @@ const Projects = () => {
 
     const allSums = {};
     const categories = [
-        "Inventory", "Counting", "Doc_Pre", "Guard", "Scanned", 
+        "Inventory", "Counting", "DocPre", "Guard", "Scanned", 
         "QC", "Indexing", "Flagging", "CBSL_QA", "Client_QC"
     ];
 
@@ -102,13 +101,14 @@ const Projects = () => {
                         <div className="border-top"></div>
                         <div className="border-bottom"></div>
                         <div className='row text-center'>
-                            <Link to="#" style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to="/AllProjectDashboard" style={{ textDecoration: 'none', color: 'black' }}>
                                 <h3 style={{ textDecoration: 'none', color: 'black' }}>All Projects</h3>
                             </Link>
                         </div>
+                        <Link to="/AllProjectDashboard" style={{ textDecoration: 'none', color: '#5f5f5f' }}>
                         <div className='row mt-2 mb-2'>
                             <div className='col-1'></div>
-                            <div className='col-6' style={{ textAlign: 'right' }}>
+                            <div className='col-5' style={{ textAlign: 'right' }}>
                                 {categories.map(category => (
                                     <p key={category}><b>{category}:</b></p>
                                 ))}
@@ -119,8 +119,11 @@ const Projects = () => {
                                         <b>{allSums[category].toLocaleString()}</b>
                                     </p>
                                 ))}
+                                <p><Link to="/AllProjectDashboard"  style={{color:'#508D69'}}>More...</Link></p>
                             </div>
+                            <div className='col-1'></div>
                         </div>
+                        </Link>
                     </div>
 
                     <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
@@ -129,9 +132,10 @@ const Projects = () => {
                                 <h3 style={{ color: '#193860' }}>UPDC</h3>
                             </Link>
                         </div>
+                        <Link to='/UPDCDashboard' style={{ textDecoration: 'none',color:'#5f5f5f' }}>
                         <div className='row mt-2 mb-2'>
                             <div className='col-1'></div>
-                            <div className='col-6' style={{ textAlign: 'right' }}>
+                            <div className='col-5' style={{ textAlign: 'right' }}>
                                 {Object.keys(updcprojectDetails).map((category, categoryIndex) => (
                                     Object.keys(updcprojectDetails[category][0]).map((key, keyIndex) => (
                                         <p key={`${categoryIndex}-${keyIndex}`}><b>{key}:</b></p>
@@ -143,14 +147,17 @@ const Projects = () => {
                                     Object.values(updcprojectDetails[category][0]).map((value, valueIndex) => (
                                         <p
                                             key={`${categoryIndex}-${valueIndex}`}
-                                            style={{ color: category === 'NonTech' ? '#508D69' : '#65B741' }}
+                                            style={{ color: category === 'NonTech' ? '#193860' : '#2A629A' }}
                                         >
                                             <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                         </p>
                                     ))
                                 ))}
+                                <p><Link to="/UPDCDashboard"  style={{color:'#193860'}}>More...</Link></p>
                             </div>
+                            <div className='col-1'></div>
                         </div>
+                        </Link>
                     </div>
 
                     <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#4BC0C0' }}>
@@ -159,9 +166,10 @@ const Projects = () => {
                                 <h3 style={{ color: '#4BC0C0' }}>Telangana</h3>
                             </Link>
                         </div>
+                        <Link to='/TelDashboard' style={{ textDecoration: 'none',color:'#5f5f5f' }}>
                         <div className='row mt-2 mb-2'>
                             <div className='col-1'></div>
-                            <div className='col-6' style={{ textAlign: 'right' }}>
+                            <div className='col-5' style={{ textAlign: 'right' }}>
                                 {Object.keys(telprojectDetails).map((category, categoryIndex) => (
                                     Object.keys(telprojectDetails[category][0]).map((key, keyIndex) => (
                                         <p key={`${categoryIndex}-${keyIndex}`}><b>{key}:</b></p>
@@ -173,14 +181,17 @@ const Projects = () => {
                                     Object.values(telprojectDetails[category][0]).map((value, valueIndex) => (
                                         <p
                                             key={`${categoryIndex}-${valueIndex}`}
-                                            style={{ color: category === 'NonTech' ? '#508D69' : '#65B741' }}
+                                            style={{ color: category === 'NonTech' ? '#028391' : '#4BC0C0' }}
                                         >
                                             <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                         </p>
                                     ))
                                 ))}
+                                <p><Link to="/TelDashboard"  style={{color:'#4BC0C0'}}>More...</Link></p>
                             </div>
+                            <div className='col-1'></div>
                         </div>
+                        </Link>
                     </div>
                     <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: 'rgb(148, 78, 99)' }}>
                         <div className='row text-center'>
@@ -188,9 +199,10 @@ const Projects = () => {
                                 <h3 style={{ color: 'rgb(148, 78, 99)' }}>Karnataka</h3>
                             </Link>
                         </div>
+                        <Link to='/KarDashboard' style={{ textDecoration: 'none',color:'#5f5f5f' }}>
                         <div className='row mt-2 mb-2'>
                             <div className='col-1'></div>
-                            <div className='col-6' style={{ textAlign: 'right' }}>
+                            <div className='col-5' style={{ textAlign: 'right' }}>
                                 {Object.keys(karprojectDetails).map((category, categoryIndex) => (
                                     Object.keys(karprojectDetails[category][0]).map((key, keyIndex) => (
                                         <p key={`${categoryIndex}-${keyIndex}`}><b>{key}:</b></p>
@@ -202,14 +214,17 @@ const Projects = () => {
                                     Object.values(karprojectDetails[category][0]).map((value, valueIndex) => (
                                         <p
                                             key={`${categoryIndex}-${valueIndex}`}
-                                            style={{ color: category === 'NonTech' ? '#508D69' : '#65B741' }}
+                                            style={{ color: category === 'NonTech' ? 'rgb(153, 63, 82)' : 'rgb(185, 101, 119)' }}
                                         >
                                             <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                         </p>
                                     ))
                                 ))}
+                                <p><Link to="/KarDashboard"  style={{color:'rgb(148, 78, 99)'}}>More...</Link></p>
                             </div>
+                            <div className='col-1'></div>
                         </div>
+                        </Link>
                     </div>
                 </div>
             </div>

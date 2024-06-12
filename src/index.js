@@ -31,6 +31,7 @@ import KarAllPeriodic from './KarAllPeriodic';
 import NonTechModal from './Components/NonTechModal';
 import TelNonTechModal from './Components/TelNonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
+import AllProjectDashboard from './AllProjectDashboard';
 
 const App = () => {
  
@@ -40,6 +41,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/AllProjectDashboard" element={<AllProjectDashboard />} />
           <Route path="/UPDCDashboard" element={<Dashboard />} />
           <Route path="/UPDCDashboard" element={<NonTechModal />} />
           <Route path="/TelDashboard" element={<TelDashboard />} />

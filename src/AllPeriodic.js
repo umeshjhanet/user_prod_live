@@ -483,7 +483,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
               <th>Client QA</th>
               <th>Counting</th>
               <th>Inventory</th>
-              <th>Doc Preparation</th>
+              <th>Doc Pre</th>
               <th>Guard</th>
               <th>Expense Rate</th>
             </tr>
@@ -562,7 +562,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                   <th>Client-QC</th>
                   <th>Counting</th>
                   <th>Inventory</th>
-                  <th>DocPreparation</th>
+                  <th>DocPre</th>
                   <th>Guard</th>
                   <th>Expense Rate</th>
                   <th>Remarks</th>
@@ -649,7 +649,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Client-QC</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
+                            <th>DocPre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
                           </tr>

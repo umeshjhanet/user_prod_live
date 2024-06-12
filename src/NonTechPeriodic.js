@@ -477,7 +477,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       <th>Sr.No.</th>
                       <th>Counting</th>
                       <th>Inventory</th>
-                      <th>Doc Prepared</th>
+                      <th>Doc Pre</th>
                       <th>Other</th>
                       <th>Expense Rate</th>
                     </tr>
@@ -545,7 +545,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                     <th>Location Name</th>
                     <th>Counting</th>
                     <th>Inventory</th>
-                    <th>Doc Prepared</th>
+                    <th>Doc Pre</th>
                     <th>Other</th>
                     <th>Expense Rate</th>
                     <th>Remarks</th>
@@ -621,7 +621,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>User Name</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>Doc Prepared</th>
+                            <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>
@@ -743,7 +743,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
 
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>Doc Prepared</th>
+                            <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>

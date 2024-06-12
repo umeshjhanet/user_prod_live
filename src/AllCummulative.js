@@ -594,7 +594,7 @@ console.log("summary report", summaryReport)
               <th>Client QA</th>
               <th>Counting</th>
               <th>Inventory</th>
-              <th>Doc Preparation</th>
+              <th>Doc Pre</th>
               <th>Guard</th>
               <th>Expense Rate</th>
             </tr>
@@ -677,7 +677,7 @@ console.log("summary report", summaryReport)
                   <th>Client-QC</th>
                   <th>Counting</th>
                   <th>Inventory</th>
-                  <th>DocPreparation</th>
+                  <th>DocPre</th>
                   <th>Guard</th>
                   <th>Expense Rate</th>
                   <th>Remarks</th>
@@ -764,7 +764,7 @@ console.log("summary report", summaryReport)
                             <th>Client-QC</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
+                            <th>DocPre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
                           </tr>
@@ -915,7 +915,7 @@ console.log("summary report", summaryReport)
                             <th>Client-QC</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>DocPreparation</th>
+                            <th>DocPre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
 

@@ -171,56 +171,56 @@ const NonTechModal = ({ onClose, userInfo }) => {
                 )}
                 {manualSelected && (
                   <>
-                    <div className="row">
-                      <div className="col-3">
-                        <label className="mt-2 ms-0">Staff Name</label>
+                    <div className="row mt-2">
+                      <div className="col-2">
+                        <label className="mt-2 ms-0">Staff Name:</label>
                       </div>
                       <div className="col-9">
                         <input type="text" name="StaffName" onChange={handleInputChange} />
                       </div>
                     </div>
                     <div className="row mt-2">
-                      <div className="col-3">
-                        <label className="mt-2">Counting</label>
+                      <div className="col-2">
+                        <label className="mt-2">Counting:</label>
                       </div>
                       <div className="col-9">
                         <input type="number" name="Counting" onChange={handleInputChange} />
                       </div>
                     </div>
                     <div className="row mt-2">
-                      <div className="col-3">
-                        <label className="mt-2">Inventory</label>
+                      <div className="col-2">
+                        <label className="mt-2">Inventory:</label>
                       </div>
                       <div className="col-9">
                         <input type="number" name="Inventory" onChange={handleInputChange} />
                       </div>
                     </div>
                     <div className="row mt-2">
-                      <div className="col-3">
-                        <label className="mt-2">DocPreparation</label>
+                      <div className="col-2">
+                        <label className="mt-2">DocPre:</label>
                       </div>
                       <div className="col-9">
                         <input type="number" name="DocPreparation" onChange={handleInputChange} />
                       </div>
                     </div>
                     <div className="row mt-2">
-                      <div className="col-3">
-                        <label className="mt-2">Other</label>
+                      <div className="col-2">
+                        <label className="mt-2">Other:</label>
                       </div>
                       <div className="col-9">
                         <input type="number" name="Guard" onChange={handleInputChange} />
                       </div>
                     </div>
                     <div className="row mt-2">
-                      <div className="col-3">
-                        <label className="mt-2">Date</label>
+                      <div className="col-2">
+                        <label className="mt-2">Date:</label>
                       </div>
                       <div className="col-9">
                         <input type="date" name="Date" onChange={handleInputChange} />
                       </div>
                     </div>
                     <div className="row mt-2">
-                      <div className="col-3"></div>
+                      <div className="col-2"></div>
                       <div className="col-9">
                         <button type="submit">Submit</button>
                       </div>

@@ -390,7 +390,7 @@ const KarNonTechCommulative = () => {
         <th>Sr.No.</th>
         <th>Counting</th>
         <th>Inventory</th>
-        <th>Doc Prepared</th>
+        <th>Doc Pre</th>
         <th>Other</th>
         <th>Expense Rate</th>
       </tr>
@@ -474,7 +474,7 @@ const KarNonTechCommulative = () => {
 
                     <th>Counting</th>
                     <th>Inventory</th>
-                    <th>Doc Prepared</th>
+                    <th>Doc Pre</th>
                     <th>Other</th>
                     <th>Expense Rate</th>
                     <th>Remarks</th>
@@ -549,7 +549,7 @@ const KarNonTechCommulative = () => {
                             <th>User Name</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>Doc Prepared</th>
+                            <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>
@@ -670,7 +670,7 @@ const KarNonTechCommulative = () => {
                             <th>Date</th>
                             <th>Counting</th>
                             <th>Inventory</th>
-                            <th>Doc Prepared</th>
+                            <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
                             <th>Remarks</th>
