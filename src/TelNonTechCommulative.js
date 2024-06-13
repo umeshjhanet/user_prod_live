@@ -45,16 +45,18 @@ const TelNonTechCommulative = () => {
   };
 
   const handleUserView = (username, locationName, rowIndex) => {
-    setLocationView(false);
-    setShowModal(true);
-   
+    setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
-
+  setTimeout(() => {
     setUserView(true);
+    setLocationView(false);
+    setShowModal(true);
+    setIsLoading(false);
+  }, 1000);
   };
 
   const handleExport = () => {
@@ -391,8 +393,8 @@ const TelNonTechCommulative = () => {
                   <thead>
                     <tr>
                       <th>Sr.No.</th>
-                      <th>Counting</th>
                       <th>Inventory</th>
+                      <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
                       <th>Expense Rate</th>
@@ -401,8 +403,8 @@ const TelNonTechCommulative = () => {
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>{summaryReport.Counting}</td>
                       <td>{summaryReport.Inventory}</td>
+                      <td>{summaryReport.Counting}</td>
                       <td>{summaryReport.DocPreparation}</td>
                       <td>{summaryReport.Guard}</td>
                       <td>{lastColumnTotal.toLocaleString()}</td>
@@ -459,9 +461,8 @@ const TelNonTechCommulative = () => {
                   <tr>
                     <th>Sr.No.</th>
                     <th>Location Name</th>
-
-                    <th>Counting</th>
                     <th>Inventory</th>
+                    <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
                     <th>Expense Rate</th>
@@ -470,12 +471,12 @@ const TelNonTechCommulative = () => {
                 </thead>
                 <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    
-                    <tr  key={index}>
+
+                    <tr key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
-                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
                       <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
@@ -487,7 +488,7 @@ const TelNonTechCommulative = () => {
             </div>
           </div>
         </div>
-        {locationView && showModal && (
+        {locationView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
@@ -500,14 +501,14 @@ const TelNonTechCommulative = () => {
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
-                <div className="row " ref={ref}>
+                <div className="row mt-3" ref={ref}>
                   <div className="search-report-card">
-                    <div className="row" style={{ marginTop: '-10px' }}>
+                    <div className="row">
                       <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                        <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                       </div>
                       <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport} style={{ padding: '2px' }}>
+                        <button className="btn btn-success" onClick={handleLocationExport}>
                           Export CSV
                         </button>
                       </div>
@@ -536,8 +537,8 @@ const TelNonTechCommulative = () => {
                             <th>Sr.No.</th>
                             <th>Location</th>
                             <th>User Name</th>
-                            <th>Counting</th>
                             <th>Inventory</th>
+                            <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
@@ -553,17 +554,16 @@ const TelNonTechCommulative = () => {
                             const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
                             const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
                             const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-                          
+
                             // Calculate total expense rate
                             const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
-
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
-                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
+                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
                                 <td>{elem.Guard || 0}</td>
                                 <td>{totalRate.toLocaleString()}</td>
@@ -582,22 +582,23 @@ const TelNonTechCommulative = () => {
           </div>
         )}
 
-        {userView && showModal && (
-           <div className="custom-modal-overlay">
-           <div className="custom-modal">
-             <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-               <h6 className="" style={{ color: "white" }}>
-                 User Wise Detailed Report
-               </h6>
-               <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                 <IoMdCloseCircle />
-               </button>
-             </div>
-             <div className="row">
-               <div className="col-1">
-                 <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
-               </div>
-             </div>
+
+        {userView && !isLoading && showModal && (
+          <div className="custom-modal-overlay">
+            <div className="custom-modal">
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="" style={{ color: "white" }}>
+                  User Wise Detailed Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                  <IoMdCloseCircle />
+                </button>
+              </div>
+              <div className="row">
+                <div className="col-1">
+                  <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
+                </div>
+              </div>
               <div className="modal-body">
 
                 <div className="row mt-3" ref={ref}>
@@ -638,9 +639,8 @@ const TelNonTechCommulative = () => {
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Date</th>
-
-                            <th>Counting</th>
                             <th>Inventory</th>
+                            <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
@@ -656,19 +656,17 @@ const TelNonTechCommulative = () => {
                             const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
                             const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
                             const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-                          
+
                             // Calculate total expense rate
                             const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
-
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>
                                 <td>{elem.Date}</td>
-
-                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
+                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
                                 <td>{elem.Guard || 0}</td>
                                 <td>{totalRate.toLocaleString()}</td>
@@ -688,7 +686,7 @@ const TelNonTechCommulative = () => {
         )}
       </div>
     </>
-  );
+  )
 }
 
 export default TelNonTechCommulative

@@ -1,19 +1,13 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.js', // Entry point of your application
   output: {
     filename: '[name].[contenthash].js',
-    path: path.resolve(__dirname, 'dist'),
+    chunkFilename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'dist'), // Output directory
+    publicPath: '/', // Ensure the public path is correct for your server setup
   },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: './public/index.html',  // Updated path
-    }),
-  ],
   module: {
     rules: [
       {
@@ -26,6 +20,20 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      // Other loaders like file-loader, url-loader, etc., if needed
     ],
+  },
+  plugins: [
+    // Add any necessary plugins here
+  ],
+  devServer: {
+    contentBase: path.join(__dirname, 'build'),
+    compress: true,
+    port: 9000,
+    historyApiFallback: true, // For single-page applications
   },
 };

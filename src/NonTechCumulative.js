@@ -46,16 +46,18 @@ const NonTechCumulative = () => {
   };
 
   const handleUserView = (username, locationName, rowIndex) => {
-    setLocationView(false);
-    setShowModal(true);
-
+    setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
-
+  setTimeout(() => {
     setUserView(true);
+    setLocationView(false);
+    setShowModal(true);
+    setIsLoading(false);
+  }, 1000);
   };
 
   const handleExport = () => {
@@ -421,18 +423,19 @@ const NonTechCumulative = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className={`container mb-5 ${isLoading ? "blur" : ""}`}>
+      <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
         <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
+
               {summaryReport ? (
                 <table className="table-bordered mt-2">
                   <thead>
                     <tr>
                       <th>Sr.No.</th>
-                      <th>Counting</th>
                       <th>Inventory</th>
+                      <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
                       <th>Expense Rate</th>
@@ -441,8 +444,8 @@ const NonTechCumulative = () => {
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>{summaryReport.Counting}</td>
                       <td>{summaryReport.Inventory}</td>
+                      <td>{summaryReport.Counting}</td>
                       <td>{summaryReport.DocPreparation}</td>
                       <td>{summaryReport.Guard}</td>
                       <td>{lastColumnTotal.toLocaleString()}</td>
@@ -452,7 +455,9 @@ const NonTechCumulative = () => {
               ) : (
                 <p>No data available</p>
               )}
+
             </div>
+
           </div>
         </div>
         <div className="row mt-3">
@@ -464,38 +469,31 @@ const NonTechCumulative = () => {
 
               <div className="row">
                 <div className="col-2">
-                  <p>
-                    Total row(s):{locationReport ? locationReport.length : 0}
-                  </p>
+                  <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
                 </div>
                 <div className="col-8"></div>
                 <div className="col-2">
-                  <button className="btn btn-success" onClick={handleExport}>
-                    Export CSV
-                  </button>
+                  <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
                 </div>
                 {showConfirmation && (
                   <div className="confirmation-dialog">
                     <div className="confirmation-content">
-                      <p className="fw-bold">
-                        Are you sure you want to export the CSV file?
-                      </p>
-                      <button
-                        className="btn btn-success mt-3 ms-5"
-                        onClick={handleDetailedExport}
-                      >
-                        Yes
-                      </button>
-                      <button
-                        className="btn btn-danger ms-3 mt-3"
-                        onClick={handleCancelExport}
-                      >
-                        No
-                      </button>
+                      <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                      <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                      <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
                     </div>
                   </div>
                 )}
               </div>
+              {showConfirmation && (
+                <div className="confirmation-dialog">
+                  <div className="confirmation-content">
+                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="all-tables row ms-2 me-2">
@@ -504,8 +502,8 @@ const NonTechCumulative = () => {
                   <tr>
                     <th>Sr.No.</th>
                     <th>Location Name</th>
-                    <th>Counting</th>
                     <th>Inventory</th>
+                    <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
                     <th>Expense Rate</th>
@@ -513,81 +511,45 @@ const NonTechCumulative = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {enhancedLocationReport &&
-                    enhancedLocationReport.map((elem, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td
-                          onClick={() => handleLocationView(elem.LocationName)}
-                        >
-                          {elem.LocationName || 0}
-                        </td>
-                        <td>
-                          {isNaN(parseInt(elem.Counting))
-                            ? 0
-                            : parseInt(elem.Counting).toLocaleString()}
-                        </td>
-                        <td>
-                          {isNaN(parseInt(elem.Inventory))
-                            ? 0
-                            : parseInt(elem.Inventory).toLocaleString()}
-                        </td>
-                        <td>
-                          {isNaN(parseInt(elem.DocPreparation))
-                            ? 0
-                            : parseInt(elem.DocPreparation).toLocaleString()}
-                        </td>
-                        <td>
-                          {isNaN(parseInt(elem.Guard))
-                            ? 0
-                            : parseInt(elem.Guard).toLocaleString()}
-                        </td>
-                        <td>
-                          {elem.rowSum ? elem.rowSum.toLocaleString() : 0}
-                        </td>
-                        <td></td>
-                      </tr>
-                    ))}
+                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
+                      <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
+                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                      <td></td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        {locationView && showModal && (
+        {locationView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div className="modal-header">
-                <h4 className="modal-title">User Wise Summary Report</h4>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={toggleModal}
-                  >
-                    Close
-                  </button>
-                </div>
-                <button type="button" className="close" onClick={toggleModal}>
-                  &times;
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="ms-2" style={{ color: "white" }}>
+                  User Wise Summary Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                  <IoMdCloseCircle />
                 </button>
+                <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
                 <div className="row mt-3" ref={ref}>
                   <div className="search-report-card">
                     <div className="row">
                       <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8">
-                          Total row(s):
-                          {detailedReportLocationWise
-                            ? detailedReportLocationWise.length
-                            : 0}
-                        </p>
+                        <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                       </div>
                       <div className="col-2">
-                        <button
-                          className="btn btn-success"
-                          onClick={handleLocationExport}
-                        >
+                        <button className="btn btn-success" onClick={handleLocationExport}>
                           Export CSV
                         </button>
                       </div>
@@ -598,16 +560,10 @@ const NonTechCumulative = () => {
                               <p className="fw-bold">
                                 Are you sure you want to export the CSV file?
                               </p>
-                              <button
-                                className="btn btn-success mt-3 ms-5"
-                                onClick={handleDetailedLocationWiseExport}
-                              >
+                              <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
                                 Yes
                               </button>
-                              <button
-                                className="btn btn-danger ms-3 mt-3"
-                                onClick={handleCancelLocationExport}
-                              >
+                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
                                 No
                               </button>
                             </div>
@@ -615,16 +571,15 @@ const NonTechCumulative = () => {
                         )}
                       </div>
                     </div>
-                    <div className="all-tables row ms-2 me-2">
+                    <div className="modal-table row ms-2 me-2">
                       <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
                             <th>Location</th>
                             <th>User Name</th>
-
-                            <th>Counting</th>
                             <th>Inventory</th>
+                            <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
@@ -632,105 +587,70 @@ const NonTechCumulative = () => {
                           </tr>
                         </thead>
                         <tbody>
-                        {detailedReportLocationWise &&
-  detailedReportLocationWise.map((elem, index) => {
-    const normalizeName = (name) =>
-      name ? name.replace(/district court/gi, "").trim() : "";
-    const normalizedLocationName = normalizeName(elem.locationName);
-    console.log("Normalized Location Name:", normalizedLocationName);
+                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                            const priceData = price.find(price => price.LocationName === elem.locationName);
 
-    const priceData = price.find(
-      (price) => normalizeName(price.LocationName) === normalizedLocationName
-    );
-    console.log("Price Data:", priceData);
+                            // Calculate rates for each activity
+                            const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+                            const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+                            const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+                            const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
 
-    // Calculate rates for each activity
-    const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
-    const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
-    const docPreparationRate =
-      elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
-    const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-
-    // Calculate total expense rate
-    const totalRate =
-      countingRate + inventoryRate + docPreparationRate + otherRate;
-    console.log("Total Rate:", totalRate);
-
-    return (
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{elem.locationName}</td>
-        <td
-          onClick={() =>
-            handleUserView(elem.user_type, elem.locationName)
-          }
-        >
-          {elem.user_type || 0}
-        </td>
-        <td>{elem.Counting || 0}</td>
-        <td>{elem.Inventory || 0}</td>
-        <td>{elem.DocPreparation || 0}</td>
-        <td>{elem.Guard || 0}</td>
-        <td>{totalRate.toLocaleString()}</td>
-        <td></td>
-      </tr>
-    );
-  })}
-
+                            // Calculate total expense rate
+                            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+                            return (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{elem.locationName}</td>
+                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td>{elem.Inventory || 0}</td>
+                                <td>{elem.Counting || 0}</td>
+                                <td>{elem.DocPreparation || 0}</td>
+                                <td>{elem.Guard || 0}</td>
+                                <td>{totalRate.toLocaleString()}</td>
+                                <td></td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         )}
 
-        {userView && showModal && (
+
+        {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
-              <div
-                className="modal-header"
-                style={{ padding: "5px", backgroundColor: "#4BC0C0" }}
-              >
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                 <h6 className="" style={{ color: "white" }}>
                   User Wise Detailed Report
                 </h6>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={toggleModal}
-                >
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
                   <IoMdCloseCircle />
                 </button>
               </div>
               <div className="row">
                 <div className="col-1">
-                  <IoArrowBackCircle
-                    style={{ height: "30px", width: "30px" }}
-                    onClick={handleBackToLocationView}
-                  />
+                  <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
                 </div>
               </div>
               <div className="modal-body">
-                
-                 
-               
+
                 <div className="row mt-3" ref={ref}>
                   <div className="search-report-card">
                     <div className="row">
                       <div className="col-2">
-                        <p>
-                          Total row(s):
-                          {detailedUserReport ? detailedUserReport.length : 0}
-                        </p>
+                        <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
                       </div>
-                      <div className="col-md-6">
-                        <button
-                          className="btn btn-success"
-                          onClick={handleUserExport}
-                        >
+                      <div className="col-8"></div>
+                      <div className="col-md-2">
+                        <button className="btn btn-success" onClick={handleUserExport}>
                           Export CSV
                         </button>
                       </div>
@@ -741,16 +661,10 @@ const NonTechCumulative = () => {
                               <p className="fw-bold">
                                 Are you sure you want to export the CSV file?
                               </p>
-                              <button
-                                className="btn btn-success mt-3 ms-5"
-                                onClick={handleUserWiseExport}
-                              >
+                              <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
                                 Yes
                               </button>
-                              <button
-                                className="btn btn-danger ms-3 mt-3"
-                                onClick={handleCancelUserExport}
-                              >
+                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
                                 No
                               </button>
                             </div>
@@ -758,7 +672,7 @@ const NonTechCumulative = () => {
                         )}
                       </div>
                     </div>
-                    <div className="all-tables row ms-2 me-2">
+                    <div className="modal-table row ms-2 me-2">
                       <table className="table-modal mt-2">
                         <thead>
                           <tr>
@@ -766,8 +680,8 @@ const NonTechCumulative = () => {
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Date</th>
-                            <th>Counting</th>
                             <th>Inventory</th>
+                            <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
@@ -775,66 +689,45 @@ const NonTechCumulative = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {detailedUserReport &&
-                            detailedUserReport.map((elem, index) => {
-                              const normalizeName = (name) =>
-                                name ? name.replace(/district court/gi, "").trim() : "";
-                              const normalizedLocationName = normalizeName(elem.locationName);
-                              console.log("Normalized Location Name:", normalizedLocationName);
-                          
-                              const priceData = price.find(
-                                (price) => normalizeName(price.LocationName) === normalizedLocationName
-                              );
-                              console.log("Price Data:", priceData);
+                          {detailedUserReport && detailedUserReport.map((elem, index) => {
+                            const priceData = price.find(price => price.LocationName === elem.locationName);
 
-                              // Calculate rates for each activity
-                              const countingRate =
-                                elem.Counting *
-                                (priceData ? priceData.CountingRate : 0);
-                              const inventoryRate =
-                                elem.Inventory *
-                                (priceData ? priceData.InventoryRate : 0);
-                              const docPreparationRate =
-                                elem.DocPreparation *
-                                (priceData ? priceData.DocPreparationRate : 0);
-                              const otherRate =
-                                elem.Guard *
-                                (priceData ? priceData.GuardRate : 0);
+                            // Calculate rates for each activity
+                            const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+                            const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+                            const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+                            const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
 
-                              // Calculate total expense rate
-                              const totalRate =
-                                countingRate +
-                                inventoryRate +
-                                docPreparationRate +
-                                otherRate;
-
-                              return (
-                                <tr key={index}>
-                                  <td>{index + 1}</td>
-                                  <td>{elem.locationName}</td>
-                                  <td>{elem.user_type || 0}</td>
-                                  <td>{elem.Date}</td>
-                                  <td>{elem.Counting || 0}</td>
-                                  <td>{elem.Inventory || 0}</td>
-                                  <td>{elem.DocPreparation || 0}</td>
-                                  <td>{elem.Guard || 0}</td>
-                                  <td>{totalRate.toLocaleString()}</td>
-                                  <td></td>
-                                </tr>
-                              );
-                            })}
+                            // Calculate total expense rate
+                            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+                            return (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{elem.locationName}</td>
+                                <td>{elem.user_type || 0}</td>
+                                <td>{elem.Date}</td>
+                                <td>{elem.Inventory || 0}</td>
+                                <td>{elem.Counting || 0}</td>
+                                <td>{elem.DocPreparation || 0}</td>
+                                <td>{elem.Guard || 0}</td>
+                                <td>{totalRate.toLocaleString()}</td>
+                                <td></td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         )}
       </div>
     </>
-  );
+  )
 };
 
 export default NonTechCumulative;

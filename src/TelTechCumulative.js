@@ -42,15 +42,18 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices }) => {
   };
 
   const handleUserView = (username, locationName, rowIndex) => {
-    setLocationView(false);
-    setShowModal(true);
+    setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
-
+  setTimeout(() => {
     setUserView(true);
+    setLocationView(false);
+    setShowModal(true);
+    setIsLoading(false);
+  }, 1000);
   };
   //sdfd
   const handleExport = () => {
@@ -422,73 +425,63 @@ fetchPrices();
 console.log("Prices",price);
 console.log("LOCations",locationReport);
 
-  return (
-    <>
-      {isLoading && <Loader />}
-      <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
-        <div className="row mt-3">
-          <div className="search-report-card">
-            <h4>Summary Report</h4>
-            <div className="row ms-2 me-2">
-              <table className="table-bordered mt-2" >
-                <thead>
-                  <tr>
-                    <th>Sr.No.</th>
-                    <th>Scanned</th>
-                    <th>QC</th>
-                    <th>Indexing</th>
-                    <th>Flagging</th>
-                    <th>CBSL-QA</th>
-                    <th>Client-QC</th>
-                    <th>Expense Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    {summaryReport && summaryReport.map((elem, index) => (
-                      <>
-                        <td key={index}>{index + 1}</td>
-                        <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                        <td>{lastColumnTotal.toLocaleString()}</td>
-                      </>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-
-            </div>
+return (
+  <>
+    {isLoading && <Loader />}
+    <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
+      <div className="row mt-3">
+        <div className="search-report-card">
+          <h4>Summary Report</h4>
+          <div className="row ms-2 me-2">
+            <table className="table-bordered mt-2" >
+              <thead>
+                <tr>
+                  <th>Sr.No.</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Flagging</th>
+                  <th>Indexing</th>
+                  <th>CBSL-QA</th>
+                  <th>Client-QC</th>
+                  <th>Expense Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {summaryReport && summaryReport.map((elem, index) => (
+                    <>
+                      <td key={index}>{index + 1}</td>
+                      <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                      <td>{lastColumnTotal.toLocaleString()}</td>
+                    </>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
 
           </div>
-        </div>
-        <div className="row mt-3">
-          <div className="search-report-card">
-            <div className="row">
-              <div className="col-6">
-                <h4>Location Wise Summary Report</h4>
-              </div>
 
-              <div className="row">
-                <div className="col-2">
-                  <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
-                </div>
-                <div className="col-8"></div>
-                <div className="col-2">
-                  <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
-                </div>
-                {showConfirmation && (
-                  <div className="confirmation-dialog">
-                    <div className="confirmation-content">
-                      <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                      <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                      <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                    </div>
-                  </div>
-                )}
+        </div>
+      </div>
+      <div className="row mt-3">
+        <div className="search-report-card">
+          <div className="row">
+            <div className="col-6">
+              <h4>Location Wise Summary Report</h4>
+            </div>
+
+            <div className="row">
+              <div className="col-2">
+                <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
+              </div>
+              <div className="col-8"></div>
+              <div className="col-2">
+                <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
               </div>
               {showConfirmation && (
                 <div className="confirmation-dialog">
@@ -500,146 +493,165 @@ console.log("LOCations",locationReport);
                 </div>
               )}
             </div>
+            {showConfirmation && (
+              <div className="confirmation-dialog ">
+                <div className="confirmation-content">
+                  <p className="confirmation-text fw-bold ">Are you sure you want to export the CSV file?</p>
+                  <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                  <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                </div>
+              </div>
+            )}
+          </div>
 
-            <div className="all-tables row ms-2 me-2">
-              <table className="table-bordered mt-2">
-                <thead>
-                  <tr>
-                    <th>Sr.No.</th>
-                    <th>Location Name</th>
-                    <th>Scanned</th>
-                    <th>QC</th>
-                    <th>Indexing</th>
-                    <th>Flagging</th>
-                    <th>CBSL-QA</th>
-                    <th>Client-QC</th>
-                    <th>Expense Rate</th>
-                    <th>Remarks</th>
+          <div className="all-tables row ms-2 me-2">
+            <table className="table-bordered mt-2">
+              <thead>
+                <tr>
+                  <th>Sr.No.</th>
+                  <th>Location Name</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Flagging</th>
+                  <th>Indexing</th>
+                  <th>CBSL-QA</th>
+                  <th>Client-QC</th>
+                  <th>Expense Rate</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
+                    <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                    <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                    <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                    <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                    <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                    <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                    <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
+                    <td></td>
                   </tr>
-                </thead>
-                <tbody>
-                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr  key={index}>
-                      <td>{index + 1}</td>
-                      <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
-                      <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                      <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
-                      <td></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-        {locationView && showModal && (
-          <div className="custom-modal-overlay">
-            <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="ms-2" style={{ color: "white" }}>
-                  User Wise Summary Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
-                </button>
-                <button type="button" className="close" onClick={toggleModal}>&times;</button>
-              </div>
-              <div className="modal-body">
-                <div className="row " ref={ref}>
-                  <div className="search-report-card">
-                    <div className="row" style={{ marginTop: '-10px' }}>
-                      <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
-                      </div>
-                      <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport} style={{ padding: '2px' }}>
-                          Export CSV
-                        </button>
-                      </div>
-                      <div className="col-md-8 text-end">
-                        {showConfirmationLocation && (
-                          <div className="confirmation-dialog">
-                            <div className="confirmation-content">
-                              <p className="fw-bold">
-                                Are you sure you want to export the CSV file?
-                              </p>
-                              <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
-                                Yes
-                              </button>
-                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
-                                No
-                              </button>
-                            </div>
+      </div>
+      {locationView && !isLoading && showModal && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal">
+            <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+              <h6 className="ms-2" style={{ color: "white" }}>
+                User Wise Summary Report
+              </h6>
+              <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                <IoMdCloseCircle />
+              </button>
+              <button type="button" className="close" onClick={toggleModal}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="row " ref={ref}>
+                <div className="search-report-card">
+                  <div className="row" style={{ marginTop: '-10px' }}>
+                    <div className="col-10 d-flex align-items-center">
+                      <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                    </div>
+                    <div className="col-2">
+                      <button className="btn btn-success" onClick={handleLocationExport} style={{ padding: '2px' }}>
+                        Export CSV
+                      </button>
+                    </div>
+                    <div className="col-md-8 text-end">
+                      {showConfirmationLocation && (
+                        <div className="confirmation-dialog">
+                          <div className="confirmation-content">
+                            <p className="fw-bold">
+                              Are you sure you want to export the CSV file?
+                            </p>
+                            <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
+                              Yes
+                            </button>
+                            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
+                              No
+                            </button>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="modal-table row ms-2 me-2">
-                      <table className="table-modal mt-2">
-                        <thead>
-                          <tr>
-                            <th>Sr.No.</th>
-                            <th>Location</th>
-                            <th>User Name</th>
-                            <th>Scanned</th>
-                            <th>QC</th>
-                            <th>Indexing</th>
-                            <th>Flagging</th>
-                            <th>CBSL-QA</th>
-                            <th>Client-QC</th>
-                            <th>Expense Rate</th>
-                            <th>Remarks</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const priceData = price.find(price => price.LocationName === elem.locationName);
+                  </div>
+                  <div className="modal-table row ms-2 me-2">
+                    <table className="table-modal mt-2">
+                      <thead>
+                        <tr>
+                          <th>Sr.No.</th>
+                          <th>Location</th>
+                          <th>User Name</th>
+                          <th>Scanned</th>
+                          <th>QC</th>
+                          <th>Flagging</th>
+                          <th>Indexing</th>
+                          <th>CBSL-QA</th>
+                          <th>Client-QC</th>
+                          <th>Expense Rate</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        
 
-                            // Calculate rates for each activity
-                            const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
-                            const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
-                            const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
-                            const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
-                            const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
-                            const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
-                          
-                            // Calculate total expense rate
-                            const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
-                            return (
-                              <tr  key={index}>
-                                <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
-                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{totalRate.toLocaleString()}</td>
-                                <td></td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+{detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                         const normalizeName = (name) =>
+                          name ? name.replace(/district court/gi, "").trim() : "";
+                        const normalizedLocationName = normalizeName(elem.locationName);
+                        console.log("Normalized Location Name:", normalizedLocationName);
+                    
+                        const priceData = price.find(
+                          (price) => normalizeName(price.LocationName) === normalizedLocationName
+                        );
+
+                          // Calculate rates for each activity
+                          const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                          const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                          const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                          const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                          const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                          const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+                        
+                          // Calculate total expense rate
+                          const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
+                          return (
+                            <tr  key={index}>
+                              <td>{index + 1}</td>
+                              <td>{elem.locationName}</td>
+                              <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                              <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                              <td>{totalRate.toLocaleString()}</td>
+                              <td></td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
-
             </div>
+
           </div>
-        )}
+        </div>
+      )}
 
 
-        {userView && showModal && (
-          <div className="custom-modal-overlay">
+      {userView && !isLoading && showModal && (
+        <div className="custom-modal-overlay">
           <div className="custom-modal">
             <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
               <h6 className="" style={{ color: "white" }}>
@@ -650,106 +662,113 @@ console.log("LOCations",locationReport);
               </button>
             </div>
             <div className="row">
-              <div className="col-1">
-                <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
+            <div className="col-1">  
+              <IoArrowBackCircle style={{height:'30px',width:'30px'}} onClick={handleBackToLocationView}/>
               </div>
-            </div>
-              <div className="modal-body">
+          </div>
+            <div className="modal-body">
 
-                <div className="row mt-3" ref={ref}>
-                  <div className="search-report-card">
-                    <div className="row">
-                      <div className="col-2">
-                        <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
-                      </div>
-                      <div className="col-8"></div>
-                      <div className="col-md-2">
-                        <button className="btn btn-success" onClick={handleUserExport}>
-                          Export CSV
-                        </button>
-                      </div>
-                      <div className="col-md-6 text-end">
-                        {showConfirmationUser && (
-                          <div className="confirmation-dialog">
-                            <div className="confirmation-content">
-                              <p className="fw-bold">
-                                Are you sure you want to export the CSV file?
-                              </p>
-                              <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
-                                Yes
-                              </button>
-                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
-                                No
-                              </button>
-                            </div>
+              <div className="row mt-3" ref={ref}>
+                <div className="search-report-card">
+                  <div className="row">
+                    <div className="col-2">
+                      <p>Total row(s):{detailedUserReport ? detailedUserReport.length : 0}</p>
+                    </div>
+                    <div className="col-8"></div>
+                    <div className="col-md-2">
+                      <button className="btn btn-success" onClick={handleUserExport}>
+                        Export CSV
+                      </button>
+                    </div>
+                    <div className="col-md-6 text-end">
+                      {showConfirmationUser && (
+                        <div className="confirmation-dialog">
+                          <div className="confirmation-content">
+                            <p className="fw-bold">
+                              Are you sure you want to export the CSV file?
+                            </p>
+                            <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
+                              Yes
+                            </button>
+                            <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
+                              No
+                            </button>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="modal-table row ms-2 me-2">
-                      <table className="table-modal mt-2">
-                        <thead>
-                          <tr>
-                            <th>Sr.No.</th>
-                            <th>Location</th>
-                            <th>User Name</th>
-                            <th>Date</th>
-                            <th>Lot No</th>
-                            <th>Scanned</th>
-                            <th>QC</th>
-                            <th>Indexing</th>
-                            <th>Flagging</th>
-                            <th>CBSL-QA</th>
-                            <th>Client-QC</th>
-                            <th>Expense Rate</th>
-                            <th>Remarks</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const priceData = price.find(price => price.LocationName === elem.locationName);
+                  </div>
+                  <div className="modal-table row ms-2 me-2">
+                    <table className="table-modal mt-2">
+                      <thead>
+                        <tr>
+                          <th>Sr.No.</th>
+                          <th>Location</th>
+                          <th>User Name</th>
+                          <th>Date</th>
+                          <th>Lot No</th>
+                          <th>Scanned</th>
+                          <th>QC</th>
+                          <th>Flagging</th>
+                          <th>Indexing</th>
+                          <th>CBSL-QA</th>
+                          <th>Client-QC</th>
+                          <th>Expense Rate</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {detailedUserReport && detailedUserReport.map((elem, index) => {
+                           const normalizeName = (name) =>
+                            name ? name.replace(/district court/gi, "").trim() : "";
+                          const normalizedLocationName = normalizeName(elem.locationName);
+                          console.log("Normalized Location Name:", normalizedLocationName);
+                      
+                          const priceData = price.find(
+                            (price) => normalizeName(price.LocationName) === normalizedLocationName
+                          );
 
-                            // Calculate rates for each activity
-                            const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
-                            const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
-                            const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
-                            const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
-                            const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
-                            const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
-                          
-                            // Calculate total expense rate
-                            const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
-                            return (
-                              <tr  key={index}>
-                                <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
-                                <td>{elem.Date}</td>
-                                <td>{elem.lotno}</td>
-                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{totalRate.toLocaleString()}</td>
-                                <td></td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                          // Calculate rates for each activity
+                          const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                          const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                          const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                          const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                          const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                          const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+                        
+                          // Calculate total expense rate
+                          const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
+                          return (
+                            <tr  key={index}>
+                              <td>{index + 1}</td>
+                              <td>{elem.locationName}</td>
+                              <td>{elem.user_type || 0}</td>
+                              <td>{elem.Date}</td>
+                              <td>{elem.lotno}</td>
+                              <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                              <td>{totalRate.toLocaleString()}</td>
+                              <td></td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
-
             </div>
+
           </div>
-        )}
-      </div>
-    </>
-  );
+        </div>
+      )}
+    </div>
+  </>
+);
 };
 
 export default TelTechCumulative;

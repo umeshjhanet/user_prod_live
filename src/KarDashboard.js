@@ -50,6 +50,54 @@ const KarDashboard = () => {
     const [showFilter, setShowFilter] = useState(true);
     const [userData, setUserData] = useState(null);
     const [isModalOpen,setIsModalOpen] = useState(false);
+    const [localPrices, setLocalPrices] = useState([]);
+
+    useEffect(() => {
+        setLocalPrices(prices);
+    }, [prices]);
+    const handleBlur = (e, rateType, index) => {
+        const updatedPrices = [...localPrices];
+        updatedPrices[index][rateType] = parseFloat(e.target.innerText) || 0; // Ensure a valid number
+        setLocalPrices(updatedPrices);
+        handleEditPrice(e, rateType, index);
+    };
+
+    const calculateTotalRate = (elem) => {
+        return (
+            elem.ScanRate +
+            elem.QcRate +
+            elem.IndexRate +
+            elem.FlagRate +
+            elem.CbslQaRate +
+            elem.ClientQcRate +
+            elem.CountingRate +
+            elem.InventoryRate +
+            elem.DocPreparationRate +
+            elem.GuardRate
+        ).toFixed(3);
+    };
+
+    const renderRow = (elem, index, fields) => {
+        return (
+            <tr key={elem.id}>
+                <td>{elem.LocationName}</td>
+                {fields.map((field, idx) => (
+                    <td key={idx} contentEditable onBlur={(e) => handleEditPrice(e, field, index)}>{elem[field]}</td>
+                ))}
+                <td>{calculateTotalRate(elem)}</td>
+                <td>
+                    <button
+                        className="btn btn-success"
+                        style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }}
+                        onClick={() => handleSave(elem.id, index)}
+                    >
+                        Save
+                    </button>
+                </td>
+            </tr>
+        );
+    };
+
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -358,7 +406,10 @@ const KarDashboard = () => {
 
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
-
+    console.log("Business Rate", prices);
+    if (!localPrices || localPrices.length === 0) {
+        return <p>No data available.</p>;
+    }
 
 
     return (
@@ -445,7 +496,7 @@ const KarDashboard = () => {
                                 </div>
                                 <div className='col-8'></div>
                                 <div className='col-1'>
-                                    <button style={{ border: 'none', backgroundColor: 'white' }}title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                    <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
                                 </div>
                             </div>
 
@@ -453,72 +504,29 @@ const KarDashboard = () => {
                                 <thead>
                                     <tr>
                                         <th>Location</th>
-                                        <th>Scanned</th>
-                                        <th>QC</th>
-                                        <th>Indexing</th>
-                                        <th>Flagging</th>
-                                        <th>CBSL_QA</th>
-                                        <th>Client_QC</th>
-                                        <th>Counting</th>
                                         <th>Inventory</th>
+                                        <th>Counting</th>
                                         <th>Doc Prepared</th>
                                         <th>Other</th>
+                                        <th>Scanned</th>
+                                        <th>QC</th>
+                                        <th>Flagging</th>
+                                        <th>Indexing</th>
+                                        <th>CBSL_QA</th>
+                                        <th>Client_QC</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {prices && prices.slice(0,1).map((elem, index) => {
-                                        const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
-                                        return (
-                                            <tr key={index}>
-                                                <td>{elem.LocationName}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'CountingRate', index)}>{elem.CountingRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'InventoryRate', index)}>{elem.InventoryRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparationRate', index)}>{elem.DocPreparationRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'GuardRate', index)}>{elem.GuardRate}</td>
-                                                <td>{totalRate.toFixed(3)}</td>
-                                                <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                            </tr>
-                                        )
-                                    })}
-                                    {showFullTable && (
-                                        <>
-                                        { prices && prices.slice(1).map((elem, index) => {
-                                            const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
-                                            return (
-                                                <tr key={index+1}>
-                                                    <td>{elem.LocationName}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'CountingRate', index)}>{elem.CountingRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'InventoryRate', index)}>{elem.InventoryRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparationRate', index)}>{elem.DocPreparationRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'GuardRate', index)}>{elem.GuardRate}</td>
-                                                    <td>{totalRate.toFixed(3)}</td>
-                                                    <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                                </tr>
-                                            )
-                                        })}
-                                        </>
-                                    )
-                                            }
+                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate',  'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate',  'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, [ 'InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate',  'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
                                 </tbody>
                             </table>
 
                         </div>
                     )}
-                     {technicalSelected && (
+                    {technicalSelected && (
                         <div className='row mt-2 ms-0 me-0 search-report-card'>
                             <div className='row'>
                                 <div className='col-3'>
@@ -526,7 +534,7 @@ const KarDashboard = () => {
                                 </div>
                                 <div className='col-8'></div>
                                 <div className='col-1'>
-                                    <button style={{ border: 'none', backgroundColor: 'white' }}title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                    <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
                                 </div>
                             </div>
 
@@ -536,8 +544,8 @@ const KarDashboard = () => {
                                         <th>Location</th>
                                         <th>Scanned</th>
                                         <th>QC</th>
-                                        <th>Indexing</th>
                                         <th>Flagging</th>
+                                        <th>Indexing</th>
                                         <th>CBSL_QA</th>
                                         <th>Client_QC</th>
                                         <th>Total Price</th>
@@ -545,43 +553,8 @@ const KarDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {prices && prices.slice(0,1).map((elem, index) => {
-                                        const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
-                                        return (
-                                            <tr key={index}>
-                                                <td>{elem.LocationName}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
-                                                <td>{totalRate.toFixed(3)}</td>
-                                                <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                            </tr>
-                                        )
-                                    })}
-                                    {showFullTable && (
-                                        <>
-                                        { prices && prices.slice(1).map((elem, index) => {
-                                            const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
-                                            return (
-                                                <tr key={index+1}>
-                                                    <td>{elem.LocationName}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'ScanRate', index)}>{elem.ScanRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'QcRate', index)}>{elem.QcRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'IndexRate', index)}>{elem.IndexRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'FlagRate', index)}>{elem.FlagRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'CbslQaRate', index)}>{elem.CbslQaRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'ClientQcRate', index)}>{elem.ClientQcRate}</td>
-                                                    <td>{totalRate.toFixed(3)}</td>
-                                                    <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                                </tr>
-                                            )
-                                        })}
-                                        </>
-                                    )
-                                            }
+                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate',  'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
                                 </tbody>
                             </table>
 
@@ -595,7 +568,7 @@ const KarDashboard = () => {
                                 </div>
                                 <div className='col-8'></div>
                                 <div className='col-1'>
-                                    <button style={{ border: 'none', backgroundColor: 'white' }}title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                    <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
                                 </div>
                             </div>
 
@@ -603,48 +576,17 @@ const KarDashboard = () => {
                                 <thead>
                                     <tr>
                                         <th>Location</th>
-                                        <th>Counting</th>
                                         <th>Inventory</th>
+                                        <th>Counting</th>
                                         <th>Doc Prepared</th>
-                                        <th>Other</th>
+                                        <th>Guard</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {prices && prices.slice(0,1).map((elem, index) => {
-                                        const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
-                                        return (
-                                            <tr key={index}>
-                                                <td>{elem.LocationName}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'CountingRate', index)}>{elem.CountingRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'InventoryRate', index)}>{elem.InventoryRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparationRate', index)}>{elem.DocPreparationRate}</td>
-                                                <td contentEditable onBlur={(e) => handleEditPrice(e, 'GuardRate', index)}>{elem.GuardRate}</td>
-                                                <td>{totalRate.toFixed(3)}</td>
-                                                <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                            </tr>
-                                        )
-                                    })}
-                                    {showFullTable && (
-                                        <>
-                                        { prices && prices.slice(1).map((elem, index) => {
-                                            const totalRate = elem.ScanRate + elem.QcRate + elem.IndexRate + elem.FlagRate + elem.CbslQaRate + elem.ClientQcRate + elem.CountingRate + elem.InventoryRate + elem.DocPreparationRate + elem.GuardRate;
-                                            return (
-                                                <tr key={index+1}>
-                                                    <td>{elem.LocationName}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'CountingRate', index)}>{elem.CountingRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'InventoryRate', index)}>{elem.InventoryRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'DocPreparationRate', index)}>{elem.DocPreparationRate}</td>
-                                                    <td contentEditable onBlur={(e) => handleEditPrice(e, 'GuardRate', index)}>{elem.GuardRate}</td>
-                                                    <td>{totalRate.toFixed(3)}</td>
-                                                    <td><button className="btn btn-success" style={{ paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={() => handleSave(elem.id, index)}>Save</button></td>
-                                                </tr>
-                                            )
-                                        })}
-                                        </>
-                                    )
-                                            }
+                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate']))}
+                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate']))}
                                 </tbody>
                             </table>
 

@@ -39,15 +39,19 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
     setUserView(false);
   };
 
-  const handleUserView = (username, locationName) => {
-    setLocationView(false);
-    setShowModal(true);
+  const handleUserView = (username, locationName, rowIndex) => {
+    setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName, startDate, endDate);
+    fetchUserDetailedReport(username, locationName);
+  setTimeout(() => {
     setUserView(true);
+    setLocationView(false);
+    setShowModal(true);
+    setIsLoading(false);
+  }, 1000);
   };
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -451,47 +455,33 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
 
-            {summaryReport ? (
-  <table className="table-bordered mt-2">
-    <thead>
-      <tr>
-        <th>Sr.No.</th>
-        <th>Counting</th>
-        <th>Inventory</th>
-        <th>Doc Pre</th>
-        <th>Other</th>
-        <th>Expense Rate</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>{summaryReport.Counting}</td>
-        <td>{summaryReport.Inventory}</td>
-        <td>{summaryReport.DocPreparation}</td>
-        <td>{summaryReport.Guard}</td>
-        <td>
-          {(() => {
-            // Assuming `price` data contains a single set of rates for the summary report
-            const priceData = price[0]; // Adjust this line as per your data structure
+              {summaryReport ? (
+                <table className="table-bordered mt-2">
+                  <thead>
+                    <tr>
+                      <th>Sr.No.</th>
+                      <th>Inventory</th>
+                      <th>Counting</th>
+                      <th>Doc Pre</th>
+                      <th>Other</th>
+                      <th>Expense Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>{summaryReport.Inventory}</td>
+                      <td>{summaryReport.Counting}</td>
+                      <td>{summaryReport.DocPreparation}</td>
+                      <td>{summaryReport.Guard}</td>
+                      <td>{lastColumnTotal.toLocaleString()}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              ) : (
+                <p>No data available</p>
+              )}
 
-            // Calculate rates for each activity
-            const countingRate = summaryReport.Counting * (priceData ? priceData.CountingRate : 0);
-            const inventoryRate = summaryReport.Inventory * (priceData ? priceData.InventoryRate : 0);
-            const docPreparationRate = summaryReport.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
-            const otherRate = summaryReport.Guard * (priceData ? priceData.GuardRate : 0);
-
-            // Calculate total expense rate
-            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
-
-            // Display the total expense rate
-            return totalRate.toLocaleString();
-          })()}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-) : null}
             </div>
 
           </div>
@@ -538,8 +528,8 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                   <tr>
                     <th>Sr.No.</th>
                     <th>Location Name</th>
-                    <th>Counting</th>
                     <th>Inventory</th>
+                    <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
                     <th>Expense Rate</th>
@@ -548,12 +538,12 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                 </thead>
                 <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    
-                    <tr  key={index}>
+
+                    <tr key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
-                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
                       <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
@@ -565,7 +555,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
             </div>
           </div>
         </div>
-        {locationView && showModal && (
+        {locationView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
@@ -614,8 +604,8 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Sr.No.</th>
                             <th>Location</th>
                             <th>User Name</th>
-                            <th>Counting</th>
                             <th>Inventory</th>
+                            <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
@@ -631,16 +621,16 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
                             const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
                             const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-                          
+
                             // Calculate total expense rate
                             const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
-                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
+                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
                                 <td>{elem.Guard || 0}</td>
                                 <td>{totalRate.toLocaleString()}</td>
@@ -660,22 +650,22 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         )}
 
 
-        {userView && showModal && (
-           <div className="custom-modal-overlay">
-           <div className="custom-modal">
-             <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-               <h6 className="" style={{ color: "white" }}>
-                 User Wise Detailed Report
-               </h6>
-               <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                 <IoMdCloseCircle />
-               </button>
-             </div>
-             <div className="row">
-               <div className="col-1">
-                 <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
-               </div>
-             </div>
+        {userView && !isLoading && showModal && (
+          <div className="custom-modal-overlay">
+            <div className="custom-modal">
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="" style={{ color: "white" }}>
+                  User Wise Detailed Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                  <IoMdCloseCircle />
+                </button>
+              </div>
+              <div className="row">
+                <div className="col-1">
+                  <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
+                </div>
+              </div>
               <div className="modal-body">
 
                 <div className="row mt-3" ref={ref}>
@@ -716,9 +706,8 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Location</th>
                             <th>User Name</th>
                             <th>Date</th>
-                            <th>Lot No</th>
-                            <th>Counting</th>
                             <th>Inventory</th>
+                            <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
                             <th>Expense Rate</th>
@@ -727,25 +716,24 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                             const priceData = price.find(price => price.LocationName === elem.locationName);
+                            const priceData = price.find(price => price.LocationName === elem.locationName);
 
-                             // Calculate rates for each activity
-                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
-                             const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
-                             const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
-                             const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-                           
-                             // Calculate total expense rate
-                             const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+                            // Calculate rates for each activity
+                            const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
+                            const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
+                            const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
+                            const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
+
+                            // Calculate total expense rate
+                            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>
                                 <td>{elem.Date}</td>
-                                <td>{elem.lotno}</td>
-                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
+                                <td>{elem.Counting || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
                                 <td>{elem.Guard || 0}</td>
                                 <td>{totalRate.toLocaleString()}</td>

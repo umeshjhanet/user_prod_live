@@ -32,6 +32,7 @@ import NonTechModal from './Components/NonTechModal';
 import TelNonTechModal from './Components/TelNonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
 import AllProjectDashboard from './AllProjectDashboard';
+import LocationWiseDashboard from './LocationWiseDashboard';
 
 const App = () => {
  
@@ -42,6 +43,7 @@ const App = () => {
           <Route path="/" element={<Login />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/AllProjectDashboard" element={<AllProjectDashboard />} />
+          <Route path="/LocationWiseDashboard" element={<LocationWiseDashboard />} />
           <Route path="/UPDCDashboard" element={<Dashboard />} />
           <Route path="/UPDCDashboard" element={<NonTechModal />} />
           <Route path="/TelDashboard" element={<TelDashboard />} />

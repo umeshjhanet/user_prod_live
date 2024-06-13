@@ -44,18 +44,19 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
   };
 
   const handleUserView = (username, locationName, rowIndex) => {
-    setLocationView(false);
-    setShowModal(true);
-
+    setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
-
+  setTimeout(() => {
     setUserView(true);
+    setLocationView(false);
+    setShowModal(true);
+    setIsLoading(false);
+  }, 1000);
   };
-  //sdfd
   const handleExport = () => {
     setShowConfirmation(true);
   };
@@ -474,8 +475,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                     <th>Sr.No.</th>
                     <th>Scanned</th>
                     <th>QC</th>
-                    <th>Indexing</th>
                     <th>Flagging</th>
+                    <th>Indexing</th>
                     <th>CBSL-QA</th>
                     <th>Client-QC</th>
                     <th>Expense Rate</th>
@@ -488,8 +489,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                         <td key={index}>{index + 1}</td>
                         <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                         <td>{lastColumnTotal.toLocaleString()}</td>
@@ -547,8 +548,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                     <th>Location Name</th>
                     <th>Scanned</th>
                     <th>QC</th>
-                    <th>Indexing</th>
                     <th>Flagging</th>
+                    <th>Indexing</th>
                     <th>CBSL-QA</th>
                     <th>Client-QC</th>
                     <th>Expense Rate</th>
@@ -562,8 +563,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                       <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                       <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
@@ -575,7 +576,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
             </div>
           </div>
         </div>
-        {locationView && showModal && (
+        {locationView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
@@ -626,8 +627,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                             <th>User Name</th>
                             <th>Scanned</th>
                             <th>QC</th>
-                            <th>Indexing</th>
                             <th>Flagging</th>
+                            <th>Indexing</th>
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Expense Rate</th>
@@ -635,24 +636,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {/* {enhanceddetailedReportLocationWise && console.log("Rendering Data: ", enhanceddetailedReportLocationWise)}
-                          {enhanceddetailedReportLocationWise && enhanceddetailedReportLocationWise.map((elem, index) => {
-                            return (
-                              <tr  key={index}>
-                                <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
-                                <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
-                                <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
-                                <td></td>
-                              </tr>
-                            );
-                          })} */}
+                          
 
 {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
                            const normalizeName = (name) =>
@@ -681,8 +665,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                                 <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>
@@ -702,7 +686,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
         )}
 
 
-        {userView && showModal && (
+        {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
@@ -761,8 +745,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                             <th>Lot No</th>
                             <th>Scanned</th>
                             <th>QC</th>
-                            <th>Indexing</th>
                             <th>Flagging</th>
+                            <th>Indexing</th>
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Expense Rate</th>
@@ -799,8 +783,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                                 <td>{elem.lotno}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>

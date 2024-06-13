@@ -40,15 +40,19 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
     setUserView(false);
   };
 
-  const handleUserView = (username, locationName) => {
-    setLocationView(false);
-    setShowModal(true);
+  const handleUserView = (username, locationName, rowIndex) => {
+    setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName, startDate, endDate);
+    fetchUserDetailedReport(username, locationName);
+  setTimeout(() => {
     setUserView(true);
+    setLocationView(false);
+    setShowModal(true);
+    setIsLoading(false);
+  }, 1000);
   };
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -462,8 +466,8 @@ fetchPrices();
                     <th>Sr.No.</th>
                     <th>Scanned</th>
                     <th>QC</th>
-                    <th>Indexing</th>
                     <th>Flagging</th>
+                    <th>Indexing</th>
                     <th>CBSL-QA</th>
                     <th>Client-QC</th>
                     <th>Expense Rate</th>
@@ -476,8 +480,8 @@ fetchPrices();
                         <td key={index}>{index + 1}</td>
                         <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                        <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                         <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                         <td>{lastColumnTotal.toLocaleString()}</td>
@@ -517,9 +521,9 @@ fetchPrices();
                 )}
               </div>
               {showConfirmation && (
-                <div className="confirmation-dialog">
+                <div className="confirmation-dialog ">
                   <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                    <p className="confirmation-text fw-bold ">Are you sure you want to export the CSV file?</p>
                     <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
                     <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
                   </div>
@@ -535,8 +539,8 @@ fetchPrices();
                     <th>Location Name</th>
                     <th>Scanned</th>
                     <th>QC</th>
-                    <th>Indexing</th>
                     <th>Flagging</th>
+                    <th>Indexing</th>
                     <th>CBSL-QA</th>
                     <th>Client-QC</th>
                     <th>Expense Rate</th>
@@ -544,14 +548,14 @@ fetchPrices();
                   </tr>
                 </thead>
                 <tbody>
-                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-                    <tr  key={index}>
+                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                    <tr key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                       <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
@@ -563,7 +567,7 @@ fetchPrices();
             </div>
           </div>
         </div>
-        {locationView && showModal && (
+        {locationView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
@@ -576,14 +580,14 @@ fetchPrices();
                 <button type="button" className="close" onClick={toggleModal}>&times;</button>
               </div>
               <div className="modal-body">
-                <div className="row mt-3" ref={ref}>
+                <div className="row " ref={ref}>
                   <div className="search-report-card">
-                    <div className="row">
+                    <div className="row" style={{ marginTop: '-10px' }}>
                       <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8">Total row(s):{detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
+                        <p className="mb-0 me-8" >Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
                       </div>
                       <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport}>
+                        <button className="btn btn-success" onClick={handleLocationExport} style={{ padding: '2px' }}>
                           Export CSV
                         </button>
                       </div>
@@ -614,8 +618,8 @@ fetchPrices();
                             <th>User Name</th>
                             <th>Scanned</th>
                             <th>QC</th>
-                            <th>Indexing</th>
                             <th>Flagging</th>
+                            <th>Indexing</th>
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Expense Rate</th>
@@ -623,7 +627,9 @@ fetchPrices();
                           </tr>
                         </thead>
                         <tbody>
-                        {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                          
+
+{detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
                            const normalizeName = (name) =>
                             name ? name.replace(/district court/gi, "").trim() : "";
                           const normalizedLocationName = normalizeName(elem.locationName);
@@ -650,8 +656,8 @@ fetchPrices();
                                 <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>
@@ -671,22 +677,22 @@ fetchPrices();
         )}
 
 
-        {userView && showModal && (
+        {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
-          <div className="custom-modal">
-            <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-              <h6 className="" style={{ color: "white" }}>
-                User Wise Detailed Report
-              </h6>
-              <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                <IoMdCloseCircle />
-              </button>
-            </div>
-            <div className="row">
-            <div className="col-1">  
-              <IoArrowBackCircle style={{height:'30px',width:'30px'}} onClick={handleBackToLocationView}/>
+            <div className="custom-modal">
+              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                <h6 className="" style={{ color: "white" }}>
+                  User Wise Detailed Report
+                </h6>
+                <button type="button" className="btn btn-danger" onClick={toggleModal}>
+                  <IoMdCloseCircle />
+                </button>
               </div>
-          </div>
+              <div className="row">
+              <div className="col-1">  
+                <IoArrowBackCircle style={{height:'30px',width:'30px'}} onClick={handleBackToLocationView}/>
+                </div>
+            </div>
               <div className="modal-body">
 
                 <div className="row mt-3" ref={ref}>
@@ -730,8 +736,8 @@ fetchPrices();
                             <th>Lot No</th>
                             <th>Scanned</th>
                             <th>QC</th>
-                            <th>Indexing</th>
                             <th>Flagging</th>
+                            <th>Indexing</th>
                             <th>CBSL-QA</th>
                             <th>Client-QC</th>
                             <th>Expense Rate</th>
@@ -768,8 +774,8 @@ fetchPrices();
                                 <td>{elem.lotno}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
-                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                                <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>
