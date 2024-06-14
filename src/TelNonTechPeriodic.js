@@ -467,7 +467,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
-                      <th>Expense Rate</th>
+                      <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -535,7 +535,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                     <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
-                    <th>Expense Rate</th>
+                    <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
                 </thead>
@@ -611,7 +611,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>
@@ -713,7 +713,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>

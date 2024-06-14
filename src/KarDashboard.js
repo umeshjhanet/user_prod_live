@@ -288,70 +288,57 @@ const KarDashboard = () => {
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
+        const fetchBusinessRate = (userData) => {
+            // Check userData structure
+            if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+                console.error("Invalid userData structure:", userData);
+                return;
+            }
 
-        const fetchSummaryReport = () => {
+            // Dynamic locationName assignment
+            const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+            // Check if userData meets the conditions to include the locationName parameter
+            const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+            const hasSingleProject = userData.projects.length === 1;
+
+            // Check if locationName matches any location name in userData.locations
+            const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
+
+            console.log("LocationName:", locationName);
+            console.log("isCBSLUser:", isCBSLUser);
+            console.log("userData.user_roles:", userData.user_roles);
+            console.log("hasSingleProject:", hasSingleProject);
+            console.log("userData.projects:", userData.projects);
+            console.log("hasMatchingLocation:", hasMatchingLocation);
+            console.log("userData.locations:", userData.locations);
+
+            let apiUrl = `${API_URL}/telgetbusinessrate`;
+
+            if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+                const separator = apiUrl.includes('?') ? '&' : '?';
+                apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
+                console.log("Modified API URL with locationName:", apiUrl);
+            } else {
+                console.log("API URL without locationName:", apiUrl);
+            }
+
             axios
-                .get(`${API_URL}/karsummaryReport`)
-                .then((response) => setSummaryReport(response.data))
+                .get(apiUrl)
+                .then((response) => {
+                    console.log("Response data:", response.data);
+                    setPrices(response.data);
+                })
                 .catch((error) => {
                     console.error("Error fetching user data:", error);
                 });
         };
 
-        // const fetchLocation = () => {
-        //     axios
-        //       .get(`${API_URL}/locations`)
-        //       .then((response) => setLocation(response.data))
-        //       .catch((error) => {
-        //         console.error("Error fetching location data:", error);
-        //       });
-        //   };
 
-        const fetchBusinessRate = () => {
-            axios
-                .get(`${API_URL}/kargetbusinessrate`)
-                .then((response) => setPrices(response.data))
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-        };
+        fetchBusinessRate(userData);
 
-        // const fetchTechData = async () => {
-        //   try {
-        //     const response = await axios.get(`${API_URL}/gettask`);
-        //     const data = response.data;
-        //     if (data.length > 0) {
-        //       // Assuming all objects have the same structure
-        //       setTableHeaders(Object.keys(data[0]));
-        //     }
-        //     setTableData(data);
-        //   } catch (error) {
-        //     console.error("Error fetching data:", error);
-        //   }
-        // };
+    }, [userData]);
 
-        // const fetchNonTechData=async()=>{
-        //     try{
-        //         const response=await axios.get(`${API_URL}/getstaff`);
-        //         const data=response.data;
-        //         if(data.length>0){
-        //             setNonTechTableHeaders(Object.keys(data[0]));
-        //         }
-        //         setNonTechTableData(data);
-        //     } catch(error){
-        //         console.error("Error Fetchinf in data",error);
-        //     }
-        // }
-
-
-
-        fetchSummaryReport();
-        fetchBusinessRate();
-        // fetchTechData();
-        // fetchNonTechData();
-        // fetchLocation();
-
-    }, []);
     console.log("Summary Data", summaryReport);
 
     const multiplyData = (summaryData, priceData) => {
@@ -512,8 +499,8 @@ const KarDashboard = () => {
                                         <th>QC</th>
                                         <th>Flagging</th>
                                         <th>Indexing</th>
-                                        <th>CBSL_QA</th>
-                                        <th>Client_QC</th>
+                                        <th>CBSL-QA</th>
+                                        <th>Client-QA</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
@@ -546,8 +533,8 @@ const KarDashboard = () => {
                                         <th>QC</th>
                                         <th>Flagging</th>
                                         <th>Indexing</th>
-                                        <th>CBSL_QA</th>
-                                        <th>Client_QC</th>
+                                        <th>CBSL-QA</th>
+                                        <th>Client-QA</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
@@ -579,7 +566,7 @@ const KarDashboard = () => {
                                         <th>Inventory</th>
                                         <th>Counting</th>
                                         <th>Doc Prepared</th>
-                                        <th>Guard</th>
+                                        <th>Other</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>

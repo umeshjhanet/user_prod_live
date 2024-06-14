@@ -483,7 +483,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
-                      <th>Expense Rate</th>
+                      <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -551,7 +551,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                     <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
-                    <th>Expense Rate</th>
+                    <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
                 </thead>
@@ -627,13 +627,13 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const priceData = price.find(price => price.LocationName === elem.locationName);
+                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
 
                             // Calculate rates for each activity
                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
@@ -729,13 +729,13 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const priceData = price.find(price => price.LocationName === elem.locationName);
+                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
 
                             // Calculate rates for each activity
                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);

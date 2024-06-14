@@ -7,7 +7,7 @@ import { priceCount } from "./Components/priceCount";
 import { useRef } from 'react';
 import { FiDownload } from 'react-icons/fi';
 
-const AllCummulative = () => {
+const AllCummulative = ({ userData }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
@@ -214,49 +214,41 @@ const AllCummulative = () => {
         console.error("Error in exporting data:", error);
       });
   };
-  const multiplyLocationData = (locationData, priceData) => {
-    if (!locationData || !priceData) return []; // Ensure both data arrays are provided
-
-    return locationData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
-
-  const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
-  const multiplyUserWiseData = (userWiseData, priceData) => {
-    if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
-    return userWiseData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
 
   const toggleModal = () => {
     setShowModal(!showModal);
   };
 
   useEffect(() => {
-    const fetchSummaryReport = (userData, locationName) => {
+    const locationName = userData.locations.length > 0 ? userData.locations[0].name : ""; 
+    const fetchSummaryReport = () => {
       setIsLoading(true);
-    
       let apiUrl = `${API_URL}/summaryreportcummulative`;
-    
       // Check if userData meets the conditions to include the locationName parameter
-      // if (
-      //   userData.user_roles.includes("CBSL Site User") &&
-      //   userData.projects.length === 1 &&
-      //   userData.locations[0] === locationName
-      // ) {
-      //   apiUrl += `?locationName=${locationName}`;
-      // }
-    
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects.length === 1;
+
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
       axios.get(apiUrl)
         .then((response) => {
           setSummaryReport(response.data);
@@ -267,42 +259,117 @@ const AllCummulative = () => {
           setIsLoading(false);
         });
     };
+
     const fetchLocationReport = () => {
       setIsLoading(true);
+
+      let apiUrl = `${API_URL}/detailedreportcummulative`;
+
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects.length === 1;
+
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
       axios
-        .get(`${API_URL}/detailedreportcummulative`)
+        .get(apiUrl)
         .then((response) => {
-          setLocationReport(response.data)
+          setLocationReport(response.data);
           setIsLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching location report:", error);
           setIsLoading(false);
         });
     };
 
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
+      const formatDate = (date) => date.toISOString().split('T')[0];
+    
       setIsLoading(true);
       let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
+    
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
+    
+      // Check userData structure
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid userData structure:", userData);
+        setIsLoading(false);
+        return;
+      }
+    
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects.length === 1;
+    
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+    
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+    
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+    
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        const separator = apiUrl.includes('?') ? '&' : '?';
+        apiUrl += `${separator}locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+    
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
           setDetailedCsv(url);
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error in exporting data:", error);
           setIsLoading(false);
         });
     };
+    
+    
+    
+    
+    
     const fetchPrices = () => {
       setIsLoading(true); // Set loading to true when fetching data
       axios
@@ -325,7 +392,7 @@ const AllCummulative = () => {
       fetchUserDetailed(locationName);
     }
     fetchUserDetailedReport();
-  }, [selectedUsername, locationName, startDate, endDate]);
+  }, [selectedUsername, locationName, startDate, endDate, userData]);
   // console.log("Location Data", locationReport);
   const Loader = () => (
     <div className="loader-overlay">
@@ -424,7 +491,7 @@ const AllCummulative = () => {
     <>
       {isLoading && <Loader />}
       <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
-      <div className="row mt-3">
+        <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
@@ -437,13 +504,13 @@ const AllCummulative = () => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
-                      <th>Scanning ADF</th>
-                      <th>Image QC</th>
+                      <th>Scanned</th>
+                      <th>QC</th>
                       <th>Flagging</th>
                       <th>Indexing</th>
-                      <th>CBSL QA</th>
-                      <th>Client QA</th>
-                      <th>Expense Rate</th>
+                      <th>CBSL-QA</th>
+                      <th>Client-QA</th>
+                      <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -518,7 +585,7 @@ const AllCummulative = () => {
                     <th>Flagging</th>
                     <th>Indexing</th>
                     <th>CBSL-QA</th>
-                    <th>Client-QC</th>
+                    <th>Client-QA</th>
                     <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
@@ -605,7 +672,7 @@ const AllCummulative = () => {
                             <th>Flagging</th>
                             <th>Indexing</th>
                             <th>CBSL-QA</th>
-                            <th>Client-QC</th>
+                            <th>Client-QA</th>
                             <th>Expense</th>
                           </tr>
                         </thead>
@@ -743,7 +810,7 @@ const AllCummulative = () => {
                             <th>Flagging</th>
                             <th>Indexing</th>
                             <th>CBSL-QA</th>
-                            <th>Client-QC</th>
+                            <th>Client-QA</th>
                             <th>Expense</th>
                           </tr>
                         </thead>

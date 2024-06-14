@@ -446,13 +446,13 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
-                      <th>Scanning ADF</th>
-                      <th>Image QC</th>
+                      <th>Scanned</th>
+                      <th>QC</th>
                       <th>Flagging</th>
                       <th>Indexing</th>
-                      <th>CBSL QA</th>
-                      <th>Client QA</th>
-                      <th>Expense Rate</th>
+                      <th>CBSL-QA</th>
+                      <th>Client-QA</th>
+                      <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -527,7 +527,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                     <th>Flagging</th>
                     <th>Indexing</th>
                     <th>CBSL-QA</th>
-                    <th>Client-QC</th>
+                    <th>Client-QA</th>
                     <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
@@ -614,7 +614,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Flagging</th>
                             <th>Indexing</th>
                             <th>CBSL-QA</th>
-                            <th>Client-QC</th>
+                            <th>Client-QA</th>
                             <th>Expense</th>
                           </tr>
                         </thead>
@@ -752,7 +752,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>Flagging</th>
                             <th>Indexing</th>
                             <th>CBSL-QA</th>
-                            <th>Client-QC</th>
+                            <th>Client-QA</th>
                             <th>Expense</th>
                           </tr>
                         </thead>

@@ -48,7 +48,7 @@ const TelDashboard = () => {
     const [showCalculator, setShowCalculator] = useState(false);
     const [showFilter, setShowFilter] = useState(true);
     const [userData, setUserData] = useState(null);
-    const [isModalOpen,setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
 
     useEffect(() => {
@@ -280,8 +280,8 @@ const TelDashboard = () => {
 
 
 
-    
-    
+
+
 
 
     const handleEditPrice = (e, field, index) => {
@@ -293,30 +293,57 @@ const TelDashboard = () => {
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
+        const fetchBusinessRate = (userData) => {
+            // Check userData structure
+            if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+                console.error("Invalid userData structure:", userData);
+                return;
+            }
 
-        const fetchSummaryReport = () => {
+            // Dynamic locationName assignment
+            const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+            // Check if userData meets the conditions to include the locationName parameter
+            const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+            const hasSingleProject = userData.projects.length === 1;
+
+            // Check if locationName matches any location name in userData.locations
+            const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
+
+            console.log("LocationName:", locationName);
+            console.log("isCBSLUser:", isCBSLUser);
+            console.log("userData.user_roles:", userData.user_roles);
+            console.log("hasSingleProject:", hasSingleProject);
+            console.log("userData.projects:", userData.projects);
+            console.log("hasMatchingLocation:", hasMatchingLocation);
+            console.log("userData.locations:", userData.locations);
+
+            let apiUrl = `${API_URL}/telgetbusinessrate`;
+
+            if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+                const separator = apiUrl.includes('?') ? '&' : '?';
+                apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
+                console.log("Modified API URL with locationName:", apiUrl);
+            } else {
+                console.log("API URL without locationName:", apiUrl);
+            }
+
             axios
-                .get(`${API_URL}/telsummaryReport`)
-                .then((response) => setSummaryReport(response.data))
+                .get(apiUrl)
+                .then((response) => {
+                    console.log("Response data:", response.data);
+                    setPrices(response.data);
+                })
                 .catch((error) => {
                     console.error("Error fetching user data:", error);
                 });
         };
 
-       
 
-        const fetchBusinessRate = () => {
-            axios
-                .get(`${API_URL}/telgetbusinessrate`)
-                .then((response) => setPrices(response.data))
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-        };
+        fetchBusinessRate(userData);
 
-        fetchSummaryReport();
-        fetchBusinessRate();
-    }, []);
+    }, [userData]);
+
     console.log("Summary Data", summaryReport);
 
     const multiplyData = (summaryData, priceData) => {
@@ -332,7 +359,7 @@ const TelDashboard = () => {
         });
     };
 
- 
+
     useEffect(() => {
         const newMultipliedData = multiplyData(summaryReport, editedPrices);
         setMultipliedData(newMultipliedData);
@@ -395,10 +422,10 @@ const TelDashboard = () => {
                     </div>
                     <div className='row ms-0 mt-2 search-report-card'>
                         <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
-                            <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white',padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
+                            <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white', padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
                             {/* <div className='col-11'></div> */}
                             {/* </div> */}
-                           
+
                             {/* <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}> */}
                             {/* <div className='col-1'></div> */}
                             <div className='col-1'>
@@ -409,47 +436,47 @@ const TelDashboard = () => {
                                 <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
                                 <label htmlFor='technical' className='ms-1'>Technical</label>
                             </div>
-                            <div className='col-2' style={{marginLeft:'-20px'}}>
+                            <div className='col-2' style={{ marginLeft: '-20px' }}>
                                 <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
                                 <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
                             </div>
                             {nonTechnicalSelected && userData && userData.user_roles && userData.user_roles.includes("CBSL Site User") ? (
                                 <div className='col-2'>
-                                <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleOpenModal}>Upload</button>
-                            </div>
+                                    <button className='btn btn-success' style={{ marginTop: '-5px', paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={handleOpenModal}>Upload</button>
+                                </div>
                             ) : (
                                 <div className='col-4'></div>
                             )}
-                            
-                            
+
+
                         </div>
                         {showFilter && (<>
-                        <div className='row mt-2' style={{ marginBottom: '-10px' }}>
-                            <div className='col-1'></div>
-                            <div className='col-2'>
-                                <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
-                                <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                            <div className='row mt-2' style={{ marginBottom: '-10px' }}>
+                                <div className='col-1'></div>
+                                <div className='col-2'>
+                                    <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
+                                    <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                                </div>
+                                <div className='col-2'>
+                                    <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                    <label htmlFor='periodic' className='ms-1'>Periodic</label>
+                                </div>
+                                {periodicSelected && (
+                                    <>
+                                        <div className='col-3'>
+                                            <label className='me-1'>From Date:</label>
+                                            <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                                        </div>
+                                        <div className='col-3'>
+                                            <label className='me-1'>To Date:</label>
+                                            <input type='date' value={toDate} onChange={handleToDateChange} />
+                                        </div>
+                                    </>
+                                )}
+                                <div className='col-1'>
+                                    <button className='btn btn-success' style={{ marginTop: '-5px', paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={handleSubmit}>Submit</button>
+                                </div>
                             </div>
-                            <div className='col-2'>
-                                <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
-                                <label htmlFor='periodic' className='ms-1'>Periodic</label>
-                            </div>
-                            {periodicSelected && (
-                                <>
-                                    <div className='col-3'>
-                                        <label className='me-1'>From Date:</label>
-                                        <input type='date' value={fromDate} onChange={handleFromDateChange} />
-                                    </div>
-                                    <div className='col-3'>
-                                        <label className='me-1'>To Date:</label>
-                                        <input type='date' value={toDate} onChange={handleToDateChange} />
-                                    </div>
-                                </>
-                            )}
-                            <div className='col-1'>
-                                <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleSubmit}>Submit</button>
-                            </div>
-                        </div>
                         </>)}
                         {error && <p className='text-danger'>{error}</p>}
                     </div>
@@ -477,15 +504,15 @@ const TelDashboard = () => {
                                         <th>QC</th>
                                         <th>Flagging</th>
                                         <th>Indexing</th>
-                                        <th>CBSL_QA</th>
-                                        <th>Client_QC</th>
+                                        <th>CBSL-QA</th>
+                                        <th>Client-QA</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate',  'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate',  'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, [ 'InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate',  'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
                                 </tbody>
                             </table>
 
@@ -511,14 +538,14 @@ const TelDashboard = () => {
                                         <th>QC</th>
                                         <th>Flagging</th>
                                         <th>Indexing</th>
-                                        <th>CBSL_QA</th>
-                                        <th>Client_QC</th>
+                                        <th>CBSL-QA</th>
+                                        <th>Client-QA</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate',  'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
                                     {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
                                 </tbody>
                             </table>
@@ -544,14 +571,14 @@ const TelDashboard = () => {
                                         <th>Inventory</th>
                                         <th>Counting</th>
                                         <th>Doc Prepared</th>
-                                        <th>Guard</th>
+                                        <th>Other</th>
                                         <th>Total Price</th>
                                         <th>Edit Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate']))}
-                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate']))}
+                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate']))}
+                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate']))}
                                 </tbody>
                             </table>
 
@@ -567,7 +594,7 @@ const TelDashboard = () => {
             {showAllCumulativeSummary && <TelAllCumulative />}
             {showAllPeriodicSummary && <TelAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
-            {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData}/>}
+            {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData} />}
             <ToastContainer />
         </>
     );

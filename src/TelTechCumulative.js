@@ -442,8 +442,8 @@ return (
                   <th>Flagging</th>
                   <th>Indexing</th>
                   <th>CBSL-QA</th>
-                  <th>Client-QC</th>
-                  <th>Expense Rate</th>
+                  <th>Client-QA</th>
+                  <th>Expense</th>
                 </tr>
               </thead>
               <tbody>
@@ -515,8 +515,8 @@ return (
                   <th>Flagging</th>
                   <th>Indexing</th>
                   <th>CBSL-QA</th>
-                  <th>Client-QC</th>
-                  <th>Expense Rate</th>
+                  <th>Client-QA</th>
+                  <th>Expense</th>
                   <th>Remarks</th>
                 </tr>
               </thead>
@@ -594,8 +594,8 @@ return (
                           <th>Flagging</th>
                           <th>Indexing</th>
                           <th>CBSL-QA</th>
-                          <th>Client-QC</th>
-                          <th>Expense Rate</th>
+                          <th>Client-QA</th>
+                          <th>Expense</th>
                           <th>Remarks</th>
                         </tr>
                       </thead>
@@ -712,8 +712,8 @@ return (
                           <th>Flagging</th>
                           <th>Indexing</th>
                           <th>CBSL-QA</th>
-                          <th>Client-QC</th>
-                          <th>Expense Rate</th>
+                          <th>Client-QA</th>
+                          <th>Expense</th>
                           <th>Remarks</th>
                         </tr>
                       </thead>

@@ -394,7 +394,7 @@ const KarNonTechCommulative = () => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
-                      <th>Expense Rate</th>
+                      <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -462,7 +462,7 @@ const KarNonTechCommulative = () => {
                     <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
-                    <th>Expense Rate</th>
+                    <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
                 </thead>
@@ -538,7 +538,7 @@ const KarNonTechCommulative = () => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>
@@ -578,7 +578,6 @@ const KarNonTechCommulative = () => {
             </div>
           </div>
         )}
-
 
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
@@ -640,7 +639,7 @@ const KarNonTechCommulative = () => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>

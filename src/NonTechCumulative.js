@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "./API";
 import axios from "axios";
-import { priceCount } from "./Components/priceCount";
+
 import { useRef } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
@@ -322,7 +322,6 @@ const NonTechCumulative = () => {
       <div className="loader"></div>
     </div>
   );
-  const totalPrice = 0.141;
 
   const handleBackToLocationView = () => {
     setLocationView(true);
@@ -417,9 +416,8 @@ const NonTechCumulative = () => {
       setLastColumnTotal(sumOfLastColumn);
     }
   }, [enhancedLocationReport]);
+console.log("PRices",price);
 
-  console.log("Prices", price);
-  console.log("Locations", locationReport);
   return (
     <>
       {isLoading && <Loader />}
@@ -438,7 +436,7 @@ const NonTechCumulative = () => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
-                      <th>Expense Rate</th>
+                      <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -506,7 +504,7 @@ const NonTechCumulative = () => {
                     <th>Counting</th>
                     <th>Doc Pre</th>
                     <th>Other</th>
-                    <th>Expense Rate</th>
+                    <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
                 </thead>
@@ -582,13 +580,13 @@ const NonTechCumulative = () => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const priceData = price.find(price => price.LocationName === elem.locationName);
+                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
 
                             // Calculate rates for each activity
                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
@@ -622,7 +620,6 @@ const NonTechCumulative = () => {
             </div>
           </div>
         )}
-
 
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
@@ -684,13 +681,13 @@ const NonTechCumulative = () => {
                             <th>Counting</th>
                             <th>Doc Pre</th>
                             <th>Other</th>
-                            <th>Expense Rate</th>
+                            <th>Expense</th>
                             <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const priceData = price.find(price => price.LocationName === elem.locationName);
+                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
 
                             // Calculate rates for each activity
                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
