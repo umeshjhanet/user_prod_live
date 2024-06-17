@@ -261,85 +261,85 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
     };
   
     useEffect(() => {
-        const fetchSummaryReport = () => {
-            setIsLoading(true);
-            axios.get(`${API_URL}/summaryreportcummulativetelangana`)
-              .then((response) => {
-                setSummaryReport(response.data);
-                setIsLoading(false);
-              })
-              .catch((error) => {
-                console.error("Error fetching summary report:", error);
-                setIsLoading(false);
-              });
-          };
-      const fetchLocationReport = () => {
-        setIsLoading(true);
-        axios
-          .get(`${API_URL}/detailedreportcummulativetelangana`)
-          .then((response) => { 
-            setLocationReport(response.data)
-          setIsLoading(false);})
-          .catch((error) => {
-            console.error("Error fetching user data:", error);
-            setIsLoading(false);
-          });
-          
-      };
-  
-      const fetchDetailedReportCsvFile = (startDate, endDate) => {
-        const formattedStartDate = startDate ? new Date(startDate) : null;
-        const formattedEndDate = endDate ? new Date(endDate) : null;
-        const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
+      const fetchSummaryReport = () => {
+          setIsLoading(true);
+          axios.get(`${API_URL}/summaryreportcummulativetelangana`)
+            .then((response) => {
+              setSummaryReport(response.data);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error("Error fetching summary report:", error);
+              setIsLoading(false);
+            });
         };
-        setIsLoading(true);
-        let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
-  
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-        }
-  
-        axios.get(apiUrl, { responseType: "blob" })
-          .then((response) => {
-            const blob = new Blob([response.data], { type: "text/csv" });
-            const url = window.URL.createObjectURL(blob);
-            setDetailedCsv(url);
-          })
-          .catch((error) => {
-            console.error("Error in exporting data:", error);
-            setIsLoading(false);
-          });
-          
+    const fetchLocationReport = () => {
+      setIsLoading(true);
+      axios
+        .get(`${API_URL}/detailedreportcummulativetelangana`)
+        .then((response) => { 
+          setLocationReport(response.data)
+        setIsLoading(false);})
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false);
+        });
+        
+    };
+
+    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => {
+        return date.toISOString().split('T')[0];
       };
-      const fetchPrices = () => {
-        setIsLoading(true); // Set loading to true when fetching data
-        axios
-          .get(`${API_URL}/telgetbusinessrate`)
-          .then((response) => {
-            setPrice(response.data);
-            setIsLoading(false); // Set loading to false after data is fetched
-          })
-          .catch((error) => {
-            console.error("Error fetching user data:", error);
-            setIsLoading(false); // Set loading to false in case of error
-          });
-      };
-      fetchPrices();
-  
-  
-      fetchDetailedReportCsvFile(startDate, endDate);
-      // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-  
-      fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-  
-      fetchSummaryReport();
-      fetchLocationReport();
-      if (locationName) {
-        fetchUserDetailed(locationName);
+      setIsLoading(true);
+      let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
+
+      if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-      fetchUserDetailedReport();
-    }, [selectedUsername, locationName, startDate, endDate]);
+
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+          setIsLoading(false);
+        });
+        
+    };
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/telgetbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
+    fetchPrices();
+
+
+    fetchDetailedReportCsvFile(startDate, endDate);
+    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+
+    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
+
+    fetchSummaryReport();
+    fetchLocationReport();
+    if (locationName) {
+      fetchUserDetailed(locationName);
+    }
+    fetchUserDetailedReport();
+  }, [selectedUsername, locationName, startDate, endDate]);
     // console.log("Location Data", locationReport);
     const Loader = () => (
       <div className="loader-overlay">
@@ -502,7 +502,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                 <div className="col-8"></div>
                 <div className="col-2">
                   <button className="btn btn-success" onClick={handleExport}>
-                    <FiDownload className="me-2" />Export Csv
+                    <FiDownload className="me-2" />Export CSV
                   </button>
                 </div>
                 {showConfirmation && (
@@ -515,15 +515,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                   </div>
                 )}
               </div>
-              {showConfirmation && (
-                <div className="confirmation-dialog">
-                  <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                  </div>
-                </div>
-              )}
+              
             </div>
             <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">

@@ -313,7 +313,7 @@ const KarDashboard = () => {
             console.log("hasMatchingLocation:", hasMatchingLocation);
             console.log("userData.locations:", userData.locations);
 
-            let apiUrl = `${API_URL}/telgetbusinessrate`;
+            let apiUrl = `${API_URL}/kargetbusinessrate`;
 
             if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
                 const separator = apiUrl.includes('?') ? '&' : '?';

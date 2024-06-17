@@ -514,7 +514,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate }) => {
                 <div className="col-8"></div>
                 <div className="col-2">
                   <button className="btn btn-success" onClick={handleExport}>
-                    <FiDownload className="me-2" />Export Csv
+                    <FiDownload className="me-2" />Export CSV
                   </button>
                 </div>
                 {showConfirmation && (
@@ -527,15 +527,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate }) => {
                   </div>
                 )}
               </div>
-              {showConfirmation && (
-                <div className="confirmation-dialog">
-                  <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                  </div>
-                </div>
-              )}
+              
             </div>
             <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">
