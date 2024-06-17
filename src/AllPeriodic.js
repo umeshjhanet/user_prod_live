@@ -131,39 +131,40 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   const handleCancelUserExport = () => {
     setShowConfirmationUser(false);
   }
-
+  
   const fetchUserDetailed = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
+  
     setIsLoading(true);
-    axios
-      .get(`${API_URL}/alldetailedreportlocationwise`, {
-        params: {
-          locationName: locationName,
-          startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-          endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-        },
-      })
-      .then((response) => {
-        setDetailedReportLocationWise(response.data)
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        setIsLoading(false);
-      });
+    axios.get(`${API_URL}/alldetailedreportlocationwise`, {
+      params: {
+        locationName: locationName,
+        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+      }
+    })
+    .then((response) => {
+      console.log("Detailed Report Location Wise API Response:", response.data);
+      setDetailedReportLocationWise(response.data);
+      setIsLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error fetching detailed report location wise:", error);
+      setIsLoading(false);
+    });
   };
-
-
+  
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
+  
     setIsLoading(true);
     axios.get(`${API_URL}/alluserdetailedreportlocationwise`, {
       params: {
@@ -173,16 +174,17 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         endDate: formattedEndDate ? formatDate(formattedEndDate) : null
       }
     })
-      .then((response) => {
-        setDetailedUserReport(response.data)
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user detailed report:", error);
-        setIsLoading(false);
-      });
+    .then((response) => {
+      console.log("User Detailed Report API Response:", response.data);
+      setDetailedUserReport(response.data);
+      setIsLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error fetching user detailed report:", error);
+      setIsLoading(false);
+    });
   };
-
+  
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -212,7 +214,6 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       });
   };
-
 
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -244,6 +245,12 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       });
   };
+  useEffect(() => {
+    fetchUserDetailed(locationName, startDate,endDate);
+    fetchUserDetailedReport(selectedUsername, locationName, startDate, endDate);
+    fetchDetailedLocationWiseReportCsvFile(locationName, startDate, endDate);
+    fetchUserWiseReportCsvFile(selectedUsername, locationName, startDate, endDate);
+  }, [selectedUsername, locationName, startDate, endDate]);
 
   useEffect(() => {
     const fetchSummaryReport = async () => {
@@ -428,7 +435,8 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
       <div className="loader"></div>
     </div>
   );
- 
+  console.log("LocationWise User's", detailedReportLocationWise);
+  console.log("User's", detailedUserReport);
   return (
     <>
       {isLoading && <Loader />}

@@ -147,8 +147,6 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       });
   };
-
-
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -173,7 +171,6 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       });
   };
-
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -203,8 +200,6 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       });
   };
-
-
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -235,7 +230,6 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       });
   };
-
   useEffect(() => {
     const fetchSummaryReport = async () => {
       setIsLoading(true);
@@ -260,7 +254,6 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       }
     };
-
     const fetchLocationReport = async () => {
       setIsLoading(true);
       try {
@@ -284,7 +277,6 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         setIsLoading(false);
       }
     };
-
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -322,13 +314,13 @@ const KarAllPeriodic = ({ multipliedData, startDate, endDate }) => {
         });
     };
     fetchPrices();
-
-
     fetchSummaryReport();
     fetchLocationReport();
     fetchDetailedReportCsvFile(startDate, endDate);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
+    fetchUserDetailed(locationName,startDate,endDate);
+    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
 
   }, [selectedUsername, locationName, startDate, endDate]);
 

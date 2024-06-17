@@ -322,14 +322,14 @@ const KarTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         });
     };
 
-fetchPrices();
-
-
+    fetchPrices();
     fetchSummaryReport();
     fetchLocationReport();
     fetchDetailedReportCsvFile(startDate, endDate);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
+    fetchUserDetailed(locationName,startDate,endDate);
+    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
 
   }, [selectedUsername, locationName, startDate, endDate]);
 

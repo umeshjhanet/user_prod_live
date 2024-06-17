@@ -147,7 +147,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       });
   };
 
-
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -326,6 +325,8 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
     fetchDetailedReportCsvFile(startDate, endDate);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
+    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
+    fetchUserDetailed(locationName,startDate,endDate);
 
   }, [selectedUsername, locationName, startDate, endDate]);
 
