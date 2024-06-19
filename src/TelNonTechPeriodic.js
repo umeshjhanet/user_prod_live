@@ -147,6 +147,93 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       });
   };
 
+  const calculateColumnSum = () => {
+    let Inventory = 0;
+    let Counting = 0;
+    let DocPreparation = 0;
+    let Guard = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
+      detailedReportLocationWise.forEach((elem) => {
+        Inventory += parseInt(elem.Inventory) || 0;
+        Counting += parseInt(elem.Counting) || 0;
+        DocPreparation += parseInt(elem.DocPreparation) || 0;
+        Guard += parseInt(elem.Guard) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+        const countingRate = priceData?.CountingRate || 0;
+        const inventoryRate = priceData?.InventoryRate || 0;
+        const docPreparationRate = priceData?.DocPreparationRate || 0;
+        const guardRate = priceData?.GuardRate || 0;
+        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
+        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
+        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
+        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
+  
+        const totalRate =countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Inventory,
+      Counting,
+      DocPreparation,
+      Guard,
+      totalExpenseRate,
+    };
+  };
+
+  const calculateColumnSumUser = () => {
+    let Inventory = 0;
+    let Counting = 0;
+    let DocPreparation = 0;
+    let Guard = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedUserReport && Array.isArray(detailedUserReport)) {
+      detailedUserReport.forEach((elem) => {
+        Inventory += parseInt(elem.Inventory) || 0;
+        Counting += parseInt(elem.Counting) || 0;
+        DocPreparation += parseInt(elem.DocPreparation) || 0;
+        Guard += parseInt(elem.Guard) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+        const countingRate = priceData?.CountingRate || 0;
+        const inventoryRate = priceData?.InventoryRate || 0;
+        const docPreparationRate = priceData?.DocPreparationRate || 0;
+        const guardRate = priceData?.GuardRate || 0;
+  
+        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
+        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
+        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
+        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
+  
+        const totalRate =countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Inventory,
+      Counting,
+      DocPreparation,
+      Guard,
+      totalExpenseRate,
+    };
+  };
+  
+  const columnSums = calculateColumnSum();
+  const columnSumsUser = calculateColumnSumUser();
 
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -643,6 +730,27 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                               </tr>
                             );
                           })}
+                          <tr style={{ color: "black" }}>
+                    <td colSpan="3">
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Inventory.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Counting.toLocaleString()}</strong>
+                    </td> 
+                    <td>
+                      <strong>{columnSums.DocPreparation.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Guard.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                      <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
+                    </td>
+                  </tr>
                         </tbody>
                       </table>
                     </div>
@@ -746,6 +854,27 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                               </tr>
                             );
                           })}
+                          <tr style={{ color: "black" }}>
+                    <td colSpan="4">
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Inventory.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Counting.toLocaleString()}</strong>
+                    </td> 
+                    <td>
+                      <strong>{columnSumsUser.DocPreparation.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Guard.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                      <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                    </td>
+                  </tr>
                         </tbody>
                       </table>
                     </div>

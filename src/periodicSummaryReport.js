@@ -66,6 +66,121 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate }) => {
     setShowConfirmation(true);
   };
 
+
+  const calculateColumnSum = () => {
+    let Scanned = 0;
+    let QC = 0;
+    let Flagging = 0;
+    let Indexing = 0;
+    let CBSL_QA = 0;
+    let Client_QC = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
+      detailedReportLocationWise.forEach((elem) => {
+        Scanned += parseInt(elem.Scanned) || 0;
+        QC += parseInt(elem.QC) || 0;
+        Flagging += parseInt(elem.Flagging) || 0;
+        Indexing += parseInt(elem.Indexing) || 0;
+        CBSL_QA += parseInt(elem.CBSL_QA) || 0;
+        Client_QC += parseInt(elem.Client_QC) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+  
+        const scanRate = priceData?.ScanRate || 0;
+        const qcRate = priceData?.QcRate || 0;
+        const indexRate = priceData?.IndexRate || 0;
+        const flagRate = priceData?.FlagRate || 0;
+        const cbslQaRate = priceData?.CbslQaRate || 0;
+        const clientQcRate = priceData?.ClientQcRate || 0;
+        
+  
+        const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
+        const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
+        const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
+        const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
+        const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
+        const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        
+        const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Scanned,
+      QC,
+      Flagging,
+      Indexing,
+      CBSL_QA,
+      Client_QC,
+      totalExpenseRate,
+    };
+  };
+
+  const calculateColumnSumUser = () => {
+    let Scanned = 0;
+    let QC = 0;
+    let Flagging = 0;
+    let Indexing = 0;
+    let CBSL_QA = 0;
+    let Client_QC = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedUserReport && Array.isArray(detailedUserReport)) {
+      detailedUserReport.forEach((elem) => {
+        Scanned += parseInt(elem.Scanned) || 0;
+        QC += parseInt(elem.QC) || 0;
+        Flagging += parseInt(elem.Flagging) || 0;
+        Indexing += parseInt(elem.Indexing) || 0;
+        CBSL_QA += parseInt(elem.CBSL_QA) || 0;
+        Client_QC += parseInt(elem.Client_QC) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+  
+        const scanRate = priceData?.ScanRate || 0;
+        const qcRate = priceData?.QcRate || 0;
+        const indexRate = priceData?.IndexRate || 0;
+        const flagRate = priceData?.FlagRate || 0;
+        const cbslQaRate = priceData?.CbslQaRate || 0;
+        const clientQcRate = priceData?.ClientQcRate || 0;
+        
+  
+        const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
+        const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
+        const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
+        const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
+        const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
+        const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        
+  
+        const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Scanned,
+      QC,
+      Flagging,
+      Indexing,
+      CBSL_QA,
+      Client_QC,
+      totalExpenseRate,
+    };
+  };
+  
+  const columnSums = calculateColumnSum();
+  const columnSumsUser = calculateColumnSumUser();
+
   const handleDetailedExport = () => {
     if (detailedcsv) {
       const link = document.createElement("a");
@@ -667,6 +782,34 @@ fetchPrices();
                               </tr>
                             );
                           })}
+                           <tr style={{ color: "black" }}>
+                    <td colSpan="3">
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Scanned.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Flagging.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Indexing.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Client_QC.toLocaleString()}</strong>
+                    </td>
+                    
+                    <td>
+                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                      <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
+                    </td>
+                  </tr>
                         </tbody>
                       </table>
                     </div>
@@ -785,6 +928,32 @@ fetchPrices();
                               </tr>
                             );
                           })}
+                           <tr style={{ color: "black" }}>
+                    <td colSpan="5">
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                    </td>
+                  </tr>
                         </tbody>
                       </table>
                     </div>
