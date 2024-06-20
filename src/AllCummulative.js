@@ -122,6 +122,7 @@ const AllCummulative = ({ userData }) => {
       document.body.removeChild(link);
     }
     setShowConfirmationUser(false)
+    
   }
 
 
