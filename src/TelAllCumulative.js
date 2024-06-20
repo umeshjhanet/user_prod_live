@@ -261,85 +261,85 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
     };
   
     useEffect(() => {
-        const fetchSummaryReport = () => {
-            setIsLoading(true);
-            axios.get(`${API_URL}/summaryreportcummulativetelangana`)
-              .then((response) => {
-                setSummaryReport(response.data);
-                setIsLoading(false);
-              })
-              .catch((error) => {
-                console.error("Error fetching summary report:", error);
-                setIsLoading(false);
-              });
-          };
-      const fetchLocationReport = () => {
-        setIsLoading(true);
-        axios
-          .get(`${API_URL}/detailedreportcummulativetelangana`)
-          .then((response) => { 
-            setLocationReport(response.data)
-          setIsLoading(false);})
-          .catch((error) => {
-            console.error("Error fetching user data:", error);
-            setIsLoading(false);
-          });
-          
-      };
-  
-      const fetchDetailedReportCsvFile = (startDate, endDate) => {
-        const formattedStartDate = startDate ? new Date(startDate) : null;
-        const formattedEndDate = endDate ? new Date(endDate) : null;
-        const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
+      const fetchSummaryReport = () => {
+          setIsLoading(true);
+          axios.get(`${API_URL}/summaryreportcummulativetelangana`)
+            .then((response) => {
+              setSummaryReport(response.data);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error("Error fetching summary report:", error);
+              setIsLoading(false);
+            });
         };
-        setIsLoading(true);
-        let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
-  
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-        }
-  
-        axios.get(apiUrl, { responseType: "blob" })
-          .then((response) => {
-            const blob = new Blob([response.data], { type: "text/csv" });
-            const url = window.URL.createObjectURL(blob);
-            setDetailedCsv(url);
-          })
-          .catch((error) => {
-            console.error("Error in exporting data:", error);
-            setIsLoading(false);
-          });
-          
+    const fetchLocationReport = () => {
+      setIsLoading(true);
+      axios
+        .get(`${API_URL}/detailedreportcummulativetelangana`)
+        .then((response) => { 
+          setLocationReport(response.data)
+        setIsLoading(false);})
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false);
+        });
+        
+    };
+
+    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => {
+        return date.toISOString().split('T')[0];
       };
-      const fetchPrices = () => {
-        setIsLoading(true); // Set loading to true when fetching data
-        axios
-          .get(`${API_URL}/telgetbusinessrate`)
-          .then((response) => {
-            setPrice(response.data);
-            setIsLoading(false); // Set loading to false after data is fetched
-          })
-          .catch((error) => {
-            console.error("Error fetching user data:", error);
-            setIsLoading(false); // Set loading to false in case of error
-          });
-      };
-      fetchPrices();
-  
-  
-      fetchDetailedReportCsvFile(startDate, endDate);
-      // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-  
-      fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-  
-      fetchSummaryReport();
-      fetchLocationReport();
-      if (locationName) {
-        fetchUserDetailed(locationName);
+      setIsLoading(true);
+      let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
+
+      if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-      fetchUserDetailedReport();
-    }, [selectedUsername, locationName, startDate, endDate]);
+
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+          setIsLoading(false);
+        });
+        
+    };
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/telgetbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
+    fetchPrices();
+
+
+    fetchDetailedReportCsvFile(startDate, endDate);
+    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+
+    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
+
+    fetchSummaryReport();
+    fetchLocationReport();
+    if (locationName) {
+      fetchUserDetailed(locationName);
+    }
+    fetchUserDetailedReport();
+  }, [selectedUsername, locationName, startDate, endDate]);
     // console.log("Location Data", locationReport);
     const Loader = () => (
       <div className="loader-overlay">
@@ -442,6 +442,159 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
   
   console.log("summary report",summaryReport)
   //console.log("Scanned Value", summaryReport.Scanned)
+
+  const calculateColumnSum = () => {
+    let Inventory = 0;
+    let Counting = 0;
+    let DocPreparation = 0;
+    let Guard = 0;
+    let Scanned = 0;
+    let QC = 0;
+    let Flagging = 0;
+    let Indexing = 0;
+    let CBSL_QA = 0;
+    let Client_QC = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
+      detailedReportLocationWise.forEach((elem) => {
+        Inventory += parseInt(elem.Inventory) || 0;
+        Counting += parseInt(elem.Counting) || 0;
+        DocPreparation += parseInt(elem.DocPreparation) || 0;
+        Guard += parseInt(elem.Guard) || 0;
+        Scanned += parseInt(elem.Scanned) || 0;
+        QC += parseInt(elem.QC) || 0;
+        Flagging += parseInt(elem.Flagging) || 0;
+        Indexing += parseInt(elem.Indexing) || 0;
+        CBSL_QA += parseInt(elem.CBSL_QA) || 0;
+        Client_QC += parseInt(elem.Client_QC) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+  
+        const scanRate = priceData?.ScanRate || 0;
+        const qcRate = priceData?.QcRate || 0;
+        const indexRate = priceData?.IndexRate || 0;
+        const flagRate = priceData?.FlagRate || 0;
+        const cbslQaRate = priceData?.CbslQaRate || 0;
+        const clientQcRate = priceData?.ClientQcRate || 0;
+        const countingRate = priceData?.CountingRate || 0;
+        const inventoryRate = priceData?.InventoryRate || 0;
+        const docPreparationRate = priceData?.DocPreparationRate || 0;
+        const guardRate = priceData?.GuardRate || 0;
+  
+        const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
+        const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
+        const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
+        const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
+        const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
+        const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
+        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
+        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
+        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
+  
+        const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Inventory,
+      Counting,
+      DocPreparation,
+      Guard,
+      Scanned,
+      QC,
+      Flagging,
+      Indexing,
+      CBSL_QA,
+      Client_QC,
+      totalExpenseRate,
+    };
+  };
+
+  const calculateColumnSumUser = () => {
+    let Inventory = 0;
+    let Counting = 0;
+    let DocPreparation = 0;
+    let Guard = 0;
+    let Scanned = 0;
+    let QC = 0;
+    let Flagging = 0;
+    let Indexing = 0;
+    let CBSL_QA = 0;
+    let Client_QC = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedUserReport && Array.isArray(detailedUserReport)) {
+      detailedUserReport.forEach((elem) => {
+        Inventory += parseInt(elem.Inventory) || 0;
+        Counting += parseInt(elem.Counting) || 0;
+        DocPreparation += parseInt(elem.DocPreparation) || 0;
+        Guard += parseInt(elem.Guard) || 0;
+        Scanned += parseInt(elem.Scanned) || 0;
+        QC += parseInt(elem.QC) || 0;
+        Flagging += parseInt(elem.Flagging) || 0;
+        Indexing += parseInt(elem.Indexing) || 0;
+        CBSL_QA += parseInt(elem.CBSL_QA) || 0;
+        Client_QC += parseInt(elem.Client_QC) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+  
+        const scanRate = priceData?.ScanRate || 0;
+        const qcRate = priceData?.QcRate || 0;
+        const indexRate = priceData?.IndexRate || 0;
+        const flagRate = priceData?.FlagRate || 0;
+        const cbslQaRate = priceData?.CbslQaRate || 0;
+        const clientQcRate = priceData?.ClientQcRate || 0;
+        const countingRate = priceData?.CountingRate || 0;
+        const inventoryRate = priceData?.InventoryRate || 0;
+        const docPreparationRate = priceData?.DocPreparationRate || 0;
+        const guardRate = priceData?.GuardRate || 0;
+  
+        const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
+        const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
+        const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
+        const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
+        const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
+        const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
+        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
+        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
+        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
+  
+        const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Inventory,
+      Counting,
+      DocPreparation,
+      Guard,
+      Scanned,
+      QC,
+      Flagging,
+      Indexing,
+      CBSL_QA,
+      Client_QC,
+      totalExpenseRate,
+    };
+  };
+  
+  const columnSums = calculateColumnSum();
+  const columnSumsUser = calculateColumnSumUser();
+
+
   return (
     <>
       {isLoading && <Loader />}
@@ -502,7 +655,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                 <div className="col-8"></div>
                 <div className="col-2">
                   <button className="btn btn-success" onClick={handleExport}>
-                    <FiDownload className="me-2" />Export Csv
+                    <FiDownload className="me-2" />Export CSV
                   </button>
                 </div>
                 {showConfirmation && (
@@ -515,15 +668,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                   </div>
                 )}
               </div>
-              {showConfirmation && (
-                <div className="confirmation-dialog">
-                  <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                  </div>
-                </div>
-              )}
+              
             </div>
             <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">
@@ -690,6 +835,46 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                               </tr>
                             );
                           })}
+                           <tr style={{ color: "black" }}>
+                    <td colSpan="3">
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Inventory.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Counting.toLocaleString()}</strong>
+                    </td> 
+                    <td>
+                      <strong>{columnSums.DocPreparation.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Guard.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Scanned.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Flagging.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Indexing.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Client_QC.toLocaleString()}</strong>
+                    </td>
+                    
+                    <td>
+                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                      <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
+                    </td>
+                  </tr>
                         </tbody>
                       </table>
                     </div>
@@ -829,6 +1014,44 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
                               </tr>
                             );
                           })}
+                          <tr style={{ color: "black" }}>
+                    <td colSpan="5">
+                      <strong>Total</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Inventory.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Counting.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.DocPreparation.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Guard.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                    </td>
+                  </tr>
                         </tbody>
                       </table>
                     </div>
