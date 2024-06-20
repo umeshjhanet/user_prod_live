@@ -188,7 +188,7 @@ const TelNonTechCommulative = () => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvtelangana`;
+    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontechtelangana`;
 
     if (username && locationName) {
       // If locationName is an array, join its elements with commas
