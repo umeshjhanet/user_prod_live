@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Header from './Components/Header';
@@ -33,45 +33,44 @@ import TelNonTechModal from './Components/TelNonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
 import AllProjectDashboard from './AllProjectDashboard';
 import LocationWiseDashboard from './LocationWiseDashboard';
+import PrivateRoute from './PrivateRoute';
 
 const App = () => {
  
   return (
-    <React.StrictMode>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/AllProjectDashboard" element={<AllProjectDashboard />} />
-          <Route path="/LocationWiseDashboard" element={<LocationWiseDashboard />} />
-          <Route path="/UPDCDashboard" element={<Dashboard />} />
-          <Route path="/UPDCDashboard" element={<NonTechModal />} />
-          <Route path="/TelDashboard" element={<TelDashboard />} />
-          <Route path="/TelDashboard" element={<TelNonTechModal />} />
-          <Route path="/TelDashboard" element={<TelNonTechCommulative />} />
-          <Route path="/TelDashboard" element={<TelNonTechPeriodic />} />
-          <Route path="/TelDashboard" element={<TelAllCumulative />} />
-          <Route path="/TelDashboard" element={<TelAllPeriodic />} />
-          <Route path="/KarDashboard" element={<KarDashboard />} />
-          <Route path="/KarDashboard" element={<KarNonTechCumulative />} />
-          <Route path="/KarDashboard" element={<KarNonTechPeriodic />} />
-          <Route path="/KarDashboard" element={<KarAllCumulative />} />
-          <Route path="/KarDashboard" element={<KarAllPeriodic />} />
-          <Route path="/KarDashboard" element={<KarNonTechModal />} />
-          <Route path="/User_Form" element={<User_Form />} />
-          <Route path="/dashboard" element={<PeriodicSummaryReport />} />
-          <Route path="/dashboard" element={<CumulativeSummaryReport />} />
-          <Route path="/dashboard" element={<NonTechCumulative />} />
-          <Route path="/dashboard" element={<AllCummulative />} />
-          <Route path="/dashboard" element={<AllPeriodic />} />
-          <Route path="/dashboard" element={<NonTechPeriodic />} />
-          <Route path="/dashboard" element={<CalculatorModal />} />
-          <Route path="/PriceRateForm" element={<PriceRateForm />} />
-          <Route path="/nontechForm" element={<NonTechForm />} />
-          <Route path="/TaskForm" element={<TaskForm/>}/>
-        </Routes>
-      </BrowserRouter>
-    </React.StrictMode>
+    <Router>
+    <Routes>
+      <Route path="/" element={<Login />} />
+          <Route path="/projects" element={<PrivateRoute element={<Projects />} />} />
+          <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>
+          <Route path="/LocationWiseDashboard" element={<PrivateRoute element={<LocationWiseDashboard />} />}/>
+          <Route path="/UPDCDashboard"element={<PrivateRoute element={<Dashboard />} />}/>
+          <Route path="/UPDCDashboard" element={<PrivateRoute element={<NonTechModal />} />}/>
+          <Route path="/TelDashboard"element={<PrivateRoute element={<TelDashboard />} />}/>
+          <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechModal />} />}/>
+          <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechCommulative />} />}/>
+          <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechPeriodic />} />}/>
+          <Route path="/TelDashboard"element={<PrivateRoute element={<TelAllCumulative />} />}/>
+          <Route path="/TelDashboard"element={<PrivateRoute element={<TelAllPeriodic />} />}/>
+          <Route path="/KarDashboard"element={<PrivateRoute element={<KarDashboard />} />}/>
+          <Route path="/KarDashboard"element={<PrivateRoute element={<KarNonTechCumulative />} />}/>
+          <Route path="/KarDashboard"element={<PrivateRoute element={<KarNonTechPeriodic />} />}/>
+          <Route path="/KarDashboard"element={<PrivateRoute element={<KarAllCumulative />} />}/>
+          <Route path="/KarDashboard"element={<PrivateRoute element={<KarAllPeriodic />} />}/>
+          <Route path="/KarDashboard"element={<PrivateRoute element={<KarNonTechModal />} />}/>
+          <Route path="/User_Form"element={<PrivateRoute element={<User_Form />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<PeriodicSummaryReport />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<CumulativeSummaryReport />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<NonTechCumulative />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<AllCummulative />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<AllPeriodic />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<NonTechPeriodic />} />}/>
+          <Route path="/dashboard"element={<PrivateRoute element={<CalculatorModal />} />}/>
+          <Route path="/PriceRateForm"element={<PrivateRoute element={<PriceRateForm />} />}/>
+          <Route path="/nontechForm"element={<PrivateRoute element={<NonTechForm />} />}/>
+          <Route path="/TaskForm"element={<PrivateRoute element={<TaskForm/>}/>}/>
+          </Routes>
+          </Router>
   );
 };
 

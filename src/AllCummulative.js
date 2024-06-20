@@ -262,10 +262,7 @@ const AllCummulative = ({ userData }) => {
           console.error("Error fetching user data:", error);
           setIsLoading(false);
         });
-
-
     };
-
 
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
