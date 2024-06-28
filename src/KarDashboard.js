@@ -296,11 +296,11 @@ const KarDashboard = () => {
             }
 
             // Dynamic locationName assignment
-            const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+            const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
 
             // Check if userData meets the conditions to include the locationName parameter
             const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-            const hasSingleProject = userData.projects.length === 1;
+            const hasSingleProject = userData.projects[0] === 3;
 
             // Check if locationName matches any location name in userData.locations
             const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
@@ -582,13 +582,13 @@ const KarDashboard = () => {
 
                 </div>
             </div>
-            {showPeriodicSummary && <KarTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCumulativeSummary && <KarTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <KarNonTechCumulative />}
-            {shownonTechPeriodicSummary && <KarNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showAllCumulativeSummary && <KarAllCumulative />}
-            {showAllPeriodicSummary && <KarAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {showPeriodicSummary && <KarTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCumulativeSummary && <KarTechCumulative userData={userData} multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
+            {shownonTechCumulativeSummary && <KarNonTechCumulative userData={userData} />}
+            {shownonTechPeriodicSummary && <KarNonTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showAllCumulativeSummary && <KarAllCumulative userData={userData} />}
+            {showAllPeriodicSummary && <KarAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <KarNonTechModal onClose={handleCloseModal} userInfo={userData}/>}
             <ToastContainer />
         </>

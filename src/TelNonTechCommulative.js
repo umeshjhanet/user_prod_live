@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
-const TelNonTechCommulative = () => {
+const TelNonTechCommulative = ({userData}) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
@@ -217,8 +217,37 @@ const TelNonTechCommulative = () => {
   useEffect(() => {
     const fetchSummaryReport = () => {
       setIsLoading(true);
-      axios.get(`${API_URL}/summaryreportnontechtelangana`)
+    
+      let apiUrl = `${API_URL}/summaryreportnontechtelangana`;
+    
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 2;
+    
+      // Use the location name directly
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    
+      // Check if locationName matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => location.name === locationName);
+    
+      console.log("LocationName:", locationName);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+    
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationName)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+    
+      axios.get(apiUrl)
         .then((response) => {
+          console.log("Response data:", response.data);  // Log the response data
           setSummaryReport(response.data);
           setIsLoading(false);
         })
@@ -227,20 +256,138 @@ const TelNonTechCommulative = () => {
           setIsLoading(false);
         });
     };
+    
     const fetchLocationReport = () => {
       setIsLoading(true);
+
+      let apiUrl = `${API_URL}/detailedreportcummulativenontechtelangana`;
+
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 2;
+
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName}`;
+
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
+
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
       axios
-        .get(`${API_URL}/detailedreportcummulativenontechtelangana`)
+        .get(apiUrl)
         .then((response) => {
-          setLocationReport(response.data)
+          setLocationReport(response.data);
           setIsLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching location report:", error);
           setIsLoading(false);
         });
-
     };
+
+    const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => date.toISOString().split('T')[0];
+    
+      setIsLoading(true);
+      let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechtelangana`;
+    
+      if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      }
+    
+      // Check userData structure
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid userData structure:", userData);
+        setIsLoading(false);
+        return;
+      }
+    
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects[0] === 2;
+    
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName}`;
+    
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
+    
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+    
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        const separator = apiUrl.includes('?') ? '&' : '?';
+        apiUrl += `${separator}locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+    
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setDetailedCsv(url);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+          setIsLoading(false);
+        });
+    };
+    // const fetchSummaryReport = () => {
+    //   setIsLoading(true);
+    //   axios.get(`${API_URL}/summaryreportnontechtelangana`)
+    //     .then((response) => {
+    //       setSummaryReport(response.data);
+    //       setIsLoading(false);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching summary report:", error);
+    //       setIsLoading(false);
+    //     });
+    // };
+    // const fetchLocationReport = () => {
+    //   setIsLoading(true);
+    //   axios
+    //     .get(`${API_URL}/detailedreportcummulativenontechtelangana`)
+    //     .then((response) => {
+    //       setLocationReport(response.data)
+    //       setIsLoading(false);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching user data:", error);
+    //       setIsLoading(false);
+    //     });
+
+    // };
     const fetchPrices = () => {
       setIsLoading(true); // Set loading to true when fetching data
       axios
@@ -254,34 +401,34 @@ const TelNonTechCommulative = () => {
           setIsLoading(false); // Set loading to false in case of error
         });
     };
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
-      const formattedStartDate = startDate ? new Date(startDate) : null;
-      const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
-      setIsLoading(true);
-      let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechtelangana`;
+    // const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    //   const formattedStartDate = startDate ? new Date(startDate) : null;
+    //   const formattedEndDate = endDate ? new Date(endDate) : null;
+    //   const formatDate = (date) => {
+    //     return date.toISOString().split('T')[0];
+    //   };
+    //   setIsLoading(true);
+    //   let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechtelangana`;
 
-      if (formattedStartDate && formattedEndDate) {
-        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-      }
+    //   if (formattedStartDate && formattedEndDate) {
+    //     apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    //   }
 
-      axios.get(apiUrl, { responseType: "blob" })
-        .then((response) => {
-          const blob = new Blob([response.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          setDetailedCsv(url);
-        })
-        .catch((error) => {
-          console.error("Error in exporting data:", error);
-          setIsLoading(false);
-        });
+    //   axios.get(apiUrl, { responseType: "blob" })
+    //     .then((response) => {
+    //       const blob = new Blob([response.data], { type: "text/csv" });
+    //       const url = window.URL.createObjectURL(blob);
+    //       setDetailedCsv(url);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error in exporting data:", error);
+    //       setIsLoading(false);
+    //     });
 
-    };
+    // };
 
 
-    fetchDetailedReportCsvFile(startDate, endDate);
+    fetchDetailedReportCsvFile(startDate, endDate,userData);
     // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
 
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
@@ -292,7 +439,7 @@ const TelNonTechCommulative = () => {
       fetchUserDetailed(locationName);
     }
     fetchUserDetailedReport();
-  }, [selectedUsername, locationName, startDate, endDate]);
+  }, [selectedUsername, locationName, startDate, endDate,userData]);
   // console.log("Location Data", locationReport);
   const Loader = () => (
     <div className="loader-overlay">

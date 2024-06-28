@@ -7,7 +7,7 @@ import { useRef } from 'react';
 import { IoArrowBackCircle } from "react-icons/io5";
 import { FiDownload } from 'react-icons/fi';
 
-const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
+const TelAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [locationView, setLocationView] = useState(false);
@@ -262,84 +262,131 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices }) => {
   
     useEffect(() => {
       const fetchSummaryReport = () => {
-          setIsLoading(true);
-          axios.get(`${API_URL}/summaryreportcummulativetelangana`)
-            .then((response) => {
-              setSummaryReport(response.data);
-              setIsLoading(false);
-            })
-            .catch((error) => {
-              console.error("Error fetching summary report:", error);
-              setIsLoading(false);
-            });
-        };
-    const fetchLocationReport = () => {
-      setIsLoading(true);
-      axios
-        .get(`${API_URL}/detailedreportcummulativetelangana`)
-        .then((response) => { 
-          setLocationReport(response.data)
-        setIsLoading(false);})
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false);
-        });
+        setIsLoading(true);
         
-    };
-
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
-      const formattedStartDate = startDate ? new Date(startDate) : null;
-      const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
+        const baseUrl = `${API_URL}/summaryreportcummulativetelangana`;
+    
+        // Ensure userData has the expected structure and values
+        const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 2;
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+        const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => location.name === locationName);
+    
+        console.log("isCBSLUser:", isCBSLUser); // Log isCBSLUser
+        console.log("hasSingleProject:", hasSingleProject); // Log hasSingleProject
+        console.log("locationName:", locationName); // Log locationName
+        console.log("hasMatchingLocation:", hasMatchingLocation); // Log hasMatchingLocation
+    
+        // Use URL and URLSearchParams for constructing the URL
+        const url = new URL(baseUrl);
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          url.searchParams.append("locationName", locationName);
+        }
+    
+        console.log("Final API URL for Summary Report:", url.toString()); // Log the final URL
+    
+        // Make the API request
+        axios.get(url.toString())
+          .then((response) => {
+            console.log("Response data:", response.data); // Log the response data
+            setSummaryReport(response.data);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching summary report:", error);
+            setIsLoading(false);
+          });
       };
-      setIsLoading(true);
-      let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
-
-      if (formattedStartDate && formattedEndDate) {
-        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-      }
-
-      axios.get(apiUrl, { responseType: "blob" })
-        .then((response) => {
-          const blob = new Blob([response.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          setDetailedCsv(url);
-        })
-        .catch((error) => {
-          console.error("Error in exporting data:", error);
-          setIsLoading(false);
-        });
+    
+    
+      const fetchLocationReport = () => {
+        setIsLoading(true);
+        let apiUrl = `${API_URL}/detailedreportcummulativetelangana`;
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+        const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 2;
+        const locationNameWithDistrictCourt = `${locationName}`;
+        const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => location.name === locationNameWithDistrictCourt);
+    
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        }
         
-    };
-    const fetchPrices = () => {
-      setIsLoading(true); // Set loading to true when fetching data
-      axios
-        .get(`${API_URL}/telgetbusinessrate`)
-        .then((response) => {
-          setPrice(response.data);
-          setIsLoading(false); // Set loading to false after data is fetched
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false); // Set loading to false in case of error
-        });
-    };
-    fetchPrices();
-
-
-    fetchDetailedReportCsvFile(startDate, endDate);
-    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-
-    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-
-    fetchSummaryReport();
-    fetchLocationReport();
-    if (locationName) {
-      fetchUserDetailed(locationName);
-    }
-    fetchUserDetailedReport();
-  }, [selectedUsername, locationName, startDate, endDate]);
+        console.log("Final API URL for Location Report:", apiUrl);
+    
+        axios.get(apiUrl)
+          .then((response) => {
+            setLocationReport(response.data);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching location report:", error);
+            setIsLoading(false);
+          });
+      };
+    
+      const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
+        const formattedStartDate = startDate ? new Date(startDate) : null;
+        const formattedEndDate = endDate ? new Date(endDate) : null;
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        setIsLoading(true);
+        let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
+    
+        if (formattedStartDate && formattedEndDate) {
+          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        }
+    
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects[0] === 2;
+        const locationNameWithDistrictCourt = `${locationName}`;
+        const hasMatchingLocation = userData.locations.some(location => location.name === locationNameWithDistrictCourt);
+    
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          const separator = apiUrl.includes('?') ? '&' : '?';
+          apiUrl += `${separator}locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        }
+    
+        console.log("Final API URL for Detailed Report CSV:", apiUrl);
+    
+        axios.get(apiUrl, { responseType: "blob" })
+          .then((response) => {
+            const blob = new Blob([response.data], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            setDetailedCsv(url);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error in exporting data:", error);
+            setIsLoading(false);
+          });
+      };
+    
+      const fetchPrices = () => {
+        setIsLoading(true);
+        axios.get(`${API_URL}/telgetbusinessrate`)
+          .then((response) => {
+            setPrice(response.data);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching prices:", error);
+            setIsLoading(false);
+          });
+      };
+    
+      fetchPrices();
+      fetchDetailedReportCsvFile(startDate, endDate, userData);
+      fetchSummaryReport();
+      fetchLocationReport();
+    
+      if (locationName) {
+        fetchUserDetailed(locationName);
+      }
+      
+      fetchUserDetailedReport();
+    }, [selectedUsername, locationName, startDate, endDate, userData]);
+    
     // console.log("Location Data", locationReport);
     const Loader = () => (
       <div className="loader-overlay">

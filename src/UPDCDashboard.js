@@ -280,23 +280,26 @@ const Dashboard = () => {
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
+        
         const fetchBusinessRate = (userData) => {
+            console.log("fetchBusinessRate function called");
+
             // Check userData structure
             if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
                 console.error("Invalid userData structure:", userData);
                 return;
             }
-        
+
             // Dynamic locationName assignment
             const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-        
+
             // Check if userData meets the conditions to include the locationName parameter
             const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-            const hasSingleProject = userData.projects.length === 1;
-        
+            const hasSingleProject = userData.projects[0] === 1;
+
             // Check if locationName matches any location name in userData.locations
             const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
-        
+
             console.log("LocationName:", locationName);
             console.log("isCBSLUser:", isCBSLUser);
             console.log("userData.user_roles:", userData.user_roles);
@@ -304,9 +307,9 @@ const Dashboard = () => {
             console.log("userData.projects:", userData.projects);
             console.log("hasMatchingLocation:", hasMatchingLocation);
             console.log("userData.locations:", userData.locations);
-        
+
             let apiUrl = `${API_URL}/getbusinessrate`;
-        
+
             if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
                 const separator = apiUrl.includes('?') ? '&' : '?';
                 apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
@@ -314,7 +317,7 @@ const Dashboard = () => {
             } else {
                 console.log("API URL without locationName:", apiUrl);
             }
-        
+
             axios
                 .get(apiUrl)
                 .then((response) => {
@@ -325,9 +328,13 @@ const Dashboard = () => {
                     console.error("Error fetching user data:", error);
                 });
         };
-        
-        
-        fetchBusinessRate(userData);
+
+        // Ensure userData is available before calling fetchBusinessRate
+        if (userData) {
+            fetchBusinessRate(userData);
+        } else {
+            console.error("userData is not available:", userData);
+        }
 
     }, [userData]);
     
@@ -570,10 +577,10 @@ const Dashboard = () => {
 
                 </div>
             </div>
-            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userInfo={userData}/>}
-            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} userInfo={userData}/>}
-            {shownonTechCumulativeSummary && <NonTechCumulative userInfo={userData}/>}
-            {shownonTechPeriodicSummary && <NonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userInfo={userData}/>}
+            {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData}/>}
+            {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} userData={userData}/>}
+            {shownonTechCumulativeSummary && <NonTechCumulative userData={userData}/>}
+            {shownonTechPeriodicSummary && <NonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData}/>}
             {showAllCumulativeSummary && <AllCummulative userData={userData}/>}
             {showAllPeriodicSummary && <AllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData}/>}
             {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}

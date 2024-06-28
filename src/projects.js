@@ -80,7 +80,7 @@ const Projects = () => {
 
     const allSums = {};
     const categories = [
-        "Inventory", "Counting", "DocPre", "Guard", "Scanned", 
+        "Inventory", "Counting", "DocPre", "Other", "Scanned", 
         "QC",  "Flagging", "Indexing", "CBSL_QA", "Client_QC"
     ];
 

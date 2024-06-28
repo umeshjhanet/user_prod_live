@@ -305,7 +305,7 @@ const TelDashboard = () => {
 
             // Check if userData meets the conditions to include the locationName parameter
             const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-            const hasSingleProject = userData.projects.length === 1;
+            const hasSingleProject = userData.projects[0] === 2;
 
             // Check if locationName matches any location name in userData.locations
             const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
@@ -587,13 +587,13 @@ const TelDashboard = () => {
 
                 </div>
             </div>
-            {showPeriodicSummary && <TelTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCumulativeSummary && <TelTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <TelNonTechCommulative />}
-            {shownonTechPeriodicSummary && <TelNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showAllCumulativeSummary && <TelAllCumulative />}
-            {showAllPeriodicSummary && <TelAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {showPeriodicSummary && <TelTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCumulativeSummary && <TelTechCumulative userData={userData} multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
+            {shownonTechCumulativeSummary && <TelNonTechCommulative userData={userData} />}
+            {shownonTechPeriodicSummary && <TelNonTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showAllCumulativeSummary && <TelAllCumulative userData={userData} />}
+            {showAllPeriodicSummary && <TelAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData} />}
             <ToastContainer />
         </>

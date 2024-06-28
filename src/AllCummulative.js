@@ -236,11 +236,41 @@ const AllCummulative = ({ userData }) => {
   const toggleModal = () => {
     setShowModal(!showModal);
   };
-
+ 
   useEffect(() => {
+    const locationName = userData.locations.length > 0 ? userData.locations[0].name : ""; 
+
     const fetchSummaryReport = () => {
       setIsLoading(true);
-      axios.get(`${API_URL}/summaryreportcummulative`)
+
+      let apiUrl = `${API_URL}/summaryreportcummulative`;
+
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 1;
+
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
+      axios.get(apiUrl)
         .then((response) => {
           setSummaryReport(response.data);
           setIsLoading(false);
@@ -250,48 +280,113 @@ const AllCummulative = ({ userData }) => {
           setIsLoading(false);
         });
     };
+
     const fetchLocationReport = () => {
       setIsLoading(true);
+
+      let apiUrl = `${API_URL}/detailedreportcummulative`;
+
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 1;
+
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
       axios
-        .get(`${API_URL}/detailedreportcummulative`)
+        .get(apiUrl)
         .then((response) => {
-          setLocationReport(response.data)
+          setLocationReport(response.data);
           setIsLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching location report:", error);
           setIsLoading(false);
         });
     };
 
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
+      const formatDate = (date) => date.toISOString().split('T')[0];
+    
       setIsLoading(true);
       let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
-
-
+    
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-
-
+    
+      // Check userData structure
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid userData structure:", userData);
+        setIsLoading(false);
+        return;
+      }
+    
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects[0] === 1;
+    
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+    
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+    
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+    
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        const separator = apiUrl.includes('?') ? '&' : '?';
+        apiUrl += `${separator}locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+    
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
           setDetailedCsv(url);
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error in exporting data:", error);
           setIsLoading(false);
         });
-
-
     };
+    
     const fetchPrices = () => {
       setIsLoading(true); // Set loading to true when fetching data
       axios
@@ -309,20 +404,15 @@ const AllCummulative = ({ userData }) => {
 
 
 
-    fetchDetailedReportCsvFile(startDate, endDate);
-    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-
-
+    fetchDetailedReportCsvFile(startDate, endDate,userData);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-
-
     fetchSummaryReport();
     fetchLocationReport();
     if (locationName) {
       fetchUserDetailed(locationName);
     }
     fetchUserDetailedReport();
-  }, [selectedUsername, locationName, startDate, endDate]);
+  }, [selectedUsername, locationName, startDate, endDate,userData]);
   // console.log("Location Data", locationReport);
   const Loader = () => (
     <div className="loader-overlay">
@@ -747,7 +837,7 @@ const AllCummulative = ({ userData }) => {
                     <th>Indexing</th>
                     <th>CBSL-QA</th>
                     <th>Client-QC</th>
-                    <th>Expense Rate</th>
+                    <th>Expense</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
-const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
+const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
   const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState(null);
@@ -248,6 +248,10 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
 
   useEffect(() => {
     const fetchSummaryReport = async () => {
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid or undefined userData structure:", userData);
+        return;
+      }
       setIsLoading(true);
       try {
         const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -255,22 +259,40 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         const formatDate = (date) => {
           return date.toISOString().split('T')[0];
         };
-
+    
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/summaryreportnontech`;
-        const queryParams = {};
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    
+        // Check conditions for including locationName
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+        const locationNameWithDistrictCourt = `${locationName} District Court`;
+        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+    
+        let queryParams = [];
+    
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          queryParams.push(`locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`);
         }
-
-        const response = await axios.get(apiUrl, { params: queryParams });
+    
+        if (formattedStartDate && formattedEndDate) {
+          queryParams.push(`startDate=${formatDate(formattedStartDate)}`, `endDate=${formatDate(formattedEndDate)}`);
+        }
+    
+        if (queryParams.length > 0) {
+          apiUrl += `?${queryParams.join('&')}`;
+        }
+    
+        const response = await axios.get(apiUrl);
         setSummaryReport(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching summary data:", error);
+        console.error("Error fetching summary report:", error);
         setIsLoading(false);
       }
     };
-
+   
+    
     const fetchLocationReport = async () => {
       setIsLoading(true);
       try {
@@ -279,18 +301,31 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
         const formatDate = (date) => {
           return date.toISOString().split('T')[0];
         };
-
+    
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/detailedreportcummulativenontech`;
-        const queryParams = {};
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+        const locationNameWithDistrictCourt = `${locationName} District Court`;
+        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+    
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
         }
-
-        const response = await axios.get(apiUrl, { params: queryParams });
+    
+        if (formattedStartDate && formattedEndDate) {
+          // Determine whether to use '?' or '&' based on existing query parameters
+          apiUrl += apiUrl.includes('?') ? '&' : '?';
+          apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        }
+    
+        const response = await axios.get(apiUrl);
         setLocationReport(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching summary data:", error);
+        console.error("Error fetching detailed report:", error);
         setIsLoading(false);
       }
     };
@@ -301,13 +336,26 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
       const formatDate = (date) => {
         return date.toISOString().split('T')[0];
       };
-
+    
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/detailedreportcummulativecsvnontech`;
-
-      if (formattedStartDate && formattedEndDate) {
-        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+    
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
       }
-
+    
+      if (formattedStartDate && formattedEndDate) {
+        // Determine whether to use '?' or '&' based on existing query parameters
+        apiUrl += apiUrl.includes('?') ? '&' : '?';
+        apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      }
+    
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
           const blob = new Blob([response.data], { type: "text/csv" });
@@ -318,17 +366,18 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate }) => {
           console.error("Error in exporting data:", error);
         });
     };
+    
 
     fetchPrices();
-    fetchSummaryReport();
-    fetchLocationReport();
-    fetchDetailedReportCsvFile(startDate, endDate);
+    fetchSummaryReport(userData);
+    fetchLocationReport(userData);
+    fetchDetailedReportCsvFile(startDate, endDate,userData);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
     fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
     fetchUserDetailed(locationName,startDate,endDate);
 
-  }, [selectedUsername, locationName, startDate, endDate]);
+  }, [selectedUsername, locationName, startDate, endDate,userData]);
 
 
   const calculateColumnSum = () => {
