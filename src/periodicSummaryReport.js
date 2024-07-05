@@ -6,13 +6,13 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
-const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) => {
+const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData }) => {
 
   const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
   const [price, setPrice] = useState([]);
-  const[enhancedLocationReport,setEnhancedLocationReport] = useState([]);
+  const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
   const [showModal, setShowModal] = useState(true);
@@ -30,9 +30,9 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
   const [lastColumnTotal, setLastColumnTotal] = useState(0);
   const ref = useRef(null);
 
- 
 
-  const handleLocationView = ({locationName}) => {
+
+  const handleLocationView = (locationName) => {
     setShowModal(true);
     fetchUserDetailed(locationName, startDate, endDate);
     fetchDetailedLocationWiseReportCsvFile(locationName, startDate, endDate)
@@ -47,12 +47,12 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
     fetchUserDetailedReport(username, locationName);
-  setTimeout(() => {
-    setUserView(true);
-    setLocationView(false);
-    setShowModal(true);
-    setIsLoading(false);
-  }, 1000);
+    setTimeout(() => {
+      setUserView(true);
+      setLocationView(false);
+      setShowModal(true);
+      setIsLoading(false);
+    }, 1000);
   };
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -75,7 +75,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
     let CBSL_QA = 0;
     let Client_QC = 0;
     let totalExpenseRate = 0;
-  
+
     if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
       detailedReportLocationWise.forEach((elem) => {
         Scanned += parseInt(elem.Scanned) || 0;
@@ -86,31 +86,29 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
         Client_QC += parseInt(elem.Client_QC) || 0;
         const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
         const priceData = price.find(
-          
+
           (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
         );
-  
+
         const scanRate = priceData?.ScanRate || 0;
         const qcRate = priceData?.QcRate || 0;
         const indexRate = priceData?.IndexRate || 0;
         const flagRate = priceData?.FlagRate || 0;
         const cbslQaRate = priceData?.CbslQaRate || 0;
         const clientQcRate = priceData?.ClientQcRate || 0;
-        
-  
         const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
         const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
         const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
         const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
         const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
         const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
-        
+
         const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal;
-  
+
         totalExpenseRate += totalRate;
       });
     }
-  
+
     return {
       Scanned,
       QC,
@@ -130,7 +128,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
     let CBSL_QA = 0;
     let Client_QC = 0;
     let totalExpenseRate = 0;
-  
+
     if (detailedUserReport && Array.isArray(detailedUserReport)) {
       detailedUserReport.forEach((elem) => {
         Scanned += parseInt(elem.Scanned) || 0;
@@ -141,32 +139,32 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
         Client_QC += parseInt(elem.Client_QC) || 0;
         const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
         const priceData = price.find(
-          
+
           (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
         );
-  
+
         const scanRate = priceData?.ScanRate || 0;
         const qcRate = priceData?.QcRate || 0;
         const indexRate = priceData?.IndexRate || 0;
         const flagRate = priceData?.FlagRate || 0;
         const cbslQaRate = priceData?.CbslQaRate || 0;
         const clientQcRate = priceData?.ClientQcRate || 0;
-        
-  
+
+
         const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
         const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
         const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
         const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
         const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
         const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
-        
-  
+
+
         const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal;
-  
+
         totalExpenseRate += totalRate;
       });
     }
-  
+
     return {
       Scanned,
       QC,
@@ -177,7 +175,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
       totalExpenseRate,
     };
   };
-  
+
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
 
@@ -237,6 +235,31 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
   const handleCancelUserExport = () => {
     setShowConfirmationUser(false);
   }
+
+  // const fetchUserDetailed = (locationName, startDate, endDate) => {
+  //   const formattedStartDate = startDate ? new Date(startDate) : null;
+  //   const formattedEndDate = endDate ? new Date(endDate) : null;
+  //   const formatDate = (date) => {
+  //     return date.toISOString().split('T')[0];
+  //   };
+  //   setIsLoading(true);
+  //   axios
+  //     .get(`${API_URL}/detailedreportlocationwise`, {
+  //       params: {
+  //         locationName: locationName,
+  //         startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+  //         endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setDetailedReportLocationWise(response.data)
+  //       setIsLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching user data:", error);
+  //       setIsLoading(false);
+  //     });
+  // };
 
   const fetchUserDetailed = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -364,30 +387,30 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
         const formatDate = (date) => {
           return date.toISOString().split('T')[0];
         };
-    
+
         const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/summaryreport`;
-    
+
         // Check conditions for including locationName
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
         const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
         const locationNameWithDistrictCourt = `${locationName} District Court`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
+
         let queryParams = [];
-    
+
         if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
           queryParams.push(`locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`);
         }
-    
+
         if (formattedStartDate && formattedEndDate) {
           queryParams.push(`startDate=${formatDate(formattedStartDate)}`, `endDate=${formatDate(formattedEndDate)}`);
         }
-    
+
         if (queryParams.length > 0) {
           apiUrl += `?${queryParams.join('&')}`;
         }
-    
+
         const response = await axios.get(apiUrl);
         setSummaryReport(response.data);
         setIsLoading(false);
@@ -408,24 +431,24 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
     //     const formatDate = (date) => {
     //       return date.toISOString().split('T')[0];
     //     };
-    
+
     //     const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
     //     let apiUrl = `${API_URL}/summaryreport`;
-    
+
     //     // Check conditions for including locationName
     //     const isCBSLUser = userData.user_roles.includes("CBSL Site User");
     //     const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
     //     const locationNameWithDistrictCourt = `${locationName} District Court`;
     //     const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
+
     //     if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
     //       apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
     //     }
-    
+
     //     if (formattedStartDate && formattedEndDate) {
     //       apiUrl += `&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     //     }
-    
+
     //     const response = await axios.get(apiUrl);
     //     setSummaryReport(response.data);
     //     setIsLoading(false);
@@ -434,7 +457,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
     //     setIsLoading(false);
     //   }
     // };
-    
+
     const fetchLocationReport = async () => {
       setIsLoading(true);
       try {
@@ -443,26 +466,26 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
         const formatDate = (date) => {
           return date.toISOString().split('T')[0];
         };
-    
+
         const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/detailedreport`;
-    
+
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
         const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
         const locationNameWithDistrictCourt = `${locationName} District Court`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
+
         if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
           apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
         }
-    
+
         if (formattedStartDate && formattedEndDate) {
           // Determine whether to use '?' or '&' based on existing query parameters
           apiUrl += apiUrl.includes('?') ? '&' : '?';
           apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
         }
-    
+
         const response = await axios.get(apiUrl);
         setLocationReport(response.data);
         setIsLoading(false);
@@ -485,7 +508,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
         });
     };
 
-   
+
 
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -493,26 +516,26 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
       const formatDate = (date) => {
         return date.toISOString().split('T')[0];
       };
-    
+
       const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/detailedreportcsv`;
-    
+
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = userData.user_roles.includes("CBSL Site User");
       const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
       const locationNameWithDistrictCourt = `${locationName} District Court`;
       const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
+
       if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
         apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
       }
-    
+
       if (formattedStartDate && formattedEndDate) {
         // Determine whether to use '?' or '&' based on existing query parameters
         apiUrl += apiUrl.includes('?') ? '&' : '?';
         apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-    
+
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
           const blob = new Blob([response.data], { type: "text/csv" });
@@ -524,16 +547,16 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate,userData }) 
         });
     };
 
-fetchPrices();
+    fetchPrices();
     fetchSummaryReport(userData);
     fetchLocationReport(userData);
-    fetchDetailedReportCsvFile(startDate, endDate,userData);
+    fetchDetailedReportCsvFile(startDate, endDate, userData);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
-    fetchUserDetailed(locationName,startDate,endDate);
-    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
+    fetchUserDetailed(locationName, startDate, endDate);
+    fetchUserDetailedReport(selectedUsername, locationName, startDate, endDate);
 
-  }, [selectedUsername, locationName, startDate, endDate,userData]);
+  }, [selectedUsername, locationName, startDate, endDate, userData]);
 
 
   const multiplyLocationData = (locationData, priceData) => {
@@ -752,7 +775,7 @@ fetchPrices();
                   </tr>
                 </thead>
                 <tbody>
-                  {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
+                {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
@@ -831,17 +854,17 @@ fetchPrices();
                           </tr>
                         </thead>
                         <tbody>
-                          
 
-{detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                           const normalizeName = (name) =>
-                            name ? name.replace(/district court/gi, "").trim() : "";
-                          const normalizedLocationName = normalizeName(elem.locationName);
-                          console.log("Normalized Location Name:", normalizedLocationName);
-                      
-                          const priceData = price.find(
-                            (price) => normalizeName(price.LocationName) === normalizedLocationName
-                          );
+
+                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
+                            const normalizeName = (name) =>
+                              name ? name.replace(/district court/gi, "").trim() : "";
+                            const normalizedLocationName = normalizeName(elem.locationName);
+                            console.log("Normalized Location Name:", normalizedLocationName);
+
+                            const priceData = price.find(
+                              (price) => normalizeName(price.LocationName) === normalizedLocationName
+                            );
 
                             // Calculate rates for each activity
                             const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
@@ -850,11 +873,11 @@ fetchPrices();
                             const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
                             const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
                             const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
-                          
+
                             // Calculate total expense rate
-                            const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
+                            const totalRate = scannedRate + qcRate + indexRate + flagRate + cbslqaRate + clientqcRate;
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
@@ -869,34 +892,34 @@ fetchPrices();
                               </tr>
                             );
                           })}
-                           <tr style={{ color: "black" }}>
-                    <td colSpan="3">
-                      <strong>Total</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Scanned.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.QC.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Flagging.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Indexing.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Client_QC.toLocaleString()}</strong>
-                    </td>
-                    
-                    <td>
-                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
-                      <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
-                    </td>
-                  </tr>
+                          <tr style={{ color: "black" }}>
+                            <td colSpan="3">
+                              <strong>Total</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Scanned.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.QC.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Flagging.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Indexing.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Client_QC.toLocaleString()}</strong>
+                            </td>
+
+                            <td>
+                              {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                              <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -921,10 +944,10 @@ fetchPrices();
                 </button>
               </div>
               <div className="row">
-              <div className="col-1">  
-                <IoArrowBackCircle style={{height:'30px',width:'30px'}} onClick={handleBackToLocationView}/>
+                <div className="col-1">
+                  <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
                 </div>
-            </div>
+              </div>
               <div className="modal-body">
 
                 <div className="row mt-3" ref={ref}>
@@ -977,12 +1000,12 @@ fetchPrices();
                           </tr>
                         </thead>
                         <tbody>
-                        {detailedUserReport && detailedUserReport.map((elem, index) => {
-                             const normalizeName = (name) =>
+                          {detailedUserReport && detailedUserReport.map((elem, index) => {
+                            const normalizeName = (name) =>
                               name ? name.replace(/district court/gi, "").trim() : "";
                             const normalizedLocationName = normalizeName(elem.locationName);
                             console.log("Normalized Location Name:", normalizedLocationName);
-                        
+
                             const priceData = price.find(
                               (price) => normalizeName(price.LocationName) === normalizedLocationName
                             );
@@ -994,11 +1017,11 @@ fetchPrices();
                             const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
                             const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
                             const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
-                          
+
                             // Calculate total expense rate
-                            const totalRate = scannedRate + qcRate + indexRate + flagRate +cbslqaRate+ clientqcRate;
+                            const totalRate = scannedRate + qcRate + indexRate + flagRate + cbslqaRate + clientqcRate;
                             return (
-                              <tr  key={index}>
+                              <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
                                 <td>{elem.user_type || 0}</td>
@@ -1015,32 +1038,32 @@ fetchPrices();
                               </tr>
                             );
                           })}
-                           <tr style={{ color: "black" }}>
-                    <td colSpan="5">
-                      <strong>Total</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.QC.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
-                    </td>
-                  </tr>
+                          <tr style={{ color: "black" }}>
+                            <td colSpan="5">
+                              <strong>Total</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
