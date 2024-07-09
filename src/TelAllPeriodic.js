@@ -824,7 +824,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
+                      <td className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
@@ -950,7 +950,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{inventory.toLocaleString()}</td>
                                 <td>{counting.toLocaleString()}</td>
                                 <td>{docPreparation.toLocaleString()}</td>
@@ -1004,6 +1004,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                       {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
                       <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
                     </td>
+                    <td></td>
                   </tr>
                         </tbody>
                       </table>
@@ -1181,6 +1182,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                     <td>
                       <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
                     </td>
+                    <td></td>
                   </tr>
                         </tbody>
                       </table>

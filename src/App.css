@@ -232,7 +232,11 @@ input[type="submit"]:hover {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
-
+.hover-text:hover{
+color: steelblue;
+cursor: pointer;
+font-weight: 500;
+}
 .login-card-content {
   max-width: 400px;
 }
