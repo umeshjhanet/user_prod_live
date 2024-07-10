@@ -140,6 +140,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     };
   
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios.get(`${API_URL}/alldetailedreportlocationwise`, {
       params: {
         locationName: locationName,
@@ -166,6 +167,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     };
   
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/alluserdetailedreportlocationwise`, {
       params: {
         username: username,

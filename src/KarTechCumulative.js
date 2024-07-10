@@ -122,6 +122,7 @@ const KarTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/kardetailedreportlocationwise`, {
         params: { locationName: locationName },
@@ -139,6 +140,7 @@ const KarTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
 
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/karuserdetailedreportlocationwise`, {
       params: {
         username: username,

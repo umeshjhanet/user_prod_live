@@ -268,6 +268,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData })
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/detailedreportlocationwise`, {
         params: {
@@ -294,6 +295,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData })
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedUserReport(null);
     axios.get(`${API_URL}/userdetailedreportlocationwise`, {
       params: {
         username: username,
@@ -982,7 +984,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData })
                       </div>
                     </div>
                     <div className="modal-table row ms-2 me-2">
-                      <table className="table-modal mt-2">
+                      {/* <table className="table-modal mt-2">
                         <thead>
                           <tr>
                             <th>Sr.No.</th>
@@ -1067,7 +1069,100 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData })
                             <td></td>
                           </tr>
                         </tbody>
-                      </table>
+                      </table> */}
+                      {isLoading ? (
+                    <p>Loading data...</p>
+                  ) : detailedUserReport && detailedUserReport.length > 0 ? (
+                    <table className="table-modal mt-2">
+                      <thead>
+                        <tr>
+                          <th>Sr.No.</th>
+                          <th>Location</th>
+                          <th>User Name</th>
+                          <th>Date</th>
+                          <th>Lot No</th>
+                          <th>Scanned</th>
+                          <th>QC</th>
+                          <th>Flagging</th>
+                          <th>Indexing</th>
+                          <th>CBSL-QA</th>
+                          <th>Client-QA</th>
+                          <th>Expense</th>
+                          <th>Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detailedUserReport.map((elem, index) => {
+                          const normalizeName = (name) =>
+                            name ? name.replace(/district court/gi, "").trim() : "";
+                          const normalizedLocationName = normalizeName(elem.locationName);
+                          console.log("Normalized Location Name:", normalizedLocationName);
+
+                          const priceData = price.find(
+                            (price) => normalizeName(price.LocationName) === normalizedLocationName
+                          );
+
+                          // Calculate rates for each activity
+                          const scannedRate = elem.Scanned * (priceData ? priceData.ScanRate : 0);
+                          const qcRate = elem.QC * (priceData ? priceData.QcRate : 0);
+                          const indexRate = elem.Indexing * (priceData ? priceData.IndexRate : 0);
+                          const flagRate = elem.Flagging * (priceData ? priceData.FlagRate : 0);
+                          const cbslqaRate = elem.CBSL_QA * (priceData ? priceData.CbslQaRate : 0);
+                          const clientqcRate = elem.Client_QC * (priceData ? priceData.ClientQcRate : 0);
+
+                          // Calculate total expense rate
+                          const totalRate = scannedRate + qcRate + indexRate + flagRate + cbslqaRate + clientqcRate;
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{elem.locationName}</td>
+                              <td>{elem.user_type || 0}</td>
+                              <td>{elem.Date}</td>
+                              <td>{elem.lotno}</td>
+                              <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                              <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
+                              <td>{totalRate.toLocaleString()}</td>
+                              <td></td>
+                            </tr>
+                          );
+                        })}
+                        <tr style={{ color: "black" }}>
+                          <td colSpan="5">
+                            <strong>Total</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                          </td>
+                          <td>
+                            <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                          </td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p>Data Loading.... </p>
+                  )}
+
                     </div>
                   </div>
                 </div>

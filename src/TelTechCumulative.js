@@ -119,6 +119,7 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/teldetailedreportlocationwise`, {
         params: { locationName: locationName },
@@ -140,6 +141,7 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/teluserdetailedreportlocationwise`, {
       params: {
         username: username,

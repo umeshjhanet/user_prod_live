@@ -125,6 +125,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
   
     const fetchUserDetailed = (locationName) => {
       setIsLoading(true);
+      setDetailedReportLocationWise([]);
       axios
         .get(`${API_URL}/alldetailedreportlocationwisetelangana`, {
           params: { locationName: locationName },
@@ -142,6 +143,7 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
 
     const fetchUserDetailedReport = (username, locationName) => {
       setIsLoading(true);
+      setDetailedUserReport([]);
       axios.get(`${API_URL}/alluserdetailedreportlocationwisetelangana`, {
         params: {
           username: username,

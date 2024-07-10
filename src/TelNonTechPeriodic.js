@@ -129,6 +129,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => 
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/alldetailedreportlocationwisenontechtelangana`, {
         params: {
@@ -242,6 +243,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => 
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechtelangana`, {
       params: {
         username: username,

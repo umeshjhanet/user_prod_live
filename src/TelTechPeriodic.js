@@ -130,6 +130,7 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/teldetailedreportlocationwise`, {
         params: {
@@ -156,6 +157,7 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/teluserdetailedreportlocationwise`, {
       params: {
         username: username,

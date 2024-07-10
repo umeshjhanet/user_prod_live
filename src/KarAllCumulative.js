@@ -123,6 +123,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
   
     const fetchUserDetailed = (locationName) => {
       setIsLoading(true);
+      setDetailedReportLocationWise([]);
       axios
         .get(`${API_URL}/alldetailedreportlocationwisekarnataka`, {
           params: { locationName: locationName },
@@ -140,6 +141,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
 
     const fetchUserDetailedReport = (username, locationName) => {
       setIsLoading(true);
+      setDetailedUserReport([]);
       axios.get(`${API_URL}/alluserdetailedreportlocationwisekarnataka`, {
         params: {
           username: username,

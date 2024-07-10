@@ -122,6 +122,7 @@ const NonTechCumulative = ({userData}) => {
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/alldetailedreportlocationwisenontech`, {
         params: { locationName: locationName },
@@ -150,6 +151,7 @@ const NonTechCumulative = ({userData}) => {
   };
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios
       .get(`${API_URL}/alluserdetailedreportlocationwisenontech`, {
         params: {

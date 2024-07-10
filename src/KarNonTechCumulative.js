@@ -122,6 +122,7 @@ const KarNonTechCommulative = ({userData}) => {
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/alldetailedreportlocationwisenontechkarnataka`, {
         params: { locationName: locationName },
@@ -139,6 +140,7 @@ const KarNonTechCommulative = ({userData}) => {
 
     const fetchUserDetailedReport = (username, locationName) => {
       setIsLoading(true);
+      setDetailedUserReport([]);
       axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechkarnataka`, {
         params: {
           username: username,

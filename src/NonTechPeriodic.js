@@ -129,6 +129,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/alldetailedreportlocationwisenontech`, {
         params: {
@@ -154,6 +155,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/alluserdetailedreportlocationwisenontech`, {
       params: {
         username: username,

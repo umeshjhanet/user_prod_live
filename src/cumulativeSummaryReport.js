@@ -120,6 +120,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/detailedreportlocationwise`, {
         params: { locationName: locationName },
@@ -137,6 +138,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
 
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/userdetailedreportlocationwise`, {
       params: {
         username: username,

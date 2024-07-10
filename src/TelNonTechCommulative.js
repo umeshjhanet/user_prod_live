@@ -122,6 +122,7 @@ const TelNonTechCommulative = ({userData}) => {
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/alldetailedreportlocationwisenontechtelangana`, {
         params: { locationName: locationName },
@@ -139,6 +140,7 @@ const TelNonTechCommulative = ({userData}) => {
 
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechtelangana`, {
       params: {
         username: username,

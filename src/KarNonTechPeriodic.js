@@ -218,6 +218,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate, userData }) =>
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/alldetailedreportlocationwisenontechkarnataka`, {
         params: {
@@ -244,6 +245,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate, userData }) =>
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechkarnataka`, {
       params: {
         username: username,
