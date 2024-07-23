@@ -800,7 +800,7 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td className="hover-text" onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
+                      <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
@@ -901,8 +901,8 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
+                                <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
@@ -1046,9 +1046,9 @@ const TelTechCumulative = ({ multipliedData, prices, editedPrices, userData }) =
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
-                                <td>{elem.Date}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.user_type || 0}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.Date}</td>
                                 <td>{elem.lotno}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>

@@ -395,9 +395,7 @@ const KarDashboard = () => {
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
     console.log("Business Rate", prices);
-    if (!localPrices || localPrices.length === 0) {
-        return <p>No data available.</p>;
-    }
+   
 
 
     return (

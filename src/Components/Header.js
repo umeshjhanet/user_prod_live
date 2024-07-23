@@ -22,9 +22,9 @@ const Header = () => {
                 </ul>
                 <form className="d-flex">
                    {/* <Link to='/'> */}
-                    <button onClick={handleLogout} href='/' className="btn logout-btn" style={{ color: 'white', marginTop: '0px', paddingTop:'4px',height:'42px' }}><IoLogOut style={{ color: 'white', fontSize: '30px', marginRight: '10px' }} />LOGOUT</button>
+                    <button onClick={handleLogout} href='/' className="btn logout-btn" style={{ color: 'white', marginTop: '8px', paddingTop:'4px',height:'42px' }}><IoLogOut style={{ color: 'white', fontSize: '30px', marginRight: '10px' }} />LOGOUT</button>
                   {/* </Link> */}
-                  <p className='ms-2' style={{ color: 'white', marginTop: '20px' }}>Welcome: {userLog ? userLog.first_name : 'Guest'}</p>
+                  <p className='ms-2' style={{ color: 'white', marginTop: '15px' }}>Welcome: {userLog ? userLog.first_name : 'Guest'}</p>
                 </form>
               </div>
             </div>

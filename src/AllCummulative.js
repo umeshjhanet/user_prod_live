@@ -758,7 +758,7 @@ const AllCummulative = ({ userData }) => {
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
+                      <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
@@ -935,8 +935,8 @@ const AllCummulative = ({ userData }) => {
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td
+                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
+                                <td style={{whiteSpace:'nowrap'}}
                                   onClick={() =>
                                     handleUserView(elem.user_type, elem.locationName)
                                   }
@@ -1007,184 +1007,7 @@ const AllCummulative = ({ userData }) => {
           </div>
         </div>
       )}
-        {/* {locationView && showModal && (
-          <div className="custom-modal-overlay">
-            <div className="custom-modal">
-              <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                <h6 className="ms-2" style={{ color: "white" }}>
-                  User Wise Summary Report
-                </h6>
-                <button type="button" className="btn btn-danger" onClick={toggleModal}>
-                  <IoMdCloseCircle />
-                </button>
-                <button type="button" className="close" onClick={toggleModal}>&times;</button>
-              </div>
-              <div className="modal-body">
-                <div className="row mt-3" ref={ref}>
-                  <div className="search-report-card">
-                    <div className="row">
-                      <div className="col-10 d-flex align-items-center">
-                        <p className="mb-0 me-8">Total row(s): {detailedReportLocationWise ? detailedReportLocationWise.length : 0}</p>
-                      </div>
-                      <div className="col-2">
-                        <button className="btn btn-success" onClick={handleLocationExport}>
-                          Export CSV
-                        </button>
-                      </div>
-                      <div className="col-md-8 text-end">
-                        {showConfirmationLocation && (
-                          <div className="confirmation-dialog">
-                            <div className="confirmation-content">
-                              <p className="fw-bold">
-                                Are you sure you want to export the CSV file?
-                              </p>
-                              <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedLocationWiseExport}>
-                                Yes
-                              </button>
-                              <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelLocationExport}>
-                                No
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="modal-table row ms-2 me-2 style={{ overflowX: 'auto' }}">
-                      <table className="table-modal mt-2">
-                        <thead>
-                          <tr>
-                            <th>Sr.No.</th>
-                            <th>Location</th>
-                            <th>User Name</th>
-                            <th>Inventory</th>
-                            <th>Counting</th>
-                            <th>DocPreparation</th>
-                            <th>Other</th>
-                            <th>Scanned</th>
-                            <th>QC</th>
-                            <th>Flagging</th>
-                            <th>Indexing</th>
-                            <th>CBSL-QA</th>
-                            <th>Client-QC</th>
-                            <th>Expense</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          
-                          {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
-                            const normalizedLocationName = normalizeName(elem.locationName);
-                            console.log("Normalized Location Name:", normalizedLocationName);
-
-                            const priceData = price.find(
-                              (price) => normalizeName(price.LocationName) === normalizedLocationName
-                            );
-
-                            const scanRate = priceData?.ScanRate || 0;
-                            const qcRate = priceData?.QcRate || 0;
-                            const indexRate = priceData?.IndexRate || 0;
-                            const flagRate = priceData?.FlagRate || 0;
-                            const cbslQaRate = priceData?.CbslQaRate || 0;
-                            const clientQcRate = priceData?.ClientQcRate || 0;
-                            const countingRate = priceData?.CountingRate || 0;
-                            const inventoryRate = priceData?.InventoryRate || 0;
-                            const docPreparationRate = priceData?.DocPreparationRate || 0;
-                            const guardRate = priceData?.GuardRate || 0;
-
-                            const scanned = isNaN(Number(elem.Scanned)) ? 0 : Number(elem.Scanned);
-                            const qc = isNaN(Number(elem.QC)) ? 0 : Number(elem.QC);
-                            const indexing = isNaN(Number(elem.Indexing)) ? 0 : Number(elem.Indexing);
-                            const flagging = isNaN(Number(elem.Flagging)) ? 0 : Number(elem.Flagging);
-                            const cbslQa = isNaN(Number(elem.CBSL_QA)) ? 0 : Number(elem.CBSL_QA);
-                            const clientQc = isNaN(Number(elem.Client_QC)) ? 0 : Number(elem.Client_QC);
-                            const counting = isNaN(Number(elem.Counting)) ? 0 : Number(elem.Counting);
-                            const inventory = isNaN(Number(elem.Inventory)) ? 0 : Number(elem.Inventory);
-                            const docPreparation = isNaN(Number(elem.DocPreparation)) ? 0 : Number(elem.DocPreparation);
-                            const guard = isNaN(Number(elem.Guard)) ? 0 : Number(elem.Guard);
-
-                            const scannedRate = scanned * scanRate;
-                            const qcRateTotal = qc * qcRate;
-                            const indexRateTotal = indexing * indexRate;
-                            const flagRateTotal = flagging * flagRate;
-                            const cbslQaRateTotal = cbslQa * cbslQaRate;
-                            const clientQcRateTotal = clientQc * clientQcRate;
-                            const countingRateTotal = counting * countingRate;
-                            const inventoryRateTotal = inventory * inventoryRate;
-                            const docPreparationRateTotal = docPreparation * docPreparationRate;
-                            const otherRate = guard * guardRate;
-
-                            const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
-
-                            return (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)} className="hover-text">{elem.user_type || 0}</td>
-                                <td>{inventory.toLocaleString()}</td>
-                                <td>{counting.toLocaleString()}</td>
-                                <td>{docPreparation.toLocaleString()}</td>
-                                <td>{guard.toLocaleString()}</td>
-                                <td>{scanned.toLocaleString()}</td>
-                                <td>{qc.toLocaleString()}</td>
-                                <td>{flagging.toLocaleString()}</td>
-                                <td>{indexing.toLocaleString()}</td>
-                                <td>{cbslQa.toLocaleString()}</td>
-                                <td>{clientQc.toLocaleString()}</td>
-                                <td>{totalRate.toLocaleString()}</td>
-                              </tr>
-                            );
-                          })}
-                          <tr style={{ color: "black" }}>
-                            <td colSpan="3">
-                              <strong>Total</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Inventory.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Counting.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.DocPreparation.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Guard.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Scanned.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.QC.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Flagging.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Indexing.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
-                            </td>
-                            <td>
-                              <strong>{columnSums.Client_QC.toLocaleString()}</strong>
-                            </td>
-
-                            <td>
-                              
-                              <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
-                            </td>
-                            <td></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )} */}
-
+      
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
@@ -1306,9 +1129,9 @@ const AllCummulative = ({ userData }) => {
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
-                                <td>{elem.Date}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.user_type || 0}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.Date}</td>
                                 <td>{elem.lotno}</td>
                                 <td>{inventory.toLocaleString()}</td>
                                 <td>{counting.toLocaleString()}</td>
