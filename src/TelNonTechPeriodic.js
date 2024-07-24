@@ -343,7 +343,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => 
     
         // Check conditions for including locationName
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 2;
+        const hasSingleProject =  userData.projects[0] === 2;
         const locationNameWithDistrictCourt = `${locationName}`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
     
@@ -385,7 +385,7 @@ const TelNonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => 
     
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 2;
+        const hasSingleProject =  userData.projects[0] === 2;
         const locationNameWithDistrictCourt = `${locationName}`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
     

@@ -8,7 +8,7 @@ import { IoArrowBackCircle } from "react-icons/io5";
 import { FiDownload } from 'react-icons/fi';
 
 const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
-    const [locationView, setLocationView] = useState(false);
+  const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState(null);
   const [locationReport, setLocationReport] = useState();
@@ -274,7 +274,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     
         // Check conditions for including locationName
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+        const hasSingleProject =  userData.projects[0] === 1;
         const locationNameWithDistrictCourt = `${locationName} District Court`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
     
@@ -301,7 +301,6 @@ const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       }
     };
     
-    
     const fetchLocationReport = async () => {
       setIsLoading(true);
       try {
@@ -316,7 +315,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+        const hasSingleProject = userData.projects[0] === 1;
         const locationNameWithDistrictCourt = `${locationName} District Court`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
     
@@ -338,6 +337,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       }
     };
+
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
