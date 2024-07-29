@@ -230,42 +230,42 @@ const Login = () => {
   const navigate = useNavigate();
   const [logoutTimer, setLogoutTimer] = useState(null);
 
-  useEffect(() => {
-    const resetTimeout = () => {
-      if (logoutTimer) clearTimeout(logoutTimer);
-      const timer = setTimeout(() => {
-        console.log("Logging out due to inactivity...");
-        logout();
-      }, 900000); // 15 minutes
-      setLogoutTimer(timer);
-    };
+  // useEffect(() => {
+  //   const resetTimeout = () => {
+  //     if (logoutTimer) clearTimeout(logoutTimer);
+  //     const timer = setTimeout(() => {
+  //       console.log("Logging out due to inactivity...");
+  //       logout();
+  //     }, 900000); // 15 minutes
+  //     setLogoutTimer(timer);
+  //   };
 
-    const events = [
-      "mousemove",
-      "keydown",
-      "mousedown",
-      "touchstart",
-      "scroll",
-      "wheel"
-    ];
+  //   const events = [
+  //     "mousemove",
+  //     "keydown",
+  //     "mousedown",
+  //     "touchstart",
+  //     "scroll",
+  //     "wheel"
+  //   ];
 
-    const resetTimeoutHandler = () => {
-      resetTimeout();
-    };
+  //   const resetTimeoutHandler = () => {
+  //     resetTimeout();
+  //   };
 
-    for (const event of events) {
-      window.addEventListener(event, resetTimeoutHandler);
-    }
+  //   for (const event of events) {
+  //     window.addEventListener(event, resetTimeoutHandler);
+  //   }
 
-    resetTimeout();
+  //   resetTimeout();
 
-    return () => {
-      if (logoutTimer) clearTimeout(logoutTimer);
-      for (const event of events) {
-        window.removeEventListener(event, resetTimeoutHandler);
-      }
-    };
-  }, [logoutTimer]);
+  //   return () => {
+  //     if (logoutTimer) clearTimeout(logoutTimer);
+  //     for (const event of events) {
+  //       window.removeEventListener(event, resetTimeoutHandler);
+  //     }
+  //   };
+  // }, [logoutTimer]);
 
   const logout = () => {
     console.log('Logging out due to inactivity.');
