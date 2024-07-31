@@ -251,30 +251,30 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         const formatDate = (date) => {
           return date.toISOString().split('T')[0];
         };
-    
+
         const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/telsummaryreport`;
-    
+
         // Check conditions for including locationName
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 2;
+        const hasSingleProject = userData.projects[0] === 2;
         const locationNameWithDistrictCourt = `${locationName}`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
-    
+
         let queryParams = [];
-    
+
         if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
           queryParams.push(`locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`);
         }
-    
+
         if (formattedStartDate && formattedEndDate) {
           queryParams.push(`startDate=${formatDate(formattedStartDate)}`, `endDate=${formatDate(formattedEndDate)}`);
         }
-    
+
         if (queryParams.length > 0) {
           apiUrl += `?${queryParams.join('&')}`;
         }
-    
+
         const response = await axios.get(apiUrl);
         setSummaryReport(response.data);
         setIsLoading(false);

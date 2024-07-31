@@ -395,7 +395,7 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData })
 
         // Check conditions for including locationName
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+        const hasSingleProject = userData.projects[0] === 1;
         const locationNameWithDistrictCourt = `${locationName} District Court`;
         const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
 
@@ -421,6 +421,50 @@ const PeriodicSummaryReport = ({ multipliedData, startDate, endDate, userData })
         setIsLoading(false);
       }
     };
+    // const fetchSummaryReport = async () => {
+    //   if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+    //     console.error("Invalid or undefined userData structure:", userData);
+    //     return;
+    //   }
+    //   setIsLoading(true);
+    //   try {
+    //     const formattedStartDate = startDate ? new Date(startDate) : null;
+    //     const formattedEndDate = endDate ? new Date(endDate) : null;
+    //     const formatDate = (date) => {
+    //       return date.toISOString().split('T')[0];
+    //     };
+
+    //     const locationName = userData.locations.length > 0 ? userData.locations.name : "";
+    //     let apiUrl = `${API_URL}/summaryreport`;
+
+    //     // Check conditions for including locationName
+    //     const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+    //     const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+    //     const locationNameWithDistrictCourt = `${locationName} District Court`;
+    //     const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+    //     let queryParams = [];
+
+    //     if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+    //       queryParams.push(`locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`);
+    //     }
+
+    //     if (formattedStartDate && formattedEndDate) {
+    //       queryParams.push(`startDate=${formatDate(formattedStartDate)}`, `endDate=${formatDate(formattedEndDate)}`);
+    //     }
+
+    //     if (queryParams.length > 0) {
+    //       apiUrl += `?${queryParams.join('&')}`;
+    //     }
+
+    //     const response = await axios.get(apiUrl);
+    //     setSummaryReport(response.data);
+    //     setIsLoading(false);
+    //   } catch (error) {
+    //     console.error("Error fetching summary report:", error);
+    //     setIsLoading(false);
+    //   }
+    // };
     // const fetchSummaryReport = async () => {
     //   if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
     //     console.error("Invalid or undefined userData structure:", userData);
