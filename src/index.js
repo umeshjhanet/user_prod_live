@@ -34,6 +34,7 @@ import KarNonTechModal from './Components/KarNonTechModal';
 import AllProjectDashboard from './AllProjectDashboard';
 import LocationWiseDashboard from './LocationWiseDashboard';
 import PrivateRoute from './PrivateRoute';
+import SiteUser from './SiteUser';
 
 const App = () => {
  
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="/UPDCDashboard" element={<PrivateRoute element={<NonTechModal />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelDashboard />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechModal />} />}/>
+          <Route path="/SiteUser"element={<PrivateRoute element={<SiteUser/>} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechCommulative />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechPeriodic />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelAllCumulative />} />}/>

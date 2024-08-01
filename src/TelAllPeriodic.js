@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 import { FiDownload } from 'react-icons/fi';
+import SiteUserModal from './SiteUser';
 
 const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const [locationView, setLocationView] = useState(false);
@@ -29,6 +30,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const [price, setPrice] = useState([]);
   const [userStatus, setUserStatus] = useState();
   const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
+  const [siteUserModal,setSiteUserModal] = useState(false);
   const ref = useRef(null);
 
 
@@ -737,6 +739,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
 console.log("User Status",userStatus);
+
   const userRoles = userData.user_roles;
     const canApprove = (role, userStatus) => {
     if (role === 'CBSL Site User') return true;
@@ -801,6 +804,12 @@ console.log("User Status",userStatus);
         console.error('There was an error rejecting the data!', error);
       });
   };
+  const showSiteUserModal = () => {
+    setSiteUserModal(true);
+  }
+  const handleSiteUserModalClose = () => {
+    setSiteUserModal(false);
+  }
 
   return (
     <>
@@ -1139,7 +1148,32 @@ console.log("User Status",userStatus);
                         )}
                       </div>
                     </div>
+                    {/* {userRoles.includes("PM") && (
+                      <>
+                      <table className='table table-bordered'>
+                        <thead>
+                          <tr>
+                            <th>Sr.No.</th>
+                            <th>Location Name</th>
+                            <th>User Name</th>
+                            <th>Approved by SM</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {userStatus && userStatus.map((elem,index) => (
+                            <tr key={index}>
+                              <td>{index+1}</td>
+                              <td>{elem.LocationCode}</td>
+                              <td>{elem.UserName}</td>
+                              <td>{elem.IsApprovedCBSL}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        </table>
+                      </>
+                    )} */}
                     <div className="modal-table row ms-2 me-2">
+                      
                       <table className="table-modal mt-2">
                         <thead>
                           <tr>
@@ -1271,6 +1305,9 @@ console.log("User Status",userStatus);
                           <button className='btn btn-danger' onClick={() => handleReject(0)}>Reject</button>
                         </div>
                       </div>
+                      <div className='row mt-1'>
+                        <button className='btn btn-success' style={{width:'300px'}} onClick={showSiteUserModal}>View</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1279,6 +1316,7 @@ console.log("User Status",userStatus);
           </div>
         )}
       </div>
+      {siteUserModal && <SiteUserModal onClose={handleSiteUserModalClose} userData={userData}/>}
     </>
   )
 }

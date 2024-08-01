@@ -22,6 +22,7 @@ import TelAllPeriodic from './TelAllPeriodic';
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
 import TelNonTechModal from './Components/TelNonTechModal';
+import SiteUser from './SiteUser';
 
 const TelDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -50,6 +51,7 @@ const TelDashboard = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
+    const [siteUserModal,setSiteUserModal] = useState(false);
 
     useEffect(() => {
         setLocalPrices(prices);
@@ -97,7 +99,12 @@ const TelDashboard = () => {
         );
     };
 
-
+    const showSiteUserModal = () => {
+        setSiteUserModal(true);
+      }
+      const handleSiteUserModalClose = () => {
+        setSiteUserModal(false);
+      }
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -481,7 +488,16 @@ const TelDashboard = () => {
                             </div>
                         </>)}
                         {error && <p className='text-danger'>{error}</p>}
+                        <div className='row mt-2'>
+                        <div className='col-4'>
+                        <Link to="/SiteUser">
+                        <button className='btn btn-success' style={{width:'250px'}} >Manage Employee Details</button>
+                        </Link>
+                            
+                        </div>
                     </div>
+                    </div>
+                    
                     {allSelected && (
                         <div className='row mt-2 ms-0 me-0 search-report-card'>
                             <div className='row'>
@@ -597,6 +613,7 @@ const TelDashboard = () => {
             {showAllPeriodicSummary && <TelAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData} />}
+            
             <ToastContainer />
         </>
     );
