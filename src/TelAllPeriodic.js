@@ -30,7 +30,8 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const [price, setPrice] = useState([]);
   const [userStatus, setUserStatus] = useState();
   const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
-  const [siteUserModal,setSiteUserModal] = useState(false);
+  const [siteUserModal, setSiteUserModal] = useState(false);
+  const [approvalStatus, setApprovalStatus] = useState({});
   const ref = useRef(null);
 
 
@@ -166,6 +167,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     })
       .then((response) => {
         setDetailedUserReport(response.data)
+        initializeApprovalStatus(response.data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -738,53 +740,110 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
 
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
-console.log("User Status",userStatus);
+
+
+
+  const fetchApprovalStatus = (userName) => {
+    return axios.get(`${API_URL}/approval-status`, { params: { userName } })
+      .then(response => response.data)
+      .catch(error => {
+        console.error('Error fetching approval status:', error);
+        return {
+          IsApprovedCBSL: 0,
+          IsApprovedPM: 0,
+          IsApprovedPO: 0,
+          IsApprovedHR: 0
+        };
+      });
+  };
+  
+  
+  const initializeApprovalStatus = async (data) => {
+    const statusPromises = data.map(async (item) => {
+      const approvalStatus = await fetchApprovalStatus(item.user_type || 'defaultUser');
+      return { userName: item.user_type, approvalStatus };
+    });
+  
+    const statusResults = await Promise.all(statusPromises);
+  
+    const status = statusResults.reduce((acc, { userName, approvalStatus }) => {
+      acc[userName] = approvalStatus;
+      return acc;
+    }, {});
+  
+    console.log('Initial approval status:', status);
+    setApprovalStatus(status); // Assuming setApprovalStatus is a state setter
+  };
 
   const userRoles = userData.user_roles;
-    const canApprove = (role, userStatus) => {
+  const canApprove = (role, userName) => {
+    const userStatus = approvalStatus[userName];
+    console.log(`Checking approval status for role: ${role}`, userStatus);
+  
+    if (!userStatus) {
+      console.log('No user status found for userName:', userName);
+      return false;
+    }
+  
     if (role === 'CBSL Site User') return true;
-    console.log("Approved By CBSL SM",userStatus.IsApprovedCBSL);
-    if (role === 'PM' && userStatus.IsApprovedCBSL === 1) return true;
-    if (role === 'PO' && userStatus.IsApprovedCBSL === 1 && userStatus.IsApprovedPM === 1) return true;
-    if (role === 'HR' && userStatus.IsApprovedCBSL === 1 && userStatus.IsApprovedPM === 1 && userStatus.IsApprovedPO === 1) return true;
+    console.log("Approved By CBSL SM", userStatus.IsApprovedCBSL);
+    if (role === 'PM' && userStatus.IsApprovedCBSL) return true;
+    if (role === 'PO' && userStatus.IsApprovedCBSL && userStatus.IsApprovedPM) return true;
+    if (role === 'HR' && userStatus.IsApprovedCBSL && userStatus.IsApprovedPM && userStatus.IsApprovedPO) return true;
+    
     return false;
   };
- 
-
+  
+  
   const handleApprove = (index) => {
     const elem = detailedUserReport[index];
-    const role = userRoles.find(role => ['CBSL Site User','PM','PO','HR'].includes(role));
-    if (!role || !canApprove(role, elem)) {
+    const role = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role.split(' ')[0]));
+  
+    if (!role || !canApprove(role.split(' ')[0], elem.user_type)) {
       return alert('You are not authorized to approve this.');
     }
-    
+  
     const postData = {
       locationCode: elem.locationName,
       userName: elem.user_type || 'defaultUser',
-      inMonth: new Date(elem.Date).getMonth() + 1, // Assuming Date is in 'YYYY-MM-DD' format
+      inMonth: new Date(elem.Date).getMonth() + 1,
       userID: elem.userID || 0,
       userProfile: elem.userProfile || 0,
       action: 'approve',
-      role: role.split(' ')[0] // Extract role initial
+      role: role.split(' ')[0]
     };
-
+  
     axios.post(`${API_URL}/approve`, postData)
       .then(response => {
-        console.log(response.data);
+        console.log('Approval response:', response.data);
+        setApprovalStatus(prevStatus => {
+          const updatedStatus = {
+            ...prevStatus,
+            [elem.user_type]: {
+              ...prevStatus[elem.user_type],
+              [postData.role]: 1 // Update the state with the new approval status
+            }
+          };
+          console.log('Updated approval status:', updatedStatus);
+          return updatedStatus;
+        });
         // Update UI or show a message if necessary
       })
       .catch(error => {
         console.error('There was an error approving the data!', error);
       });
   };
-
+  
+  
+  
   const handleReject = (index) => {
     const elem = detailedUserReport[index];
     const role = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
-    if (!role || elem[`IsApproved${role.split(' ')[0]}`] !== 1) {
+    
+    if (!role || !approvalStatus[index][`IsApproved${role.split(' ')[0]}`]) {
       return alert('You are not authorized to reject this or it has not been approved by you.');
     }
-
+  
     const postData = {
       locationCode: elem.locationName,
       userName: elem.user_type || 'defaultUser',
@@ -794,16 +853,24 @@ console.log("User Status",userStatus);
       action: 'reject',
       role: role.split(' ')[0] // Extract role initial
     };
-
+  
     axios.post(`${API_URL}/approve`, postData)
       .then(response => {
-        console.log(response.data);
+        console.log('Rejection response:', response.data);
+        setApprovalStatus(prevStatus => ({
+          ...prevStatus,
+          [index]: {
+            ...prevStatus[index],
+            [`IsApproved${role.split(' ')[0]}`]: false
+          }
+        }));
         // Update UI or show a message if necessary
       })
       .catch(error => {
         console.error('There was an error rejecting the data!', error);
       });
   };
+  
   const showSiteUserModal = () => {
     setSiteUserModal(true);
   }
@@ -1150,30 +1217,39 @@ console.log("User Status",userStatus);
                     </div>
                     {/* {userRoles.includes("PM") && (
                       <>
-                      <table className='table table-bordered'>
-                        <thead>
-                          <tr>
-                            <th>Sr.No.</th>
-                            <th>Location Name</th>
-                            <th>User Name</th>
-                            <th>Approved by SM</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {userStatus && userStatus.map((elem,index) => (
-                            <tr key={index}>
-                              <td>{index+1}</td>
-                              <td>{elem.LocationCode}</td>
-                              <td>{elem.UserName}</td>
-                              <td>{elem.IsApprovedCBSL}</td>
+                        <table className='table table-bordered'>
+                          <thead>
+                            <tr>
+                              <th>Sr.No.</th>
+                              <th>Location Name</th>
+                              <th>User Name</th>
+
                             </tr>
-                          ))}
-                        </tbody>
+                          </thead>
+                          <tbody>
+                            {userStatus && userStatus.map((elem, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{elem.LocationCode}</td>
+                                <td>{elem.UserName}</td>
+
+                              </tr>
+                            ))}
+                          </tbody>
                         </table>
+                        <div className='row mt-2'>
+                          <div className='col-10'></div>
+                          <div className='col-1'>
+                            <button className='btn btn-success' onClick={() => handleApprove(0)}>Approve</button>
+                          </div>
+                          <div className='col-1'>
+                            <button className='btn btn-danger' onClick={() => handleReject(0)}>Reject</button>
+                          </div>
+                        </div>
                       </>
                     )} */}
                     <div className="modal-table row ms-2 me-2">
-                      
+
                       <table className="table-modal mt-2">
                         <thead>
                           <tr>
@@ -1305,9 +1381,7 @@ console.log("User Status",userStatus);
                           <button className='btn btn-danger' onClick={() => handleReject(0)}>Reject</button>
                         </div>
                       </div>
-                      <div className='row mt-1'>
-                        <button className='btn btn-success' style={{width:'300px'}} onClick={showSiteUserModal}>View</button>
-                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -1316,7 +1390,7 @@ console.log("User Status",userStatus);
           </div>
         )}
       </div>
-      {siteUserModal && <SiteUserModal onClose={handleSiteUserModalClose} userData={userData}/>}
+
     </>
   )
 }

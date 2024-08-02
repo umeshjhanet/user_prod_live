@@ -144,6 +144,7 @@ const SiteUser = ({ onClose }) => {
       IsActive: employee.IsActive,
       LastUpdateDate: employee.LastUpdateDate,
       FatherName: employee.FatherName,
+      UserName: employee.UserName,
     });
     setShowModal(true); // Show the modal
   };
@@ -207,24 +208,121 @@ const SiteUser = ({ onClose }) => {
                       </div>
                     </>
                   )}
-                  {manualSelected && (
+                   {manualSelected && (
                     <>
-                      <div className='row'>
-                        <div className='col-6'>
-                          <div className="row mt-2">
-                            <div className="col-4">
-                              <label className="mt-2 ms-0">Biomatrix No:</label>
-                            </div>
-                            <div className="col-8">
-                              <input type="text" name="BiomatrixNo" value={newFormData.BiomatrixNo} onChange={handleInputChange} />
-                            </div>
-                          </div>
-                          {/* Add other fields similarly */}
+                    <div className='row'>
+                      <div className='col-6'>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">User Name:</label>
                         </div>
-                        <div className='col-6'>
-                          {/* Add other fields similarly */}
+                        <div className="col-8">
+                          <input type="text" name="UserName" onChange={handleInputChange} />
                         </div>
                       </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">Biomatrix No:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="BiomatrixNo" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">Emp Reference No:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="EmpReferenceNo" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                     
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">DOJ:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="date" name="DOJ" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Fixed Salary:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="number" name="FixedSalary" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Project:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="Project" value={newFormData.Project} onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Location:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="Location" value={newFormData.Location} onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      </div>
+                      <div className='col-6'>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">HR cum Admin Name:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="HRcumAdminName" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Project Manager:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="ProjectManager" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Project Owner:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="ProjectOwner" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Is Active:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="IsActive" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2">Last Update Date:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="date" name="LastUpdateDate" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">Father's Name:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="FatherName" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                      
+                     
                       <div className="row mt-3 ms-4">
                         <button type="submit">Submit</button>
                       </div>
