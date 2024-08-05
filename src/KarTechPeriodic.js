@@ -820,7 +820,6 @@ const KarTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         )}
@@ -966,7 +965,6 @@ const KarTechPeriodic = ({ multipliedData, startDate, endDate }) => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         )}
