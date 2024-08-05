@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
-const CumulativeSummaryReport = ({ editedPrice }) => {
+const CumulativeSummaryReport = ({ editedPrice, userData }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
@@ -120,6 +120,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
 
   const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios
       .get(`${API_URL}/detailedreportlocationwise`, {
         params: { locationName: locationName },
@@ -137,6 +138,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
 
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/userdetailedreportlocationwise`, {
       params: {
         username: username,
@@ -215,16 +217,43 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
 
   useEffect(() => {
     const fetchSummaryReport = () => {
-      setIsLoading(true); // Set loading to true when fetching data
-      axios
-        .get(`${API_URL}/summaryreport`)
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid or undefined userData structure:", userData);
+        return;
+      }
+      setIsLoading(true);
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+      let apiUrl = `${API_URL}/summaryreport`;
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects[0] === 1;
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
+      axios.get(apiUrl)
         .then((response) => {
           setSummaryReport(response.data);
-          setIsLoading(false); // Set loading to false after data is fetched
+          setIsLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false); // Set loading to false in case of error
+          console.error("Error fetching summary report:", error);
+          setIsLoading(false);
         });
     };
     const fetchPrices = () => {
@@ -242,57 +271,120 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
     };
     const fetchLocationReport = () => {
       setIsLoading(true);
+
+      let apiUrl = `${API_URL}/detailedreport`;
+
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 1;
+
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+
       axios
-        .get(`${API_URL}/detailedReport`)
+        .get(apiUrl)
         .then((response) => {
-          setLocationReport(response.data)
+          setLocationReport(response.data);
           setIsLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching location report:", error);
           setIsLoading(false);
         });
-
     };
-
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    
+    const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
+      const formatDate = (date) => date.toISOString().split('T')[0];
+    
       setIsLoading(true);
       let apiUrl = `${API_URL}/detailedreportcsv`;
-
+    
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-
+    
+      // Check userData structure
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid userData structure:", userData);
+        setIsLoading(false);
+        return;
+      }
+    
+      // Dynamic locationName assignment
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects[0] === 1;
+    
+      // Append "District Court" to locationName
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+    
+      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+    
+      console.log("LocationName:", locationNameWithDistrictCourt);
+      console.log("isCBSLUser:", isCBSLUser);
+      console.log("userData.user_roles:", userData.user_roles);
+      console.log("hasSingleProject:", hasSingleProject);
+      console.log("userData.projects:", userData.projects);
+      console.log("hasMatchingLocation:", hasMatchingLocation);
+      console.log("userData.locations:", userData.locations);
+    
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        const separator = apiUrl.includes('?') ? '&' : '?';
+        apiUrl += `${separator}locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        console.log("Modified API URL with locationName:", apiUrl);
+      } else {
+        console.log("API URL without locationName:", apiUrl);
+      }
+    
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
           setDetailedCsv(url);
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error in exporting data:", error);
           setIsLoading(false);
         });
-
     };
 
-
-    fetchDetailedReportCsvFile(startDate, endDate);
-    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+    fetchDetailedReportCsvFile(startDate, endDate,userData);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
     fetchPrices();
-    fetchSummaryReport();
+    fetchSummaryReport(userData);
     fetchLocationReport();
     if (locationName) {
       fetchUserDetailed(locationName);
     }
     fetchUserDetailedReport();
-  }, [selectedUsername, locationName, startDate, endDate]);
+  }, [selectedUsername, locationName, startDate, endDate,userData]);
   // console.log("Location Data", locationReport);
   const Loader = () => (
     <div className="loader-overlay">
@@ -393,18 +485,13 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
         const flagRate = priceData?.FlagRate || 0;
         const cbslQaRate = priceData?.CbslQaRate || 0;
         const clientQcRate = priceData?.ClientQcRate || 0;
-        
-  
         const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
         const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
         const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
         const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
         const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
         const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
-        
-  
         const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal;
-  
         totalExpenseRate += totalRate;
       });
     }
@@ -667,7 +754,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
+                      <td style={{whiteSpace:'nowrap'}}  className="hover-text" onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
@@ -768,8 +855,8 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
+                                <td style={{whiteSpace:'nowrap'}}  className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
@@ -808,6 +895,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                       {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
                       <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
                     </td>
+                    <td></td>
                   </tr>
                         </tbody>
                       </table>
@@ -912,9 +1000,9 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                             return (
                               <tr  key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
-                                <td>{elem.Date}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.user_type || 0}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.Date}</td>
                                 <td>{elem.lotno}</td>
                                 <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                                 <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
@@ -952,6 +1040,7 @@ const CumulativeSummaryReport = ({ editedPrice }) => {
                     <td>
                       <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
                     </td>
+                    <td></td>
                   </tr>
                         </tbody>
                       </table>

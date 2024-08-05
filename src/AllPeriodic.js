@@ -7,8 +7,8 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 import { FiDownload } from 'react-icons/fi';
 
-const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
-    const [locationView, setLocationView] = useState(false);
+const AllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
+  const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState(null);
   const [locationReport, setLocationReport] = useState();
@@ -54,14 +54,14 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
     fetchUserDetailedReport(username, locationName);
 
 
-   
-  // Simulate data fetching
-  setTimeout(() => {
-    setUserView(true);
-    setLocationView(false);
-    setShowModal(true);
-    setIsLoading(false);
-  }, 1000);
+
+    // Simulate data fetching
+    setTimeout(() => {
+      setUserView(true);
+      setLocationView(false);
+      setShowModal(true);
+      setIsLoading(false);
+    }, 1000);
   };
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -131,15 +131,16 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   const handleCancelUserExport = () => {
     setShowConfirmationUser(false);
   }
-  
+
   const fetchUserDetailed = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
-  
+
     setIsLoading(true);
+    setDetailedReportLocationWise([]);
     axios.get(`${API_URL}/alldetailedreportlocationwise`, {
       params: {
         locationName: locationName,
@@ -147,25 +148,26 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         endDate: formattedEndDate ? formatDate(formattedEndDate) : null
       }
     })
-    .then((response) => {
-      console.log("Detailed Report Location Wise API Response:", response.data);
-      setDetailedReportLocationWise(response.data);
-      setIsLoading(false);
-    })
-    .catch((error) => {
-      console.error("Error fetching detailed report location wise:", error);
-      setIsLoading(false);
-    });
+      .then((response) => {
+        console.log("Detailed Report Location Wise API Response:", response.data);
+        setDetailedReportLocationWise(response.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching detailed report location wise:", error);
+        setIsLoading(false);
+      });
   };
-  
+
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
     const formatDate = (date) => {
       return date.toISOString().split('T')[0];
     };
-  
+
     setIsLoading(true);
+    setDetailedUserReport([]);
     axios.get(`${API_URL}/alluserdetailedreportlocationwise`, {
       params: {
         username: username,
@@ -174,17 +176,17 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         endDate: formattedEndDate ? formatDate(formattedEndDate) : null
       }
     })
-    .then((response) => {
-      console.log("User Detailed Report API Response:", response.data);
-      setDetailedUserReport(response.data);
-      setIsLoading(false);
-    })
-    .catch((error) => {
-      console.error("Error fetching user detailed report:", error);
-      setIsLoading(false);
-    });
+      .then((response) => {
+        console.log("User Detailed Report API Response:", response.data);
+        setDetailedUserReport(response.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching user detailed report:", error);
+        setIsLoading(false);
+      });
   };
-  
+
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -246,14 +248,19 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
       });
   };
   useEffect(() => {
-    fetchUserDetailed(locationName, startDate,endDate);
+    fetchUserDetailed(locationName, startDate, endDate);
     fetchUserDetailedReport(selectedUsername, locationName, startDate, endDate);
     fetchDetailedLocationWiseReportCsvFile(locationName, startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, locationName, startDate, endDate);
   }, [selectedUsername, locationName, startDate, endDate]);
 
   useEffect(() => {
+
     const fetchSummaryReport = async () => {
+      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+        console.error("Invalid or undefined userData structure:", userData);
+        return;
+      }
       setIsLoading(true);
       try {
         const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -262,17 +269,34 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/summaryreportcummulative`;
-        const queryParams = {};
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+
+        // Check conditions for including locationName
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects[0] === 1;
+        const locationNameWithDistrictCourt = `${locationName} District Court`;
+        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+        let queryParams = [];
+
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          queryParams.push(`locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`);
         }
 
-        const response = await axios.get(apiUrl, { params: queryParams });
+        if (formattedStartDate && formattedEndDate) {
+          queryParams.push(`startDate=${formatDate(formattedStartDate)}`, `endDate=${formatDate(formattedEndDate)}`);
+        }
+
+        if (queryParams.length > 0) {
+          apiUrl += `?${queryParams.join('&')}`;
+        }
+
+        const response = await axios.get(apiUrl);
         setSummaryReport(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching summary data:", error);
+        console.error("Error fetching summary report:", error);
         setIsLoading(false);
       }
     };
@@ -286,17 +310,30 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           return date.toISOString().split('T')[0];
         };
 
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/detailedreportcummulative`;
-        const queryParams = {};
-        if (formattedStartDate && formattedEndDate) {
-          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects[0] === 1;
+        const locationNameWithDistrictCourt = `${locationName} District Court`;
+        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
         }
 
-        const response = await axios.get(apiUrl, { params: queryParams });
+        if (formattedStartDate && formattedEndDate) {
+          // Determine whether to use '?' or '&' based on existing query parameters
+          apiUrl += apiUrl.includes('?') ? '&' : '?';
+          apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        }
+
+        const response = await axios.get(apiUrl);
         setLocationReport(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching summary data:", error);
+        console.error("Error fetching detailed report:", error);
         setIsLoading(false);
       }
     };
@@ -308,10 +345,23 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         return date.toISOString().split('T')[0];
       };
 
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/detailedreportcummulativecsv`;
 
+      // Check if userData meets the conditions to include the locationName parameter
+      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
+      const locationNameWithDistrictCourt = `${locationName} District Court`;
+      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+
+      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+      }
+
       if (formattedStartDate && formattedEndDate) {
-        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        // Determine whether to use '?' or '&' based on existing query parameters
+        apiUrl += apiUrl.includes('?') ? '&' : '?';
+        apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
 
       axios.get(apiUrl, { responseType: "blob" })
@@ -324,6 +374,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           console.error("Error in exporting data:", error);
         });
     };
+
     const fetchPrices = () => {
       setIsLoading(true); // Set loading to true when fetching data
       axios
@@ -339,13 +390,13 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
     };
     fetchPrices();
 
-    fetchSummaryReport();
+    fetchSummaryReport(userData);
     fetchLocationReport();
-    fetchDetailedReportCsvFile(startDate, endDate);
+    fetchDetailedReportCsvFile(startDate, endDate, userData);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
 
-  }, [selectedUsername, locationName, startDate, endDate]);
+  }, [selectedUsername, locationName, startDate, endDate, userData]);
 
   const calculateColumnSum = () => {
     let Inventory = 0;
@@ -359,7 +410,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
     let CBSL_QA = 0;
     let Client_QC = 0;
     let totalExpenseRate = 0;
-  
+
     if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
       detailedReportLocationWise.forEach((elem) => {
         Inventory += parseInt(elem.Inventory) || 0;
@@ -374,10 +425,10 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         Client_QC += parseInt(elem.Client_QC) || 0;
         const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
         const priceData = price.find(
-          
+
           (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
         );
-  
+
         const scanRate = priceData?.ScanRate || 0;
         const qcRate = priceData?.QcRate || 0;
         const indexRate = priceData?.IndexRate || 0;
@@ -388,7 +439,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         const inventoryRate = priceData?.InventoryRate || 0;
         const docPreparationRate = priceData?.DocPreparationRate || 0;
         const guardRate = priceData?.GuardRate || 0;
-  
+
         const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
         const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
         const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
@@ -399,13 +450,13 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
         const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
         const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
-  
+
         const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
-  
+
         totalExpenseRate += totalRate;
       });
     }
-  
+
     return {
       Inventory,
       Counting,
@@ -433,7 +484,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
     let CBSL_QA = 0;
     let Client_QC = 0;
     let totalExpenseRate = 0;
-  
+
     if (detailedUserReport && Array.isArray(detailedUserReport)) {
       detailedUserReport.forEach((elem) => {
         Inventory += parseInt(elem.Inventory) || 0;
@@ -448,10 +499,10 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         Client_QC += parseInt(elem.Client_QC) || 0;
         const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
         const priceData = price.find(
-          
+
           (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
         );
-  
+
         const scanRate = priceData?.ScanRate || 0;
         const qcRate = priceData?.QcRate || 0;
         const indexRate = priceData?.IndexRate || 0;
@@ -462,7 +513,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         const inventoryRate = priceData?.InventoryRate || 0;
         const docPreparationRate = priceData?.DocPreparationRate || 0;
         const guardRate = priceData?.GuardRate || 0;
-  
+
         const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
         const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
         const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
@@ -473,13 +524,13 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
         const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
         const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
         const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
-  
+
         const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
-  
+
         totalExpenseRate += totalRate;
       });
     }
-  
+
     return {
       Inventory,
       Counting,
@@ -494,19 +545,19 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
       totalExpenseRate,
     };
   };
-  
+
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
 
   useEffect(() => {
     if (price && locationReport && price.length > 0 && locationReport.length > 0) {
       const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
-  
+
       const multipliedData = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
-  
+
         const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
-  
+
         if (prices) {
           const multipliedLocation = {
             ...location,
@@ -521,7 +572,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
             DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparationRate || 0),  // Ensure the property is correct
             Guard: Number(location.Guard || 0) * (prices.GuardRate || 0),  // Ensure the property is correct
           };
-  
+
           const rowSum =
             multipliedLocation.Scanned +
             multipliedLocation.QC +
@@ -533,9 +584,9 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
             multipliedLocation.Inventory +
             multipliedLocation.DocPreparation +
             multipliedLocation.Guard;
-  
+
           multipliedLocation.rowSum = rowSum;
-  
+
           return multipliedLocation;
         } else {
           console.error(`No matching price found for location: ${location.LocationName}`);
@@ -555,7 +606,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           };
         }
       });
-  
+
       const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
         const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
@@ -564,7 +615,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
           rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
         };
       });
-  
+
       setEnhancedLocationReport(enhancedLocationReport);
       const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       setSecondLastColumnTotal(sumOfRowSums);
@@ -572,7 +623,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
       console.log(enhancedLocationReport);
     }
   }, [price, locationReport]);
-  
+
   useEffect(() => {
     if (enhancedLocationReport && enhancedLocationReport.length > 0) {
       const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
@@ -588,11 +639,33 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
   );
   console.log("LocationWise User's", detailedReportLocationWise);
   console.log("User's", detailedUserReport);
+  const handleApprove = (id) => {
+    axios.post(`${API_URL}/update-status`, { id, status: 1 })
+      .then(response => {
+        alert(response.data.message);
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Failed to update status');
+      });
+  };
+
+  const handleReject = (id) => {
+    axios.post(`${API_URL}/update-status`, { id, status: 0 })
+      .then(response => {
+        alert(response.data.message);
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Failed to update status');
+      });
+  };
+
   return (
     <>
       {isLoading && <Loader />}
       <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
-      <div className="row mt-3">
+        <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
@@ -661,7 +734,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                   </div>
                 )}
               </div>
-             
+
             </div>
             <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">
@@ -687,7 +760,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
+                      <td style={{ whiteSpace: 'nowrap' }} className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
@@ -812,8 +885,8 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td style={{ whiteSpace: 'nowrap' }}>{elem.locationName}</td>
+                                <td style={{ whiteSpace: 'nowrap' }} className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{inventory.toLocaleString()}</td>
                                 <td>{counting.toLocaleString()}</td>
                                 <td>{docPreparation.toLocaleString()}</td>
@@ -828,46 +901,47 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                               </tr>
                             );
                           })}
-                            <tr style={{ color: "black" }}>
-                    <td colSpan="3">
-                      <strong>Total</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Inventory.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Counting.toLocaleString()}</strong>
-                    </td> 
-                    <td>
-                      <strong>{columnSums.DocPreparation.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Guard.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Scanned.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.QC.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Flagging.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Indexing.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSums.Client_QC.toLocaleString()}</strong>
-                    </td>
-                    
-                    <td>
-                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
-                      <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
-                    </td>
-                  </tr>
+                          <tr style={{ color: "black" }}>
+                            <td colSpan="3">
+                              <strong>Total</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Inventory.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Counting.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.DocPreparation.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Guard.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Scanned.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.QC.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Flagging.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Indexing.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSums.Client_QC.toLocaleString()}</strong>
+                            </td>
+
+                            <td>
+                              {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                              <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
+                            </td>
+                            <td></td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -945,6 +1019,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             <th>CBSL-QA</th>
                             <th>Client-QA</th>
                             <th>Expense</th>
+
                           </tr>
                         </thead>
                         <tbody>
@@ -989,9 +1064,9 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{elem.locationName}</td>
-                                <td>{elem.user_type || 0}</td>
-                                <td >{elem.Date}</td>
+                                <td style={{ whiteSpace: 'nowrap' }}>{elem.locationName}</td>
+                                <td style={{ whiteSpace: 'nowrap' }}>{elem.user_type || 0}</td>
+                                <td style={{ whiteSpace: 'nowrap' }} >{elem.Date}</td>
                                 <td>{elem.lotno}</td>
                                 <td>{inventory.toLocaleString()}</td>
                                 <td>{counting.toLocaleString()}</td>
@@ -1004,49 +1079,60 @@ const AllPeriodic = ({ multipliedData, startDate, endDate }) => {
                                 <td>{cbslQa.toLocaleString()}</td>
                                 <td>{clientQc.toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>
+
                               </tr>
                             );
                           })}
-                           <tr style={{ color: "black" }}>
-                    <td colSpan="5">
-                      <strong>Total</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Inventory.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Counting.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.DocPreparation.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Guard.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.QC.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
-                    </td>
-                    <td>
-                      <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
-                    </td>
-                  </tr>
+                          <tr style={{ color: "black" }}>
+                            <td colSpan="5">
+                              <strong>Total</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Inventory.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Counting.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.DocPreparation.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Guard.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                            </td>
+                            <td>
+                              <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                            </td>
+                            <td></td>
+                          </tr>
                         </tbody>
                       </table>
+                      <div className='row mt-2'>
+                        <div className='col-10'></div>
+                        <div className='col-1'>
+                          <button className='btn btn-success' onClick={() => handleApprove(1)}>Approve</button>
+                        </div>
+                        <div className='col-1'>
+                          <button className='btn btn-danger' onClick={() => handleReject(1)}>Reject</button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

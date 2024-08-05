@@ -269,10 +269,11 @@ const KarDashboard = () => {
             toast.success("Updated successfully");
 
             // Fetch updated prices from the database
-            const updatedPricesResponse = await axios.get(
-                `${API_URL}/kargetbusinessrate`
-            );
-            setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
+            fetchBusinessRate(userData);
+            // const updatedPricesResponse = await axios.get(
+            //     `${API_URL}/kargetbusinessrate`
+            // );
+            // setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
         } catch (error) {
             console.error("Error updating business rate:", error);
             toast.error("Failed to update business rate");
@@ -284,55 +285,55 @@ const KarDashboard = () => {
         newPrices[index][field] = parseFloat(e.target.innerText);
         setPrices(newPrices);
     };
+    const fetchBusinessRate = (userData) => {
+        // Check userData structure
+        if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+            console.error("Invalid userData structure:", userData);
+            return;
+        }
 
+        // Dynamic locationName assignment
+        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects[0] === 3;
+
+        // Check if locationName matches any location name in userData.locations
+        const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
+
+        console.log("LocationName:", locationName);
+        console.log("isCBSLUser:", isCBSLUser);
+        console.log("userData.user_roles:", userData.user_roles);
+        console.log("hasSingleProject:", hasSingleProject);
+        console.log("userData.projects:", userData.projects);
+        console.log("hasMatchingLocation:", hasMatchingLocation);
+        console.log("userData.locations:", userData.locations);
+
+        let apiUrl = `${API_URL}/kargetbusinessrate`;
+
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+            const separator = apiUrl.includes('?') ? '&' : '?';
+            apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
+            console.log("Modified API URL with locationName:", apiUrl);
+        } else {
+            console.log("API URL without locationName:", apiUrl);
+        }
+
+        axios
+            .get(apiUrl)
+            .then((response) => {
+                console.log("Response data:", response.data);
+                setPrices(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching user data:", error);
+            });
+    };
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
-        const fetchBusinessRate = (userData) => {
-            // Check userData structure
-            if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
-                console.error("Invalid userData structure:", userData);
-                return;
-            }
-
-            // Dynamic locationName assignment
-            const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-
-            // Check if userData meets the conditions to include the locationName parameter
-            const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-            const hasSingleProject = userData.projects.length === 1;
-
-            // Check if locationName matches any location name in userData.locations
-            const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
-
-            console.log("LocationName:", locationName);
-            console.log("isCBSLUser:", isCBSLUser);
-            console.log("userData.user_roles:", userData.user_roles);
-            console.log("hasSingleProject:", hasSingleProject);
-            console.log("userData.projects:", userData.projects);
-            console.log("hasMatchingLocation:", hasMatchingLocation);
-            console.log("userData.locations:", userData.locations);
-
-            let apiUrl = `${API_URL}/kargetbusinessrate`;
-
-            if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-                const separator = apiUrl.includes('?') ? '&' : '?';
-                apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
-                console.log("Modified API URL with locationName:", apiUrl);
-            } else {
-                console.log("API URL without locationName:", apiUrl);
-            }
-
-            axios
-                .get(apiUrl)
-                .then((response) => {
-                    console.log("Response data:", response.data);
-                    setPrices(response.data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-        };
+       
 
 
         fetchBusinessRate(userData);
@@ -394,9 +395,7 @@ const KarDashboard = () => {
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
     console.log("Business Rate", prices);
-    if (!localPrices || localPrices.length === 0) {
-        return <p>No data available.</p>;
-    }
+   
 
 
     return (
@@ -582,13 +581,13 @@ const KarDashboard = () => {
 
                 </div>
             </div>
-            {showPeriodicSummary && <KarTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCumulativeSummary && <KarTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <KarNonTechCumulative />}
-            {shownonTechPeriodicSummary && <KarNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showAllCumulativeSummary && <KarAllCumulative />}
-            {showAllPeriodicSummary && <KarAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {showPeriodicSummary && <KarTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCumulativeSummary && <KarTechCumulative userData={userData} multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
+            {shownonTechCumulativeSummary && <KarNonTechCumulative userData={userData} />}
+            {shownonTechPeriodicSummary && <KarNonTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showAllCumulativeSummary && <KarAllCumulative userData={userData} />}
+            {showAllPeriodicSummary && <KarAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <KarNonTechModal onClose={handleCloseModal} userInfo={userData}/>}
             <ToastContainer />
         </>

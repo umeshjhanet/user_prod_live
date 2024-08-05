@@ -22,6 +22,7 @@ import TelAllPeriodic from './TelAllPeriodic';
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
 import TelNonTechModal from './Components/TelNonTechModal';
+import SiteUser from './SiteUser';
 
 const TelDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -50,6 +51,7 @@ const TelDashboard = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
+    const [siteUserModal,setSiteUserModal] = useState(false);
 
     useEffect(() => {
         setLocalPrices(prices);
@@ -97,7 +99,12 @@ const TelDashboard = () => {
         );
     };
 
-
+    const showSiteUserModal = () => {
+        setSiteUserModal(true);
+      }
+      const handleSiteUserModalClose = () => {
+        setSiteUserModal(false);
+      }
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -268,10 +275,11 @@ const TelDashboard = () => {
             toast.success("Updated successfully");
 
             // Fetch updated prices from the database
-            const updatedPricesResponse = await axios.get(
-                `${API_URL}/telgetbusinessrate`
-            );
-            setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
+            fetchBusinessRate(userData);
+            // const updatedPricesResponse = await axios.get(
+            //     `${API_URL}/telgetbusinessrate`
+            // );
+            // setPrices(updatedPricesResponse.data); // Update the local state with the new prices fetched from the database
         } catch (error) {
             console.error("Error updating business rate:", error);
             toast.error("Failed to update business rate");
@@ -289,55 +297,56 @@ const TelDashboard = () => {
         newPrices[index][field] = parseFloat(e.target.innerText);
         setPrices(newPrices);
     };
+    const fetchBusinessRate = (userData) => {
+        // Check userData structure
+        if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+            console.error("Invalid userData structure:", userData);
+            return;
+        }
+
+        // Dynamic locationName assignment
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects[0] === 2;
+
+        // Check if locationName matches any location name in userData.locations
+        const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
+
+        console.log("LocationName:", locationName);
+        console.log("isCBSLUser:", isCBSLUser);
+        console.log("userData.user_roles:", userData.user_roles);
+        console.log("hasSingleProject:", hasSingleProject);
+        console.log("userData.projects:", userData.projects);
+        console.log("hasMatchingLocation:", hasMatchingLocation);
+        console.log("userData.locations:", userData.locations);
+
+        let apiUrl = `${API_URL}/telgetbusinessrate`;
+
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+            const separator = apiUrl.includes('?') ? '&' : '?';
+            apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
+            console.log("Modified API URL with locationName:", apiUrl);
+        } else {
+            console.log("API URL without locationName:", apiUrl);
+        }
+
+        axios
+            .get(apiUrl)
+            .then((response) => {
+                console.log("Response data:", response.data);
+                setPrices(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching user data:", error);
+            });
+    };
 
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
-        const fetchBusinessRate = (userData) => {
-            // Check userData structure
-            if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
-                console.error("Invalid userData structure:", userData);
-                return;
-            }
-
-            // Dynamic locationName assignment
-            const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-
-            // Check if userData meets the conditions to include the locationName parameter
-            const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-            const hasSingleProject = userData.projects.length === 1;
-
-            // Check if locationName matches any location name in userData.locations
-            const hasMatchingLocation = userData.locations.some(location => location.name === locationName);
-
-            console.log("LocationName:", locationName);
-            console.log("isCBSLUser:", isCBSLUser);
-            console.log("userData.user_roles:", userData.user_roles);
-            console.log("hasSingleProject:", hasSingleProject);
-            console.log("userData.projects:", userData.projects);
-            console.log("hasMatchingLocation:", hasMatchingLocation);
-            console.log("userData.locations:", userData.locations);
-
-            let apiUrl = `${API_URL}/telgetbusinessrate`;
-
-            if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-                const separator = apiUrl.includes('?') ? '&' : '?';
-                apiUrl += `${separator}locationName=${encodeURIComponent(locationName)}`;
-                console.log("Modified API URL with locationName:", apiUrl);
-            } else {
-                console.log("API URL without locationName:", apiUrl);
-            }
-
-            axios
-                .get(apiUrl)
-                .then((response) => {
-                    console.log("Response data:", response.data);
-                    setPrices(response.data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-        };
+      
 
 
         fetchBusinessRate(userData);
@@ -479,7 +488,16 @@ const TelDashboard = () => {
                             </div>
                         </>)}
                         {error && <p className='text-danger'>{error}</p>}
+                        <div className='row mt-2'>
+                        <div className='col-4'>
+                        <Link to="/SiteUser">
+                        <button className='btn btn-success' style={{width:'250px'}} >Manage Employee Details</button>
+                        </Link>
+                            
+                        </div>
                     </div>
+                    </div>
+                    
                     {allSelected && (
                         <div className='row mt-2 ms-0 me-0 search-report-card'>
                             <div className='row'>
@@ -587,14 +605,15 @@ const TelDashboard = () => {
 
                 </div>
             </div>
-            {showPeriodicSummary && <TelTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCumulativeSummary && <TelTechCumulative multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <TelNonTechCommulative />}
-            {shownonTechPeriodicSummary && <TelNonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showAllCumulativeSummary && <TelAllCumulative />}
-            {showAllPeriodicSummary && <TelAllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
-            {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
+            {showPeriodicSummary && <TelTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCumulativeSummary && <TelTechCumulative userData={userData} multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
+            {shownonTechCumulativeSummary && <TelNonTechCommulative userData={userData} />}
+            {shownonTechPeriodicSummary && <TelNonTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showAllCumulativeSummary && <TelAllCumulative userData={userData} />}
+            {showAllPeriodicSummary && <TelAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData} />}
+            
             <ToastContainer />
         </>
     );

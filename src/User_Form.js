@@ -180,7 +180,7 @@ const User_Form = () => {
         .catch(error => console.error(error))
     }
     const fetchLocation = () => {
-      fetch(`${API_URL}/alllocations`)
+      fetch(`${API_URL}/locations`)
         .then(response => response.json())
         .then(data => setLocation(data))
         .catch(error => console.error(error))
@@ -214,7 +214,7 @@ const User_Form = () => {
 
 
     const fetchProject = () => {
-            fetch("http://localhost:5001/getproject")
+            fetch(`${API_URL}/getproject`)
               .then(response => response.json())
               .then(data => setProject(data))
               .catch(error => console.error(error))

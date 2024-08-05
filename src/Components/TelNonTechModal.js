@@ -123,7 +123,7 @@ const TelNonTechModal = ({ onClose, userInfo }) => {
         <div className="custom-modal" style={{overflowY:'auto'}}>
           <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
             <h6 className="ms-2" style={{ color: "white" }}>
-              User Wise Summary Report
+            Upload Non Technical Data
             </h6>
             <button type="button" className="btn btn-danger" onClick={onClose}>
               <IoMdCloseCircle />
