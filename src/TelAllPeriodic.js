@@ -149,6 +149,78 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         setIsLoading(false);
       });
   };
+
+  // const initializeApprovalStatus = (data) => {
+  //   const initialStatus = {};
+  
+  //   data.forEach(item => {
+  //     if (item.user_type) {
+  //       initialStatus[item.user_type] = {
+  //         CBSL : item.IsApprovedCBSL || 0,
+  //         PM: item.IsApprovedPM || 0,
+  //         PO: item.IsApprovedPO || 0,
+  //         HR: item.IsApprovedHR || 0
+  //       };
+  //     } else {
+  //       console.error('Missing user_type in item:', item);
+  //     }
+  //   });
+  
+  //   setApprovalStatus(initialStatus);
+  //   console.log("Approval Status Initialized:", initialStatus);
+  // };
+ 
+
+  const initializeApprovalStatus = (data) => {
+    const initialStatus = {};
+  
+    data.forEach(item => {
+      if (item.user_type) {
+        // Map 'CBSL Site User' directly
+        const role = item.user_type === 'CBSL Site User' ? 'CBSL Site User' : item.user_type;
+  
+        // Initialize status if not already present
+        if (!initialStatus[role]) {
+          initialStatus[role] = {
+            'CBSL Site User': 0,  // Default value for CBSL Site User
+            PM: 0,
+            PO: 0,
+            HR: 0
+          };
+        }
+  
+        // Update the status for this user
+        initialStatus[role] = {
+          'CBSL Site User': role === 'CBSL Site User' ? item.IsApprovedCBSL || 0 : initialStatus[role]['CBSL Site User'],
+          PM: item.IsApprovedPM || 0,
+          PO: item.IsApprovedPO || 0,
+          HR: item.IsApprovedHR || 0
+        };
+      } else {
+        console.error('Missing user_type in item:', item);
+      }
+    });
+  
+    // Ensure 'CBSL Site User' status is correctly reflected
+    if (initialStatus['CBSL Site User']) {
+      initialStatus['CBSL Site User'] = {
+        ...initialStatus['CBSL Site User'],
+        'CBSL Site User': (initialStatus['CBSL Site User'] || {}).CBSL
+      };
+    }
+  
+    setApprovalStatus(initialStatus);
+    console.log("Approval Status Initialized:", initialStatus);
+  };
+  
+  
+  
+  
+ 
+  
+  
+
+  
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -170,11 +242,15 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         initializeApprovalStatus(response.data);
         setIsLoading(false);
       })
+     
       .catch((error) => {
         console.error("Error fetching user detailed report:", error);
         setIsLoading(false);
       });
+     
   };
+
+
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -458,6 +534,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
     fetchUserDetailed(locationName, startDate, endDate);
     fetchUserDetailedReport(selectedUsername, locationName, startDate, endDate);
+    
 
   }, [selectedUsername, locationName, startDate, endDate, userData]);
 
@@ -758,81 +835,170 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   };
   
   
-  const initializeApprovalStatus = async (data) => {
-    const statusPromises = data.map(async (item) => {
-      const approvalStatus = await fetchApprovalStatus(item.user_type || 'defaultUser');
-      return { userName: item.user_type, approvalStatus };
-    });
+  const getUserInfo = () => {
+    const userLog = JSON.parse(localStorage.getItem('user'));
+    if (!userLog) {
+      console.error('No user data found in localStorage');
+      return { userRoles: [], locationCode: null, userID: null };
+    }
   
-    const statusResults = await Promise.all(statusPromises);
-  
-    const status = statusResults.reduce((acc, { userName, approvalStatus }) => {
-      acc[userName] = approvalStatus;
-      return acc;
-    }, {});
-  
-    console.log('Initial approval status:', status);
-    setApprovalStatus(status); // Assuming setApprovalStatus is a state setter
+    const userRoles = userLog.user_roles || [];
+    const locationCode = userLog.locations && userLog.locations.length > 0 ? userLog.locations[0].id : null;
+   
+   console.log("location",locationCode);
+    return { userRoles, locationCode};
+   
   };
+  
+ 
 
   const userRoles = userData.user_roles;
-  const canApprove = (role, userName) => {
-    const userStatus = approvalStatus[userName];
-    console.log(`Checking approval status for role: ${role}`, userStatus);
-  
-    if (!userStatus) {
-      console.log('No user status found for userName:', userName);
-      return false;
-    }
-  
-    if (role === 'CBSL Site User') return true;
-    console.log("Approved By CBSL SM", userStatus.IsApprovedCBSL);
-    if (role === 'PM' && userStatus.IsApprovedCBSL) return true;
-    if (role === 'PO' && userStatus.IsApprovedCBSL && userStatus.IsApprovedPM) return true;
-    if (role === 'HR' && userStatus.IsApprovedCBSL && userStatus.IsApprovedPM && userStatus.IsApprovedPO) return true;
+
+  // const handleApprove = async (index) => {
+  //   const elem = detailedUserReport[index];
+  //   const { userRoles, locationCode, userID } = getUserInfo();
     
-    return false;
-  };
+  //   console.log('Selected element for approval:', elem); // Verify selected item
+  //   console.log('User Roles:', userRoles); // Check roles of the logged-in user
+  //   console.log('Location Code:', locationCode);
+  //   console.log('User ID:', userID);
+    
+  //   // Find the role object that matches the approved roles
+  //   const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+    
+  //   if (!roleObj) {
+  //     return alert('Role not found.');
+  //   }
+  
+  //   console.log('Selected Role:', roleObj); // Verify the role
+  
+  //   const inMonth = new Date(elem.Date).getMonth() + 1;
+    
+  //   try {
+  //     // Determine if the current role is 'CBSL Site User'
+  //     if (roleObj === 'CBSL Site User') {
+  //       const postData = {
+  //         LocationCode: locationCode,
+  //         UserName: elem.user_type || 'defaultUser',
+  //         InMonth: inMonth,
+  //         UserID: userID || 0,
+  //         userProfile: elem.userProfile || 0,
+  //         role: roleObj
+  //       };
+  
+  //       console.log('Post data to be sent for CBSL Site User:', postData);
+  
+  //       // Send approval request directly
+  //       const response = await axios.post(`${API_URL}/approve`, postData);
+  //       console.log('Approval response for CBSL Site User:', response.data);
+  
+  //       setApprovalStatus(prevStatus => {
+  //         const updatedStatus = {
+  //           ...prevStatus,
+  //           [elem.user_type]: {
+  //             ...prevStatus[elem.user_type],
+  //             [roleObj]: 1
+  //           }
+  //         };
+  //         console.log('Updated approval status:', updatedStatus);
+  //         return updatedStatus;
+  //       });
+  //       alert('Approval status updated successfully');
+  //     } else {
+  //       // For other roles, first fetch the approval status and then decide on approval
+  //       const response = await axios.get(`${API_URL}/fetch-approved`, {
+  //         params: {
+  //           LocationCode: locationCode,
+  //           UserName: elem.user_type,
+  //           InMonth: inMonth
+  //         }
+  //       });
+        
+  //       const approvedData = response.data;
+  
+  //       console.log('Response received from API:', response);
+  //       console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
+        
+  //       if (!approvedData || approvedData.length === 0) {
+  //         console.log('No approval data found for user:', elem.user_type);
+  //         return alert('No approval data found.');
+  //       }
+        
+  //       const userStatus = approvedData[0];
+  //       console.log('Current approval status:', userStatus);
+        
+  //       // Approval logic based on the role
+  //       const canUserApprove = canApprove(roleObj, userStatus);
+        
+  //       if (!canUserApprove) {
+  //         return alert('You are not authorized to approve this.');
+  //       }
+        
+  //       const postData = {
+  //         LocationCode: userStatus.LocationCode,
+  //         UserName: elem.user_type || 'defaultUser',
+  //         InMonth: inMonth,
+  //         UserID: userID || 0,
+  //         userProfile: elem.userProfile || 0,
+  //         role: roleObj
+  //       };
+  
+  //       console.log('Post data to be sent:', postData);
+  
+  //       // Send approval request
+  //       axios.post(`${API_URL}/approve`, postData)
+  //         .then(response => {
+  //           console.log('Approval response:', response.data);
+  //           setApprovalStatus(prevStatus => {
+  //             const updatedStatus = {
+  //               ...prevStatus,
+  //               [elem.user_type]: {
+  //                 ...prevStatus[elem.user_type],
+  //                 [roleObj]: 1
+  //               }
+  //             };
+  //             console.log('Updated approval status:', updatedStatus);
+  //             return updatedStatus;
+  //           });
+  //           alert('Approval status updated successfully');
+  //         })
+  //         .catch(error => {
+  //           console.error('There was an error approving the data!', error);
+  //           alert(error.response ? error.response.data.message : 'Error approving task');
+  //         });
+  //     }
+  //   } catch (error) {
+  //     console.error('Error processing approval:', error);
+  //     alert('Error processing approval.');
+  //   }
+  // };
   
   
-  const handleApprove = (index) => {
-    const elem = detailedUserReport[index];
-    const role = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role.split(' ')[0]));
   
-    if (!role || !canApprove(role.split(' ')[0], elem.user_type)) {
-      return alert('You are not authorized to approve this.');
-    }
+  // const canApprove = (role, userStatus) => {
+  //   console.log(`Checking approval status for role: ${role}`, userStatus);
   
-    const postData = {
-      locationCode: elem.locationName,
-      userName: elem.user_type || 'defaultUser',
-      inMonth: new Date(elem.Date).getMonth() + 1,
-      userID: elem.userID || 0,
-      userProfile: elem.userProfile || 0,
-      action: 'approve',
-      role: role.split(' ')[0]
-    };
+  //   // Approval logic based on the role
+  //   switch (role) {
+  //     case 'CBSL Site User':
+  //       return true; // CBSL Site User can always approve
   
-    axios.post(`${API_URL}/approve`, postData)
-      .then(response => {
-        console.log('Approval response:', response.data);
-        setApprovalStatus(prevStatus => {
-          const updatedStatus = {
-            ...prevStatus,
-            [elem.user_type]: {
-              ...prevStatus[elem.user_type],
-              [postData.role]: 1 // Update the state with the new approval status
-            }
-          };
-          console.log('Updated approval status:', updatedStatus);
-          return updatedStatus;
-        });
-        // Update UI or show a message if necessary
-      })
-      .catch(error => {
-        console.error('There was an error approving the data!', error);
-      });
-  };
+  //     case 'PM':
+  //       return userStatus.IsApprovedCBSL === 1; // PM can approve if CBSL Site User has approved
+  
+  //     case 'PO':
+  //       return userStatus.IsApprovedCBSL === 1 && userStatus.IsApprovedPM === 1; // PO can approve if CBSL Site User and PM have approved
+  
+  //     case 'HR':
+  //       return userStatus.IsApprovedCBSL === 1 && userStatus.IsApprovedPM === 1 && userStatus.IsApprovedPO === 1; // HR can approve if CBSL Site User, PM, and PO have approved
+  
+  //     default:
+  //       console.log('Unknown role:', role);
+  //       return false;
+  //   }
+  // };
+  
+  
   
   
   
@@ -870,6 +1036,150 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         console.error('There was an error rejecting the data!', error);
       });
   };
+
+
+  const handleApprove = async (index) => {
+    const elem = detailedUserReport[index];
+    const { userRoles, locationCode, userID } = getUserInfo();
+    
+    console.log('Selected element for approval:', elem);
+    console.log('User Roles:', userRoles);
+    console.log('Location Code:', locationCode);
+    console.log('User ID:', userID);
+    
+    // Find the role object that matches the approved roles
+    const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+    
+    if (!roleObj) {
+      return alert('Role not found.');
+    }
+    
+    console.log('Selected Role:', roleObj);
+    
+    const inMonth = new Date(elem.Date).getMonth() + 1;
+    
+    try {
+      if (roleObj === 'CBSL Site User') {
+        const postData = {
+          LocationCode: locationCode,
+          UserName: elem.user_type || 'defaultUser',
+          InMonth: inMonth,
+          UserID: userID || 0,
+          userProfile: elem.userProfile || 0,
+          role: roleObj
+        };
+  
+        console.log('Post data to be sent for CBSL Site User:', postData);
+  
+        // Send approval request directly
+        const response = await axios.post(`${API_URL}/approve`, postData);
+        console.log('Approval response for CBSL Site User:', response.data);
+  
+        setApprovalStatus(prevStatus => {
+          const updatedStatus = {
+            ...prevStatus,
+            [elem.user_type]: {
+              ...prevStatus[elem.user_type],
+              [roleObj]: 1
+            }
+          };
+          console.log('Updated approval status:', updatedStatus);
+          return updatedStatus;
+        });
+        alert('Approval status updated successfully');
+      } else {
+        // For other roles, first fetch the approval status and then decide on approval
+        const response = await axios.get(`${API_URL}/fetch-approved`, {
+          params: {
+            LocationCode: locationCode,
+            UserName: elem.user_type,
+            InMonth: inMonth
+          }
+        });
+  
+        const approvedData = response.data;
+  
+        console.log('Response received from API:', response);
+        console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
+        
+        if (!approvedData || approvedData.length === 0) {
+          console.log('No approval data found for user:', elem.user_type);
+          return alert('You are not authorized to approve this.');
+        }
+  
+        const userStatus = approvedData[0];
+        
+        // Verify that userStatus has the expected structure
+        console.log('Current approval status:', userStatus);
+  
+        if (!userStatus) {
+          return alert('Error: User status data is missing.');
+        }
+  
+        // Approval logic based on the role
+        const canUserApprove = canApprove(roleObj, userStatus);
+  
+        if (!canUserApprove) {
+          return alert('You are not authorized to approve this.');
+        }
+        
+        const postData = {
+          LocationCode: userStatus.LocationCode,
+          UserName: elem.user_type || 'defaultUser',
+          InMonth: inMonth,
+          UserID: userID || 0,
+          userProfile: elem.userProfile || 0,
+          role: roleObj
+        };
+  
+        console.log('Post data to be sent:', postData);
+  
+        // Send approval request
+        axios.post(`${API_URL}/approve`, postData)
+          .then(response => {
+            console.log('Approval response:', response.data);
+            setApprovalStatus(prevStatus => {
+              const updatedStatus = {
+                ...prevStatus,
+                [elem.user_type]: {
+                  ...prevStatus[elem.user_type],
+                  [roleObj]: 1
+                }
+              };
+              console.log('Updated approval status:', updatedStatus);
+              return updatedStatus;
+            });
+            alert('Approval status updated successfully');
+          })
+          .catch(error => {
+            console.error('There was an error approving the data!', error);
+            alert(error.response ? error.response.data.message : 'Error approving task');
+          });
+      }
+    } catch (error) {
+      console.error('Error processing approval:', error);
+      alert('Error processing approval.');
+    }
+  };
+  
+  
+  // Helper function for approval logic
+  const canApprove = (role, status) => {
+    if (!status) return false;
+    switch (role) {
+      case 'CBSL Site User':
+        return true; // CBSL Site User can always approve
+      case 'PM':
+        return status.IsApprovedCBSL === 1; // PM can approve only if CBSL Site User has approved
+      case 'PO':
+        return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1; // PO can approve if CBSL Site User and PM have approved
+      case 'HR':
+        return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1 && status.IsApprovedPO === 1; // HR can approve if all have approved
+      default:
+        return false;
+    }
+  };
+  
   
   const showSiteUserModal = () => {
     setSiteUserModal(true);
