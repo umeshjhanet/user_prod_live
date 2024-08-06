@@ -7,6 +7,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 import { FiDownload } from 'react-icons/fi';
 import SiteUserModal from './SiteUser';
+import { toast } from 'react-toastify';
 
 const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const [locationView, setLocationView] = useState(false);
@@ -34,8 +35,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const [approvalStatus, setApprovalStatus] = useState({});
   const ref = useRef(null);
 
-
-
   const handleLocationView = (locationName) => {
     setShowModal(true);
     fetchUserDetailed(locationName, startDate, endDate);
@@ -56,9 +55,11 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
       setIsLoading(false);
     }, 1000);
   };
+
   const toggleModal = () => {
     setShowModal(!showModal);
   };
+
   const handleBackToLocationView = () => {
     setLocationView(true);
     setUserView(false);
@@ -108,7 +109,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     setShowConfirmationUser(true);
   }
 
-
   const handleUserWiseExport = () => {
     if (userwisecsv) {
       const link = document.createElement("a");
@@ -124,6 +124,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const handleCancelUserExport = () => {
     setShowConfirmationUser(false);
   }
+
   const fetchUserDetailed = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -170,7 +171,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   //   console.log("Approval Status Initialized:", initialStatus);
   // };
  
-
   const initializeApprovalStatus = (data) => {
     const initialStatus = {};
   
@@ -213,14 +213,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     console.log("Approval Status Initialized:", initialStatus);
   };
   
-  
-  
-  
- 
-  
-  
-
-  
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -249,7 +241,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
       });
      
   };
-
 
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -280,6 +271,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         setIsLoading(false);
       });
   };
+
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -310,6 +302,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         setIsLoading(false);
       });
   };
+
   useEffect(() => {
     const fetchSummaryReport = async () => {
       if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
@@ -818,23 +811,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
 
-
-
-  const fetchApprovalStatus = (userName) => {
-    return axios.get(`${API_URL}/approval-status`, { params: { userName } })
-      .then(response => response.data)
-      .catch(error => {
-        console.error('Error fetching approval status:', error);
-        return {
-          IsApprovedCBSL: 0,
-          IsApprovedPM: 0,
-          IsApprovedPO: 0,
-          IsApprovedHR: 0
-        };
-      });
-  };
-  
-  
   const getUserInfo = () => {
     const userLog = JSON.parse(localStorage.getItem('user'));
     if (!userLog) {
@@ -850,8 +826,6 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
    
   };
   
- 
-
   const userRoles = userData.user_roles;
 
   // const handleApprove = async (index) => {
@@ -999,44 +973,408 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   // };
   
   
-  
-  
-  
-  const handleReject = (index) => {
-    const elem = detailedUserReport[index];
-    const role = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+  // const handleReject = async (index) => {
+  //   const elem = detailedUserReport[index];
+  //   const { userRoles, locationCode, userID } = getUserInfo();
     
-    if (!role || !approvalStatus[index][`IsApproved${role.split(' ')[0]}`]) {
-      return alert('You are not authorized to reject this or it has not been approved by you.');
+  //   console.log('Selected element for rejection:', elem);
+  //   console.log('User Roles:', userRoles);
+  //   console.log('Location Code:', locationCode);
+  //   console.log('User ID:', userID);
+    
+  //   // Find the role object that matches the approved roles
+  //   const roleObj = userRoles.find(role => roleHierarchy.includes(role));
+    
+  //   if (!roleObj) {
+  //     return alert('Role not found.');
+  //   }
+    
+  //   console.log('Selected Role:', roleObj);
+    
+  //   const inMonth = new Date(elem.Date).getMonth() + 1;
+    
+  //   try {
+  //     if (roleObj === 'CBSL Site User') {
+  //       const postData = {
+  //         LocationCode: locationCode,
+  //         UserName: elem.user_type || 'defaultUser',
+  //         InMonth: inMonth,
+  //         UserID: userID || 0,
+  //         userProfile: elem.userProfile || 0,
+  //         role: roleObj
+  //       };
+    
+  //       console.log('Post data to be sent for CBSL Site User:', postData);
+    
+  //       // Send rejection request directly
+  //       const response = await axios.post(`${API_URL}/reject`, postData);
+  //       console.log('Rejection response for CBSL Site User:', response.data);
+    
+  //       setApprovalStatus(prevStatus => {
+  //         const updatedStatus = {
+  //           ...prevStatus,
+  //           [elem.user_type]: {
+  //             ...prevStatus[elem.user_type],
+  //             [roleObj]: 1
+  //           }
+  //         };
+  //         console.log('Updated rejection status:', updatedStatus);
+  //         return updatedStatus;
+  //       });
+  //       toast.success('Rejection status updated successfully');
+  //     } else {
+  //       // For other roles, first fetch the approval status and then decide on rejection
+  //       const response = await axios.get(`${API_URL}/fetch-approved`, {
+  //         params: {
+  //           LocationCode: locationCode,
+  //           UserName: elem.user_type,
+  //           InMonth: inMonth
+  //         }
+  //       });
+    
+  //       const approvedData = response.data;
+    
+  //       console.log('Response received from API:', response);
+  //       console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
+        
+  //       if (!approvedData || approvedData.length === 0) {
+  //         console.log('No approval data found for user:', elem.user_type);
+  //         return toast.success('You are not authorized to reject this.');
+  //       }
+    
+  //       const userStatus = approvedData[0];
+        
+  //       // Verify that userStatus has the expected structure
+  //       console.log('Current approval status:', userStatus);
+    
+  //       if (!userStatus) {
+  //         return alert('Error: User status data is missing.');
+  //       }
+    
+  //       // Rejection logic based on the role
+  //       const canUserReject = canReject(roleObj, userStatus);
+    
+  //       if (!canUserReject) {
+  //         return toast.success('You cannot reject this task because a higher role has already approved it.');
+  //       }
+        
+  //       const postData = {
+  //         LocationCode: userStatus.LocationCode,
+  //         UserName: elem.user_type || 'defaultUser',
+  //         InMonth: inMonth,
+  //         UserID: userID || 0,
+  //         userProfile: elem.userProfile || 0,
+  //         role: roleObj
+  //       };
+    
+  //       console.log('Post data to be sent:', postData);
+    
+  //       // Send rejection request
+  //       axios.post(`${API_URL}/reject`, postData)
+  //         .then(response => {
+  //           console.log('Reject response:', response.data);
+  //           setApprovalStatus(prevStatus => {
+  //             const updatedStatus = {
+  //               ...prevStatus,
+  //               [elem.user_type]: {
+  //                 ...prevStatus[elem.user_type],
+  //                 [roleObj]: 1
+  //               }
+  //             };
+  //             console.log('Updated rejection status:', updatedStatus);
+  //             return updatedStatus;
+  //           });
+  //           toast.success('Rejected successfully');
+  //         })
+  //         .catch(error => {
+  //           console.error('There was an error rejecting the data!', error);
+  //           toast.success(error.response ? error.response.data.message : 'Error rejecting task');
+  //         });
+  //     }
+  //   } catch (error) {
+  //     console.error('Error processing rejection:', error);
+  //     toast.success('Already rejected.');
+  //   }
+  // };
+  
+  // const handleApprove = async (index) => {
+  //   const elem = detailedUserReport[index];
+  //   const { userRoles, locationCode, userID } = getUserInfo();
+    
+  //   console.log('Selected element for approval:', elem);
+  //   console.log('User Roles:', userRoles);
+  //   console.log('Location Code:', locationCode);
+  //   console.log('User ID:', userID);
+    
+  //   // Find the role object that matches the approved roles
+  //   const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+    
+  //   if (!roleObj) {
+  //     return alert('Role not found.');
+  //   }
+    
+  //   console.log('Selected Role:', roleObj);
+    
+  //   const inMonth = new Date(elem.Date).getMonth() + 1;
+    
+  //   try {
+  //     if (roleObj === 'CBSL Site User') {
+  //       const postData = {
+  //         LocationCode: locationCode,
+  //         UserName: elem.user_type || 'defaultUser',
+  //         InMonth: inMonth,
+  //         UserID: userID || 0,
+  //         userProfile: elem.userProfile || 0,
+  //         role: roleObj
+  //       };
+  
+  //       console.log('Post data to be sent for CBSL Site User:', postData);
+  
+  //       // Send approval request directly
+  //       const response = await axios.post(`${API_URL}/approve`, postData);
+  //       console.log('Approval response for CBSL Site User:', response.data);
+  
+  //       setApprovalStatus(prevStatus => {
+  //         const updatedStatus = {
+  //           ...prevStatus,
+  //           [elem.user_type]: {
+  //             ...prevStatus[elem.user_type],
+  //             [roleObj]: 1
+  //           }
+  //         };
+  //         console.log('Updated approval status:', updatedStatus);
+  //         return updatedStatus;
+  //       });
+  //       alert('Approval status updated successfully');
+  //     } else {
+  //       // For other roles, first fetch the approval status and then decide on approval
+  //       const response = await axios.get(`${API_URL}/fetch-approved`, {
+  //         params: {
+  //           LocationCode: locationCode,
+  //           UserName: elem.user_type,
+  //           InMonth: inMonth
+  //         }
+  //       });
+  
+  //       const approvedData = response.data;
+  
+  //       console.log('Response received from API:', response);
+  //       console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
+        
+  //       if (!approvedData || approvedData.length === 0) {
+  //         console.log('No approval data found for user:', elem.user_type);
+  //         return alert('You are not authorized to approve this.');
+  //       }
+  
+  //       const userStatus = approvedData[0];
+        
+  //       // Verify that userStatus has the expected structure
+  //       console.log('Current approval status:', userStatus);
+  
+  //       if (!userStatus) {
+  //         return alert('Error: User status data is missing.');
+  //       }
+  
+  //       // Approval logic based on the role
+  //       const canUserApprove = canApprove(roleObj, userStatus);
+  
+  //       if (!canUserApprove) {
+  //         return alert('You are not authorized to approve this.');
+  //       }
+
+        
+        
+  //       const postData = {
+  //         LocationCode: userStatus.LocationCode,
+  //         UserName: elem.user_type || 'defaultUser',
+  //         InMonth: inMonth,
+  //         UserID: userID || 0,
+  //         userProfile: elem.userProfile || 0,
+  //         role: roleObj
+  //       };
+  
+  //       console.log('Post data to be sent:', postData);
+  
+  //       // Send approval request
+  //       axios.post(`${API_URL}/approve`, postData)
+  //         .then(response => {
+  //           console.log('Approval response:', response.data);
+  //           setApprovalStatus(prevStatus => {
+  //             const updatedStatus = {
+  //               ...prevStatus,
+  //               [elem.user_type]: {
+  //                 ...prevStatus[elem.user_type],
+  //                 [roleObj]: 1
+  //               }
+  //             };
+  //             console.log('Updated approval status:', updatedStatus);
+  //             return updatedStatus;
+  //           });
+  //           alert('Approval status updated successfully');
+  //         })
+  //         .catch(error => {
+  //           console.error('There was an error approving the data!', error);
+  //           alert(error.response ? error.response.data.message : 'Error approving task');
+  //         });
+  //     }
+  //   } catch (error) {
+  //     console.error('Error processing approval:', error);
+  //     alert('Error processing approval.');
+  //   }
+  // };
+  
+  // const canApprove = (role, status) => {
+  //   if (!status) return false;
+  //   switch (role) {
+  //     case 'CBSL Site User':
+  //       return true; // CBSL Site User can always approve
+  //     case 'PM':
+  //       return status.IsApprovedCBSL === 1; // PM can approve only if CBSL Site User has approved
+  //     case 'PO':
+  //       return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1; // PO can approve if CBSL Site User and PM have approved
+  //     case 'HR':
+  //       return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1 && status.IsApprovedPO === 1; // HR can approve if all have approved
+  //     default:
+  //       return false;
+  //   }
+  // };
+  
+
+  const roleHierarchy = ['CBSL Site User', 'PM', 'PO', 'HR'];
+
+  const canApprove = (role, status) => {
+    if (!status) return false;
+    switch (role) {
+      case 'CBSL Site User':
+        return true; // CBSL Site User can always approve
+      case 'PM':
+        return status.IsApprovedCBSL === 1; // PM can approve only if CBSL Site User has approved
+      case 'PO':
+        return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1; // PO can approve if CBSL Site User and PM have approved
+      case 'HR':
+        return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1 && status.IsApprovedPO === 1; // HR can approve if all have approved
+      default:
+        return false;
     }
-  
-    const postData = {
-      locationCode: elem.locationName,
-      userName: elem.user_type || 'defaultUser',
-      inMonth: new Date(elem.Date).getMonth() + 1, // Assuming Date is in 'YYYY-MM-DD' format
-      userID: elem.userID || 0,
-      userProfile: elem.userProfile || 0,
-      action: 'reject',
-      role: role.split(' ')[0] // Extract role initial
-    };
-  
-    axios.post(`${API_URL}/approve`, postData)
-      .then(response => {
-        console.log('Rejection response:', response.data);
-        setApprovalStatus(prevStatus => ({
-          ...prevStatus,
-          [index]: {
-            ...prevStatus[index],
-            [`IsApproved${role.split(' ')[0]}`]: false
-          }
-        }));
-        // Update UI or show a message if necessary
-      })
-      .catch(error => {
-        console.error('There was an error rejecting the data!', error);
-      });
   };
 
+  const canReject = (role, status) => {
+    if (!status) return false;
+    switch (role) {
+      case 'CBSL Site User':
+        return !status.IsApprovedPM && !status.IsApprovedPO && !status.IsApprovedHR; // CBSL Site User can reject only if no higher role has approved
+      case 'PM':
+        return !status.IsApprovedPO && !status.IsApprovedHR; // PM can reject only if PO and HR have not approved
+      case 'PO':
+        return !status.IsApprovedHR; // PO can reject only if HR has not approved
+      case 'HR':
+        return true; // HR can always reject
+      default:
+        return false;
+    }
+  };
+  
+  const handleReject = async (index) => {
+    const elem = detailedUserReport[index];
+    const { userRoles, locationCode, userID } = getUserInfo();
+  
+    console.log('Selected element for rejection:', elem);
+    console.log('User Roles:', userRoles);
+    console.log('Location Code:', locationCode);
+    console.log('User ID:', userID);
+  
+    // Find the role object that matches the approved roles
+    const roleObj = userRoles.find(role => roleHierarchy.includes(role));
+  
+    if (!roleObj) {
+      return alert('Role not found.');
+    }
+  
+    console.log('Selected Role:', roleObj);
+  
+    const inMonth = new Date(elem.Date).getMonth() + 1;
+  
+    try {
+      // For all roles, first fetch the approval status and then decide on rejection
+      const response = await axios.get(`${API_URL}/fetch-approved`, {
+        params: {
+          LocationCode: locationCode,
+          UserName: elem.user_type,
+          InMonth: inMonth
+        }
+      });
+  
+      const approvedData = response.data;
+  
+      console.log('Response received from API:', response);
+      console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
+  
+      if (!approvedData || approvedData.length === 0) {
+        console.log('No approval data found for user:', elem.user_type);
+        return toast.success('You cannot reject this task because PM has already approved the task. ');
+      }
+  
+      const userStatus = approvedData[0];
+  
+      // Verify that userStatus has the expected structure
+      console.log('Current approval status:', userStatus);
+  
+      if (!userStatus) {
+        return alert('Error: User status data is missing.');
+      }
+  
+      // Rejection logic based on the role
+      const canUserReject = canReject(roleObj, userStatus);
+  
+      if (!canUserReject) {
+        // Find the highest role that has approved
+        const approvedRoles = roleHierarchy.slice(roleHierarchy.indexOf(roleObj) + 1).filter(role => {
+          switch (role) {
+            case 'PM':
+              return userStatus.IsApprovedPM === 1;
+            case 'PO':
+              return userStatus.IsApprovedPO === 1;
+            case 'HR':
+              return userStatus.IsApprovedHR === 1;
+            default:
+              return false;
+          }
+        });
+        const firstApprovedRole = approvedRoles[0];
+        return toast.success(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
+      }
+  
+      const postData = {
+        LocationCode: userStatus.LocationCode,
+        UserName: elem.user_type || 'defaultUser',
+        InMonth: inMonth,
+        UserID: userID || 0,
+        userProfile: elem.userProfile || 0,
+        role: roleObj
+      };
+  
+      console.log('Post data to be sent:', postData);
+  
+      // Send rejection request
+      const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
+      console.log('Reject response:', rejectResponse.data);
+      setApprovalStatus(prevStatus => {
+        const updatedStatus = {
+          ...prevStatus,
+          [elem.user_type]: {
+            ...prevStatus[elem.user_type],
+            [roleObj]: 1
+          }
+        };
+        console.log('Updated rejection status:', updatedStatus);
+        return updatedStatus;
+      });
+      toast.success('Rejected successfully');
+    } catch (error) {
+      console.error('Error processing rejection:', error);
+      toast.success('Already rejected.');
+    }
+  };
 
   const handleApprove = async (index) => {
     const elem = detailedUserReport[index];
@@ -1048,7 +1386,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     console.log('User ID:', userID);
     
     // Find the role object that matches the approved roles
-    const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+    const roleObj = userRoles.find(role => roleHierarchy.includes(role));
     
     if (!roleObj) {
       return alert('Role not found.');
@@ -1068,13 +1406,13 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           userProfile: elem.userProfile || 0,
           role: roleObj
         };
-  
+    
         console.log('Post data to be sent for CBSL Site User:', postData);
-  
+    
         // Send approval request directly
         const response = await axios.post(`${API_URL}/approve`, postData);
         console.log('Approval response for CBSL Site User:', response.data);
-  
+    
         setApprovalStatus(prevStatus => {
           const updatedStatus = {
             ...prevStatus,
@@ -1086,7 +1424,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           console.log('Updated approval status:', updatedStatus);
           return updatedStatus;
         });
-        alert('Approval status updated successfully');
+        toast.success('Approved successfully');
       } else {
         // For other roles, first fetch the approval status and then decide on approval
         const response = await axios.get(`${API_URL}/fetch-approved`, {
@@ -1096,31 +1434,47 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
             InMonth: inMonth
           }
         });
-  
+    
         const approvedData = response.data;
-  
+    
         console.log('Response received from API:', response);
         console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
         
         if (!approvedData || approvedData.length === 0) {
           console.log('No approval data found for user:', elem.user_type);
-          return alert('You are not authorized to approve this.');
+          return toast.success('You cannot approve this task because CBSL Site User has not approved the task yet.');
         }
-  
+    
         const userStatus = approvedData[0];
         
         // Verify that userStatus has the expected structure
         console.log('Current approval status:', userStatus);
-  
+    
         if (!userStatus) {
           return alert('Error: User status data is missing.');
         }
-  
+    
         // Approval logic based on the role
         const canUserApprove = canApprove(roleObj, userStatus);
-  
+    
         if (!canUserApprove) {
-          return alert('You are not authorized to approve this.');
+          // Find the highest role that has not approved yet
+          const unapprovedRoles = roleHierarchy.slice(0, roleHierarchy.indexOf(roleObj)).filter(role => {
+            switch (role) {
+              case 'CBSL Site User':
+                return userStatus.IsApprovedCBSL !== 1;
+              case 'PM':
+                return userStatus.IsApprovedPM !== 1;
+              case 'PO':
+                return userStatus.IsApprovedPO !== 1;
+              case 'HR':
+                return userStatus.IsApprovedHR !== 1;
+              default:
+                return false;
+            }
+          });
+          const firstUnapprovedRole = unapprovedRoles[0];
+          return toast.success(`You cannot approve this task because ${firstUnapprovedRole} has not approved the task yet.`);
         }
         
         const postData = {
@@ -1131,9 +1485,9 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           userProfile: elem.userProfile || 0,
           role: roleObj
         };
-  
+    
         console.log('Post data to be sent:', postData);
-  
+    
         // Send approval request
         axios.post(`${API_URL}/approve`, postData)
           .then(response => {
@@ -1149,41 +1503,24 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
               console.log('Updated approval status:', updatedStatus);
               return updatedStatus;
             });
-            alert('Approval status updated successfully');
+            toast.success('Approved successfully');
           })
           .catch(error => {
             console.error('There was an error approving the data!', error);
-            alert(error.response ? error.response.data.message : 'Error approving task');
+            toast.success(error.response ? error.response.data.message : 'Error approving task');
           });
       }
     } catch (error) {
       console.error('Error processing approval:', error);
-      alert('Error processing approval.');
+      toast.success('Already Approved');
     }
   };
   
-  
-  // Helper function for approval logic
-  const canApprove = (role, status) => {
-    if (!status) return false;
-    switch (role) {
-      case 'CBSL Site User':
-        return true; // CBSL Site User can always approve
-      case 'PM':
-        return status.IsApprovedCBSL === 1; // PM can approve only if CBSL Site User has approved
-      case 'PO':
-        return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1; // PO can approve if CBSL Site User and PM have approved
-      case 'HR':
-        return status.IsApprovedCBSL === 1 && status.IsApprovedPM === 1 && status.IsApprovedPO === 1; // HR can approve if all have approved
-      default:
-        return false;
-    }
-  };
-  
-  
+
   const showSiteUserModal = () => {
     setSiteUserModal(true);
   }
+
   const handleSiteUserModalClose = () => {
     setSiteUserModal(false);
   }
