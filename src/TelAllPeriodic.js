@@ -304,6 +304,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   };
 
   useEffect(() => {
+
     const fetchSummaryReport = async () => {
       if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
         console.error("Invalid or undefined userData structure:", userData);
@@ -385,6 +386,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         setIsLoading(false);
       }
     };
+
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -421,6 +423,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           console.error("Error in exporting data:", error);
         });
     };
+
     // const fetchSummaryReport = async () => {
     //   setIsLoading(true);
     //   try {
@@ -518,6 +521,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           setIsLoading(false); // Set loading to false in case of error
         });
     };
+
     fetchPrices();
     fetchUserStatus();
     fetchSummaryReport(userData);
@@ -1341,7 +1345,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           }
         });
         const firstApprovedRole = approvedRoles[0];
-        return toast.success(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
+        return toast.error(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
       }
   
       const postData = {
@@ -1372,7 +1376,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
       toast.success('Rejected successfully');
     } catch (error) {
       console.error('Error processing rejection:', error);
-      toast.success('Already rejected.');
+      toast.success('Rejected successfully');
     }
   };
 
@@ -1442,7 +1446,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         
         if (!approvedData || approvedData.length === 0) {
           console.log('No approval data found for user:', elem.user_type);
-          return toast.success('You cannot approve this task because CBSL Site User has not approved the task yet.');
+          return toast.error('You cannot approve this task because CBSL Site User has not approved the task yet.');
         }
     
         const userStatus = approvedData[0];
@@ -1474,7 +1478,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
             }
           });
           const firstUnapprovedRole = unapprovedRoles[0];
-          return toast.success(`You cannot approve this task because ${firstUnapprovedRole} has not approved the task yet.`);
+          return toast.error(`You cannot approve this task because ${firstUnapprovedRole} has not approved the task yet.`);
         }
         
         const postData = {
@@ -1516,14 +1520,13 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     }
   };
   
-
   const showSiteUserModal = () => {
     setSiteUserModal(true);
-  }
+  };
 
   const handleSiteUserModalClose = () => {
     setSiteUserModal(false);
-  }
+  };
 
   return (
     <>
