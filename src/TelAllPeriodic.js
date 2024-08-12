@@ -8,7 +8,6 @@ import { IoArrowBackCircle } from "react-icons/io5";
 import { FiDownload } from 'react-icons/fi';
 import SiteUserModal from './SiteUser';
 import { toast } from 'react-toastify';
-
 const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
@@ -2046,3 +2045,4 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
 }
 
 export default TelAllPeriodic
+
