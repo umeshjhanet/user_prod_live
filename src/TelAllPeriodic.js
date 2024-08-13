@@ -46,7 +46,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     setIsLoading(true);
     setSelectedUsername(username);
     setLocationName(locationName);
-    fetchUserDetailedReport(username, locationName);
+    fetchUserDetailedReport(username, locationName,startDate,endDate);
     setTimeout(() => {
       setUserView(true);
       setLocationView(false);

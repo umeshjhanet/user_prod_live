@@ -46,7 +46,7 @@ const KarTechPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName);
+    fetchUserDetailedReport(username, locationName,startDate,endDate);
   setTimeout(() => {
     setUserView(true);
     setLocationView(false);

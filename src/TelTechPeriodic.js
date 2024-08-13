@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
+
 const TelTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
 
   const [locationView, setLocationView] = useState(false);
@@ -46,7 +47,7 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName);
+    fetchUserDetailedReport(username, locationName,startDate,endDate);
   setTimeout(() => {
     setUserView(true);
     setLocationView(false);
@@ -1097,7 +1098,11 @@ fetchPrices();
 
             </div>
           </div>
-        )}
+        )} 
+
+
+
+
       </div>
     </>
   );
