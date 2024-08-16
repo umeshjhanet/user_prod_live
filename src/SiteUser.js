@@ -36,7 +36,9 @@ const SiteUser = ({ onClose }) => {
   });
 
   const [editingEmployee, setEditingEmployee] = useState(null); // State for the employee being edited
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [showModal, setShowModal] = useState(false); 
+  const [employeeDetailedCsv, setEmployeeDetailedCsv] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);// State to control modal visibility
 
   const handleDownloadFormat = (e) => {
     e.preventDefault();
@@ -48,6 +50,25 @@ const SiteUser = ({ onClose }) => {
       link.click();
       document.body.removeChild(link);
     }
+  };
+
+  const handleExport = () => {
+    setShowConfirmation(true);
+  };
+  const handleDetailedExport = () => {
+    if (employeeDetailedCsv) {
+      const link = document.createElement("a");
+      link.href = employeeDetailedCsv;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    setShowConfirmation(false);
+  };
+
+  const handleCancelExport = () => {
+    setShowConfirmation(false);
   };
 
   useEffect(() => {
@@ -76,8 +97,22 @@ const SiteUser = ({ onClose }) => {
           setIsLoading(false);
         });
     };
+
+    const fetchDetailedEmployeeCsvFile = () => {
+      let apiUrl = `${API_URL}/downloademployee`;
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setEmployeeDetailedCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+        });
+    };
     fetchDownloadExcel();
     fetchEmployeeDetails();
+    fetchDetailedEmployeeCsvFile();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -331,9 +366,22 @@ const SiteUser = ({ onClose }) => {
             </div>
           </div>
         </div>
-        <div className='row search-report-card'>
-        <div className="row mt-3" style={{overflow:'auto'}}>
-          <h3 className="text-center">Site User Details</h3>
+        <div className="row search-report-card">
+  <div className="row mt-3" style={{ overflow: 'auto' }}>
+    <div className="d-flex justify-content-between align-items-center">
+      <h3 className="text-center mb-0">Site User Details</h3>
+      <button className="btn btn-success ms-3" onClick={handleExport}>Export</button>
+    </div>
+                {showConfirmation && (
+                  <div className="confirmation-dialog">
+                    <div className="confirmation-content">
+                      <p className="fw-bold">Are you sure you want to export the CSV file?</p>
+                      <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                      <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                    </div>
+                  </div>
+                )}
+              
           {isLoading ? (
             <div className="text-center">Loading...</div>
           ) : (
