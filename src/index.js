@@ -35,6 +35,8 @@ import AllProjectDashboard from './AllProjectDashboard';
 import LocationWiseDashboard from './LocationWiseDashboard';
 import PrivateRoute from './PrivateRoute';
 import SiteUser from './SiteUser';
+import Home from './home';
+import TaskTray from './TaskTray';
 
 const App = () => {
  
@@ -43,10 +45,12 @@ const App = () => {
     <Routes>
       <Route path="/" element={<Login />} />
           <Route path="/projects" element={<PrivateRoute element={<Projects />} />} />
+          <Route path="/home" element={<PrivateRoute element={<Home/>} />} />
+          <Route path="/TaskTray" element={<PrivateRoute element={<TaskTray/>} />} />
           <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>
           <Route path="/LocationWiseDashboard" element={<PrivateRoute element={<LocationWiseDashboard />} />}/>
           <Route path="/UPDCDashboard"element={<PrivateRoute element={<Dashboard />} />}/>
-          <Route path="/UPDCDashboard" element={<PrivateRoute element={<NonTechModal />} />}/>
+          <Route path="/uploadNonTechnical" element={<PrivateRoute element={<NonTechModal />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelDashboard />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechModal />} />}/>
           <Route path="/SiteUser"element={<PrivateRoute element={<SiteUser/>} />}/>

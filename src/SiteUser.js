@@ -19,19 +19,20 @@ const SiteUser = ({ onClose }) => {
   const [excelData, setExcelData] = useState(null);
   const [downloadExcel, setDownloadExcel] = useState(null);
   const [newFormData, setNewFormData] = useState({
+    UserName:'',
+    FatherName: '',
     BiomatrixNo: '',
     EmpReferenceNo: '',
     DOJ: '',
     FixedSalary: '',
     Project: '',
     Location: '',
+    SiteManager: '',
     HRcumAdminName: '',
     ProjectManager: '',
     ProjectOwner: '',
     IsActive: '',
-    LastUpdateDate: '',
-    FatherName: '',
-    UserName:''
+    LastUpdateDate: '',   
   });
 
   const [editingEmployee, setEditingEmployee] = useState(null); // State for the employee being edited
@@ -230,16 +231,23 @@ const SiteUser = ({ onClose }) => {
                       </div>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2 ms-0">Emp Reference No:</label>
+                          <label className="mt-2 ms-0">Father Name:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="FatherName" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">Emp. Reference No:</label>
                         </div>
                         <div className="col-8">
                           <input type="text" name="EmpReferenceNo" onChange={handleInputChange} />
                         </div>
                       </div>
-                     
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">DOJ:</label>
+                          <label className="mt-2 ms-0">DOJ:</label>
                         </div>
                         <div className="col-8">
                           <input type="date" name="DOJ" onChange={handleInputChange} />
@@ -247,33 +255,33 @@ const SiteUser = ({ onClose }) => {
                       </div>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">Fixed Salary:</label>
+                          <label className="mt-2 ms-0">Fixed Salary:</label>
                         </div>
                         <div className="col-8">
-                          <input type="number" name="FixedSalary" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2">Project:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="Project" value={newFormData.Project} onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2">Location:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="Location" value={newFormData.Location} onChange={handleInputChange} />
+                          <input type="text" name="FixedSalary" onChange={handleInputChange} />
                         </div>
                       </div>
                       </div>
                       <div className='col-6'>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">HR cum Admin Name:</label>
+                          <label className="mt-2 ms-0">Project:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="Project" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">Location:</label>
+                        </div>
+                        <div className="col-8">
+                          <input type="text" name="Location" onChange={handleInputChange} />
+                        </div>
+                      </div>
+                      <div className="row mt-2">
+                        <div className="col-4">
+                          <label className="mt-2 ms-0">HR cum Admin Name:</label>
                         </div>
                         <div className="col-8">
                           <input type="text" name="HRcumAdminName" onChange={handleInputChange} />
@@ -281,7 +289,7 @@ const SiteUser = ({ onClose }) => {
                       </div>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">Project Manager:</label>
+                          <label className="mt-2 ms-0">Project Manager:</label>
                         </div>
                         <div className="col-8">
                           <input type="text" name="ProjectManager" onChange={handleInputChange} />
@@ -289,7 +297,7 @@ const SiteUser = ({ onClose }) => {
                       </div>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">Project Owner:</label>
+                          <label className="mt-2 ms-0">Project Owner:</label>
                         </div>
                         <div className="col-8">
                           <input type="text" name="ProjectOwner" onChange={handleInputChange} />
@@ -297,7 +305,7 @@ const SiteUser = ({ onClose }) => {
                       </div>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">Is Active:</label>
+                          <label className="mt-2 ms-0">Is Active:</label>
                         </div>
                         <div className="col-8">
                           <input type="text" name="IsActive" onChange={handleInputChange} />
@@ -305,24 +313,14 @@ const SiteUser = ({ onClose }) => {
                       </div>
                       <div className="row mt-2">
                         <div className="col-4">
-                          <label className="mt-2">Last Update Date:</label>
+                          <label className="mt-2 ms-0">Last Update Date:</label>
                         </div>
                         <div className="col-8">
                           <input type="date" name="LastUpdateDate" onChange={handleInputChange} />
                         </div>
                       </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Father's Name:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="FatherName" onChange={handleInputChange} />
-                        </div>
-                      </div>
                       </div>
                     </div>
-                      
-                     
                       <div className="row mt-3 ms-4">
                         <button type="submit">Submit</button>
                       </div>
@@ -332,57 +330,52 @@ const SiteUser = ({ onClose }) => {
               </form>
             </div>
           </div>
-          <div className="row" style={{ padding: '5px', backgroundColor: '#4BC0C0' }}>
-            <h6 className="ms-2" style={{ color: 'white' }}>
-              Manage Employee Details
-            </h6>
-          </div>
-          <div className='row mt-2 search-report-card'>
-          <div className="row mt-2" style={{overflow:'auto'}}>
-            <div className="col-12">
-              <h5>Employee Details</h5>
-              {isLoading ? (
-                <p>Loading...</p>
-              ) : (
-                <table className="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th style={{whiteSpace:'nowrap'}}>Sr.No</th>
-                      <th style={{whiteSpace:'nowrap'}}>User Name</th>
-                      <th style={{whiteSpace:'nowrap'}}>Biomatrix No</th>
-                      <th style={{whiteSpace:'nowrap'}}>Emp Reference No</th>
-                      <th style={{whiteSpace:'nowrap'}}>Father's Name</th>
-                      <th style={{whiteSpace:'nowrap'}}>DOJ</th>
-                      <th style={{whiteSpace:'nowrap'}}>Project</th>
-                      <th style={{whiteSpace:'nowrap'}}>Location</th>
-                      <th style={{whiteSpace:'nowrap'}}>Fixed Salary</th>
-                      <th style={{whiteSpace:'nowrap'}}>HR cum Admin Name</th>
-                      <th style={{whiteSpace:'nowrap'}}>Project Manager</th>
-                      <th style={{whiteSpace:'nowrap'}}>Project Owner</th>
-                      <th style={{whiteSpace:'nowrap'}}>Is Active</th>
-                      <th style={{whiteSpace:'nowrap'}}>Last Update Date</th>
-                      <th style={{whiteSpace:'nowrap'}}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {employee && employee.map((elem, index) => (
-                      <tr key={index}>
-                        <td style={{whiteSpace:'nowrap'}}>{index + 1}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.UserName}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.BiomatrixNo}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.EmpReferenceNo}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.FatherName}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.DOJ}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.Project}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.Location}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.FixedSalary}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.HRcumAdminName}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.ProjectManager}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.ProjectOwner}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.IsActive}</td>
-                        <td style={{whiteSpace:'nowrap'}}>{elem.LastUpdateDate}</td>
-                        <td style={{whiteSpace:'nowrap'}}>
-                          <div className='row'>
+        </div>
+        <div className='row search-report-card'>
+        <div className="row mt-3" style={{overflow:'auto'}}>
+          <h3 className="text-center">Site User Details</h3>
+          {isLoading ? (
+            <div className="text-center">Loading...</div>
+          ) : (
+            <table className="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>User Name</th>
+                  <th>Father Name</th>
+                  <th>Biomatrix No</th>
+                  <th>Emp. Reference No</th>
+                  <th>DOJ</th>
+                  <th>Fixed Salary</th>
+                  <th>Project</th>
+                  <th>Location</th>
+                  <th>HR cum Admin Name</th>
+                  <th>Project Manager</th>
+                  <th>Project Owner</th>
+                  <th>Is Active</th>
+                  <th>Last Update Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {employee.map((elem, index) => (
+                  <tr key={index}>
+                    <td>{elem.userid}</td>
+                    <td>{elem.UserName}</td>
+                    <td>{elem.FatherName}</td>
+                    <td>{elem.BiomatrixNo}</td>
+                    <td>{elem.EmpReferenceNo}</td>
+                    <td>{elem.DOJ}</td>
+                    <td>{elem.FixedSalary}</td>
+                    <td>{elem.Project}</td>
+                    <td>{elem.Location}</td>
+                    <td>{elem.HRcumAdminName}</td>
+                    <td>{elem.ProjectManager}</td>
+                    <td>{elem.ProjectOwner}</td>
+                    <td>{elem.IsActive}</td>
+                    <td>{elem.LastUpdateDate}</td>
+                    <td>
+                    <div className='row'>
                             <div className='col-3'>
                               <button className='btn' onClick={() => handleEdit(elem)}>
                                 <BiSolidEditAlt />
@@ -394,25 +387,30 @@ const SiteUser = ({ onClose }) => {
                                 <RiDeleteBin6Line />
                               </button>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-          </div>
+                            </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
-
-        {/* Modal for editing employee */}
+        </div>
+        {/* Modal for editing employee details */}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
-            <Modal.Title>Edit Employee</Modal.Title>
+            <Modal.Title>Edit Employee Details</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="formBasicUsername">
+                <Form.Label>User Name</Form.Label>
+                <Form.Control type="text" style={{border:'1px solid black'}} name="UserName" value={newFormData.UserName} onChange={handleInputChange} />
+              </Form.Group>
+              <Form.Group controlId="formBasicFatherName">
+                <Form.Label>Father Name</Form.Label>
+                <Form.Control type="text" style={{border:'1px solid black'}} name="FatherName" value={newFormData.FatherName} onChange={handleInputChange} />
+              </Form.Group>
               <Form.Group controlId="formBasicBiomatrixNo">
                 <Form.Label>Biomatrix No</Form.Label>
                 <Form.Control type="text" style={{border:'1px solid black'}} name="BiomatrixNo" value={newFormData.BiomatrixNo} onChange={handleInputChange} />
@@ -423,11 +421,11 @@ const SiteUser = ({ onClose }) => {
               </Form.Group>
               <Form.Group controlId="formBasicDOJ">
                 <Form.Label>DOJ</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="DOJ" value={newFormData.DOJ} onChange={handleInputChange} />
+                <Form.Control type="date" style={{border:'1px solid black'}} name="DOJ" value={newFormData.DOJ} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicFixedSalary">
                 <Form.Label>Fixed Salary</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
+                <Form.Control type="number" style={{border:'1px solid black'}} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicProject">
                 <Form.Label>Project</Form.Label>
@@ -455,18 +453,10 @@ const SiteUser = ({ onClose }) => {
               </Form.Group>
               <Form.Group controlId="formBasicLastUpdateDate">
                 <Form.Label>Last Update Date</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="LastUpdateDate" value={newFormData.LastUpdateDate} onChange={handleInputChange} />
+                <Form.Control type="date" style={{border:'1px solid black'}} name="LastUpdateDate" value={newFormData.LastUpdateDate} onChange={handleInputChange} />
               </Form.Group>
-              <Form.Group controlId="formBasicFatherName">
-                <Form.Label>Father Name</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="FatherName" value={newFormData.FatherName} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicFatherName">
-                <Form.Label>User Name</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="UserName" value={newFormData.UserName} onChange={handleInputChange} />
-              </Form.Group>
-              <Button variant="primary" className='mt-2' type="submit">
-                Update
+              <Button variant="primary" type="submit">
+                Save Changes
               </Button>
             </Form>
           </Modal.Body>
@@ -476,9 +466,8 @@ const SiteUser = ({ onClose }) => {
             </Button>
           </Modal.Footer>
         </Modal>
-
-        <ToastContainer />
       </div>
+      <ToastContainer />
     </>
   );
 };

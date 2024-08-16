@@ -51,7 +51,9 @@ const TelDashboard = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
-    const [siteUserModal,setSiteUserModal] = useState(false);
+    const [siteUserModal, setSiteUserModal] = useState(false);
+    const [ratesData, setRatesData] = useState([]);
+    const [productNames, setProductNames] = useState([]);
 
     useEffect(() => {
         setLocalPrices(prices);
@@ -101,10 +103,10 @@ const TelDashboard = () => {
 
     const showSiteUserModal = () => {
         setSiteUserModal(true);
-      }
-      const handleSiteUserModalClose = () => {
+    }
+    const handleSiteUserModalClose = () => {
         setSiteUserModal(false);
-      }
+    }
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -346,12 +348,50 @@ const TelDashboard = () => {
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
-      
 
+        const fetchData = async () => {
+            try {
+              const response = await axios.get(`${API_URL}/ratesbylocation`);
+              const transformedData = transformData(response.data);
+              console.log('Transformed Data:', transformedData);
+              setRatesData(transformedData.ratesData);
+              setProductNames(transformedData.productNames);
+            } catch (error) {
+              console.error('Error fetching rates data:', error);
+            }
+          };
+      
+          fetchData();
 
         fetchBusinessRate(userData);
 
     }, [userData]);
+    const transformData = (data) => {
+        const locationData = {};
+        const productNamesSet = new Set();
+    
+        data.forEach(item => {
+          if (!locationData[item.LocationName]) {
+            locationData[item.LocationName] = {
+              LocationName: item.LocationName,
+              ProductRates: {},
+              OldRate: item.OldRate,
+              NewRate: item.NewRate,
+              ChangeDate: item.ChangeDate,
+              EffectiveDate: item.EffectiveDate,
+              LastModifiedDate: item.LastModifiedDate
+            };
+          }
+          locationData[item.LocationName].ProductRates[item.ProductName] = item.CurrentRate;
+          productNamesSet.add(item.ProductName);
+        });
+    
+        return {
+          ratesData: Object.values(locationData),
+          productNames: Array.from(productNamesSet),
+        };
+      };
+    
 
     console.log("Summary Data", summaryReport);
 
@@ -489,15 +529,49 @@ const TelDashboard = () => {
                         </>)}
                         {error && <p className='text-danger'>{error}</p>}
                         <div className='row mt-2'>
-                        <div className='col-4'>
-                        <Link to="/SiteUser">
-                        <button className='btn btn-success' style={{width:'250px'}} >Manage Employee Details</button>
-                        </Link>
-                            
+                            <div className='col-4'>
+                                <Link to="/SiteUser">
+                                    <button className='btn btn-success' style={{ width: '250px' }} >Manage Employee Details</button>
+                                </Link>
+
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    
+                    {/* <div className='row'>
+                    <table border="1">
+        <thead>
+          <tr>
+            <th>Location Name</th>
+            {productNames.map((productName, index) => (
+              <th key={index}>{productName}</th>
+            ))}
+            <th>Old Rate</th>
+            <th>New Rate</th>
+            <th>Change Date</th>
+            <th>Effective Date</th>
+            <th>Last Modified Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ratesData.map((location, index) => (
+            <tr key={index}>
+              <td>{location.LocationName}</td>
+              {productNames.map((productName, idx) => (
+                <td key={idx}>
+                  {location.ProductRates[productName] !== undefined ? location.ProductRates[productName] : 'N/A'}
+                </td>
+              ))}
+              <td>{location.OldRate}</td>
+              <td>{location.NewRate}</td>
+              <td>{location.ChangeDate}</td>
+              <td>{location.EffectiveDate}</td>
+              <td>{location.LastModifiedDate}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+                    </div> */}
+
                     {allSelected && (
                         <div className='row mt-2 ms-0 me-0 search-report-card'>
                             <div className='row'>
@@ -613,7 +687,7 @@ const TelDashboard = () => {
             {showAllPeriodicSummary && <TelAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <TelNonTechModal onClose={handleCloseModal} userInfo={userData} />}
-            
+
             <ToastContainer />
         </>
     );
