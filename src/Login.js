@@ -311,13 +311,11 @@ const Login = () => {
     }
   };
 
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     const data = JSON.parse(localStorage.getItem('user'));
     navigateToDestination(data);
   };
-
 
   const navigateToDestination = (data) => {
     if (data.projects && data.projects.includes(1)) {
@@ -330,7 +328,6 @@ const Login = () => {
       navigate('/projects');
     }
   };
-
 
   const handleToggle = () => {
     if (type === 'password') {
