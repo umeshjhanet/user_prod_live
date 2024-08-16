@@ -545,6 +545,39 @@ font-weight: 500;
   width: 400px;
   
 } */
+
+.task-table{
+  height: 500px;
+  overflow-y: auto;
+}
+.approved-card{
+  background-color: white;
+  width: 250px;
+  height: 100px;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+.pending-card{
+  background-color: white;
+  width: 250px;
+  height: 100px;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+.rejected-card{
+  background-color: white;
+  width: 250px;
+  height: 100px;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+.active-card {
+  background-color: lightgray;
+}
+
 .confirmation-dialog{
   display: block; /* Hide modal by default */
   position: fixed;
