@@ -37,6 +37,7 @@ import SiteUser from './SiteUser';
 import Home from './home';
 import TaskTray from './TaskTray';
 import UploadNonTechModal from './uploadNonTechnical';
+import KarTaskTray from './KarTaskTray';
 
 const App = () => {
  
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/projects" element={<PrivateRoute element={<Projects />} />} />
           <Route path="/home" element={<PrivateRoute element={<Home/>} />} />
           <Route path="/TaskTray" element={<PrivateRoute element={<TaskTray/>} />} />
+          <Route path="/KarTaskTray" element={<PrivateRoute element={<KarTaskTray/>} />} />
           <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>
           <Route path="/LocationWiseDashboard" element={<PrivateRoute element={<LocationWiseDashboard />} />}/>
           <Route path="/UPDCDashboard"element={<PrivateRoute element={<Dashboard />} />}/>

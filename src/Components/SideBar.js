@@ -14,6 +14,16 @@ const SideBar = () => {
         }
         return '/projects'; // Default case if no project is assigned or project ID doesn't match
     };
+    const getTaskTrayLink = () => {
+        if (projects.includes(1)) {
+            return '/TaskTray';
+        } else if (projects.includes(2)) {
+            return '/TaskTray';
+        } else if (projects.includes(3)) {
+            return '/KarTaskTray';
+        }
+        return ''; // Default case if no project is assigned or project ID doesn't match
+    };
     const superAdmin = () => {
         return (
             <>
@@ -45,8 +55,13 @@ const SideBar = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="/TaskTray" class="nav-link link-dark">
+                            <a href={getTaskTrayLink()} class="nav-link link-dark">
                                 Approval Workflow
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/user_form" class="nav-link link-dark">
+                                Add User
                             </a>
                         </li>
                         <li>
@@ -91,7 +106,7 @@ const SideBar = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="/TaskTray" class="nav-link link-dark">
+                            <a href={getTaskTrayLink()} class="nav-link link-dark">
                                 Approval Workflow
                             </a>
                         </li>
@@ -138,7 +153,7 @@ const SideBar = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="/TaskTray" class="nav-link link-dark">
+                            <a  href={getTaskTrayLink()}  class="nav-link link-dark">
                                 Approval Workflow
                             </a>
                         </li>
@@ -186,7 +201,7 @@ const SideBar = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="/TaskTray" class="nav-link link-dark">
+                            <a href={getTaskTrayLink()} class="nav-link link-dark">
                                 Approval Workflow
                             </a>
                         </li>

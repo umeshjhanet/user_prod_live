@@ -85,11 +85,11 @@ const Login = () => {
 
   const navigateToDestination = (data) => {
     if (data.projects && data.projects.includes(1)) {
-      navigate('/UPDCDashboard');
+      navigate('/home');
     } else if (data.projects && data.projects.includes(2)) {
       navigate('/home');
     } else if (data.projects && data.projects.includes(3)) {
-      navigate('/KarDashboard');
+      navigate('/home');
     } else {
       navigate('/home');
     }
