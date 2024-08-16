@@ -631,6 +631,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
       setLastColumnTotal(sumOfLastColumn);
     }
   }, [enhancedLocationReport]);
+
   console.log("Location Data", enhancedLocationReport);
   const Loader = () => (
     <div className="loader-overlay">
@@ -639,6 +640,7 @@ const AllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   );
   console.log("LocationWise User's", detailedReportLocationWise);
   console.log("User's", detailedUserReport);
+  
   const handleApprove = (id) => {
     axios.post(`${API_URL}/update-status`, { id, status: 1 })
       .then(response => {

@@ -83,7 +83,6 @@ const Login = () => {
     navigateToDestination(data);
   };
 
-
   const navigateToDestination = (data) => {
     if (data.projects && data.projects.includes(1)) {
       navigate('/UPDCDashboard');
@@ -95,7 +94,6 @@ const Login = () => {
       navigate('/home');
     }
   };
-
 
   const handleToggle = () => {
     if (type === 'password') {
