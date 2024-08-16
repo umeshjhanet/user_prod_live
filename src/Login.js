@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from 'react-icons-kit';
@@ -23,6 +26,7 @@ const Login = () => {
     password: "Invalid password",
     blank: "Please fill in all fields"
   };
+
 
   const renderErrorMessage = (name) =>
     errorMessages[name] && (
@@ -69,6 +73,7 @@ const Login = () => {
     } catch (error) {
       console.error("Error:", error);
       setErrorMessages({ error: "An unexpected error occurred. Please try again later." });
+      setErrorMessages({ error: "An unexpected error occurred. Please try again later." });
     }
   };
 
@@ -77,6 +82,7 @@ const Login = () => {
     const data = JSON.parse(localStorage.getItem('user'));
     navigateToDestination(data);
   };
+
 
   const navigateToDestination = (data) => {
     if (data.projects && data.projects.includes(1)) {
@@ -90,6 +96,7 @@ const Login = () => {
     }
   };
 
+
   const handleToggle = () => {
     if (type === 'password') {
       setIcon(eye);
@@ -99,6 +106,7 @@ const Login = () => {
       setType('password');
     }
   };
+
 
   return (
     <>
@@ -148,5 +156,7 @@ const Login = () => {
     </>
   );
 };
+  
 
 export default Login;
+
