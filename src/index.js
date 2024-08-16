@@ -28,7 +28,6 @@ import TelAllCumulative from './TelAllCumulative';
 import TelAllPeriodic from './TelAllPeriodic';
 import KarAllCumulative from './KarAllCumulative';
 import KarAllPeriodic from './KarAllPeriodic';
-import NonTechModal from './Components/NonTechModal';
 import TelNonTechModal from './Components/TelNonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
 import AllProjectDashboard from './AllProjectDashboard';
@@ -37,6 +36,7 @@ import PrivateRoute from './PrivateRoute';
 import SiteUser from './SiteUser';
 import Home from './home';
 import TaskTray from './TaskTray';
+import UploadNonTechModal from './uploadNonTechnical';
 
 const App = () => {
  
@@ -50,7 +50,7 @@ const App = () => {
           <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>
           <Route path="/LocationWiseDashboard" element={<PrivateRoute element={<LocationWiseDashboard />} />}/>
           <Route path="/UPDCDashboard"element={<PrivateRoute element={<Dashboard />} />}/>
-          <Route path="/uploadNonTechnical" element={<PrivateRoute element={<NonTechModal />} />}/>
+          <Route path="/uploadNonTechnical" element={<PrivateRoute element={<UploadNonTechModal />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelDashboard />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechModal />} />}/>
           <Route path="/SiteUser"element={<PrivateRoute element={<SiteUser/>} />}/>

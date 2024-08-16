@@ -3,10 +3,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
-import { API_URL } from '../API';
+import { API_URL } from './API';
 import { FiDownload } from 'react-icons/fi';
 
-const NonTechModal = () => {
+const UploadNonTechModal = () => {
     const userInfo = JSON.parse(localStorage.getItem('user'));
   const { projects = [], locations = [] } = userInfo;
   const projectId = projects[0];
@@ -236,4 +236,4 @@ const NonTechModal = () => {
   );
 }
 
-export default NonTechModal;
+export default UploadNonTechModal;
