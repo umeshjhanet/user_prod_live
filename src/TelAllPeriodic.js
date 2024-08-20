@@ -1613,64 +1613,62 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     console.log("Approval Status Initialized:", initialStatus);
   };
   
-  const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
+  const fetchUserDetailedReport = async (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
+    const formatDate = (date) => date.toISOString().split('T')[0];
+
     setIsLoading(true);
     setDetailedUserReport([]);
-    axios.get(`${API_URL}/alluserdetailedreportlocationwisetelangana`, {
-      params: {
-        username: username,
-        locationName: locationName,
-        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-      }
-    })
-      .then((response) => {
-        setDetailedUserReport(response.data)
+
+    try {
+        const response = await axios.get(`${API_URL}/alluserdetailedreportlocationwisetelangana`, {
+            params: {
+                username: username,
+                locationName: locationName,
+                startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+                endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+            }
+        });
+        setDetailedUserReport(response.data);
         initializeApprovalStatus(response.data);
-        setIsLoading(false);
-      })
-     
-      .catch((error) => {
+    } catch (error) {
         console.error("Error fetching user detailed report:", error);
+    } finally {
         setIsLoading(false);
-      });
-     
-  };
-
-  const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
-
-    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvtelangana`;
-
-    if (locationName && formattedStartDate && formattedEndDate) {
-      apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    } else if (locationName) {
-      apiUrl += `?locationName=${locationName}`;
-    } else if (formattedStartDate && formattedEndDate) {
-      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
-    setIsLoading(true);
-    axios.get(apiUrl, { responseType: "blob" })
-      .then((response) => {
-        const blob = new Blob([response.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        setDetailedLocationWiseCsv(url);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error in exporting data:", error);
-        setIsLoading(false);
-      });
-  };
+};
+
+
+const fetchDetailedLocationWiseReportCsvFile = async (locationName, startDate, endDate) => {
+  const formattedStartDate = startDate ? new Date(startDate) : null;
+  const formattedEndDate = endDate ? new Date(endDate) : null;
+  const formatDate = (date) => date.toISOString().split('T')[0];
+
+  let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvtelangana`;
+
+  if (locationName && formattedStartDate && formattedEndDate) {
+      apiUrl += `?locationName=${encodeURIComponent(locationName)}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  } else if (locationName) {
+      apiUrl += `?locationName=${encodeURIComponent(locationName)}`;
+  } else if (formattedStartDate && formattedEndDate) {
+      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  }
+
+  setIsLoading(true);
+
+  try {
+      const response = await axios.get(apiUrl, { responseType: "blob" });
+      const blob = new Blob([response.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      setDetailedLocationWiseCsv(url);
+  } catch (error) {
+      console.error("Error in exporting data:", error);
+  } finally {
+      setIsLoading(false);
+  }
+};
+
 
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -1787,42 +1785,77 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
       }
     };
 
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    // const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    //   const formattedStartDate = startDate ? new Date(startDate) : null;
+    //   const formattedEndDate = endDate ? new Date(endDate) : null;
+    //   const formatDate = (date) => {
+    //     return date.toISOString().split('T')[0];
+    //   };
+
+    //   const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    //   let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
+
+    //   // Check if userData meets the conditions to include the locationName parameter
+    //   const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+    //   const hasSingleProject = userData.projects[0] === 2;
+    //   const locationNameWithDistrictCourt = `${locationName}`;
+    //   const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
+
+    //   if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+    //     apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+    //   }
+
+    //   if (formattedStartDate && formattedEndDate) {
+    //     // Determine whether to use '?' or '&' based on existing query parameters
+    //     apiUrl += apiUrl.includes('?') ? '&' : '?';
+    //     apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    //   }
+
+    //   axios.get(apiUrl, { responseType: "blob" })
+    //     .then((response) => {
+    //       const blob = new Blob([response.data], { type: "text/csv" });
+    //       const url = window.URL.createObjectURL(blob);
+    //       setDetailedCsv(url);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error in exporting data:", error);
+    //     });
+    // };
+
+    const fetchDetailedReportCsvFile = async (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
-
+      const formatDate = (date) => date.toISOString().split('T')[0];
+  
       const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
-
+  
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = userData.user_roles.includes("CBSL Site User");
       const hasSingleProject = userData.projects[0] === 2;
       const locationNameWithDistrictCourt = `${locationName}`;
       const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
-
+  
       if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
       }
-
+  
       if (formattedStartDate && formattedEndDate) {
-        // Determine whether to use '?' or '&' based on existing query parameters
-        apiUrl += apiUrl.includes('?') ? '&' : '?';
-        apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+          // Determine whether to use '?' or '&' based on existing query parameters
+          apiUrl += apiUrl.includes('?') ? '&' : '?';
+          apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-
-      axios.get(apiUrl, { responseType: "blob" })
-        .then((response) => {
+  
+      try {
+          const response = await axios.get(apiUrl, { responseType: "blob" });
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
           setDetailedCsv(url);
-        })
-        .catch((error) => {
+      } catch (error) {
           console.error("Error in exporting data:", error);
-        });
-    };
+      }
+  };
+  
 
     // const fetchSummaryReport = async () => {
     //   setIsLoading(true);
@@ -3219,7 +3252,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
             </div>
           </div>
         )}
-        {userView && !isLoading && showModal && (
+        {/* {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
@@ -3407,7 +3440,204 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
+
+
+{userView && !isLoading && showModal && (
+  <div className="custom-modal-overlay">
+    <div className="custom-modal">
+      <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+        <h6 className="" style={{ color: "white" }}>
+          User Wise Detailed Report
+        </h6>
+        <button type="button" className="btn btn-danger" onClick={toggleModal}>
+          <IoMdCloseCircle />
+        </button>
+      </div>
+      <div className="row">
+        <div className="col-1">
+          <IoArrowBackCircle style={{ height: '30px', width: '30px' }} onClick={handleBackToLocationView} />
+        </div>
+      </div>
+      <div className="modal-body">
+        {/* Display Distinct Date Count */}
+        <div className="row mt-3">
+          <div className="col-12">
+            <p className="fw-bold">
+              Number Of Working Days: {detailedUserReport ? new Set(detailedUserReport.map(item => item.Date)).size : 0}
+            </p>
+          </div>
+        </div>
+        <div className="search-report-card">
+          <div className="row">
+            <div className="col-2">
+              <p>Total row(s): {detailedUserReport ? detailedUserReport.length : 0}</p>
+            </div>
+            <div className="col-8"></div>
+            <div className="col-md-2">
+              <button className="btn btn-success" onClick={handleUserExport}>
+                Export CSV
+              </button>
+            </div>
+            <div className="col-md-6 text-end">
+              {showConfirmationUser && (
+                <div className="confirmation-dialog">
+                  <div className="confirmation-content">
+                    <p className="fw-bold">
+                      Are you sure you want to export the CSV file?
+                    </p>
+                    <button className="btn btn-success mt-3 ms-5" onClick={handleUserWiseExport}>
+                      Yes
+                    </button>
+                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelUserExport}>
+                      No
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="modal-table row ms-2 me-2">
+            <table className="table-modal mt-2">
+              <thead>
+                <tr>
+                  <th>Sr.No.</th>
+                  <th>Location</th>
+                  <th>User Name</th>
+                  <th style={{ width: '200px' }}>Date</th>
+                  <th>Lot No</th>
+                  <th>Inventory</th>
+                  <th>Counting</th>
+                  <th>DocPre</th>
+                  <th>Other</th>
+                  <th>Scanned</th>
+                  <th>QC</th>
+                  <th>Flagging</th>
+                  <th>Indexing</th>
+                  <th>CBSL-QA</th>
+                  <th>Client-QA</th>
+                  <th>Expense</th>
+                </tr>
+              </thead>
+              <tbody>
+                {detailedUserReport && detailedUserReport.map((elem, index) => {
+                  const normalizeName = (name) =>
+                    name ? name.replace(/district court/gi, "").trim() : "";
+                  const normalizedLocationName = normalizeName(elem.locationName);
+                  const priceData = price.find(
+                    (price) => normalizeName(price.LocationName) === normalizedLocationName
+                  );
+                  const scanRate = priceData?.ScanRate || 0;
+                  const qcRate = priceData?.QcRate || 0;
+                  const indexRate = priceData?.IndexRate || 0;
+                  const flagRate = priceData?.FlagRate || 0;
+                  const cbslQaRate = priceData?.CbslQaRate || 0;
+                  const clientQcRate = priceData?.ClientQcRate || 0;
+                  const countingRate = priceData?.CountingRate || 0;
+                  const inventoryRate = priceData?.InventoryRate || 0;
+                  const docPreparationRate = priceData?.DocPreparationRate || 0;
+                  const guardRate = priceData?.GuardRate || 0;
+                  const scanned = isNaN(Number(elem.Scanned)) ? 0 : Number(elem.Scanned);
+                  const qc = isNaN(Number(elem.QC)) ? 0 : Number(elem.QC);
+                  const indexing = isNaN(Number(elem.Indexing)) ? 0 : Number(elem.Indexing);
+                  const flagging = isNaN(Number(elem.Flagging)) ? 0 : Number(elem.Flagging);
+                  const cbslQa = isNaN(Number(elem.CBSL_QA)) ? 0 : Number(elem.CBSL_QA);
+                  const clientQc = isNaN(Number(elem.Client_QC)) ? 0 : Number(elem.Client_QC);
+                  const counting = isNaN(Number(elem.Counting)) ? 0 : Number(elem.Counting);
+                  const inventory = isNaN(Number(elem.Inventory)) ? 0 : Number(elem.Inventory);
+                  const docPreparation = isNaN(Number(elem.DocPreparation)) ? 0 : Number(elem.DocPreparation);
+                  const guard = isNaN(Number(elem.Guard)) ? 0 : Number(elem.Guard);
+                  const scannedRate = scanned * scanRate;
+                  const qcRateTotal = qc * qcRate;
+                  const indexRateTotal = indexing * indexRate;
+                  const flagRateTotal = flagging * flagRate;
+                  const cbslQaRateTotal = cbslQa * cbslQaRate;
+                  const clientQcRateTotal = clientQc * clientQcRate;
+                  const countingRateTotal = counting * countingRate;
+                  const inventoryRateTotal = inventory * inventoryRate;
+                  const docPreparationRateTotal = docPreparation * docPreparationRate;
+                  const otherRate = guard * guardRate;
+                  const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td style={{ whiteSpace: 'nowrap' }}>{elem.locationName}</td>
+                      <td style={{ whiteSpace: 'nowrap' }}>{elem.user_type || 0}</td>
+                      <td style={{ whiteSpace: 'nowrap' }} >{elem.Date}</td>
+                      <td>{elem.lotno}</td>
+                      <td>{inventory.toLocaleString()}</td>
+                      <td>{counting.toLocaleString()}</td>
+                      <td>{docPreparation.toLocaleString()}</td>
+                      <td>{guard.toLocaleString()}</td>
+                      <td>{scanned.toLocaleString()}</td>
+                      <td>{qc.toLocaleString()}</td>
+                      <td>{flagging.toLocaleString()}</td>
+                      <td>{indexing.toLocaleString()}</td>
+                      <td>{cbslQa.toLocaleString()}</td>
+                      <td>{clientQc.toLocaleString()}</td>
+                      <td>{totalRate.toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+                <tr style={{ color: "black" }}>
+                  <td colSpan="5">
+                    <strong>Total</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Inventory.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Counting.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.DocPreparation.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Guard.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Indexing.toFixed(2).toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                  </td>
+                  <td>
+                    <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+            <div className='row mt-2'>
+              <div className='col-10'></div>
+              <div className='col-1'>
+                <button className='btn btn-success' onClick={() => handleApprove(0)}>Approve</button>
+              </div>
+              <div className='col-1'>
+                <button className='btn btn-danger' onClick={() => handleReject(0)}>Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
       </div>
 
     </>

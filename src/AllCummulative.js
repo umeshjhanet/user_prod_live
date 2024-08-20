@@ -1007,7 +1007,9 @@ const AllCummulative = ({ userData }) => {
           </div>
         </div>
       )}
-      
+      {isLoading && (
+  <div className="loader"></div>
+)}
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
@@ -1026,6 +1028,11 @@ const AllCummulative = ({ userData }) => {
               </div>
               <div className="modal-body">
                 <div className="row mt-3" ref={ref}>
+                <div className="col-12">
+            <p className="fw-bold">
+              Number Of Working Days: {detailedUserReport ? new Set(detailedUserReport.map(item => item.Date)).size : 0}
+            </p>
+          </div>
                   <div className="search-report-card">
                     <div className="row">
                       <div className="col-2">
