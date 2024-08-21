@@ -292,6 +292,7 @@ const TaskTray = () => {
                             <th>Indexing</th>
                             <th>CBSL QA</th>
                             <th>Client QC</th>
+                            <th>Working Days</th>
                             <th>Remarks</th>
                             <th>Actions</th>
                         </tr>
@@ -309,6 +310,7 @@ const TaskTray = () => {
                                 <td>{elem.Indexing}</td>
                                 <td>{elem.CBSL_QA}</td>
                                 <td>{elem.Client_QC}</td>
+                                <td>{elem.DistinctDateCount}</td>
                                 <td style={{whiteSpace:'nowrap'}}>{elem.Remarks}</td>
                                 <td>
                                     <div className='row mt-2'>
