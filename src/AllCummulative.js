@@ -1010,6 +1010,7 @@ const AllCummulative = ({ userData }) => {
       {isLoading && (
   <div className="loader"></div>
 )}
+
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
