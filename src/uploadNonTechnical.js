@@ -34,10 +34,6 @@ const UploadNonTechModal = () => {
     Guard: '',
   });
 
-
-
- 
-
   const handleDownloadFormat = (e) => {
     e.preventDefault();
     if (downloadExcel) {

@@ -85,13 +85,13 @@ const Login = () => {
 
   const navigateToDestination = (data) => {
     if (data.projects && data.projects.includes(1)) {
-      navigate('/home');
+      navigate('/UPDCDashboard');
     } else if (data.projects && data.projects.includes(2)) {
-      navigate('/home');
+      navigate('/TelDashboard');
     } else if (data.projects && data.projects.includes(3)) {
-      navigate('/home');
+      navigate('/KarDashboard');
     } else {
-      navigate('/home');
+      navigate('/projects');
     }
   };
 

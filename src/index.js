@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Components/Header';
 import Login from './Login';
 import User_Form from './User_Form';
-import Dashboard from './UPDCDashboard';
+import UPDCDashboard from './UPDCDashboard';
 import PeriodicSummaryReport from './periodicSummaryReport';
 import CumulativeSummaryReport from './cumulativeSummaryReport';
 import Projects from './projects';
@@ -38,6 +38,7 @@ import Home from './home';
 import TaskTray from './TaskTray';
 import UploadNonTechModal from './uploadNonTechnical';
 import KarTaskTray from './KarTaskTray';
+import DynamicDashboard from './Dashboard';
 
 const App = () => {
  
@@ -47,11 +48,12 @@ const App = () => {
       <Route path="/" element={<Login />} />
           <Route path="/projects" element={<PrivateRoute element={<Projects />} />} />
           <Route path="/home" element={<PrivateRoute element={<Home/>} />} />
+          <Route path="/Dashboard/:projectId" element={<PrivateRoute element={<DynamicDashboard />} />} />
           <Route path="/TaskTray" element={<PrivateRoute element={<TaskTray/>} />} />
           <Route path="/KarTaskTray" element={<PrivateRoute element={<KarTaskTray/>} />} />
           <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>
           <Route path="/LocationWiseDashboard" element={<PrivateRoute element={<LocationWiseDashboard />} />}/>
-          <Route path="/UPDCDashboard"element={<PrivateRoute element={<Dashboard />} />}/>
+          <Route path="/UPDCDashboard"element={<PrivateRoute element={<UPDCDashboard />} />}/>
           <Route path="/uploadNonTechnical" element={<PrivateRoute element={<UploadNonTechModal />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelDashboard />} />}/>
           <Route path="/TelDashboard"element={<PrivateRoute element={<TelNonTechModal />} />}/>

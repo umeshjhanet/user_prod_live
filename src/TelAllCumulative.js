@@ -647,7 +647,11 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices, userData }) =>
   return (
     <>
       {isLoading && <Loader />}
-      <div className={`container mb-5 ${isLoading ? 'blur' : ''}`}>
+      <div className={`container-fluid mb-5 ${isLoading ? 'blur' : ''}`}>
+        <div className='row'>
+          <div className='col-2'></div>
+          <div className='col-9 ms-5'>
+       
         <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
@@ -1117,6 +1121,8 @@ const TelAllCumulative = ({ multipliedData, prices, editedPrices, userData }) =>
             </div>
           </div>
         )}
+        </div>
+        </div>
       </div>
     </>
   )

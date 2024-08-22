@@ -623,6 +623,9 @@ import Header from './Components/Header';
 import { BiSolidEditAlt } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { Modal, Button, Form } from 'react-bootstrap'; // Import Modal and Form
+import { FaHome } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import SideBar from './Components/SideBar';
 
 const SiteUser = ({ onClose }) => {
   const [excelSelected, setExcelSelected] = useState(true);
@@ -644,7 +647,7 @@ const SiteUser = ({ onClose }) => {
   const [selectedLocationName, setSelectedLocationName] = useState('');
   const [downloadExcel, setDownloadExcel] = useState(null);
   const [newFormData, setNewFormData] = useState({
-    UserName:'',
+    UserName: '',
     FatherName: '',
     BiomatrixNo: '',
     EmpReferenceNo: '',
@@ -656,11 +659,11 @@ const SiteUser = ({ onClose }) => {
     ProjectManager: '',
     ProjectOwner: '',
     IsActive: '',
-    LastUpdateDate: '',   
+    LastUpdateDate: '',
   });
 
   const [editingEmployee, setEditingEmployee] = useState(null); // State for the employee being edited
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
   const [employeeDetailedCsv, setEmployeeDetailedCsv] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);// State to control modal visibility
 
@@ -944,15 +947,19 @@ const SiteUser = ({ onClose }) => {
   return (
     <>
       <Header />
-      <div className="container mt-3">
-        <div className="row" style={{ overflowY: 'auto' }}>
-          <div className="row" style={{ padding: '5px', backgroundColor: '#4BC0C0' }}>
-            <h6 className="ms-2" style={{ color: 'white' }}>
-              Upload Employee Details
-            </h6>
+      <div className="container-fluid mt-3">
+        <div className='row'>
+          <div className='col-2'>
+            <SideBar />
           </div>
-          <div className="row ">
-            <div className="row">
+          <div className='col-9 ms-5'>
+            <div className="row" style={{ overflowY: 'auto' }}>
+              <div className="row" style={{ padding: '5px', backgroundColor: '#4BC0C0' }}>
+                <h6 className="ms-2" style={{ color: 'white' }}>
+                  Upload Employee Details
+                </h6>
+              </div>
+
               <form className="non-tech mb-5" onSubmit={handleSubmit}>
                 <div className="row mt-2  search-report-card">
                   <div className="row upload-options ms-1">
@@ -971,16 +978,11 @@ const SiteUser = ({ onClose }) => {
 
                   {excelSelected && (
                     <>
-                      <div className="row ms-2 justify-content-end">
-                        <button className="non-tech mt-1 d-flex align-items-center" onClick={handleDownloadFormat}>
-                          <FiDownload className="me-2" />Format
-                        </button>
-                      </div>
-                      <div className="row mt-0">
+                      <div className="row mt-1">
                         <div className="col-2">
                           <label className="mt-0">Upload Excel:</label>
                         </div>
-                        <div className="col-10 mt-0">
+                        <div className="col-8 mt-0">
                           <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
                         </div>
                       </div>
@@ -989,7 +991,7 @@ const SiteUser = ({ onClose }) => {
                       </div>
                     </>
                   )}
-                   {manualSelected && (
+                  {manualSelected && (
                     <>
                     <div className='row'>
                       <div className='col-6'>
@@ -1162,86 +1164,74 @@ const SiteUser = ({ onClose }) => {
                   )}
                 </div>
               </form>
+
+            </div>
+            <div className="row search-report-card">
+            <h3>Site User Details</h3>
+              <div  style={{ overflow: 'auto',height:'500px' }}>
+                {isLoading ? (
+                  <div className="text-center">Loading...</div>
+                ) : (
+                  <table className="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Father Name</th>
+                        <th>Biomatrix No</th>
+                        <th>Emp. Reference No</th>
+                        <th>DOJ</th>
+                        <th>Fixed Salary</th>
+                        <th>Project</th>
+                        <th>Location</th>
+                        <th>HR cum Admin Name</th>
+                        <th>Project Manager</th>
+                        <th>Project Owner</th>
+                        <th>Is Active</th>
+                        <th>Last Update Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {employee.map((elem, index) => (
+                        <tr key={index}>
+                          <td>{elem.userid}</td>
+                          <td>{elem.UserName}</td>
+                          <td>{elem.FatherName}</td>
+                          <td>{elem.BiomatrixNo}</td>
+                          <td>{elem.EmpReferenceNo}</td>
+                          <td>{elem.DOJ}</td>
+                          <td>{elem.FixedSalary}</td>
+                          <td>{elem.Project}</td>
+                          <td>{elem.Location}</td>
+                          <td>{elem.HRcumAdminName}</td>
+                          <td>{elem.ProjectManager}</td>
+                          <td>{elem.ProjectOwner}</td>
+                          <td>{elem.IsActive}</td>
+                          <td>{elem.LastUpdateDate}</td>
+                          <td>
+                            <div className='row'>
+                              <div className='col-3'>
+                                <button className='btn' onClick={() => handleEdit(elem)}>
+                                  <BiSolidEditAlt />
+                                </button>
+                              </div>
+                              <div className='col-2'></div>
+                              <div className='col-3'>
+                                <button className='btn' onClick={() => handleDelete(elem.userid)}>
+                                  <RiDeleteBin6Line />
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="row search-report-card">
-  <div className="row mt-3" style={{ overflow: 'auto' }}>
-    <div className="d-flex justify-content-between align-items-center">
-      <h3 className="text-center mb-0">Site User Details</h3>
-      <button className="btn btn-success ms-3" onClick={handleExport}>Export</button>
-    </div>
-                {showConfirmation && (
-                  <div className="confirmation-dialog">
-                    <div className="confirmation-content">
-                      <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                      <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                      <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                    </div>
-                  </div>
-                )}
-              
-          {isLoading ? (
-            <div className="text-center">Loading...</div>
-          ) : (
-            <table className="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>User ID</th>
-                  <th>User Name</th>
-                  <th>Father Name</th>
-                  <th>Biomatrix No</th>
-                  <th>Emp. Reference No</th>
-                  <th>DOJ</th>
-                  <th>Fixed Salary</th>
-                  <th>Project</th>
-                  <th>Location</th>
-                  <th>HR cum Admin Name</th>
-                  <th>Project Manager</th>
-                  <th>Project Owner</th>
-                  <th>Is Active</th>
-                  <th>Last Update Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {employee.map((elem, index) => (
-                  <tr key={index}>
-                    <td>{elem.userid}</td>
-                    <td>{elem.UserName}</td>
-                    <td>{elem.FatherName}</td>
-                    <td>{elem.BiomatrixNo}</td>
-                    <td>{elem.EmpReferenceNo}</td>
-                    <td>{elem.DOJ}</td>
-                    <td>{elem.FixedSalary}</td>
-                    <td>{elem.Project}</td>
-                    <td>{elem.Location}</td>
-                    <td>{elem.HRcumAdminName}</td>
-                    <td>{elem.ProjectManager}</td>
-                    <td>{elem.ProjectOwner}</td>
-                    <td>{elem.IsActive}</td>
-                    <td>{elem.LastUpdateDate}</td>
-                    <td>
-                    <div className='row'>
-                            <div className='col-3'>
-                              <button className='btn' onClick={() => handleEdit(elem)}>
-                                <BiSolidEditAlt />
-                              </button>
-                            </div>
-                            <div className='col-2'></div>
-                            <div className='col-3'>
-                              <button className='btn' onClick={() => handleDelete(elem.userid)}>
-                                <RiDeleteBin6Line />
-                              </button>
-                            </div>
-                            </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
         </div>
         {/* Modal for editing employee details */}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -1252,27 +1242,27 @@ const SiteUser = ({ onClose }) => {
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="formBasicUsername">
                 <Form.Label>User Name</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="UserName" value={newFormData.UserName} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="UserName" value={newFormData.UserName} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicFatherName">
                 <Form.Label>Father Name</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="FatherName" value={newFormData.FatherName} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="FatherName" value={newFormData.FatherName} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicBiomatrixNo">
                 <Form.Label>Biomatrix No</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="BiomatrixNo" value={newFormData.BiomatrixNo} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="BiomatrixNo" value={newFormData.BiomatrixNo} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicEmpReferenceNo">
                 <Form.Label>Emp Reference No</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="EmpReferenceNo" value={newFormData.EmpReferenceNo} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="EmpReferenceNo" value={newFormData.EmpReferenceNo} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicDOJ">
                 <Form.Label>DOJ</Form.Label>
-                <Form.Control type="date" style={{border:'1px solid black'}} name="DOJ" value={newFormData.DOJ} onChange={handleInputChange} />
+                <Form.Control type="date" style={{ border: '1px solid black' }} name="DOJ" value={newFormData.DOJ} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicFixedSalary">
                 <Form.Label>Fixed Salary</Form.Label>
-                <Form.Control type="number" style={{border:'1px solid black'}} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
+                <Form.Control type="number" style={{ border: '1px solid black' }} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicProject">
                <Form.Label>Project</Form.Label>
@@ -1280,27 +1270,27 @@ const SiteUser = ({ onClose }) => {
              </Form.Group>
                <Form.Group controlId="formBasicLocation">
                 <Form.Label>Location</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="Location" value={newFormData.Location} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="Location" value={newFormData.Location} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicHRcumAdminName">
                 <Form.Label>HR cum Admin Name</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="HRcumAdminName" value={newFormData.HRcumAdminName} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="HRcumAdminName" value={newFormData.HRcumAdminName} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicProjectManager">
                 <Form.Label>Project Manager</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="ProjectManager" value={newFormData.ProjectManager} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="ProjectManager" value={newFormData.ProjectManager} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicProjectOwner">
                 <Form.Label>Project Owner</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="ProjectOwner" value={newFormData.ProjectOwner} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="ProjectOwner" value={newFormData.ProjectOwner} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicIsActive">
                 <Form.Label>Is Active</Form.Label>
-                <Form.Control type="text" style={{border:'1px solid black'}} name="IsActive" value={newFormData.IsActive} onChange={handleInputChange} />
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="IsActive" value={newFormData.IsActive} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicLastUpdateDate">
                 <Form.Label>Last Update Date</Form.Label>
-                <Form.Control type="date" style={{border:'1px solid black'}} name="LastUpdateDate" value={newFormData.LastUpdateDate} onChange={handleInputChange} />
+                <Form.Control type="date" style={{ border: '1px solid black' }} name="LastUpdateDate" value={newFormData.LastUpdateDate} onChange={handleInputChange} />
               </Form.Group>
               <Button variant="primary" type="submit">
                 Save Changes
