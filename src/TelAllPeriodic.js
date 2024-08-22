@@ -1613,64 +1613,62 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
     console.log("Approval Status Initialized:", initialStatus);
   };
   
-  const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
+  const fetchUserDetailedReport = async (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
+    const formatDate = (date) => date.toISOString().split('T')[0];
+
     setIsLoading(true);
     setDetailedUserReport([]);
-    axios.get(`${API_URL}/alluserdetailedreportlocationwisetelangana`, {
-      params: {
-        username: username,
-        locationName: locationName,
-        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-      }
-    })
-      .then((response) => {
-        setDetailedUserReport(response.data)
+
+    try {
+        const response = await axios.get(`${API_URL}/alluserdetailedreportlocationwisetelangana`, {
+            params: {
+                username: username,
+                locationName: locationName,
+                startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
+                endDate: formattedEndDate ? formatDate(formattedEndDate) : null
+            }
+        });
+        setDetailedUserReport(response.data);
         initializeApprovalStatus(response.data);
-        setIsLoading(false);
-      })
-     
-      .catch((error) => {
+    } catch (error) {
         console.error("Error fetching user detailed report:", error);
+    } finally {
         setIsLoading(false);
-      });
-     
-  };
-
-  const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
-
-    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvtelangana`;
-
-    if (locationName && formattedStartDate && formattedEndDate) {
-      apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    } else if (locationName) {
-      apiUrl += `?locationName=${locationName}`;
-    } else if (formattedStartDate && formattedEndDate) {
-      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
     }
-    setIsLoading(true);
-    axios.get(apiUrl, { responseType: "blob" })
-      .then((response) => {
-        const blob = new Blob([response.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        setDetailedLocationWiseCsv(url);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error in exporting data:", error);
-        setIsLoading(false);
-      });
-  };
+};
+
+
+const fetchDetailedLocationWiseReportCsvFile = async (locationName, startDate, endDate) => {
+  const formattedStartDate = startDate ? new Date(startDate) : null;
+  const formattedEndDate = endDate ? new Date(endDate) : null;
+  const formatDate = (date) => date.toISOString().split('T')[0];
+
+  let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvtelangana`;
+
+  if (locationName && formattedStartDate && formattedEndDate) {
+      apiUrl += `?locationName=${encodeURIComponent(locationName)}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  } else if (locationName) {
+      apiUrl += `?locationName=${encodeURIComponent(locationName)}`;
+  } else if (formattedStartDate && formattedEndDate) {
+      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+  }
+
+  setIsLoading(true);
+
+  try {
+      const response = await axios.get(apiUrl, { responseType: "blob" });
+      const blob = new Blob([response.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      setDetailedLocationWiseCsv(url);
+  } catch (error) {
+      console.error("Error in exporting data:", error);
+  } finally {
+      setIsLoading(false);
+  }
+};
+
 
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
@@ -1787,42 +1785,77 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
       }
     };
 
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    // const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    //   const formattedStartDate = startDate ? new Date(startDate) : null;
+    //   const formattedEndDate = endDate ? new Date(endDate) : null;
+    //   const formatDate = (date) => {
+    //     return date.toISOString().split('T')[0];
+    //   };
+
+    //   const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+    //   let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
+
+    //   // Check if userData meets the conditions to include the locationName parameter
+    //   const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+    //   const hasSingleProject = userData.projects[0] === 2;
+    //   const locationNameWithDistrictCourt = `${locationName}`;
+    //   const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
+
+    //   if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+    //     apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+    //   }
+
+    //   if (formattedStartDate && formattedEndDate) {
+    //     // Determine whether to use '?' or '&' based on existing query parameters
+    //     apiUrl += apiUrl.includes('?') ? '&' : '?';
+    //     apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    //   }
+
+    //   axios.get(apiUrl, { responseType: "blob" })
+    //     .then((response) => {
+    //       const blob = new Blob([response.data], { type: "text/csv" });
+    //       const url = window.URL.createObjectURL(blob);
+    //       setDetailedCsv(url);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error in exporting data:", error);
+    //     });
+    // };
+
+    const fetchDetailedReportCsvFile = async (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
-      const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
-      };
-
+      const formatDate = (date) => date.toISOString().split('T')[0];
+  
       const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/detailedreportcummulativecsvtelangana`;
-
+  
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = userData.user_roles.includes("CBSL Site User");
       const hasSingleProject = userData.projects[0] === 2;
       const locationNameWithDistrictCourt = `${locationName}`;
       const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
-
+  
       if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
       }
-
+  
       if (formattedStartDate && formattedEndDate) {
-        // Determine whether to use '?' or '&' based on existing query parameters
-        apiUrl += apiUrl.includes('?') ? '&' : '?';
-        apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+          // Determine whether to use '?' or '&' based on existing query parameters
+          apiUrl += apiUrl.includes('?') ? '&' : '?';
+          apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-
-      axios.get(apiUrl, { responseType: "blob" })
-        .then((response) => {
+  
+      try {
+          const response = await axios.get(apiUrl, { responseType: "blob" });
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
           setDetailedCsv(url);
-        })
-        .catch((error) => {
+      } catch (error) {
           console.error("Error in exporting data:", error);
-        });
-    };
+      }
+  };
+  
 
     // const fetchSummaryReport = async () => {
     //   setIsLoading(true);
@@ -2810,7 +2843,7 @@ const TelAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
             </div>
           </div>
         )}
-        {userView && !isLoading && showModal && (
+         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
               <div className="modal-header" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>

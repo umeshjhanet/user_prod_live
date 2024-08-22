@@ -248,12 +248,14 @@
 
 
 import React, { useState } from 'react';
-import { Link, navigate, useLocation } from 'react-router-dom'; // Assuming you use react-router-dom
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Assuming you use react-router-dom
+
 
 const SideBar = () => {
     const userLog = JSON.parse(localStorage.getItem('user'));
     const projects = userLog ? userLog.projects : [];
     const location = useLocation();
+    const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/');
