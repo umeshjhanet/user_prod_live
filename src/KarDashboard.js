@@ -22,6 +22,7 @@ import KarAllPeriodic from './KarAllPeriodic';
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
+import SideBar from './Components/SideBar';
 
 
 const KarDashboard = () => {
@@ -49,7 +50,7 @@ const KarDashboard = () => {
     const [showCalculator, setShowCalculator] = useState(false);
     const [showFilter, setShowFilter] = useState(true);
     const [userData, setUserData] = useState(null);
-    const [isModalOpen,setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
 
     useEffect(() => {
@@ -293,7 +294,7 @@ const KarDashboard = () => {
         }
 
         // Dynamic locationName assignment
-        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
 
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
@@ -333,7 +334,7 @@ const KarDashboard = () => {
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
-       
+
 
 
         fetchBusinessRate(userData);
@@ -395,190 +396,196 @@ const KarDashboard = () => {
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
     console.log("Business Rate", prices);
-   
+
 
 
     return (
         <>
             <Header />
-            <div className='container'>
-                <div className='row mt-3'>
-                    <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                        <h6 className="ms-2" style={{ color: "white" }}>
-                            {userData && userData.projects && userData.projects.includes(3) ? (
-                                <span style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></span>
-                            ) : (
-                                <Link to='/projects' style={{ color: 'white' }}>
-                                    <FaHome style={{ marginTop: '-2px' }} />
-                                </Link>
-                            )} / Karnataka Courts
-                        </h6>
+            <div className='container-fluid'>
+                <div className='row'>
+                    <div className='col-2'>
+                        <SideBar />
                     </div>
-                    <div className='row ms-0 mt-2 search-report-card'>
-                        <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
-                            <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white',padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
-                            {/* <div className='col-11'></div> */}
-                            {/* </div> */}
-                           
-                            {/* <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}> */}
-                            {/* <div className='col-1'></div> */}
-                            <div className='col-1'>
-                                <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
-                                <label htmlFor='all' className='ms-1'>All</label>
+                    <div className='col-9 ms-5'>
+                        <div className='row mt-3'>
+                            <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                                <h6 className="ms-2" style={{ color: "white" }}>
+                                    {userData && userData.projects && userData.projects.includes(3) ? (
+                                        <span style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></span>
+                                    ) : (
+                                        <Link to='/projects' style={{ color: 'white' }}>
+                                            <FaHome style={{ marginTop: '-2px' }} />
+                                        </Link>
+                                    )} / Karnataka Courts
+                                </h6>
                             </div>
-                            <div className='col-2'>
-                                <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
-                                <label htmlFor='technical' className='ms-1'>Technical</label>
-                            </div>
-                            <div className='col-2' style={{marginLeft:'-20px'}}>
-                                <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
-                                <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
-                            </div>
-                            {nonTechnicalSelected && userData && userData.user_roles && userData.user_roles.includes("CBSL Site User") ? (
-                                <div className='col-2'>
-                                <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleOpenModal}>Upload</button>
-                            </div>
-                            ) : (
-                                <div className='col-4'></div>
-                            )}
-                            
-                            
-                        </div>
-                        {showFilter && (<>
-                        <div className='row mt-2' style={{ marginBottom: '-10px' }}>
-                            <div className='col-1'></div>
-                            <div className='col-2'>
-                                <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
-                                <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
-                            </div>
-                            <div className='col-2'>
-                                <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
-                                <label htmlFor='periodic' className='ms-1'>Periodic</label>
-                            </div>
-                            {periodicSelected && (
-                                <>
-                                    <div className='col-3'>
-                                        <label className='me-1'>From Date:</label>
-                                        <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                            <div className='row ms-0 mt-2 search-report-card'>
+                                <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                                    <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white', padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
+                                    {/* <div className='col-11'></div> */}
+                                    {/* </div> */}
+
+                                    {/* <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}> */}
+                                    {/* <div className='col-1'></div> */}
+                                    <div className='col-1'>
+                                        <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
+                                        <label htmlFor='all' className='ms-1'>All</label>
                                     </div>
-                                    <div className='col-3'>
-                                        <label className='me-1'>To Date:</label>
-                                        <input type='date' value={toDate} onChange={handleToDateChange} />
+                                    <div className='col-2'>
+                                        <input type='radio' id='technical' name='filterType' value='technical' onChange={handleChange} checked={technicalSelected} />
+                                        <label htmlFor='technical' className='ms-1'>Technical</label>
                                     </div>
-                                </>
-                            )}
-                            <div className='col-1'>
-                                <button className='btn btn-success' style={{ marginTop: '-5px',paddingTop:'0px',paddingBottom:'0px',height:'28px' }} onClick={handleSubmit}>Submit</button>
+                                    <div className='col-2' style={{ marginLeft: '-20px' }}>
+                                        <input type='radio' id='non-technical' name='filterType' value='non-technical' onChange={handleChange} checked={nonTechnicalSelected} />
+                                        <label htmlFor='non-technical' className='ms-1'>Non-Technical</label>
+                                    </div>
+                                    {nonTechnicalSelected && userData && userData.user_roles && userData.user_roles.includes("CBSL Site User") ? (
+                                        <div className='col-2'>
+                                            <button className='btn btn-success' style={{ marginTop: '-5px', paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={handleOpenModal}>Upload</button>
+                                        </div>
+                                    ) : (
+                                        <div className='col-4'></div>
+                                    )}
+
+
+                                </div>
+                                {showFilter && (<>
+                                    <div className='row mt-2' style={{ marginBottom: '-10px' }}>
+                                        <div className='col-1'></div>
+                                        <div className='col-2'>
+                                            <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
+                                            <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
+                                        </div>
+                                        <div className='col-2'>
+                                            <input type='radio' id='periodic' name='reportType' value='periodic' onChange={handleRadioChange} checked={periodicSelected} />
+                                            <label htmlFor='periodic' className='ms-1'>Periodic</label>
+                                        </div>
+                                        {periodicSelected && (
+                                            <>
+                                                <div className='col-3'>
+                                                    <label className='me-1'>From Date:</label>
+                                                    <input type='date' value={fromDate} onChange={handleFromDateChange} />
+                                                </div>
+                                                <div className='col-3'>
+                                                    <label className='me-1'>To Date:</label>
+                                                    <input type='date' value={toDate} onChange={handleToDateChange} />
+                                                </div>
+                                            </>
+                                        )}
+                                        <div className='col-1'>
+                                            <button className='btn btn-success' style={{ marginTop: '-5px', paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={handleSubmit}>Submit</button>
+                                        </div>
+                                    </div>
+                                </>)}
+                                {error && <p className='text-danger'>{error}</p>}
                             </div>
+                            {allSelected && (
+                                <div className='row mt-2 ms-0 me-0 search-report-card'>
+                                    <div className='row'>
+                                        <div className='col-3'>
+                                            <h5 >Expense Rate(per image)</h5>
+                                        </div>
+                                        <div className='col-8'></div>
+                                        <div className='col-1'>
+                                            <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                        </div>
+                                    </div>
+
+                                    <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Location</th>
+                                                <th>Inventory</th>
+                                                <th>Counting</th>
+                                                <th>Doc Prepared</th>
+                                                <th>Other</th>
+                                                <th>Scanned</th>
+                                                <th>QC</th>
+                                                <th>Flagging</th>
+                                                <th>Indexing</th>
+                                                <th>CBSL-QA</th>
+                                                <th>Client-QA</th>
+                                                <th>Total Price</th>
+                                                <th>Edit Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                            {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            )}
+                            {technicalSelected && (
+                                <div className='row mt-2 ms-0 me-0 search-report-card'>
+                                    <div className='row'>
+                                        <div className='col-3'>
+                                            <h5 >Expense Rate(per image)</h5>
+                                        </div>
+                                        <div className='col-8'></div>
+                                        <div className='col-1'>
+                                            <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                        </div>
+                                    </div>
+
+                                    <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Location</th>
+                                                <th>Scanned</th>
+                                                <th>QC</th>
+                                                <th>Flagging</th>
+                                                <th>Indexing</th>
+                                                <th>CBSL-QA</th>
+                                                <th>Client-QA</th>
+                                                <th>Total Price</th>
+                                                <th>Edit Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                            {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            )}
+                            {nonTechnicalSelected && (
+                                <div className='row mt-2 ms-0 me-0 search-report-card'>
+                                    <div className='row'>
+                                        <div className='col-3'>
+                                            <h5 >Expense Rate(per image)</h5>
+                                        </div>
+                                        <div className='col-8'></div>
+                                        <div className='col-1'>
+                                            <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                        </div>
+                                    </div>
+
+                                    <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Location</th>
+                                                <th>Inventory</th>
+                                                <th>Counting</th>
+                                                <th>Doc Prepared</th>
+                                                <th>Other</th>
+                                                <th>Total Price</th>
+                                                <th>Edit Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate']))}
+                                            {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate', 'CountingRate', 'DocPreparationRate', 'GuardRate']))}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            )}
                         </div>
-                        </>)}
-                        {error && <p className='text-danger'>{error}</p>}
                     </div>
-                    {allSelected && (
-                        <div className='row mt-2 ms-0 me-0 search-report-card'>
-                            <div className='row'>
-                                <div className='col-3'>
-                                    <h5 >Expense Rate(per image)</h5>
-                                </div>
-                                <div className='col-8'></div>
-                                <div className='col-1'>
-                                    <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
-                                </div>
-                            </div>
-
-                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Location</th>
-                                        <th>Inventory</th>
-                                        <th>Counting</th>
-                                        <th>Doc Prepared</th>
-                                        <th>Other</th>
-                                        <th>Scanned</th>
-                                        <th>QC</th>
-                                        <th>Flagging</th>
-                                        <th>Indexing</th>
-                                        <th>CBSL-QA</th>
-                                        <th>Client-QA</th>
-                                        <th>Total Price</th>
-                                        <th>Edit Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate', 'CountingRate',  'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate', 'FlagRate',  'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, [ 'InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate', 'ScanRate', 'QcRate',  'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                </tbody>
-                            </table>
-
-                        </div>
-                    )}
-                    {technicalSelected && (
-                        <div className='row mt-2 ms-0 me-0 search-report-card'>
-                            <div className='row'>
-                                <div className='col-3'>
-                                    <h5 >Expense Rate(per image)</h5>
-                                </div>
-                                <div className='col-8'></div>
-                                <div className='col-1'>
-                                    <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
-                                </div>
-                            </div>
-
-                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Location</th>
-                                        <th>Scanned</th>
-                                        <th>QC</th>
-                                        <th>Flagging</th>
-                                        <th>Indexing</th>
-                                        <th>CBSL-QA</th>
-                                        <th>Client-QA</th>
-                                        <th>Total Price</th>
-                                        <th>Edit Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate',  'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                </tbody>
-                            </table>
-
-                        </div>
-                    )}
-                    {nonTechnicalSelected && (
-                        <div className='row mt-2 ms-0 me-0 search-report-card'>
-                            <div className='row'>
-                                <div className='col-3'>
-                                    <h5 >Expense Rate(per image)</h5>
-                                </div>
-                                <div className='col-8'></div>
-                                <div className='col-1'>
-                                    <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
-                                </div>
-                            </div>
-
-                            <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Location</th>
-                                        <th>Inventory</th>
-                                        <th>Counting</th>
-                                        <th>Doc Prepared</th>
-                                        <th>Other</th>
-                                        <th>Total Price</th>
-                                        <th>Edit Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate']))}
-                                    {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['InventoryRate','CountingRate',  'DocPreparationRate', 'GuardRate']))}
-                                </tbody>
-                            </table>
-
-                        </div>
-                    )}
-
                 </div>
             </div>
             {showPeriodicSummary && <KarTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
@@ -588,7 +595,7 @@ const KarDashboard = () => {
             {showAllCumulativeSummary && <KarAllCumulative userData={userData} />}
             {showAllPeriodicSummary && <KarAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
-            {isModalOpen && <KarNonTechModal onClose={handleCloseModal} userInfo={userData}/>}
+            {isModalOpen && <KarNonTechModal onClose={handleCloseModal} userInfo={userData} />}
             <ToastContainer />
         </>
     );

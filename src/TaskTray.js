@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { toast, ToastContainer } from 'react-toastify';
+import SideBar from './Components/SideBar';
 
 const TaskTray = () => {
     const [approvalStatus, setApprovalStatus] = useState([]);
@@ -352,12 +353,15 @@ const TaskTray = () => {
         <>
             <ToastContainer />
             <Header />
-            <div className='container'>
+            <div className='container-fluid'>
+            <div className='row'>
+                <div className='col-2'>
+                <SideBar />
+                </div>
+            <div className='col-9 ms-5'>
                 <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                     <h6 className="ms-2" style={{ color: "white" }}>
-                        <Link to='/home' style={{ color: 'white' }}>
-                            <FaHome size={25} />
-                        </Link> / Task Tray
+                        Task Tray
                     </h6>
                 </div>
                 <div className="row mt-4">
@@ -394,6 +398,8 @@ const TaskTray = () => {
                 </div>
                 <div className='mt-4'>
                 {renderTable()}
+                </div>
+                </div>
                 </div>
             </div>
         </>

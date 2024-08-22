@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <>
       
-        <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: '#4BC0C0', color:'white', textAlign:'center' }}>
+        <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: '#4BC0C0', color:'white', textAlign:'center'}}>
           <div className="container-fluid" style={{textAlign:'center'  }} >
             <h4>User Production Dashboard- Powered by CBSL</h4>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
