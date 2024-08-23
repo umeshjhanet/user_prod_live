@@ -557,6 +557,7 @@ font-weight: 500;
   border-radius: 12px;
   padding: 10px;
   text-align: center;
+  color: #1e7e34;
 }
 .pending-card{
   background-color: white;
@@ -565,6 +566,7 @@ font-weight: 500;
   border-radius: 12px;
   padding: 10px;
   text-align: center;
+  color: orange;
 }
 .rejected-card{
   background-color: white;
@@ -573,6 +575,7 @@ font-weight: 500;
   border-radius: 12px;
   padding: 10px;
   text-align: center;
+  color: red;
 }
 .active-card {
   background-color: lightgray;
@@ -1188,7 +1191,7 @@ input[type="submit"] {
 /* Table Styles */
 .table-bordered {
   width: 100%;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   color: #212529;
   background-color: transparent;
   border-collapse: collapse;

@@ -293,9 +293,9 @@ const TaskTray = () => {
                             <th>Indexing</th>
                             <th>CBSL QA</th>
                             <th>Client QC</th>
-                            <th>Working Days</th>
-                            <th>Remarks</th>
+                            <th>Working Days</th>    
                             <th>Actions</th>
+                            <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -312,33 +312,59 @@ const TaskTray = () => {
                                 <td>{elem.CBSL_QA}</td>
                                 <td>{elem.Client_QC}</td>
                                 <td>{elem.DistinctDateCount}</td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.Remarks}</td>
-                                <td>
-                                    <div className='row mt-2'>
-                                        <div className='col-6'>
-                                            {(isRejectedCard || isPendingCard) && (
-                                                <button
-                                                    className='btn btn-success'
-                                                    onClick={() => handleApprove(index)}
-                                                    disabled={isApprovedCard}
-                                                >
-                                                    Approve
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className='col-6'>
-                                            {(isApprovedCard || isPendingCard) && (
-                                                <button
+                                <td style={{whiteSpace:'nowrap'}}>
+                                {(isApprovedCard) && (
+                                        <div className='row mt-2'>
+                                             <button
                                                     className='btn btn-danger'
                                                     onClick={() => handleReject(index)}
                                                     disabled={isRejectedCard}
+                                                    style={{width:'59px',padding:'5px 0px',fontSize:'12px',marginLeft:'12px'}}
                                                 >
                                                     Reject
                                                 </button>
-                                            )}
                                         </div>
+                                    )}
+                                    {(isRejectedCard) && (
+                                        <div className='row mt-2'>
+                                             <button
+                                                    className='btn btn-success'
+                                                    onClick={() => handleApprove(index)}
+                                                    disabled={isApprovedCard}
+                                                    style={{width:'59px',padding:'5px 0px',fontSize:'12px',marginLeft:'11px'}}
+                                                >
+                                                    Approve
+                                                </button>
+                                        </div>
+                                    )}
+                                    {(isPendingCard) && (
+                                    <div className='row mt-2 ms-1'>
+                                        {/* <div className='col-6'> */}
+                                                <button
+                                                    className='btn btn-success'
+                                                    onClick={() => handleApprove(index)}
+                                                    style={{width: '45px',
+                                                        fontSize: '11px',
+                                                        padding: '5px 0px'}}
+                                                >
+                                                    Approve
+                                                </button>
+                                        {/* </div> */}
+                                        {/* <div className='col-6'> */}
+                                                <button
+                                                    className='btn btn-danger mt-1'
+                                                    onClick={() => handleReject(index)}
+                                                    style={{width: '45px',
+                                                        fontSize: '11px',
+                                                        padding: '5px 0px'}}
+                                                >
+                                                    Reject
+                                                </button>
+                                        {/* </div> */}
                                     </div>
+                                     )}
                                 </td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.Remarks}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -374,7 +400,7 @@ const TaskTray = () => {
                             style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'approved' ? 'lightgray' : 'white' }}
                         >
                             <h5>Approved Tasks</h5>
-                            <p>Count: {getCount('approved')}</p>
+                            <h6>Count: {getCount('approved')}</h6>
                         </div>
                     </div>
                     <div className="col-4">
@@ -384,7 +410,7 @@ const TaskTray = () => {
                             style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'pending' ? 'lightgray' : 'white' }}
                         >
                             <h5>Pending Tasks</h5>
-                            <p>Count: {getCount('pending')}</p>
+                            <h6>Count: {getCount('pending')}</h6>
                         </div>
                     </div>
                     <div className="col-4">
@@ -394,7 +420,7 @@ const TaskTray = () => {
                             style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'rejected' ? 'lightgray' : 'white' }}
                         >
                             <h5>Rejected Tasks</h5>
-                            <p>Count: {getCount('rejected')}</p>
+                            <h6>Count: {getCount('rejected')}</h6>
                         </div>
                     </div>
                 </div>

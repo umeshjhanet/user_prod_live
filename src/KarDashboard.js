@@ -155,82 +155,87 @@ const KarDashboard = () => {
 
     const handleSubmit = () => {
         // Check if "Periodic" is selected
-        if (technicalSelected && periodicSelected) {
+        if 
+        // (technicalSelected && 
+            (periodicSelected) {
             // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
             if (fromDate && toDate) {
                 // If both dates are provided, show the summary report
                 setShowPeriodicSummary(true);
                 setShowCumulativeSummary(false);
-                setShowAllPeriodicSummary(false);
-                setShowAllCumulativeSummary(false);
-                setShowNonTechCumulativeSummary(false);
-                setShowNonTechPeriodicSummary(false);
+                // setShowAllPeriodicSummary(false);
+                // setShowAllCumulativeSummary(false);
+                // setShowNonTechCumulativeSummary(false);
+                // setShowNonTechPeriodicSummary(false);
                 setError('');
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
-        } else if (technicalSelected && cumulativeSelected) {
+        } else if 
+        // (technicalSelected &&
+            (cumulativeSelected) {
             // If "Cumulative" is selected, show the summary report without requiring dates
             setShowCumulativeSummary(true);
             setFromDate("");
             setToDate("");
             setShowPeriodicSummary(false);
-            setShowAllPeriodicSummary(false);
-            setShowAllCumulativeSummary(false);
-            setShowNonTechCumulativeSummary(false);
-            setShowNonTechPeriodicSummary(false);
+            // setShowAllPeriodicSummary(false);
+            // setShowAllCumulativeSummary(false);
+            // setShowNonTechCumulativeSummary(false);
+            // setShowNonTechPeriodicSummary(false);
             setError('');
-        } else if (nonTechnicalSelected && cumulativeSelected) {
-            setShowNonTechCumulativeSummary(true);
-            setShowAllPeriodicSummary(false);
-            setShowAllCumulativeSummary(false);
-            setShowCumulativeSummary(false);
-            setFromDate("");
-            setToDate("");
-            setShowPeriodicSummary(false);
-            setShowNonTechPeriodicSummary(false);
-            setError('');
-        } else if (nonTechnicalSelected && periodicSelected) {
-            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-            if (fromDate && toDate) {
-                // If both dates are provided, show the summary report
-                setShowNonTechPeriodicSummary(true);
-                setShowAllPeriodicSummary(false);
-                setShowAllCumulativeSummary(false);
-                setShowPeriodicSummary(false);
-                setShowCumulativeSummary(false);
-                setShowNonTechCumulativeSummary(false);
-                setError('');
-            }
-        } else if (allSelected && cumulativeSelected) {
-            setShowAllCumulativeSummary(true);
-            setShowCumulativeSummary(false);
-            setFromDate("");
-            setToDate("");
-            setShowPeriodicSummary(false);
-            setShowAllPeriodicSummary(false);
-            setShowNonTechPeriodicSummary(false);
-            setShowNonTechCumulativeSummary(false);
-            setError('');
-        } else if (allSelected && periodicSelected) {
-            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-            if (fromDate && toDate) {
-                // If both dates are provided, show the summary report
-                setShowAllPeriodicSummary(true);
-                setShowPeriodicSummary(false);
-                setShowCumulativeSummary(false);
-                setShowAllCumulativeSummary(false);
-                setShowNonTechPeriodicSummary(false);
-                setShowNonTechCumulativeSummary(false);
-                setError('');
-            } else {
-                // If any date is missing, show an error message
-                setError('Please provide both "From Date" and "To Date".');
-            }
-        } else {
-            setError('Please choose an option.');
-        }
+        } 
+        // else if (nonTechnicalSelected && cumulativeSelected) {
+        //     setShowNonTechCumulativeSummary(true);
+        //     setShowAllPeriodicSummary(false);
+        //     setShowAllCumulativeSummary(false);
+        //     setShowCumulativeSummary(false);
+        //     setFromDate("");
+        //     setToDate("");
+        //     setShowPeriodicSummary(false);
+        //     setShowNonTechPeriodicSummary(false);
+        //     setError('');
+        // } else if (nonTechnicalSelected && periodicSelected) {
+        //     // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+        //     if (fromDate && toDate) {
+        //         // If both dates are provided, show the summary report
+        //         setShowNonTechPeriodicSummary(true);
+        //         setShowAllPeriodicSummary(false);
+        //         setShowAllCumulativeSummary(false);
+        //         setShowPeriodicSummary(false);
+        //         setShowCumulativeSummary(false);
+        //         setShowNonTechCumulativeSummary(false);
+        //         setError('');
+        //     }
+        // } else if (allSelected && cumulativeSelected) {
+        //     setShowAllCumulativeSummary(true);
+        //     setShowCumulativeSummary(false);
+        //     setFromDate("");
+        //     setToDate("");
+        //     setShowPeriodicSummary(false);
+        //     setShowAllPeriodicSummary(false);
+        //     setShowNonTechPeriodicSummary(false);
+        //     setShowNonTechCumulativeSummary(false);
+        //     setError('');
+        // } else if (allSelected && periodicSelected) {
+        //     // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+        //     if (fromDate && toDate) {
+        //         // If both dates are provided, show the summary report
+        //         setShowAllPeriodicSummary(true);
+        //         setShowPeriodicSummary(false);
+        //         setShowCumulativeSummary(false);
+        //         setShowAllCumulativeSummary(false);
+        //         setShowNonTechPeriodicSummary(false);
+        //         setShowNonTechCumulativeSummary(false);
+        //         setError('');
+        //     } else {
+        //         // If any date is missing, show an error message
+        //         setError('Please provide both "From Date" and "To Date".');
+        //     }
+        // } else {
+        //     setError('Please choose an option.');
+        // }
     };
 
     useEffect(() => {
@@ -334,11 +339,9 @@ const KarDashboard = () => {
     useEffect(() => {
         // Set editedPrices to initialPriceCount when component mounts
         setEditedPrices(initialPriceCount);
-
-
-
-        fetchBusinessRate(userData);
-
+        if (userData) {
+            fetchBusinessRate(userData); // Fetch business rates when userData is available
+        }
     }, [userData]);
 
     console.log("Summary Data", summaryReport);
@@ -397,8 +400,6 @@ const KarDashboard = () => {
     console.log("Business Rate", prices);
     console.log("Business Rate", prices);
 
-
-
     return (
         <>
             <Header />
@@ -421,13 +422,9 @@ const KarDashboard = () => {
                                 </h6>
                             </div>
                             <div className='row ms-0 mt-2 search-report-card'>
-                                <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                                {/* <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
                                     <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white', padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
-                                    {/* <div className='col-11'></div> */}
-                                    {/* </div> */}
-
-                                    {/* <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}> */}
-                                    {/* <div className='col-1'></div> */}
+                                   
                                     <div className='col-1'>
                                         <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
                                         <label htmlFor='all' className='ms-1'>All</label>
@@ -450,9 +447,9 @@ const KarDashboard = () => {
 
 
                                 </div>
-                                {showFilter && (<>
+                                {showFilter && (<> */}
                                     <div className='row mt-2' style={{ marginBottom: '-10px' }}>
-                                        <div className='col-1'></div>
+                                        <div className='col-1'><h4>Filter</h4></div>
                                         <div className='col-2'>
                                             <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
                                             <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
@@ -477,10 +474,10 @@ const KarDashboard = () => {
                                             <button className='btn btn-success' style={{ marginTop: '-5px', paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={handleSubmit}>Submit</button>
                                         </div>
                                     </div>
-                                </>)}
+                                {/* </>)} */}
                                 {error && <p className='text-danger'>{error}</p>}
                             </div>
-                            {allSelected && (
+                            {/* {allSelected && (
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
@@ -517,8 +514,8 @@ const KarDashboard = () => {
                                     </table>
 
                                 </div>
-                            )}
-                            {technicalSelected && (
+                            )} */}
+                            {/* {technicalSelected && ( */}
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
@@ -551,8 +548,8 @@ const KarDashboard = () => {
                                     </table>
 
                                 </div>
-                            )}
-                            {nonTechnicalSelected && (
+                             {/* )} */}
+                            {/* {nonTechnicalSelected && (
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
@@ -583,17 +580,17 @@ const KarDashboard = () => {
                                     </table>
 
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>
             </div>
             {showPeriodicSummary && <KarTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showCumulativeSummary && <KarTechCumulative userData={userData} multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} />}
-            {shownonTechCumulativeSummary && <KarNonTechCumulative userData={userData} />}
+            {/* {shownonTechCumulativeSummary && <KarNonTechCumulative userData={userData} />}
             {shownonTechPeriodicSummary && <KarNonTechPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
             {showAllCumulativeSummary && <KarAllCumulative userData={userData} />}
-            {showAllPeriodicSummary && <KarAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />}
+            {showAllPeriodicSummary && <KarAllPeriodic userData={userData} multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} />} */}
             {showCalculator && <CalculatorModal userData={userData} onClose={handleCloseCalculator} />}
             {isModalOpen && <KarNonTechModal onClose={handleCloseModal} userInfo={userData} />}
             <ToastContainer />

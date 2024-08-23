@@ -294,7 +294,7 @@ const KarTechPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           return date.toISOString().split('T')[0];
         };
     
-        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/kardetailedreport`;
     
         // Check if userData meets the conditions to include the locationName parameter
@@ -328,7 +328,7 @@ const KarTechPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
         return date.toISOString().split('T')[0];
       };
     
-      const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/kardetailedreportcsv`;
     
       // Check if userData meets the conditions to include the locationName parameter

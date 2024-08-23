@@ -261,7 +261,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
     };
   
     useEffect(() => {
-      const locationName = userData.locations.length > 0 ? userData.locations[1].name : ""; 
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : ""; 
 
     const fetchSummaryReport = () => {
       setIsLoading(true);
@@ -310,7 +310,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
       let apiUrl = `${API_URL}/detailedreportcummulativekarnataka`;
 
       // Dynamic locationName assignment
-      const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
 
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
@@ -369,7 +369,7 @@ const KarAllCumulative = ({ multipliedData, prices, editedPrices,userData }) => 
       }
     
       // Dynamic locationName assignment
-      const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
     
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = userData.user_roles.includes("CBSL Site User");

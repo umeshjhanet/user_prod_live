@@ -55,27 +55,24 @@ const Projects = () => {
         fetchKarProjectDetails();
     }, []);
 
-
     const computeSums = (details) => {
-        const categories = ["NonTech", "Tech"];
         const sum = {
-            Inventory: 0,
-            Counting: 0,
-            DocPre: 0,
-            Guard: 0,
+            Received: 0,
             Scanned: 0,
             QC: 0,
             Flagging: 0,
             Indexing: 0,
             CBSL_QA: 0,
-            Client_QC: 0
+            Client_QC: 0,
+            Export: 0
         };
-
-        categories.forEach(category => {
+        Object.keys(details).forEach(category => {
             if (Array.isArray(details[category])) {
                 details[category].forEach(project => {
                     Object.keys(project).forEach(key => {
-                        sum[key] = (sum[key] || 0) + (parseInt(project[key], 10) || 0);
+                        if (sum.hasOwnProperty(key)) {
+                            sum[key] += parseInt(project[key], 8) || 0;
+                        }
                     });
                 });
             } else {
@@ -86,15 +83,14 @@ const Projects = () => {
         return sum;
     };
 
-
     const updcSums = computeSums(updcprojectDetails);
     const telSums = computeSums(telprojectDetails);
     const karSums = computeSums(karprojectDetails);
-
+    console.log(updcSums);
     const allSums = {};
     const categories = [
-        "Inventory", "Counting", "DocPre", "Other", "Scanned",
-        "QC", "Flagging", "Indexing", "CBSL_QA", "Client_QC"
+        "Received", "Scanned",
+        "QC", "Flagging", "Indexing", "CBSL_QA", "Client_QC", "Export"
     ];
 
     categories.forEach(category => {
@@ -104,9 +100,9 @@ const Projects = () => {
             (karSums[category] || 0);
     });
     const allcategories = [
-        'Scanned', 'QC',
+        'Received', 'Scanned', 'QC',
         'Flagging', 'Indexing', 'CBSL_QA',
-        'Client_QC',
+        'Client_QC', 'Export'
     ];
     const projects = [
         { id: 4, name: 'Nimhans' },
@@ -115,20 +111,18 @@ const Projects = () => {
         { id: 7, name: 'CAG' },
         { id: 8, name: 'Tata Power' },
         { id: 9, name: 'Allahbad HC' },
+        {id:10, name: 'BLR'},
     ];
 
     return (
-
         <>
-
             <Header />
             <div className='container-fluid'>
                 <div className='row'>
                     <div className='col-2'></div>
                     <div className='col-9 ms-5'>
                         <SideBar />
-                        <div className='row mt-5 mb-2'>
-                            <div className='col-4 allproject-card mt-2 mb-2 ms-3'>
+                        {/* <div className='row mt-5'>
                                 <div className="border-left"></div>
                                 <div className="border-right"></div>
                                 <div className="border-top"></div>
@@ -149,7 +143,7 @@ const Projects = () => {
                                         <div className='col-4' style={{ padding: '0' }}>
                                             {categories.map(category => (
                                                 <p key={category} style={{ color: '#508D69' }}>
-                                                    <b>{allSums[category].toLocaleString()}</b>
+                                                    <b>{(allSums[category] || 0).toLocaleString()}</b>
                                                 </p>
                                             ))}
                                             <p><Link to="/AllProjectDashboard" style={{ color: '#508D69' }}>More...</Link></p>
@@ -157,8 +151,8 @@ const Projects = () => {
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
-                            </div>
-
+                        </div> */}
+                        <div className='row mt-3 mb-2'>
                             <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
                                     <Link to='/UPDCDashboard' style={{ textDecoration: 'none' }}>
@@ -169,32 +163,29 @@ const Projects = () => {
                                     <div className='row mt-2 mb-2'>
                                         <div className='col-1'></div>
                                         <div className='col-5' style={{ textAlign: 'right' }}>
-                                            {Object.keys(updcprojectDetails).map((category, categoryIndex) => (
-                                                Array.isArray(updcprojectDetails[category]) && updcprojectDetails[category].length > 0 ?
-                                                    Object.keys(updcprojectDetails[category][0]).map((key, keyIndex) => (
-                                                        <p key={`${categoryIndex}-${keyIndex}`}><b>{key}:</b></p>
-                                                    )) : null
-                                            ))}
+                                            {updcprojectDetails && updcprojectDetails.length > 0 &&
+                                                Object.keys(updcprojectDetails[0]).map((key, keyIndex) => (
+                                                    <p key={keyIndex}><b>{key}:</b></p>
+                                                ))
+                                            }
                                         </div>
                                         <div className='col-4' style={{ padding: '0' }}>
-                                            {Object.keys(updcprojectDetails).map((category, categoryIndex) => (
-                                                Array.isArray(updcprojectDetails[category]) && updcprojectDetails[category].length > 0 ?
-                                                    Object.values(updcprojectDetails[category][0]).map((value, valueIndex) => (
-                                                        <p
-                                                            key={`${categoryIndex}-${valueIndex}`}
-                                                            style={{ color: category === 'NonTech' ? '#193860' : '#2A629A' }}
-                                                        >
-                                                            <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
-                                                        </p>
-                                                    )) : null
-                                            ))}
+                                            {updcprojectDetails && updcprojectDetails.length > 0 &&
+                                                Object.values(updcprojectDetails[0]).map((value, valueIndex) => (
+                                                    <p
+                                                        key={valueIndex}
+                                                        style={{ color: '#2A629A' }}
+                                                    >
+                                                        <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
+                                                    </p>
+                                                ))
+                                            }
                                             <p><Link to="/UPDCDashboard" style={{ color: '#193860' }}>More...</Link></p>
                                         </div>
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
                             </div>
-
                             <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#4BC0C0' }}>
                                 <div className='row text-center'>
                                     <Link to='/TelDashboard' style={{ textDecoration: 'none' }}>
@@ -205,25 +196,23 @@ const Projects = () => {
                                     <div className='row mt-2 mb-2'>
                                         <div className='col-1'></div>
                                         <div className='col-5' style={{ textAlign: 'right' }}>
-                                            {Object.keys(telprojectDetails).map((category, categoryIndex) => (
-                                                Array.isArray(telprojectDetails[category]) && telprojectDetails[category].length > 0 ?
-                                                    Object.keys(telprojectDetails[category][0]).map((key, keyIndex) => (
-                                                        <p key={`${categoryIndex}-${keyIndex}`}><b>{key}:</b></p>
-                                                    )) : null
-                                            ))}
+                                            {telprojectDetails && telprojectDetails.length > 0 &&
+                                                Object.keys(telprojectDetails[0]).map((key, keyIndex) => (
+                                                    <p key={keyIndex}><b>{key}:</b></p>
+                                                ))
+                                            }
                                         </div>
                                         <div className='col-4' style={{ padding: '0' }}>
-                                            {Object.keys(telprojectDetails).map((category, categoryIndex) => (
-                                                Array.isArray(telprojectDetails[category]) && telprojectDetails[category].length > 0 ?
-                                                    Object.values(telprojectDetails[category][0]).map((value, valueIndex) => (
-                                                        <p
-                                                            key={`${categoryIndex}-${valueIndex}`}
-                                                            style={{ color: category === 'NonTech' ? '#028391' : '#4BC0C0' }}
-                                                        >
-                                                            <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
-                                                        </p>
-                                                    )) : null
-                                            ))}
+                                            {telprojectDetails && telprojectDetails.length > 0 &&
+                                                Object.values(telprojectDetails[0]).map((value, valueIndex) => (
+                                                    <p
+                                                        key={valueIndex}
+                                                        style={{ color: '#2A629A' }}
+                                                    >
+                                                        <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
+                                                    </p>
+                                                ))
+                                            }
                                             <p><Link to="/TelDashboard" style={{ color: '#4BC0C0' }}>More...</Link></p>
                                         </div>
                                         <div className='col-1'></div>
@@ -240,40 +229,36 @@ const Projects = () => {
                                     <div className='row mt-2 mb-2'>
                                         <div className='col-1'></div>
                                         <div className='col-5' style={{ textAlign: 'right' }}>
-                                            {Object.keys(karprojectDetails).map((category, categoryIndex) => (
-                                                Array.isArray(karprojectDetails[category]) && karprojectDetails[category].length > 0 ?
-                                                    Object.keys(karprojectDetails[category][0]).map((key, keyIndex) => (
-                                                        <p key={`${categoryIndex}-${keyIndex}`}><b>{key}:</b></p>
-                                                    )) : null
-                                            ))}
+                                            {karprojectDetails && karprojectDetails.length > 0 &&
+                                                Object.keys(karprojectDetails[0]).map((key, keyIndex) => (
+                                                    <p key={keyIndex}><b>{key}:</b></p>
+                                                ))
+                                            }
                                         </div>
                                         <div className='col-4' style={{ padding: '0' }}>
-                                            {Object.keys(karprojectDetails).map((category, categoryIndex) => (
-                                                Array.isArray(karprojectDetails[category]) && karprojectDetails[category].length > 0 ?
-                                                    Object.values(karprojectDetails[category][0]).map((value, valueIndex) => (
-                                                        <p
-                                                            key={`${categoryIndex}-${valueIndex}`}
-                                                            style={{ color: category === 'NonTech' ? 'rgb(153, 63, 82)' : 'rgb(185, 101, 119)' }}
-                                                        >
-                                                            <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
-                                                        </p>
-                                                    )) : null
-                                            ))}
+                                            {karprojectDetails && karprojectDetails.length > 0 &&
+                                                Object.values(karprojectDetails[0]).map((value, valueIndex) => (
+                                                    <p
+                                                        key={valueIndex}
+                                                        style={{ color: '#2A629A' }}
+                                                    >
+                                                        <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
+                                                    </p>
+                                                ))
+                                            }
                                             <p><Link to="/KarDashboard" style={{ color: 'rgb(148, 78, 99)' }}>More...</Link></p>
                                         </div>
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
                             </div>
-                        </div>
-                        <div className='row mt-2 mb-2'>
                             {projectData.map((project, index) => {
                                 // Ensure that the project names align with project data
                                 const projectID = projects[index]?.id || 'Unknown Project';
                                 const projectName = projects[index]?.name || 'Unknown Project';
 
                                 return (
-                                    <div className='col-4 allproject-card mt-2 mb-2 ms-3' key={index}>
+                                    <div className='col-4 project-card mt-2 mb-2 ms-3' key={index}>
                                         <div className="border-left"></div>
                                         <div className="border-right"></div>
                                         <div className="border-top"></div>
@@ -308,6 +293,9 @@ const Projects = () => {
                                     </div>
                                 );
                             })}
+                        </div>
+                        <div className='row mt-2 mb-2'>
+                          
                         </div>
                     </div>
                 </div>

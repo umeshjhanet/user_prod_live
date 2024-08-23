@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Components/Header';
 import SideBar from './Components/SideBar';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from './API';
 import { FiDownload } from 'react-icons/fi';
+import { FaHome } from 'react-icons/fa';
 
 const DynamicDashboard = () => {
     const [file, setFile] = useState(null);
@@ -22,6 +23,7 @@ const DynamicDashboard = () => {
         { id: 7, name: 'CAG', description: 'Details about CAG project...' },
         { id: 8, name: 'Tata Power', description: 'Details about Tata Power project...' },
         { id: 9, name: 'Allahbad HC', description: 'Details about Allahbad HC project...' },
+        { id: 10, name: 'BLR', description: 'Details about Allahbad HC project...' },
     ];
 
     const { projectId } = useParams();
@@ -133,12 +135,15 @@ const DynamicDashboard = () => {
                     <div className='col-2'>
                         <SideBar />
                     </div>
-                    <div className='col-9 ms-5'>
-                        <div className='row mt-5'>
+                    <div className='col-10'>
+                        <div className='row mt-5 me-1'>
                             <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                                <Link to='/projects' style={{textDecoration:'none'}}>
                                 <h6 className="ms-2" style={{ color: "white" }}>
-                                    {project.name}
+                                    <FaHome/> /{project.name}
                                 </h6>
+                                </Link>
+                                
                             </div>
                             <div className='row search-report-card mt-3 ms-1'>
                                 <div className='col-3'>
@@ -155,11 +160,11 @@ const DynamicDashboard = () => {
                                 </button>
                                 {message && <div className="mt-3">{message}</div>}
                                 </div>
-                                {/* <div className='col-2'>
+                                <div className='col-2'>
                                 <button className="btn btn-primary d-flex align-items-center ms-5" style={{ width: '120px' }} onClick={handleDownloadFormat}>
                                     <FiDownload className="me-2" />Format
                                 </button>
-                                </div> */}
+                                </div>
                             </div>
                             {/* Table to display fetched data */}
                             <div className='row search-report-card mt-5 ms-1'>
