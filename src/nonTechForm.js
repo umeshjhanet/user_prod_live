@@ -108,6 +108,21 @@ const NonTechForm = () => {
       <Header />
       <div className='container'>
         <div className='row'>
+          <div className='col-6'>
+             <p>Select your favorite fruit:</p>
+        <label>
+            <input type="radio" name="fruit" value="apple"></input>
+            Apple
+        </label>
+        <br></br>
+        <label>
+            <input type="radio" name="fruit" value="banana"></input>
+            Banana
+        </label>
+        </div>
+          <div className='col-6'><h1>Excel</h1></div>
+        </div>
+        <div className='row'>
           <form onSubmit={handleSubmit}>
             <div className="row mt-2 me-1 search-report-card">
               <input
