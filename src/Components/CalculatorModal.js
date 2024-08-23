@@ -11,9 +11,13 @@ const CalculatorModal = ({ onClose }) => {
     if (salary && target && workingDays) {
       const rate = (Number(salary) / ((Number(target)) * Number(workingDays)))
       toast(`Calculated Rate: ${rate.toFixed(2)}`)
+      onClose();
     } else {
       toast.error('Please fill in all fields')
     }
+  }
+  const handleToggle = () => {
+    onClose(true);
   }
 
   return (
@@ -58,6 +62,7 @@ const CalculatorModal = ({ onClose }) => {
           >
             Submit
           </button>
+         
         </div>
       </div>
     </>

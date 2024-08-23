@@ -5,9 +5,10 @@ import { priceCount } from './Components/priceCount';
 import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
+import { FiDownload } from 'react-icons/fi';
 
-const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
-  const [locationView, setLocationView] = useState(false);
+const KarAllPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
+    const [locationView, setLocationView] = useState(false);
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState(null);
   const [locationReport, setLocationReport] = useState();
@@ -26,10 +27,10 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
   const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
   const [lastColumnTotal, setLastColumnTotal] = useState(0);
   const [price, setPrice] = useState([]);
-  const [enhancedLocationReport, setEnhancedLocationReport] = useState();
+  const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
   const ref = useRef(null);
 
-
+ 
 
   const handleLocationView = (locationName) => {
     setShowModal(true);
@@ -131,7 +132,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     setIsLoading(true);
     setDetailedReportLocationWise([]);
     axios
-      .get(`${API_URL}/alldetailedreportlocationwisenontech`, {
+      .get(`${API_URL}/alldetailedreportlocationwisekarnataka`, {
         params: {
           locationName: locationName,
           startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
@@ -147,7 +148,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       });
   };
-
   const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -156,7 +156,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     };
     setIsLoading(true);
     setDetailedUserReport([]);
-    axios.get(`${API_URL}/alluserdetailedreportlocationwisenontech`, {
+    axios.get(`${API_URL}/alluserdetailedreportlocationwisekarnataka`, {
       params: {
         username: username,
         locationName: locationName,
@@ -173,7 +173,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       });
   };
-
   const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -181,7 +180,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontech`;
+    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvkarnataka`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -203,20 +202,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       });
   };
-
-  const fetchPrices = () => {
-    setIsLoading(true); // Set loading to true when fetching data
-    axios
-      .get(`${API_URL}/getbusinessrate`)
-      .then((response) => {
-        setPrice(response.data);
-        setIsLoading(false); // Set loading to false after data is fetched
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        setIsLoading(false); // Set loading to false in case of error
-      });
-  };
   const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
     const formattedStartDate = startDate ? new Date(startDate) : null;
     const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -224,7 +209,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontech`;
+    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvkarnataka`;
 
     if (username && locationName) {
       const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
@@ -247,8 +232,8 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       });
   };
-
   useEffect(() => {
+ 
     const fetchSummaryReport = async () => {
       if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
         console.error("Invalid or undefined userData structure:", userData);
@@ -263,13 +248,13 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         };
     
         const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-        let apiUrl = `${API_URL}/summaryreportnontech`;
+        let apiUrl = `${API_URL}/summaryreportcummulativekarnataka`;
     
         // Check conditions for including locationName
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject =  userData.projects[0] === 1;
-        const locationNameWithDistrictCourt = `${locationName} District Court`;
-        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+        const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 3;
+        const locationNameWithDistrictCourt = `${locationName}`;
+        const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
     
         let queryParams = [];
     
@@ -293,7 +278,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       }
     };
-   
+    
     
     const fetchLocationReport = async () => {
       setIsLoading(true);
@@ -305,13 +290,13 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         };
     
         const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-        let apiUrl = `${API_URL}/detailedreportcummulativenontech`;
+        let apiUrl = `${API_URL}/detailedreportcummulativekarnataka`;
     
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject =  userData.projects[0] === 1;
-        const locationNameWithDistrictCourt = `${locationName} District Court`;
-        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+        const hasSingleProject =  userData.projects[0] === 3;
+        const locationNameWithDistrictCourt = `${locationName}`;
+        const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
     
         if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
           apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
@@ -331,7 +316,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         setIsLoading(false);
       }
     };
-
     const fetchDetailedReportCsvFile = (startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
@@ -340,13 +324,13 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       };
     
       const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-      let apiUrl = `${API_URL}/detailedreportcummulativecsvnontech`;
+      let apiUrl = `${API_URL}/detailedreportcummulativecsvkarnataka`;
     
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-      const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
-      const locationNameWithDistrictCourt = `${locationName} District Court`;
-      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+      const hasSingleProject =  userData.projects[0] === 3;
+      const locationNameWithDistrictCourt = `${locationName}`;
+      const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
     
       if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
         apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
@@ -369,106 +353,31 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         });
     };
     
-
+    
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/kargetbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
     fetchPrices();
-    fetchSummaryReport(userData);
-    fetchLocationReport(userData);
+    fetchSummaryReport();
+    fetchLocationReport();
     fetchDetailedReportCsvFile(startDate, endDate,userData);
     fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
-    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
     fetchUserDetailed(locationName,startDate,endDate);
+    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
 
-  }, [selectedUsername, locationName, startDate, endDate,userData]);
+  }, [selectedUsername, locationName, startDate, endDate, userData]);
 
-
-  const calculateColumnSum = () => {
-    let Inventory = 0;
-    let Counting = 0;
-    let DocPreparation = 0;
-    let Guard = 0;
-    let totalExpenseRate = 0;
-  
-    if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
-      detailedReportLocationWise.forEach((elem) => {
-        Inventory += parseInt(elem.Inventory) || 0;
-        Counting += parseInt(elem.Counting) || 0;
-        DocPreparation += parseInt(elem.DocPreparation) || 0;
-        Guard += parseInt(elem.Guard) || 0;
-        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
-        const priceData = price.find(
-          
-          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
-        );
-        const countingRate = priceData?.CountingRate || 0;
-        const inventoryRate = priceData?.InventoryRate || 0;
-        const docPreparationRate = priceData?.DocPreparationRate || 0;
-        const guardRate = priceData?.GuardRate || 0;
-        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
-        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
-        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
-        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
-  
-        const totalRate =countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
-  
-        totalExpenseRate += totalRate;
-      });
-    }
-  
-    return {
-      Inventory,
-      Counting,
-      DocPreparation,
-      Guard,
-      totalExpenseRate,
-    };
-  };
-
-  const calculateColumnSumUser = () => {
-    let Inventory = 0;
-    let Counting = 0;
-    let DocPreparation = 0;
-    let Guard = 0;
-    let totalExpenseRate = 0;
-  
-    if (detailedUserReport && Array.isArray(detailedUserReport)) {
-      detailedUserReport.forEach((elem) => {
-        Inventory += parseInt(elem.Inventory) || 0;
-        Counting += parseInt(elem.Counting) || 0;
-        DocPreparation += parseInt(elem.DocPreparation) || 0;
-        Guard += parseInt(elem.Guard) || 0;
-        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
-        const priceData = price.find(
-          
-          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
-        );
-        const countingRate = priceData?.CountingRate || 0;
-        const inventoryRate = priceData?.InventoryRate || 0;
-        const docPreparationRate = priceData?.DocPreparationRate || 0;
-        const guardRate = priceData?.GuardRate || 0;
-  
-        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
-        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
-        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
-        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
-  
-        const totalRate =countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
-  
-        totalExpenseRate += totalRate;
-      });
-    }
-  
-    return {
-      Inventory,
-      Counting,
-      DocPreparation,
-      Guard,
-      totalExpenseRate,
-    };
-  };
-  
-  const columnSums = calculateColumnSum();
-  const columnSumsUser = calculateColumnSumUser();
 
   const multiplyLocationData = (locationData, priceData) => {
     if (!locationData || !priceData) return []; // Ensure both data arrays are provided
@@ -511,45 +420,48 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
   };
 
   const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+
   useEffect(() => {
-    if (
-      price &&
-      locationReport &&
-      price.length > 0 &&
-      locationReport.length > 0
-    ) {
-      const normalizeName = (name) =>
-        name ? name.replace(/district court/gi, "").trim() : "";
-
-      const multipliedData = locationReport.map((location) => {
+    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+      const normalizeName = (name) => (name ? name.toLowerCase().replace(/district court/gi, '').trim() : '');
+  
+      const multipliedData = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
-
-        const prices = price.find(
-          (p) => normalizeName(p.LocationName) === normalizedLocationName
-        );
+  
+        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
+  
         if (prices) {
           const multipliedLocation = {
             ...location,
-            Counting: Number(location.Counting) * prices.CountingRate,
-            Inventory: Number(location.Inventory) * prices.InventoryRate,
-            DocPreparation:
-              Number(location.DocPreparation) * prices.DocPreparationRate,
-            Guard: Number(location.Guard) * prices.GuardRate,
+            Scanned: Number(location.Scanned || 0) * (prices.ScanRate || 0),
+            QC: Number(location.QC || 0) * (prices.QcRate || 0),
+            Client_QC: Number(location.Client_QC || 0) * (prices.ClientQcRate || 0),
+            Flagging: Number(location.Flagging || 0) * (prices.FlagRate || 0),
+            Indexing: Number(location.Indexing || 0) * (prices.IndexRate || 0),
+            CBSL_QA: Number(location.CBSL_QA || 0) * (prices.CbslQaRate || 0),
+            Counting: Number(location.Counting || 0) * (prices.CountingRate || 0),  // Ensure the property is correct
+            Inventory: Number(location.Inventory || 0) * (prices.InventoryRate || 0),  // Ensure the property is correct
+            DocPreparation: Number(location.DocPreparation || 0) * (prices.DocPreparationRate || 0),  // Ensure the property is correct
+            Guard: Number(location.Guard || 0) * (prices.GuardRate || 0),  // Ensure the property is correct
           };
-
+  
           const rowSum =
+            multipliedLocation.Scanned +
+            multipliedLocation.QC +
+            multipliedLocation.Client_QC +
+            multipliedLocation.Flagging +
+            multipliedLocation.Indexing +
+            multipliedLocation.CBSL_QA +
             multipliedLocation.Counting +
             multipliedLocation.Inventory +
             multipliedLocation.DocPreparation +
             multipliedLocation.Guard;
-
+  
           multipliedLocation.rowSum = rowSum;
-
+  
           return multipliedLocation;
         } else {
-          console.error(
-            `No matching price found for location: ${location.LocationName}`
-          );
+          console.error(`No matching price found for location: ${location.LocationName}`);
           return {
             ...location,
             Scanned: 0,
@@ -566,35 +478,27 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
           };
         }
       });
-
-      const enhancedLocationReport = locationReport.map((location) => {
+  
+      const enhancedLocationReport = locationReport.map(location => {
         const normalizedLocationName = normalizeName(location.LocationName);
-        const correspondingMultiplied = multipliedData.find(
-          (m) => normalizeName(m.LocationName) === normalizedLocationName
-        );
+        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.LocationName) === normalizedLocationName);
         return {
           ...location,
           rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
         };
       });
-
+  
       setEnhancedLocationReport(enhancedLocationReport);
-      const sumOfRowSums = enhancedLocationReport.reduce(
-        (acc, curr) => acc + curr.rowSum,
-        0
-      );
+      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       setSecondLastColumnTotal(sumOfRowSums);
       console.log("Total", sumOfRowSums);
       console.log(enhancedLocationReport);
     }
   }, [price, locationReport]);
-
+  
   useEffect(() => {
     if (enhancedLocationReport && enhancedLocationReport.length > 0) {
-      const sumOfLastColumn = enhancedLocationReport.reduce(
-        (acc, curr) => acc + curr.rowSum,
-        0
-      );
+      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
       console.log("Sum of Last Column", sumOfLastColumn);
       setLastColumnTotal(sumOfLastColumn);
     }
@@ -605,6 +509,159 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       <div className="loader"></div>
     </div>
   );
+
+
+  const calculateColumnSum = () => {
+    let Inventory = 0;
+    let Counting = 0;
+    let DocPreparation = 0;
+    let Guard = 0;
+    let Scanned = 0;
+    let QC = 0;
+    let Flagging = 0;
+    let Indexing = 0;
+    let CBSL_QA = 0;
+    let Client_QC = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedReportLocationWise && Array.isArray(detailedReportLocationWise)) {
+      detailedReportLocationWise.forEach((elem) => {
+        Inventory += parseInt(elem.Inventory) || 0;
+        Counting += parseInt(elem.Counting) || 0;
+        DocPreparation += parseInt(elem.DocPreparation) || 0;
+        Guard += parseInt(elem.Guard) || 0;
+        Scanned += parseInt(elem.Scanned) || 0;
+        QC += parseInt(elem.QC) || 0;
+        Flagging += parseInt(elem.Flagging) || 0;
+        Indexing += parseInt(elem.Indexing) || 0;
+        CBSL_QA += parseInt(elem.CBSL_QA) || 0;
+        Client_QC += parseInt(elem.Client_QC) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+  
+        const scanRate = priceData?.ScanRate || 0;
+        const qcRate = priceData?.QcRate || 0;
+        const indexRate = priceData?.IndexRate || 0;
+        const flagRate = priceData?.FlagRate || 0;
+        const cbslQaRate = priceData?.CbslQaRate || 0;
+        const clientQcRate = priceData?.ClientQcRate || 0;
+        const countingRate = priceData?.CountingRate || 0;
+        const inventoryRate = priceData?.InventoryRate || 0;
+        const docPreparationRate = priceData?.DocPreparationRate || 0;
+        const guardRate = priceData?.GuardRate || 0;
+  
+        const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
+        const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
+        const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
+        const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
+        const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
+        const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
+        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
+        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
+        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
+  
+        const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Inventory,
+      Counting,
+      DocPreparation,
+      Guard,
+      Scanned,
+      QC,
+      Flagging,
+      Indexing,
+      CBSL_QA,
+      Client_QC,
+      totalExpenseRate,
+    };
+  };
+
+  const calculateColumnSumUser = () => {
+    let Inventory = 0;
+    let Counting = 0;
+    let DocPreparation = 0;
+    let Guard = 0;
+    let Scanned = 0;
+    let QC = 0;
+    let Flagging = 0;
+    let Indexing = 0;
+    let CBSL_QA = 0;
+    let Client_QC = 0;
+    let totalExpenseRate = 0;
+  
+    if (detailedUserReport && Array.isArray(detailedUserReport)) {
+      detailedUserReport.forEach((elem) => {
+        Inventory += parseInt(elem.Inventory) || 0;
+        Counting += parseInt(elem.Counting) || 0;
+        DocPreparation += parseInt(elem.DocPreparation) || 0;
+        Guard += parseInt(elem.Guard) || 0;
+        Scanned += parseInt(elem.Scanned) || 0;
+        QC += parseInt(elem.QC) || 0;
+        Flagging += parseInt(elem.Flagging) || 0;
+        Indexing += parseInt(elem.Indexing) || 0;
+        CBSL_QA += parseInt(elem.CBSL_QA) || 0;
+        Client_QC += parseInt(elem.Client_QC) || 0;
+        const normalizeName = (name) => name ? name.replace(/district court/gi, "").trim() : "";
+        const priceData = price.find(
+          
+          (price) => normalizeName(price.LocationName) === normalizeName(elem.locationName)
+        );
+  
+        const scanRate = priceData?.ScanRate || 0;
+        const qcRate = priceData?.QcRate || 0;
+        const indexRate = priceData?.IndexRate || 0;
+        const flagRate = priceData?.FlagRate || 0;
+        const cbslQaRate = priceData?.CbslQaRate || 0;
+        const clientQcRate = priceData?.ClientQcRate || 0;
+        const countingRate = priceData?.CountingRate || 0;
+        const inventoryRate = priceData?.InventoryRate || 0;
+        const docPreparationRate = priceData?.DocPreparationRate || 0;
+        const guardRate = priceData?.GuardRate || 0;
+  
+        const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
+        const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
+        const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
+        const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
+        const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
+        const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        const countingRateTotal = (parseInt(elem.Counting) || 0) * countingRate;
+        const inventoryRateTotal = (parseInt(elem.Inventory) || 0) * inventoryRate;
+        const docPreparationRateTotal = (parseInt(elem.DocPreparation) || 0) * docPreparationRate;
+        const otherRate = (parseInt(elem.Guard) || 0) * guardRate;
+  
+        const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
+  
+        totalExpenseRate += totalRate;
+      });
+    }
+  
+    return {
+      Inventory,
+      Counting,
+      DocPreparation,
+      Guard,
+      Scanned,
+      QC,
+      Flagging,
+      Indexing,
+      CBSL_QA,
+      Client_QC,
+      totalExpenseRate,
+    };
+  };
+  
+  const columnSums = calculateColumnSum();
+  const columnSumsUser = calculateColumnSumUser();
+
   return (
     <>
       {isLoading && <Loader />}
@@ -612,12 +669,11 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
         <div className='row'>
           <div className='col-2'></div>
           <div className='col-9 ms-5'>
-        <div className="row mt-3">
+      <div className="row mt-3">
           <div className="search-report-card">
             <h4>Summary Report</h4>
             <div className="row ms-2 me-2">
-
-              {summaryReport ? (
+              {summaryReport && (
                 <table className="table-bordered mt-2">
                   <thead>
                     <tr>
@@ -626,26 +682,34 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                       <th>Counting</th>
                       <th>Doc Pre</th>
                       <th>Other</th>
+                      <th>Scanned</th>
+                      <th>QC</th>
+                      <th>Flagging</th>
+                      <th>Indexing</th>
+                      <th>CBSL-QA</th>
+                      <th>Client-QA</th>
                       <th>Expense</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>1</td>
-                      <td>{summaryReport.Inventory}</td>
-                      <td>{summaryReport.Counting}</td>
-                      <td>{summaryReport.DocPreparation}</td>
-                      <td>{summaryReport.Guard}</td>
+                      <td>{isNaN(parseInt(summaryReport.Inventory)) ? 0 : parseInt(summaryReport.Inventory).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.Counting)) ? 0 : parseInt(summaryReport.Counting).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.DocPreparation)) ? 0 : parseInt(summaryReport.DocPreparation).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.Guard)) ? 0 : parseInt(summaryReport.Guard).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.Scanned)) ? 0 : parseInt(summaryReport.Scanned).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.QC)) ? 0 : parseInt(summaryReport.QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.Flagging)) ? 0 : parseInt(summaryReport.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.Indexing)) ? 0 : parseInt(summaryReport.Indexing).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.CBSL_QA)) ? 0 : parseInt(summaryReport.CBSL_QA).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(summaryReport.Client_QC)) ? 0 : parseInt(summaryReport.Client_QC).toLocaleString()}</td>
                       <td>{lastColumnTotal.toLocaleString()}</td>
                     </tr>
                   </tbody>
                 </table>
-              ) : (
-                <p>No data available</p>
               )}
-
             </div>
-
           </div>
         </div>
         <div className="row mt-3">
@@ -654,14 +718,15 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
               <div className="col-6">
                 <h4>Location Wise Summary Report</h4>
               </div>
-
               <div className="row">
                 <div className="col-2">
                   <p>Total row(s):{locationReport ? locationReport.length : 0}</p>
                 </div>
                 <div className="col-8"></div>
                 <div className="col-2">
-                  <button className="btn btn-success" onClick={handleExport}>Export CSV</button>
+                  <button className="btn btn-success" onClick={handleExport}>
+                    <FiDownload className="me-2" />Export CSV
+                  </button>
                 </div>
                 {showConfirmation && (
                   <div className="confirmation-dialog">
@@ -673,17 +738,8 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                   </div>
                 )}
               </div>
-              {showConfirmation && (
-                <div className="confirmation-dialog">
-                  <div className="confirmation-content">
-                    <p className="fw-bold">Are you sure you want to export the CSV file?</p>
-                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
-                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
-                  </div>
-                </div>
-              )}
+             
             </div>
-
             <div className="all-tables row ms-2 me-2">
               <table className="table-bordered mt-2">
                 <thead>
@@ -692,15 +748,20 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                     <th>Location Name</th>
                     <th>Inventory</th>
                     <th>Counting</th>
-                    <th>Doc Pre</th>
+                    <th>DocPre</th>
                     <th>Other</th>
+                    <th>Scanned</th>
+                    <th>QC</th>
+                    <th>Flagging</th>
+                    <th>Indexing</th>
+                    <th>CBSL-QA</th>
+                    <th>Client-QA</th>
                     <th>Expense</th>
                     <th>Remarks</th>
                   </tr>
                 </thead>
                 <tbody>
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
-
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
@@ -708,6 +769,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Guard)) ? 0 : parseInt(elem.Guard).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Indexing)) ? 0 : parseInt(elem.Indexing).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.CBSL_QA)) ? 0 : parseInt(elem.CBSL_QA).toLocaleString()}</td>
+                      <td>{isNaN(parseInt(elem.Client_QC)) ? 0 : parseInt(elem.Client_QC).toLocaleString()}</td>
                       <td>{elem.rowSum ? elem.rowSum.toLocaleString() : 0}</td>
                       <td></td>
                     </tr>
@@ -768,35 +835,73 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                             <th>User Name</th>
                             <th>Inventory</th>
                             <th>Counting</th>
-                            <th>Doc Pre</th>
+                            <th>DocPre</th>
                             <th>Other</th>
+                            <th>Scanned</th>
+                            <th>QC</th>
+                            <th>Flagging</th>
+                            <th>Indexing</th>
+                            <th>CBSL-QA</th>
+                            <th>Client-QA</th>
                             <th>Expense</th>
-                            <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
-
-                            // Calculate rates for each activity
-                            const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
-                            const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
-                            const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
-                            const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-
-                            // Calculate total expense rate
-                            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+                            const normalizeName = (name) =>
+                              name ? name.replace(/district court/gi, "").trim() : "";
+                            const normalizedLocationName = normalizeName(elem.locationName);
+                            console.log("Normalized Location Name:", normalizedLocationName);
+                            const priceData = price.find(
+                              (price) => normalizeName(price.LocationName) === normalizedLocationName
+                            );
+                            const scanRate = priceData?.ScanRate || 0;
+                            const qcRate = priceData?.QcRate || 0;
+                            const indexRate = priceData?.IndexRate || 0;
+                            const flagRate = priceData?.FlagRate || 0;
+                            const cbslQaRate = priceData?.CbslQaRate || 0;
+                            const clientQcRate = priceData?.ClientQcRate || 0;
+                            const countingRate = priceData?.CountingRate || 0;
+                            const inventoryRate = priceData?.InventoryRate || 0;
+                            const docPreparationRate = priceData?.DocPreparationRate || 0;
+                            const guardRate = priceData?.GuardRate || 0;
+                            const scanned = isNaN(Number(elem.Scanned)) ? 0 : Number(elem.Scanned);
+                            const qc = isNaN(Number(elem.QC)) ? 0 : Number(elem.QC);
+                            const indexing = isNaN(Number(elem.Indexing)) ? 0 : Number(elem.Indexing);
+                            const flagging = isNaN(Number(elem.Flagging)) ? 0 : Number(elem.Flagging);
+                            const cbslQa = isNaN(Number(elem.CBSL_QA)) ? 0 : Number(elem.CBSL_QA);
+                            const clientQc = isNaN(Number(elem.Client_QC)) ? 0 : Number(elem.Client_QC);
+                            const counting = isNaN(Number(elem.Counting)) ? 0 : Number(elem.Counting);
+                            const inventory = isNaN(Number(elem.Inventory)) ? 0 : Number(elem.Inventory);
+                            const docPreparation = isNaN(Number(elem.DocPreparation)) ? 0 : Number(elem.DocPreparation);
+                            const guard = isNaN(Number(elem.Guard)) ? 0 : Number(elem.Guard);
+                            const scannedRate = scanned * scanRate;
+                            const qcRateTotal = qc * qcRate;
+                            const indexRateTotal = indexing * indexRate;
+                            const flagRateTotal = flagging * flagRate;
+                            const cbslQaRateTotal = cbslQa * cbslQaRate;
+                            const clientQcRateTotal = clientQc * clientQcRate;
+                            const countingRateTotal = counting * countingRate;
+                            const inventoryRateTotal = inventory * inventoryRate;
+                            const docPreparationRateTotal = docPreparation * docPreparationRate;
+                            const otherRate = guard * guardRate;
+                            const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
                                 <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
-                                <td>{elem.Inventory || 0}</td>
-                                <td>{elem.Counting || 0}</td>
-                                <td>{elem.DocPreparation || 0}</td>
-                                <td>{elem.Guard || 0}</td>
+                                <td>{inventory.toLocaleString()}</td>
+                                <td>{counting.toLocaleString()}</td>
+                                <td>{docPreparation.toLocaleString()}</td>
+                                <td>{guard.toLocaleString()}</td>
+                                <td>{scanned.toLocaleString()}</td>
+                                <td>{qc.toLocaleString()}</td>
+                                <td>{flagging.toLocaleString()}</td>
+                                <td>{indexing.toLocaleString()}</td>
+                                <td>{cbslQa.toLocaleString()}</td>
+                                <td>{clientQc.toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>
-                                <td></td>
                               </tr>
                             );
                           })}
@@ -817,6 +922,25 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                       <strong>{columnSums.Guard.toLocaleString()}</strong>
                     </td>
                     <td>
+                      <strong>{columnSums.Scanned.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Flagging.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Indexing.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.CBSL_QA.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSums.Client_QC.toLocaleString()}</strong>
+                    </td>
+                    
+                    <td>
                       {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
                       <strong>{columnSums.totalExpenseRate.toLocaleString()}</strong>
                     </td>
@@ -832,8 +956,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
             </div>
           </div>
         )}
-
-
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
             <div className="custom-modal">
@@ -851,8 +973,12 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                 </div>
               </div>
               <div className="modal-body">
-
                 <div className="row mt-3" ref={ref}>
+                <div className="col-12">
+            <p className="fw-bold">
+              Number Of Working Days: {detailedUserReport ? new Set(detailedUserReport.map(item => item.Date)).size : 0}
+            </p>
+          </div>
                   <div className="search-report-card">
                     <div className="row">
                       <div className="col-2">
@@ -889,44 +1015,83 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                             <th>Sr.No.</th>
                             <th>Location</th>
                             <th>User Name</th>
-                            <th>Date</th>
+                            <th style={{ width: '200px' }}>Date</th>
+                            <th>Lot No</th>
                             <th>Inventory</th>
                             <th>Counting</th>
-                            <th>Doc Pre</th>
+                            <th>DocPre</th>
                             <th>Other</th>
+                            <th>Scanned</th>
+                            <th>QC</th>
+                            <th>Flagging</th>
+                            <th>Indexing</th>
+                            <th>CBSL-QA</th>
+                            <th>Client-QA</th>
                             <th>Expense</th>
-                            <th>Remarks</th>
                           </tr>
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
-
-                            // Calculate rates for each activity
-                            const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
-                            const inventoryRate = elem.Inventory * (priceData ? priceData.InventoryRate : 0);
-                            const docPreparationRate = elem.DocPreparation * (priceData ? priceData.DocPreparationRate : 0);
-                            const otherRate = elem.Guard * (priceData ? priceData.GuardRate : 0);
-
-                            // Calculate total expense rate
-                            const totalRate = countingRate + inventoryRate + docPreparationRate + otherRate;
+                            const normalizeName = (name) =>
+                              name ? name.replace(/district court/gi, "").trim() : "";
+                            const normalizedLocationName = normalizeName(elem.locationName);
+                            const priceData = price.find(
+                              (price) => normalizeName(price.LocationName) === normalizedLocationName
+                            );
+                            const scanRate = priceData?.ScanRate || 0;
+                            const qcRate = priceData?.QcRate || 0;
+                            const indexRate = priceData?.IndexRate || 0;
+                            const flagRate = priceData?.FlagRate || 0;
+                            const cbslQaRate = priceData?.CbslQaRate || 0;
+                            const clientQcRate = priceData?.ClientQcRate || 0;
+                            const countingRate = priceData?.CountingRate || 0;
+                            const inventoryRate = priceData?.InventoryRate || 0;
+                            const docPreparationRate = priceData?.DocPreparationRate || 0;
+                            const guardRate = priceData?.GuardRate || 0;
+                            const scanned = isNaN(Number(elem.Scanned)) ? 0 : Number(elem.Scanned);
+                            const qc = isNaN(Number(elem.QC)) ? 0 : Number(elem.QC);
+                            const indexing = isNaN(Number(elem.Indexing)) ? 0 : Number(elem.Indexing);
+                            const flagging = isNaN(Number(elem.Flagging)) ? 0 : Number(elem.Flagging);
+                            const cbslQa = isNaN(Number(elem.CBSL_QA)) ? 0 : Number(elem.CBSL_QA);
+                            const clientQc = isNaN(Number(elem.Client_QC)) ? 0 : Number(elem.Client_QC);
+                            const counting = isNaN(Number(elem.Counting)) ? 0 : Number(elem.Counting);
+                            const inventory = isNaN(Number(elem.Inventory)) ? 0 : Number(elem.Inventory);
+                            const docPreparation = isNaN(Number(elem.DocPreparation)) ? 0 : Number(elem.DocPreparation);
+                            const guard = isNaN(Number(elem.Guard)) ? 0 : Number(elem.Guard);
+                            const scannedRate = scanned * scanRate;
+                            const qcRateTotal = qc * qcRate;
+                            const indexRateTotal = indexing * indexRate;
+                            const flagRateTotal = flagging * flagRate;
+                            const cbslQaRateTotal = cbslQa * cbslQaRate;
+                            const clientQcRateTotal = clientQc * clientQcRate;
+                            const countingRateTotal = counting * countingRate;
+                            const inventoryRateTotal = inventory * inventoryRate;
+                            const docPreparationRateTotal = docPreparation * docPreparationRate;
+                            const otherRate = guard * guardRate;
+                            const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal + countingRateTotal + inventoryRateTotal + docPreparationRateTotal + otherRate;
                             return (
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
                                 <td style={{whiteSpace:'nowrap'}}>{elem.user_type || 0}</td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.Date}</td>
-                                <td>{elem.Inventory || 0}</td>
-                                <td>{elem.Counting || 0}</td>
-                                <td>{elem.DocPreparation || 0}</td>
-                                <td>{elem.Guard || 0}</td>
+                                <td style={{whiteSpace:'nowrap'}} >{elem.Date}</td>
+                                <td>{elem.lotno}</td>
+                                <td>{inventory.toLocaleString()}</td>
+                                <td>{counting.toLocaleString()}</td>
+                                <td>{docPreparation.toLocaleString()}</td>
+                                <td>{guard.toLocaleString()}</td>
+                                <td>{scanned.toLocaleString()}</td>
+                                <td>{qc.toLocaleString()}</td>
+                                <td>{flagging.toLocaleString()}</td>
+                                <td>{indexing.toLocaleString()}</td>
+                                <td>{cbslQa.toLocaleString()}</td>
+                                <td>{clientQc.toLocaleString()}</td>
                                 <td>{totalRate.toLocaleString()}</td>
-                                <td></td>
                               </tr>
                             );
                           })}
                           <tr style={{ color: "black" }}>
-                    <td colSpan="4">
+                    <td colSpan="5">
                       <strong>Total</strong>
                     </td>
                     <td>
@@ -934,7 +1099,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                     </td>
                     <td>
                       <strong>{columnSumsUser.Counting.toLocaleString()}</strong>
-                    </td> 
+                    </td>
                     <td>
                       <strong>{columnSumsUser.DocPreparation.toLocaleString()}</strong>
                     </td>
@@ -942,7 +1107,24 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                       <strong>{columnSumsUser.Guard.toLocaleString()}</strong>
                     </td>
                     <td>
-                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
+                      <strong>{columnSumsUser.Scanned.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Flagging.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Indexing.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.CBSL_QA.toLocaleString()}</strong>
+                    </td>
+                    <td>
+                      <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
+                    </td>
+                    <td>
                       <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
                     </td>
                     <td></td>
@@ -953,7 +1135,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         )}
@@ -962,7 +1143,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       </div>
     </>
   )
-
 }
 
-export default NonTechPeriodic
+export default KarAllPeriodic

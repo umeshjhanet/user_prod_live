@@ -6,13 +6,16 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
-const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
+const KarNonTechCommulative = ({userData}) => {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
+  const [showModal, setShowModal] = useState(true); // Initially set to true to show the modal
   const [userView, setUserView] = useState(false);
-  const [summaryReport, setSummaryReport] = useState(null);
+  //const [summaryReport, setSummaryReport] = useState([]);
+  const [summaryReport, setSummaryReport] = useState(null); // Initialize as null
   const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
-  const [showModal, setShowModal] = useState(true);
   const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
   const [detailedUserReport, setDetailedUserReport] = useState();
   const [selectedUsername, setSelectedUsername] = useState('');
@@ -28,15 +31,17 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
   const [price, setPrice] = useState([]);
   const [enhancedLocationReport, setEnhancedLocationReport] = useState();
   const ref = useRef(null);
-
-
+  const [clickedRowIndex, setClickedRowIndex] = useState('');
 
   const handleLocationView = (locationName) => {
     setShowModal(true);
-    fetchUserDetailed(locationName, startDate, endDate);
-    fetchDetailedLocationWiseReportCsvFile(locationName, startDate, endDate)
+    console.log(locationName)
+    fetchUserDetailed(locationName);
+    fetchDetailedLocationWiseReportCsvFile(locationName)
     setLocationView(true);
     setUserView(false);
+    console.log("click on location")
+
   };
 
   const handleUserView = (username, locationName, rowIndex) => {
@@ -45,20 +50,13 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     setLocationName(locationName);
     console.log("LocationName Fetched", locationName);
     console.log("UserName Fetched", username);
-    fetchUserDetailedReport(username, locationName,startDate,endDate);
+    fetchUserDetailedReport(username, locationName);
   setTimeout(() => {
     setUserView(true);
     setLocationView(false);
     setShowModal(true);
     setIsLoading(false);
   }, 1000);
-  };
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-  const handleBackToLocationView = () => {
-    setLocationView(true);
-    setUserView(false);
   };
 
   const handleExport = () => {
@@ -122,266 +120,337 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
     setShowConfirmationUser(false);
   }
 
-  const fetchUserDetailed = (locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
+  const fetchUserDetailed = (locationName) => {
     setIsLoading(true);
     setDetailedReportLocationWise([]);
     axios
-      .get(`${API_URL}/alldetailedreportlocationwisenontech`, {
-        params: {
-          locationName: locationName,
-          startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-          endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-        },
+      .get(`${API_URL}/alldetailedreportlocationwisenontechkarnataka`, {
+        params: { locationName: locationName },
+
       })
       .then((response) => {
-        setDetailedReportLocationWise(response.data)
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        setIsLoading(false);
-      });
-  };
-
-  const fetchUserDetailedReport = (username, locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
-    setIsLoading(true);
-    setDetailedUserReport([]);
-    axios.get(`${API_URL}/alluserdetailedreportlocationwisenontech`, {
-      params: {
-        username: username,
-        locationName: locationName,
-        startDate: formattedStartDate ? formatDate(formattedStartDate) : null,
-        endDate: formattedEndDate ? formatDate(formattedEndDate) : null
-      }
-    })
-      .then((response) => {
-        setDetailedUserReport(response.data)
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user detailed report:", error);
-        setIsLoading(false);
-      });
-  };
-
-  const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
-
-    let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontech`;
-
-    if (locationName && formattedStartDate && formattedEndDate) {
-      apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    } else if (locationName) {
-      apiUrl += `?locationName=${locationName}`;
-    } else if (formattedStartDate && formattedEndDate) {
-      apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    }
-    setIsLoading(true);
-    axios.get(apiUrl, { responseType: "blob" })
-      .then((response) => {
-        const blob = new Blob([response.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        setDetailedLocationWiseCsv(url);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error in exporting data:", error);
-        setIsLoading(false);
-      });
-  };
-
-  const fetchPrices = () => {
-    setIsLoading(true); // Set loading to true when fetching data
-    axios
-      .get(`${API_URL}/getbusinessrate`)
-      .then((response) => {
-        setPrice(response.data);
+        setDetailedReportLocationWise(response.data);
         setIsLoading(false); // Set loading to false after data is fetched
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
-        setIsLoading(false); // Set loading to false in case of error
+        setIsLoading(false); // Set loading to false even if there's an error
       });
   };
-  const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
-    const formattedStartDate = startDate ? new Date(startDate) : null;
-    const formattedEndDate = endDate ? new Date(endDate) : null;
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
 
-    let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontech`;
-
-    if (username && locationName) {
-      const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
-      apiUrl += `?username=${username}&locationName=${locationQueryString}`;
-    }
-    if (formattedStartDate && formattedEndDate) {
-      const separator = apiUrl.includes('?') ? '&' : '?';
-      apiUrl += `${separator}startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    }
-    setIsLoading(true);
-    axios.get(apiUrl, { responseType: "blob" })
-      .then((response) => {
-        const blob = new Blob([response.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        setUserWiseCSv(url);
-        setIsLoading(false);
+    const fetchUserDetailedReport = (username, locationName) => {
+      setIsLoading(true);
+      setDetailedUserReport([]);
+      axios.get(`${API_URL}/alluserdetailedreportlocationwisenontechkarnataka`, {
+        params: {
+          username: username,
+          locationName: locationName
+        }
       })
-      .catch((error) => {
-        console.error("Error in exporting data:", error);
-        setIsLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    const fetchSummaryReport = async () => {
-      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
-        console.error("Invalid or undefined userData structure:", userData);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const formattedStartDate = startDate ? new Date(startDate) : null;
-        const formattedEndDate = endDate ? new Date(endDate) : null;
-        const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
-        };
-    
-        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-        let apiUrl = `${API_URL}/summaryreportnontech`;
-    
-        // Check conditions for including locationName
-        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject =  userData.projects[0] === 1;
-        const locationNameWithDistrictCourt = `${locationName} District Court`;
-        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
-        let queryParams = [];
-    
-        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-          queryParams.push(`locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`);
-        }
-    
-        if (formattedStartDate && formattedEndDate) {
-          queryParams.push(`startDate=${formatDate(formattedStartDate)}`, `endDate=${formatDate(formattedEndDate)}`);
-        }
-    
-        if (queryParams.length > 0) {
-          apiUrl += `?${queryParams.join('&')}`;
-        }
-    
-        const response = await axios.get(apiUrl);
-        setSummaryReport(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching summary report:", error);
-        setIsLoading(false);
-      }
+        .then((response) => setDetailedUserReport(response.data))
+        .catch((error) => {
+          console.error("Error fetching user detailed report:", error);
+        });
     };
-   
-    
-    const fetchLocationReport = async () => {
-      setIsLoading(true);
-      try {
-        const formattedStartDate = startDate ? new Date(startDate) : null;
-        const formattedEndDate = endDate ? new Date(endDate) : null;
-        const formatDate = (date) => {
-          return date.toISOString().split('T')[0];
-        };
-    
-        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-        let apiUrl = `${API_URL}/detailedreportcummulativenontech`;
-    
-        // Check if userData meets the conditions to include the locationName parameter
-        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-        const hasSingleProject =  userData.projects[0] === 1;
-        const locationNameWithDistrictCourt = `${locationName} District Court`;
-        const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
-        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
-        }
-    
-        if (formattedStartDate && formattedEndDate) {
-          // Determine whether to use '?' or '&' based on existing query parameters
-          apiUrl += apiUrl.includes('?') ? '&' : '?';
-          apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-        }
-    
-        const response = await axios.get(apiUrl);
-        setLocationReport(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching detailed report:", error);
-        setIsLoading(false);
-      }
-    };
-
-    const fetchDetailedReportCsvFile = (startDate, endDate) => {
+  
+    const fetchDetailedLocationWiseReportCsvFile = (locationName, startDate, endDate) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
       const formatDate = (date) => {
         return date.toISOString().split('T')[0];
       };
-    
-      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-      let apiUrl = `${API_URL}/detailedreportcummulativecsvnontech`;
-    
-      // Check if userData meets the conditions to include the locationName parameter
-      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-      const hasSingleProject = userData.projects.length === 1 && userData.projects[0] === 1;
-      const locationNameWithDistrictCourt = `${locationName} District Court`;
-      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-    
-      if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+  setIsLoading(true);
+      let apiUrl = `${API_URL}/alldetailedreportlocationwisecsvnontechkarnataka`;
+  
+      if (locationName && formattedStartDate && formattedEndDate) {
+        apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      } else if (locationName) {
+        apiUrl += `?locationName=${locationName}`;
+      } else if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
       }
-    
-      if (formattedStartDate && formattedEndDate) {
-        // Determine whether to use '?' or '&' based on existing query parameters
-        apiUrl += apiUrl.includes('?') ? '&' : '?';
-        apiUrl += `startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-      }
-    
+  
       axios.get(apiUrl, { responseType: "blob" })
         .then((response) => {
           const blob = new Blob([response.data], { type: "text/csv" });
           const url = window.URL.createObjectURL(blob);
-          setDetailedCsv(url);
+          setDetailedLocationWiseCsv(url);
+        })
+        .catch((error) => {
+          console.error("Error in exporting data:", error);
+        });
+        setIsLoading(false);
+    };
+  
+  
+    const fetchUserWiseReportCsvFile = (username, locationName, startDate, endDate) => {
+      const formattedStartDate = startDate ? new Date(startDate) : null;
+      const formattedEndDate = endDate ? new Date(endDate) : null;
+      const formatDate = (date) => {
+        return date.toISOString().split('T')[0];
+      };
+  
+      let apiUrl = `${API_URL}/alluserdetailedreportlocationwisecsvnontechkarnataka`;
+  
+      if (username && locationName) {
+        // If locationName is an array, join its elements with commas
+        const locationQueryString = Array.isArray(locationName) ? locationName.join(',') : locationName;
+        apiUrl += `?username=${username}&locationName=${locationQueryString}`;
+      } else if (formattedStartDate && formattedEndDate) {
+        apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      }
+  
+      axios.get(apiUrl, { responseType: "blob" })
+        .then((response) => {
+          const blob = new Blob([response.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          setUserWiseCSv(url);
         })
         .catch((error) => {
           console.error("Error in exporting data:", error);
         });
     };
+  
+  
+    const toggleModal = () => {
+      setShowModal(!showModal);
+    };
+  
+    useEffect(() => {
+      const fetchSummaryReport = () => {
+        setIsLoading(true);
+      
+        let apiUrl = `${API_URL}/summaryreportnontechkarnataka`;
+      
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 3;
+      
+        // Ensure locationName is extracted from the second location
+        const locationName = userData.locations.length > 1 ? userData.locations[0].name : "";
+      
+        // Check if locationName matches the second location's name
+        const hasMatchingLocation = userData.locations.length > 1 && userData.locations[0].name === locationName;
+      
+        console.log("LocationName:", locationName);
+        console.log("isCBSLUser:", isCBSLUser);
+        console.log("userData.user_roles:", userData.user_roles);
+        console.log("hasSingleProject:", hasSingleProject);
+        console.log("userData.projects:", userData.projects);
+        console.log("hasMatchingLocation:", hasMatchingLocation);
+        console.log("userData.locations:", userData.locations);
+      
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          apiUrl += `?locationName=${encodeURIComponent(locationName)}`;
+          console.log("Modified API URL with locationName:", apiUrl);
+        } else {
+          console.log("API URL without locationName:", apiUrl);
+        }
+      
+        axios.get(apiUrl)
+          .then((response) => {
+            setSummaryReport(response.data);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching summary report:", error);
+            setIsLoading(false);
+          });
+      };
+      
+  
+      const fetchLocationReport = () => {
+        setIsLoading(true);
+  
+        let apiUrl = `${API_URL}/detailedreportcummulativenontechkarnataka`;
+  
+        // Dynamic locationName assignment
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+  
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 3;
+  
+        // Append "District Court" to locationName
+        const locationNameWithDistrictCourt = `${locationName}`;
+  
+        // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+        const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
+  
+        console.log("LocationName:", locationNameWithDistrictCourt);
+        console.log("isCBSLUser:", isCBSLUser);
+        console.log("userData.user_roles:", userData.user_roles);
+        console.log("hasSingleProject:", hasSingleProject);
+        console.log("userData.projects:", userData.projects);
+        console.log("hasMatchingLocation:", hasMatchingLocation);
+        console.log("userData.locations:", userData.locations);
+  
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+          console.log("Modified API URL with locationName:", apiUrl);
+        } else {
+          console.log("API URL without locationName:", apiUrl);
+        }
+  
+        axios
+          .get(apiUrl)
+          .then((response) => {
+            setLocationReport(response.data);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching location report:", error);
+            setIsLoading(false);
+          });
+      };
+  
+      const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
+        const formattedStartDate = startDate ? new Date(startDate) : null;
+        const formattedEndDate = endDate ? new Date(endDate) : null;
+        const formatDate = (date) => date.toISOString().split('T')[0];
+      
+        setIsLoading(true);
+        let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechkarnataka`;
+      
+        if (formattedStartDate && formattedEndDate) {
+          apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+        }
+      
+        // Check userData structure
+        if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
+          console.error("Invalid userData structure:", userData);
+          setIsLoading(false);
+          return;
+        }
+      
+        // Dynamic locationName assignment
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
+      
+        // Check if userData meets the conditions to include the locationName parameter
+        const isCBSLUser = userData.user_roles.includes("CBSL Site User");
+        const hasSingleProject = userData.projects[0] === 3;
+      
+        // Append "District Court" to locationName
+        const locationNameWithDistrictCourt = `${locationName}`;
+      
+        // Check if locationNameWithDistrictCourt matches any location name in userData.locations
+        const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
+      
+        console.log("LocationName:", locationNameWithDistrictCourt);
+        console.log("isCBSLUser:", isCBSLUser);
+        console.log("userData.user_roles:", userData.user_roles);
+        console.log("hasSingleProject:", hasSingleProject);
+        console.log("userData.projects:", userData.projects);
+        console.log("hasMatchingLocation:", hasMatchingLocation);
+        console.log("userData.locations:", userData.locations);
+      
+        if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
+          const separator = apiUrl.includes('?') ? '&' : '?';
+          apiUrl += `${separator}locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+          console.log("Modified API URL with locationName:", apiUrl);
+        } else {
+          console.log("API URL without locationName:", apiUrl);
+        }
+      
+        axios.get(apiUrl, { responseType: "blob" })
+          .then((response) => {
+            const blob = new Blob([response.data], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            setDetailedCsv(url);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error in exporting data:", error);
+            setIsLoading(false);
+          });
+      };
+        // const fetchSummaryReport = () => {
+        //     setIsLoading(true);
+        //     axios.get(`${API_URL}/summaryreportnontechkarnataka`)
+        //       .then((response) => {
+        //         setSummaryReport(response.data);
+        //         setIsLoading(false);
+        //       })
+        //       .catch((error) => {
+        //         console.error("Error fetching summary report:", error);
+        //         setIsLoading(false);
+        //       });
+        //   };
+      // const fetchLocationReport = () => {
+      //   setIsLoading(true);
+      //   axios
+      //     .get(`${API_URL}/detailedreportcummulativenontechkarnataka`)
+      //     .then((response) => { 
+      //       setLocationReport(response.data)
+      //     setIsLoading(false);})
+      //     .catch((error) => {
+      //       console.error("Error fetching user data:", error);
+      //       setIsLoading(false);
+      //     });
+          
+      // };
+      const fetchPrices = () => {
+        setIsLoading(true); // Set loading to true when fetching data
+        axios
+          .get(`${API_URL}/kargetbusinessrate`)
+          .then((response) => {
+            setPrice(response.data);
+            setIsLoading(false); // Set loading to false after data is fetched
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+            setIsLoading(false); // Set loading to false in case of error
+          });
+      };
+      // const fetchDetailedReportCsvFile = (startDate, endDate) => {
+      //   const formattedStartDate = startDate ? new Date(startDate) : null;
+      //   const formattedEndDate = endDate ? new Date(endDate) : null;
+      //   const formatDate = (date) => {
+      //     return date.toISOString().split('T')[0];
+      //   };
+      //   setIsLoading(true);
+      //   let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechkarnataka`;
+  
+      //   if (formattedStartDate && formattedEndDate) {
+      //     apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+      //   }
+  
+      //   axios.get(apiUrl, { responseType: "blob" })
+      //     .then((response) => {
+      //       const blob = new Blob([response.data], { type: "text/csv" });
+      //       const url = window.URL.createObjectURL(blob);
+      //       setDetailedCsv(url);
+      //     })
+      //     .catch((error) => {
+      //       console.error("Error in exporting data:", error);
+      //       setIsLoading(false);
+      //     });
+          
+      // };
+  
+  
+      fetchDetailedReportCsvFile(startDate, endDate,userData);
+      // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+  
+      fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
+  fetchPrices();
+      fetchSummaryReport();
+      fetchLocationReport();
+      if (locationName) {
+        fetchUserDetailed(locationName);
+      }
+      fetchUserDetailedReport();
+    }, [selectedUsername, locationName, startDate, endDate,userData]);
+    // console.log("Location Data", locationReport);
+    const Loader = () => (
+      <div className="loader-overlay">
+        <div className="loader"></div>
+      </div>
+    );
+
+
+
     
-
-    fetchPrices();
-    fetchSummaryReport(userData);
-    fetchLocationReport(userData);
-    fetchDetailedReportCsvFile(startDate, endDate,userData);
-    fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
-    fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate);
-    fetchUserDetailedReport(selectedUsername,locationName,startDate,endDate);
-    fetchUserDetailed(locationName,startDate,endDate);
-
-  }, [selectedUsername, locationName, startDate, endDate,userData]);
-
-
   const calculateColumnSum = () => {
     let Inventory = 0;
     let Counting = 0;
@@ -470,141 +539,84 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
 
-  const multiplyLocationData = (locationData, priceData) => {
-    if (!locationData || !priceData) return []; // Ensure both data arrays are provided
-
-    return locationData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
-
-  const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
-
-  const multiplyUserWiseData = (userWiseData, priceData) => {
-    if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
-
-    return userWiseData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
-
-  const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
-
-  const multiplyUserData = (userData, priceData) => {
-    if (!userData || !priceData) return []; // Ensure both data arrays are provided
-
-    return userData.map((report) => {
-      const multipliedValues = priceData.map((price) => {
-        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-      });
-      return { multipliedValues };
-    });
-  };
-
-  const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
-  useEffect(() => {
-    if (
-      price &&
-      locationReport &&
-      price.length > 0 &&
-      locationReport.length > 0
-    ) {
-      const normalizeName = (name) =>
-        name ? name.replace(/district court/gi, "").trim() : "";
-
-      const multipliedData = locationReport.map((location) => {
-        const normalizedLocationName = normalizeName(location.LocationName);
-
-        const prices = price.find(
-          (p) => normalizeName(p.LocationName) === normalizedLocationName
-        );
-        if (prices) {
-          const multipliedLocation = {
-            ...location,
-            Counting: Number(location.Counting) * prices.CountingRate,
-            Inventory: Number(location.Inventory) * prices.InventoryRate,
-            DocPreparation:
-              Number(location.DocPreparation) * prices.DocPreparationRate,
-            Guard: Number(location.Guard) * prices.GuardRate,
-          };
-
-          const rowSum =
-            multipliedLocation.Counting +
-            multipliedLocation.Inventory +
-            multipliedLocation.DocPreparation +
-            multipliedLocation.Guard;
-
-          multipliedLocation.rowSum = rowSum;
-
-          return multipliedLocation;
-        } else {
-          console.error(
-            `No matching price found for location: ${location.LocationName}`
-          );
+    useEffect(() => {
+      if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+        // const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
+  
+        const multipliedData = locationReport.map(location => {
+          const normalizedLocationName = location.LocationName;
+  
+          const prices = price.find(p => p.LocationName === normalizedLocationName);
+  
+          if (prices) {
+            const multipliedLocation = {
+              ...location,
+              Counting: Number(location.Counting) * prices.CountingRate,
+              Inventory: Number(location.Inventory) * prices.InventoryRate,
+              DocPreparation: Number(location.DocPreparation) * prices.DocPreparationRate,
+              Guard: Number(location.Guard) * prices.GuardRate,
+            };
+  
+            const rowSum =
+              multipliedLocation.Counting +
+              multipliedLocation.Inventory +
+              multipliedLocation.DocPreparation +
+              multipliedLocation.Guard;
+  
+            multipliedLocation.rowSum = rowSum;
+  
+            return multipliedLocation;
+          } else {
+            console.error(`No matching price found for location: ${location.LocationName}`);
+            return {
+              ...location,
+              Scanned: 0,
+              QC: 0,
+              Client_QC: 0,
+              Flagging: 0,
+              Indexing: 0,
+              CBSL_QA: 0,
+              Counting: 0,
+              Inventory: 0,
+              DocPreparation: 0,
+              Guard: 0,
+              rowSum: 0,
+            };
+          }
+        });
+  
+        const enhancedLocationReport = locationReport.map(location => {
+          const normalizedLocationName = location.LocationName;
+          const correspondingMultiplied = multipliedData.find(m => m.LocationName === normalizedLocationName);
           return {
             ...location,
-            Scanned: 0,
-            QC: 0,
-            Client_QC: 0,
-            Flagging: 0,
-            Indexing: 0,
-            CBSL_QA: 0,
-            Counting: 0,
-            Inventory: 0,
-            DocPreparation: 0,
-            Guard: 0,
-            rowSum: 0,
+            rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
           };
-        }
-      });
-
-      const enhancedLocationReport = locationReport.map((location) => {
-        const normalizedLocationName = normalizeName(location.LocationName);
-        const correspondingMultiplied = multipliedData.find(
-          (m) => normalizeName(m.LocationName) === normalizedLocationName
-        );
-        return {
-          ...location,
-          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-        };
-      });
-
-      setEnhancedLocationReport(enhancedLocationReport);
-      const sumOfRowSums = enhancedLocationReport.reduce(
-        (acc, curr) => acc + curr.rowSum,
-        0
-      );
-      setSecondLastColumnTotal(sumOfRowSums);
-      console.log("Total", sumOfRowSums);
-      console.log(enhancedLocationReport);
-    }
-  }, [price, locationReport]);
-
-  useEffect(() => {
-    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
-      const sumOfLastColumn = enhancedLocationReport.reduce(
-        (acc, curr) => acc + curr.rowSum,
-        0
-      );
-      console.log("Sum of Last Column", sumOfLastColumn);
-      setLastColumnTotal(sumOfLastColumn);
-    }
-  }, [enhancedLocationReport]);
-  console.log("Location Data", multipliedLocationData);
-  const Loader = () => (
-    <div className="loader-overlay">
-      <div className="loader"></div>
-    </div>
-  );
+        });
+  
+        setEnhancedLocationReport(enhancedLocationReport);
+        const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+        setSecondLastColumnTotal(sumOfRowSums);
+        console.log("Total", sumOfRowSums);
+        console.log(enhancedLocationReport);
+      }
+    }, [price, locationReport]);
+  
+    useEffect(() => {
+      if (enhancedLocationReport && enhancedLocationReport.length > 0) {
+        const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+        console.log("Sum of Last Column", sumOfLastColumn);
+        setLastColumnTotal(sumOfLastColumn);
+      }
+    }, [enhancedLocationReport]);
+  
+    const handleBackToLocationView = () => {
+      setLocationView(true);
+      setUserView(false);
+    };
+  
+  console.log("summary report",summaryReport)
+  //console.log("Scanned Value", summaryReport.Scanned)
   return (
     <>
       {isLoading && <Loader />}
@@ -703,7 +715,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
 
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
+                      <td style={{whiteSpace:'nowrap'}}  className="hover-text" onClick={() => handleLocationView(elem.LocationName)}>{elem.LocationName || 0}</td>
                       <td>{isNaN(parseInt(elem.Inventory)) ? 0 : parseInt(elem.Inventory).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Counting)) ? 0 : parseInt(elem.Counting).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.DocPreparation)) ? 0 : parseInt(elem.DocPreparation).toLocaleString()}</td>
@@ -776,7 +788,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                         </thead>
                         <tbody>
                           {detailedReportLocationWise && detailedReportLocationWise.map((elem, index) => {
-                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
+                            const priceData = price.find(price => price.LocationName === elem.locationName);
 
                             // Calculate rates for each activity
                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
@@ -790,7 +802,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
-                                <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
+                                <td  style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleUserView(elem.user_type, elem.locationName)}>{elem.user_type || 0}</td>
                                 <td>{elem.Inventory || 0}</td>
                                 <td>{elem.Counting || 0}</td>
                                 <td>{elem.DocPreparation || 0}</td>
@@ -800,7 +812,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                               </tr>
                             );
                           })}
-                           <tr style={{ color: "black" }}>
+                          <tr style={{ color: "black" }}>
                     <td colSpan="3">
                       <strong>Total</strong>
                     </td>
@@ -832,7 +844,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
             </div>
           </div>
         )}
-
 
         {userView && !isLoading && showModal && (
           <div className="custom-modal-overlay">
@@ -900,7 +911,7 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
                         </thead>
                         <tbody>
                           {detailedUserReport && detailedUserReport.map((elem, index) => {
-                            const priceData = price.find(price => `${price.LocationName} District Court` === elem.locationName);
+                            const priceData = price.find(price => price.LocationName === elem.locationName);
 
                             // Calculate rates for each activity
                             const countingRate = elem.Counting * (priceData ? priceData.CountingRate : 0);
@@ -962,7 +973,6 @@ const NonTechPeriodic = ({ multipliedData, startDate, endDate,userData }) => {
       </div>
     </>
   )
-
 }
 
-export default NonTechPeriodic
+export default KarNonTechCommulative

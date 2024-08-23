@@ -6,20 +6,15 @@ import { useRef } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoArrowBackCircle } from "react-icons/io5";
 
-const CumulativeSummaryReport = ({ editedPrice, userData }) => {
+const KarTechCumulative = ({ multipliedData, prices, editedPrices, userData }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [locationView, setLocationView] = useState(false);
   const [showModal, setShowModal] = useState(true); // Initially set to true to show the modal
   const [userView, setUserView] = useState(false);
   const [summaryReport, setSummaryReport] = useState();
-  const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
-  const [lastColumnTotal, setLastColumnTotal] = useState(0);
-  const [locationReport, setLocationReport] = useState([]);
-  const [price, setPrice] = useState([]);
-  const [enhancedLocationReport, setEnhancedLocationReport] = useState([]);
+  const [locationReport, setLocationReport] = useState();
   const [locationName, setLocationName] = useState("");
-  const [multipliedData, setMultipliedData] = useState();
   const [detailedReportLocationWise, setDetailedReportLocationWise] = useState();
   const [detailedUserReport, setDetailedUserReport] = useState();
   const [selectedUsername, setSelectedUsername] = useState('');
@@ -30,10 +25,14 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
   const [showConfirmationLocation, setShowConfirmationLocation] = useState(false);
   const [showConfirmationUser, setShowConfirmationUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [multipliedLocationData, setMultipliedLocationData] = useState([]);
-  const [enhanceddetailedReportLocationWise, setEnhanceddetailedReportLocationWise] = useState([]);
   const ref = useRef(null);
   const [clickedRowIndex, setClickedRowIndex] = useState('');
+  const [price, setPrice] = useState([]);
+  const[enhancedLocationReport,setEnhancedLocationReport] = useState([]);
+  const [secondLastColumnTotal, setSecondLastColumnTotal] = useState(0);
+  const [lastColumnTotal, setLastColumnTotal] = useState(0);
+
+
   const handleLocationView = (locationName) => {
     setShowModal(true);
     fetchUserDetailed(locationName);
@@ -41,7 +40,10 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
     setLocationView(true);
     setUserView(false);
     console.log("click on location")
+
   };
+
+
 
   const handleUserView = (username, locationName, rowIndex) => {
     setIsLoading(true);
@@ -122,7 +124,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
     setIsLoading(true);
     setDetailedReportLocationWise([]);
     axios
-      .get(`${API_URL}/detailedreportlocationwise`, {
+      .get(`${API_URL}/kardetailedreportlocationwise`, {
         params: { locationName: locationName },
       })
       .then((response) => {
@@ -139,7 +141,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
   const fetchUserDetailedReport = (username, locationName) => {
     setIsLoading(true);
     setDetailedUserReport([]);
-    axios.get(`${API_URL}/userdetailedreportlocationwise`, {
+    axios.get(`${API_URL}/karuserdetailedreportlocationwise`, {
       params: {
         username: username,
         locationName: locationName
@@ -158,7 +160,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
       return date.toISOString().split('T')[0];
     };
     setIsLoading(true);
-    let apiUrl = `${API_URL}/detailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/kardetailedreportlocationwisecsv`;
 
     if (locationName && formattedStartDate && formattedEndDate) {
       apiUrl += `?locationName=${locationName}&startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -188,7 +190,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
       return date.toISOString().split('T')[0];
     };
 
-    let apiUrl = `${API_URL}/userdetailedreportlocationwisecsv`;
+    let apiUrl = `${API_URL}/karuserdetailedreportlocationwisecsv`;
 
     if (username && locationName) {
       // If locationName is an array, join its elements with commas
@@ -208,8 +210,50 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
         console.error("Error in exporting data:", error);
       });
   };
+  const multiplyLocationData = (locationData, priceData) => {
+    if (!locationData || !priceData) return []; // Ensure both data arrays are provided
 
+    return locationData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
 
+  const multipliedLocationData = multiplyLocationData(locationReport, priceCount());
+
+  const multiplyUserWiseData = (userWiseData, priceData) => {
+    if (!userWiseData || !priceData) return []; // Ensure both data arrays are provided
+
+    return userWiseData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
+
+  const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
+
+  const multiplyUserData = (userData, priceData) => {
+    if (!userData || !priceData) return []; // Ensure both data arrays are provided
+
+    return userData.map((report) => {
+      const multipliedValues = priceData.map((price) => {
+        const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
+        return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
+      });
+      return { multipliedValues };
+    });
+  };
+
+  const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
+
+  // Use multipliedData in your component as needed
+  console.log("MultipliedUserWiseData", multipliedLocationData);
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -217,35 +261,35 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
 
   useEffect(() => {
     const fetchSummaryReport = () => {
-      if (!userData || !Array.isArray(userData.user_roles) || !Array.isArray(userData.projects) || !Array.isArray(userData.locations)) {
-        console.error("Invalid or undefined userData structure:", userData);
-        return;
-      }
       setIsLoading(true);
-      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
-      let apiUrl = `${API_URL}/summaryreport`;
+    
+      let apiUrl = `${API_URL}/karsummaryreport`;
+    
       // Check if userData meets the conditions to include the locationName parameter
-      const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-      const hasSingleProject = userData.projects[0] === 1;
-      // Append "District Court" to locationName
-      const locationNameWithDistrictCourt = `${locationName} District Court`;
-      // Check if locationNameWithDistrictCourt matches any location name in userData.locations
-      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
-      console.log("LocationName:", locationNameWithDistrictCourt);
+      const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 3;
+    
+      // Ensure locationName is extracted from the second location
+      const locationName = userData.locations.length > 1 ? userData.locations[0].name : "";
+    
+      // Check if locationName matches the second location's name
+      const hasMatchingLocation = userData.locations.length > 1 && userData.locations[0].name === locationName;
+    
+      console.log("LocationName:", locationName);
       console.log("isCBSLUser:", isCBSLUser);
       console.log("userData.user_roles:", userData.user_roles);
       console.log("hasSingleProject:", hasSingleProject);
       console.log("userData.projects:", userData.projects);
       console.log("hasMatchingLocation:", hasMatchingLocation);
       console.log("userData.locations:", userData.locations);
-
+    
       if (isCBSLUser && hasSingleProject && hasMatchingLocation) {
-        apiUrl += `?locationName=${encodeURIComponent(locationNameWithDistrictCourt)}`;
+        apiUrl += `?locationName=${encodeURIComponent(locationName)}`;
         console.log("Modified API URL with locationName:", apiUrl);
       } else {
         console.log("API URL without locationName:", apiUrl);
       }
-
+    
       axios.get(apiUrl)
         .then((response) => {
           setSummaryReport(response.data);
@@ -256,36 +300,25 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
           setIsLoading(false);
         });
     };
-    const fetchPrices = () => {
-      setIsLoading(true); // Set loading to true when fetching data
-      axios
-        .get(`${API_URL}/getbusinessrate`)
-        .then((response) => {
-          setPrice(response.data);
-          setIsLoading(false); // Set loading to false after data is fetched
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false); // Set loading to false in case of error
-        });
-    };
+    
+
     const fetchLocationReport = () => {
       setIsLoading(true);
 
-      let apiUrl = `${API_URL}/detailedreport`;
+      let apiUrl = `${API_URL}/kardetailedReport`;
 
       // Dynamic locationName assignment
       const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
 
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
-      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 1;
+      const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 3;
 
       // Append "District Court" to locationName
-      const locationNameWithDistrictCourt = `${locationName} District Court`;
+      const locationNameWithDistrictCourt = `${locationName}`;
 
       // Check if locationNameWithDistrictCourt matches any location name in userData.locations
-      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+      const hasMatchingLocation = Array.isArray(userData.locations) && userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
 
       console.log("LocationName:", locationNameWithDistrictCourt);
       console.log("isCBSLUser:", isCBSLUser);
@@ -313,14 +346,14 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
           setIsLoading(false);
         });
     };
-    
+
     const fetchDetailedReportCsvFile = (startDate, endDate, userData) => {
       const formattedStartDate = startDate ? new Date(startDate) : null;
       const formattedEndDate = endDate ? new Date(endDate) : null;
       const formatDate = (date) => date.toISOString().split('T')[0];
     
       setIsLoading(true);
-      let apiUrl = `${API_URL}/detailedreportcsv`;
+      let apiUrl = `${API_URL}/kardetailedreportcsv`;
     
       if (formattedStartDate && formattedEndDate) {
         apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
@@ -338,13 +371,13 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
     
       // Check if userData meets the conditions to include the locationName parameter
       const isCBSLUser = userData.user_roles.includes("CBSL Site User");
-      const hasSingleProject = userData.projects[0] === 1;
+      const hasSingleProject = userData.projects[0] === 3;
     
       // Append "District Court" to locationName
-      const locationNameWithDistrictCourt = `${locationName} District Court`;
+      const locationNameWithDistrictCourt = `${locationName}`;
     
       // Check if locationNameWithDistrictCourt matches any location name in userData.locations
-      const hasMatchingLocation = userData.locations.some(location => `${location.name} District Court` === locationNameWithDistrictCourt);
+      const hasMatchingLocation = userData.locations.some(location => `${location.name}` === locationNameWithDistrictCourt);
     
       console.log("LocationName:", locationNameWithDistrictCourt);
       console.log("isCBSLUser:", isCBSLUser);
@@ -374,11 +407,82 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
           setIsLoading(false);
         });
     };
+    // const fetchSummaryReport = () => {
+    //   setIsLoading(true); // Set loading to true when fetching data
+    //   axios
+    //     .get(`${API_URL}/karsummaryreport`)
+    //     .then((response) => {
+    //       setSummaryReport(response.data);
+    //       setIsLoading(false); // Set loading to false after data is fetched
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching user data:", error);
+    //       setIsLoading(false); // Set loading to false in case of error
+    //     });
+    // };
+    // const fetchLocationReport = () => {
+    //   setIsLoading(true);
+    //   axios
+    //     .get(`${API_URL}/kardetailedReport`)
+    //     .then((response) => {
+    //       setLocationReport(response.data)
+    //       setIsLoading(false);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching user data:", error);
+    //       setIsLoading(false);
+    //     });
+
+    // };
+
+    // const fetchDetailedReportCsvFile = (startDate, endDate) => {
+    //   const formattedStartDate = startDate ? new Date(startDate) : null;
+    //   const formattedEndDate = endDate ? new Date(endDate) : null;
+    //   const formatDate = (date) => {
+    //     return date.toISOString().split('T')[0];
+    //   };
+    //   setIsLoading(true);
+    //   let apiUrl = `${API_URL}/kardetailedreportcsv`;
+
+    //   if (formattedStartDate && formattedEndDate) {
+    //     apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
+    //   }
+
+    //   axios.get(apiUrl, { responseType: "blob" })
+    //     .then((response) => {
+    //       const blob = new Blob([response.data], { type: "text/csv" });
+    //       const url = window.URL.createObjectURL(blob);
+    //       setDetailedCsv(url);
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error in exporting data:", error);
+    //       setIsLoading(false);
+    //     });
+
+    // };
+    const fetchPrices = () => {
+      setIsLoading(true); // Set loading to true when fetching data
+      axios
+        .get(`${API_URL}/kargetbusinessrate`)
+        .then((response) => {
+          setPrice(response.data);
+          setIsLoading(false); // Set loading to false after data is fetched
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setIsLoading(false); // Set loading to false in case of error
+        });
+    };
+
+fetchPrices();
+
 
     fetchDetailedReportCsvFile(startDate, endDate,userData);
+    // fetchDetailedLocationWiseReportCsvFile([locationName], startDate, endDate);
+
     fetchUserWiseReportCsvFile(selectedUsername, [locationName], startDate, endDate)
-    fetchPrices();
-    fetchSummaryReport(userData);
+
+    fetchSummaryReport();
     fetchLocationReport();
     if (locationName) {
       fetchUserDetailed(locationName);
@@ -391,14 +495,87 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
       <div className="loader"></div>
     </div>
   );
+  const totalPrice = 0.141;
 
   const handleBackToLocationView = () => {
     setLocationView(true);
     setUserView(false);
   };
-  const totExp = "";
+  useEffect(() => {
+    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
+      
 
-  console.log("LocationsTotal", locationReport);
+      const multipliedData = locationReport.map(location => {
+        const normalizedLocationName = location.locationname;
+
+        const prices = price.find(p => p.LocationName === normalizedLocationName);
+
+        if (prices) {
+          const multipliedLocation = {
+            ...location,
+            Scanned: Number(location.Scanned) * prices.ScanRate,
+            QC: Number(location.QC) * prices.QcRate,
+            Client_QC: Number(location.Client_QC) * prices.ClientQcRate,
+            Flagging: Number(location.Flagging) * prices.FlagRate,
+            Indexing: Number(location.Indexing) * prices.IndexRate,
+            CBSL_QA: Number(location.CBSL_QA) * prices.CbslQaRate,
+          };
+
+          const rowSum =
+            multipliedLocation.Scanned +
+            multipliedLocation.QC +
+            multipliedLocation.Client_QC +
+            multipliedLocation.Flagging +
+            multipliedLocation.Indexing +
+            multipliedLocation.CBSL_QA;
+
+          multipliedLocation.rowSum = rowSum;
+
+          return multipliedLocation;
+        }else {
+          console.error(`No matching price found for location: ${location.locationname}`);
+          return {
+            ...location,
+            Scanned: 0,
+            QC: 0,
+            Client_QC: 0,
+            Flagging: 0,
+            Indexing: 0,
+            CBSL_QA: 0,
+            Counting: 0,
+            Inventory: 0,
+            DocPreparation: 0,
+            Guard: 0,
+            rowSum: 0,
+          };
+        }
+      });
+
+      const enhancedLocationReport = locationReport.map(location => {
+        const normalizedLocationName = location.locationname;
+        const correspondingMultiplied = multipliedData.find(m => m.locationname === normalizedLocationName);
+        return {
+          ...location,
+          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
+        };
+      });
+
+      setEnhancedLocationReport(enhancedLocationReport);
+      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      setSecondLastColumnTotal(sumOfRowSums);
+      console.log("Total", sumOfRowSums);
+      console.log(enhancedLocationReport);
+    }
+  }, [price, locationReport]);
+
+  useEffect(() => {
+    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
+      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
+      console.log("Sum of Last Column", sumOfLastColumn);
+      setLastColumnTotal(sumOfLastColumn);
+    }
+  }, [enhancedLocationReport]);
+
 
 
   const calculateColumnSum = () => {
@@ -485,13 +662,18 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
         const flagRate = priceData?.FlagRate || 0;
         const cbslQaRate = priceData?.CbslQaRate || 0;
         const clientQcRate = priceData?.ClientQcRate || 0;
+        
+  
         const scannedRate = (parseInt(elem.Scanned) || 0) * scanRate;
         const qcRateTotal = (parseInt(elem.QC) || 0) * qcRate;
         const indexRateTotal = (parseInt(elem.Indexing) || 0) * indexRate;
         const flagRateTotal = (parseInt(elem.Flagging) || 0) * flagRate;
         const cbslQaRateTotal = (parseInt(elem.CBSL_QA) || 0) * cbslQaRate;
         const clientQcRateTotal = (parseInt(elem.Client_QC) || 0) * clientQcRate;
+        
+  
         const totalRate = scannedRate + qcRateTotal + indexRateTotal + flagRateTotal + cbslQaRateTotal + clientQcRateTotal;
+  
         totalExpenseRate += totalRate;
       });
     }
@@ -510,160 +692,6 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
   const columnSums = calculateColumnSum();
   const columnSumsUser = calculateColumnSumUser();
 
-  useEffect(() => {
-    if (price && locationReport && price.length > 0 && locationReport.length > 0) {
-      const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim() : '');
-
-      const multipliedData = locationReport.map(location => {
-        const normalizedLocationName = normalizeName(location.locationname);
-
-        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
-
-        if (prices) {
-          const multipliedLocation = {
-            ...location,
-            Scanned: Number(location.Scanned) * prices.ScanRate,
-            QC: Number(location.QC) * prices.QcRate,
-            Client_QC: Number(location.Client_QC) * prices.ClientQcRate,
-            Flagging: Number(location.Flagging) * prices.FlagRate,
-            Indexing: Number(location.Indexing) * prices.IndexRate,
-            CBSL_QA: Number(location.CBSL_QA) * prices.CbslQaRate,
-          };
-
-          const rowSum =
-            multipliedLocation.Scanned +
-            multipliedLocation.QC +
-            multipliedLocation.Client_QC +
-            multipliedLocation.Flagging +
-            multipliedLocation.Indexing +
-            multipliedLocation.CBSL_QA;
-
-          multipliedLocation.rowSum = rowSum;
-
-          return multipliedLocation;
-        } else {
-          console.error(`No matching price found for location: ${location.locationname}`);
-          return {
-            ...location,
-            Scanned: 0,
-            QC: 0,
-            Client_QC: 0,
-            Flagging: 0,
-            Indexing: 0,
-            CBSL_QA: 0,
-
-            rowSum: 0,
-          };
-        }
-      });
-
-      const enhancedLocationReport = locationReport.map(location => {
-        const normalizedLocationName = normalizeName(location.locationname);
-        const correspondingMultiplied = multipliedData.find(m => normalizeName(m.locationname) === normalizedLocationName);
-        return {
-          ...location,
-          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-        };
-      });
-
-      setEnhancedLocationReport(enhancedLocationReport);
-      const sumOfRowSums = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
-      setSecondLastColumnTotal(sumOfRowSums);
-      console.log("Total", sumOfRowSums);
-      console.log(enhancedLocationReport);
-    }
-  }, [price, locationReport]);
-
-  useEffect(() => {
-    if (price && detailedReportLocationWise && price.length > 0 && detailedReportLocationWise.length > 0) {
-      const normalizeName = (name) => (name ? name.replace(/district court/gi, '').trim().toLowerCase() : '');
-  
-      const multipliedLocationData = detailedReportLocationWise.map(location => {
-        const normalizedLocationName = normalizeName(location.locationName);
-        console.log(`Normalized Location Name: ${normalizedLocationName}`);
-  
-        const prices = price.find(p => normalizeName(p.LocationName) === normalizedLocationName);
-        console.log(`Matching Prices for ${normalizedLocationName}: `, prices);
-  
-        if (prices) {
-          const scannedValue = Number(location.Scanned);
-          const qcValue = Number(location.QC);
-          const clientQcValue = Number(location.Client_QC);
-          const flaggingValue = Number(location.Flagging);
-          const indexingValue = Number(location.Indexing);
-          const cbslQaValue = Number(location.CBSL_QA);
-  
-          const multipliedLocation = {
-            ...location,
-            Scanned: scannedValue * prices.ScanRate,
-            QC: qcValue * prices.QcRate,
-            Client_QC: clientQcValue * prices.ClientQcRate,
-            Flagging: flaggingValue * prices.FlagRate,
-            Indexing: indexingValue * prices.IndexRate,
-            CBSL_QA: cbslQaValue * prices.CbslQaRate,
-          };
-  
-          const rowSum =
-            multipliedLocation.Scanned +
-            multipliedLocation.QC +
-            multipliedLocation.Client_QC +
-            multipliedLocation.Flagging +
-            multipliedLocation.Indexing +
-            multipliedLocation.CBSL_QA;
-  
-          multipliedLocation.rowSum = rowSum;
-  
-          console.log(`Multiplied Location Data: `, multipliedLocation);
-  
-          return multipliedLocation;
-        } else {
-          console.error(`No matching price found for location: ${location.locationName}`);
-          return {
-            ...location,
-            Scanned: 0,
-            QC: 0,
-            Client_QC: 0,
-            Flagging: 0,
-            Indexing: 0,
-            CBSL_QA: 0,
-            rowSum: 0,
-          };
-        }
-      });
-  
-      console.log("Multiplied Location Data Array: ", multipliedLocationData);
-  
-      const enhanceddetailedReportLocationWise = detailedReportLocationWise.map(location => {
-        const normalizedLocationName = normalizeName(location.locationName);
-        const correspondingMultiplied = multipliedLocationData.find(m => normalizeName(m.locationName) === normalizedLocationName);
-  
-        if (correspondingMultiplied) {
-          console.log(`Location: ${location.locationName}, Computed Row Sum: ${correspondingMultiplied.rowSum}`);
-        } else {
-          console.log(`No corresponding multiplied data found for: ${location.locationName}`);
-        }
-  
-        return {
-          ...location,
-          rowSum: correspondingMultiplied ? correspondingMultiplied.rowSum : 0,
-        };
-      });
-  
-      console.log("Enhanced Detailed Report Location Wise before state update: ", enhanceddetailedReportLocationWise);
-      setEnhanceddetailedReportLocationWise(enhanceddetailedReportLocationWise);
-      console.log("State updated with Enhanced Detailed Report Location Wise.");
-    }
-  }, [price, detailedReportLocationWise]);
-  
-  useEffect(() => {
-    if (enhancedLocationReport && enhancedLocationReport.length > 0) {
-      const sumOfLastColumn = enhancedLocationReport.reduce((acc, curr) => acc + curr.rowSum, 0);
-      console.log("Sum of Last Column", sumOfLastColumn);
-      setLastColumnTotal(sumOfLastColumn);
-    }
-  }, [enhancedLocationReport]);
-  console.log("Prices", price);
-  console.log("LocationWiseUsers", detailedReportLocationWise);
   return (
     <>
       {isLoading && <Loader />}
@@ -735,6 +763,15 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
                   </div>
                 )}
               </div>
+              {showConfirmation && (
+                <div className="confirmation-dialog ">
+                  <div className="confirmation-content">
+                    <p className="confirmation-text fw-bold ">Are you sure you want to export the CSV file?</p>
+                    <button className="btn btn-success mt-3 ms-5" onClick={handleDetailedExport}>Yes</button>
+                    <button className="btn btn-danger ms-3 mt-3" onClick={handleCancelExport}>No</button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="all-tables row ms-2 me-2">
@@ -757,7 +794,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
                   {enhancedLocationReport && enhancedLocationReport.map((elem, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td style={{whiteSpace:'nowrap'}}  className="hover-text" onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
+                      <td style={{whiteSpace:'nowrap'}} className="hover-text" onClick={() => handleLocationView(elem.locationname)}>{elem.locationname || 0}</td>
                       <td>{isNaN(parseInt(elem.Scanned)) ? 0 : parseInt(elem.Scanned).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.QC)) ? 0 : parseInt(elem.QC).toLocaleString()}</td>
                       <td>{isNaN(parseInt(elem.Flagging)) ? 0 : parseInt(elem.Flagging).toLocaleString()}</td>
@@ -871,7 +908,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
                               </tr>
                             );
                           })}
-                          <tr style={{ color: "black" }}>
+                           <tr style={{ color: "black" }}>
                     <td colSpan="3">
                       <strong>Total</strong>
                     </td>
@@ -1045,7 +1082,9 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
                     <td>
                       <strong>{columnSumsUser.Client_QC.toLocaleString()}</strong>
                     </td>
+                    
                     <td>
+                      {/* Assuming `Expense Rate` sum calculation logic needs to be added if required */}
                       <strong>{columnSumsUser.totalExpenseRate.toLocaleString()}</strong>
                     </td>
                     <td></td>
@@ -1067,7 +1106,7 @@ const CumulativeSummaryReport = ({ editedPrice, userData }) => {
   );
 };
 
-export default CumulativeSummaryReport;
+export default KarTechCumulative;
 
 
 
