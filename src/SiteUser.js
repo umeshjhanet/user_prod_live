@@ -469,7 +469,7 @@
 //                     </div>
 //                   </div>
 //                 )}
-              
+
 //           {isLoading ? (
 //             <div className="text-center">Loading...</div>
 //           ) : (
@@ -612,7 +612,7 @@
 
 
 
-import React, { useState, useEffect,useRef  } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { IoMdCloseCircle } from "react-icons/io";
@@ -831,17 +831,17 @@ const SiteUser = ({ onClose }) => {
       const updatedLocations = [...selectedLocations];
       updatedLocations.splice(index, 1);
       setSelectedLocations(updatedLocations);
-      setSelectedLocationId(null); 
+      setSelectedLocationId(null);
       setSelectedLocationName(null);// Clear selectedLocationId if deselected
     }
   };
 
   const handleSelectProject = (id, name) => {
-        setSelectedProject(name);
-        setSelectedProjectId(parseInt(id));
-        setShowProject(!showProject);
-        setProjectDropdown(false);
-      };
+    setSelectedProject(name);
+    setSelectedProjectId(parseInt(id));
+    setShowProject(!showProject);
+    setProjectDropdown(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -878,7 +878,7 @@ const SiteUser = ({ onClose }) => {
         Project: '',
         // Add other form fields to reset them
       });
-      setSelectedLocationName(''); 
+      setSelectedLocationName('');
       setErrorMessage('');
     } catch (error) {
       setErrorMessage('Error submitting data. Please try again.');
@@ -985,6 +985,11 @@ const SiteUser = ({ onClose }) => {
                         <div className="col-8 mt-0">
                           <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
                         </div>
+                        <div className='col-2'>
+                        <button className="non-tech mt-1 d-flex align-items-center" onClick={handleDownloadFormat}>
+                           <FiDownload className="me-2" />Format
+                         </button>
+                        </div>
                       </div>
                       <div className="row mt-3 ms-4">
                         <button type="submit">Submit</button>
@@ -993,170 +998,141 @@ const SiteUser = ({ onClose }) => {
                   )}
                   {manualSelected && (
                     <>
-                    <div className='row'>
-                      <div className='col-6'>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">User Name:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="UserName" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Biomatrix No:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="BiomatrixNo" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Father Name:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="FatherName" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Emp. Reference No:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="EmpReferenceNo" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">DOJ:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="date" name="DOJ" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Fixed Salary:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="FixedSalary" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      </div>
-                      <div className='col-6'>
-                      {/* <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Project:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="Project" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Location:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="Location" onChange={handleInputChange} />
-                        </div>
-                      </div> */}
-                       <label className='mt-1'>Select Project </label><br />
-                     <input type='text' placeholder='Select Project' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedProject || ''} onClick={handleProjectDropdown} onChange={handleInputChangeProject} />
-                     {projectDropdown && (
-                      <div className='group-dropdown'>
-                        {project && project.map((elem, index) => (
-                          <div key={index} className='group-card' onClick={() => handleSelectProject(elem.id, `${elem.ProjectName}`)} >
-                            <p>{elem.ProjectName}</p>
+                      <div className='row'>
+                        <div className='col-6'>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">User Name:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="UserName" onChange={handleInputChange} />
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                   <label className='mt-1'>Select Location</label><br />
-    <div>
-      {selectedLocations.map((location, index) => (
-        <span key={index} style={{ color: '#107393' }}>
-          {location.name}
-          <button className='close-btn' onClick={() => handleRemoveLocation(index)}>&times;</button> {/* Delete button */}
-        </span>
-      ))}
-    </div>
-    <input
-      ref={locationDropdownRef}
-      type="text"
-      placeholder="Select Location"
-      className="form-control"
-      style={{ width: "100%", height: "35px", border: "1px solid lightgray", borderRadius: "2px" }}
-      onClick={handleLocationDropdown}
-      onChange={handleInputChange}
-      onKeyDown={handleKeyDown}
-    />
-
-    {locationDropdown && location && Array.isArray(location) && (
-      <div className='group-dropdown'>
-        {location.map((elem, index) => (
-          <div key={index} className='group-card' onClick={() => handleSelectLocation(elem.LocationID, `${elem.LocationName}`)} >
-            <p>{elem.LocationName}</p>
-          </div>
-        ))}
-      </div>
-    )}
-
-
-{/* <label className='mt-1'>Select Location </label><br />
-                     <input type='text' placeholder='Select Location' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedLocations || ''} onClick={handleLocationDropdown} onChange={handleInputChangeLocation} />
-                     {locationDropdown && (
-                      <div className='group-dropdown'>
-                        {location && location.map((elem, index) => (
-                          <div key={index} className='group-card' onClick={() => handleSelectLocation(elem.id, `${elem.LocationName}`)} >
-                            <p>{elem.LocationName}</p>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Biomatrix No:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="BiomatrixNo" onChange={handleInputChange} />
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    )} */}
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Father Name:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="FatherName" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Emp. Reference No:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="EmpReferenceNo" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">DOJ:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="date" name="DOJ" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Fixed Salary:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="FixedSalary" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-6'>
 
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">HR cum Admin Name:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="HRcumAdminName" onChange={handleInputChange} />
+                          <label className='mt-1'>Select Project </label><br />
+                          <input type='text' placeholder='Select Project' className='form-control' style={{ width: '100%', height: '35px', border: '1px solid lightgray', borderRadius: '2px' }} value={selectedProject || ''} onClick={handleProjectDropdown} onChange={handleInputChangeProject} />
+                          {projectDropdown && (
+                            <div className='group-dropdown'>
+                              {project && project.map((elem, index) => (
+                                <div key={index} className='group-card' onClick={() => handleSelectProject(elem.id, `${elem.ProjectName}`)} >
+                                  <p>{elem.ProjectName}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <label className='mt-1'>Select Location</label><br />
+                          <div>
+                            {selectedLocations.map((location, index) => (
+                              <span key={index} style={{ color: '#107393' }}>
+                                {location.name}
+                                <button className='close-btn' onClick={() => handleRemoveLocation(index)}>&times;</button> {/* Delete button */}
+                              </span>
+                            ))}
+                          </div>
+                          <input
+                            ref={locationDropdownRef}
+                            type="text"
+                            placeholder="Select Location"
+                            className="form-control"
+                            style={{ width: "100%", height: "35px", border: "1px solid lightgray", borderRadius: "2px" }}
+                            onClick={handleLocationDropdown}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                          />
+
+                          {locationDropdown && location && Array.isArray(location) && (
+                            <div className='group-dropdown'>
+                              {location.map((elem, index) => (
+                                <div key={index} className='group-card' onClick={() => handleSelectLocation(elem.LocationID, `${elem.LocationName}`)} >
+                                  <p>{elem.LocationName}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">HR cum Admin Name:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="HRcumAdminName" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Project Manager:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="ProjectManager" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Project Owner:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="ProjectOwner" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Is Active:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="text" name="IsActive" onChange={handleInputChange} />
+                            </div>
+                          </div>
+                          <div className="row mt-2">
+                            <div className="col-4">
+                              <label className="mt-2 ms-0">Last Update Date:</label>
+                            </div>
+                            <div className="col-8">
+                              <input type="date" name="LastUpdateDate" onChange={handleInputChange} />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Project Manager:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="ProjectManager" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Project Owner:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="ProjectOwner" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Is Active:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="text" name="IsActive" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      <div className="row mt-2">
-                        <div className="col-4">
-                          <label className="mt-2 ms-0">Last Update Date:</label>
-                        </div>
-                        <div className="col-8">
-                          <input type="date" name="LastUpdateDate" onChange={handleInputChange} />
-                        </div>
-                      </div>
-                      </div>
-                    </div>
                       <div className="row mt-3 ms-4">
                         <button type="submit">Submit</button>
                       </div>
@@ -1166,9 +1142,9 @@ const SiteUser = ({ onClose }) => {
               </form>
 
             </div>
-            <div className="row search-report-card">
-            <h3>Site User Details</h3>
-              <div  style={{ overflow: 'auto',height:'500px' }}>
+            <div className="row search-report-card mb-3"style={{ overflow: 'auto', height: '500px' }}>
+              <div >
+              <h3>Site User Details</h3>
                 {isLoading ? (
                   <div className="text-center">Loading...</div>
                 ) : (
@@ -1265,10 +1241,10 @@ const SiteUser = ({ onClose }) => {
                 <Form.Control type="number" style={{ border: '1px solid black' }} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
               </Form.Group>
               <Form.Group controlId="formBasicProject">
-               <Form.Label>Project</Form.Label>
-               <Form.Control type="text" style={{border:'1px solid black'}} name="Project" value={newFormData.Project} onChange={handleInputChange} />
-             </Form.Group>
-               <Form.Group controlId="formBasicLocation">
+                <Form.Label>Project</Form.Label>
+                <Form.Control type="text" style={{ border: '1px solid black' }} name="Project" value={newFormData.Project} onChange={handleInputChange} />
+              </Form.Group>
+              <Form.Group controlId="formBasicLocation">
                 <Form.Label>Location</Form.Label>
                 <Form.Control type="text" style={{ border: '1px solid black' }} name="Location" value={newFormData.Location} onChange={handleInputChange} />
               </Form.Group>

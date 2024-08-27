@@ -6,7 +6,7 @@ import { API_URL } from './API'
 import SideBar from './Components/SideBar'
 
 
-const Projects = () => {
+const MainOptions = () => {
     const [updcprojectDetails, setUPDCProjectDetails] = useState([]);
     const [telprojectDetails, setTelProjectDetails] = useState([]);
     const [karprojectDetails, setKarProjectDetails] = useState([]);
@@ -100,11 +100,12 @@ const Projects = () => {
             (karSums[category] || 0);
     });
     const allcategories = [
-        'Received', 'Scanned', 'QC',
-        'Flagging', 'Indexing', 'CBSL_QA',
-        'Client_QC', 'Export'
+         'Scanned', 'CBSL_QA', 'Client_QC'
     ];
     const projects = [
+        { id: 1, name: 'UPDC' },
+        { id: 2, name: 'Telangana' },
+        { id: 3, name: 'Karnataka' },
         { id: 4, name: 'Nimhans' },
         { id: 5, name: 'LIC' },
         { id: 6, name: 'NMML' },
@@ -153,7 +154,7 @@ const Projects = () => {
                                 </Link>
                         </div> */}
                         <div className='row mt-3 mb-2'>
-                            <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
+                            {/* <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
                                     <Link to='/UPDCDashboard' style={{ textDecoration: 'none' }}>
                                         <h3 style={{ color: '#193860' }}>UPDC</h3>
@@ -251,7 +252,7 @@ const Projects = () => {
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
-                            </div>
+                            </div> */}
                             {projectData.map((project, index) => {
                                 // Ensure that the project names align with project data
                                 const projectID = projects[index]?.id || 'Unknown Project';
@@ -304,6 +305,6 @@ const Projects = () => {
     );
 }
 
-export default Projects
+export default MainOptions
 
 

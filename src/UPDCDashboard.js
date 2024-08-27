@@ -145,82 +145,88 @@ const UPDCDashboard = () => {
 
     const handleSubmit = () => {
         // Check if "Periodic" is selected
-        if (technicalSelected && periodicSelected) {
+        if 
+        // (technicalSelected && 
+           (periodicSelected) {
             // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-            if (fromDate && toDate) {
+            if 
+            (fromDate && toDate) {
                 // If both dates are provided, show the summary report
                 setShowPeriodicSummary(true);
                 setShowCumulativeSummary(false);
-                setShowAllPeriodicSummary(false);
-                setShowAllCumulativeSummary(false);
-                setShowNonTechCumulativeSummary(false);
-                setShowNonTechPeriodicSummary(false);
+                // setShowAllPeriodicSummary(false);
+                // setShowAllCumulativeSummary(false);
+                // setShowNonTechCumulativeSummary(false);
+                // setShowNonTechPeriodicSummary(false);
                 setError('');
             } else {
                 // If any date is missing, show an error message
                 setError('Please provide both "From Date" and "To Date".');
             }
-        } else if (technicalSelected && cumulativeSelected) {
+        } else if 
+        // (technicalSelected && 
+            (cumulativeSelected) {
             // If "Cumulative" is selected, show the summary report without requiring dates
             setShowCumulativeSummary(true);
             setFromDate("");
             setToDate("");
             setShowPeriodicSummary(false);
-            setShowAllPeriodicSummary(false);
-            setShowAllCumulativeSummary(false);
-            setShowNonTechCumulativeSummary(false);
-            setShowNonTechPeriodicSummary(false);
+            // setShowAllPeriodicSummary(false);
+            // setShowAllCumulativeSummary(false);
+            // setShowNonTechCumulativeSummary(false);
+            // setShowNonTechPeriodicSummary(false);
             setError('');
-        } else if (nonTechnicalSelected && cumulativeSelected) {
-            setShowNonTechCumulativeSummary(true);
-            setShowAllPeriodicSummary(false);
-            setShowAllCumulativeSummary(false);
-            setShowCumulativeSummary(false);
-            setFromDate("");
-            setToDate("");
-            setShowPeriodicSummary(false);
-            setShowNonTechPeriodicSummary(false);
-            setError('');
-        } else if (nonTechnicalSelected && periodicSelected) {
-            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-            if (fromDate && toDate) {
-                // If both dates are provided, show the summary report
-                setShowNonTechPeriodicSummary(true);
-                setShowAllPeriodicSummary(false);
-                setShowAllCumulativeSummary(false);
-                setShowPeriodicSummary(false);
-                setShowCumulativeSummary(false);
-                setShowNonTechCumulativeSummary(false);
-                setError('');
-            }
-        } else if (allSelected && cumulativeSelected) {
-            setShowAllCumulativeSummary(true);
-            setShowCumulativeSummary(false);
-            setFromDate("");
-            setToDate("");
-            setShowPeriodicSummary(false);
-            setShowAllPeriodicSummary(false);
-            setShowNonTechPeriodicSummary(false);
-            setShowNonTechCumulativeSummary(false);
-            setError('');
-        } else if (allSelected && periodicSelected) {
-            // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
-            if (fromDate && toDate) {
-                // If both dates are provided, show the summary report
-                setShowAllPeriodicSummary(true);
-                setShowPeriodicSummary(false);
-                setShowCumulativeSummary(false);
-                setShowAllCumulativeSummary(false);
-                setShowNonTechPeriodicSummary(false);
-                setShowNonTechCumulativeSummary(false);
-                setError('');
-            } else {
-                // If any date is missing, show an error message
-                setError('Please provide both "From Date" and "To Date".');
-            }
-        } else {
-            setError('Please choose an option.');
-        }
+        } 
+        // else if (nonTechnicalSelected && cumulativeSelected) {
+        //     setShowNonTechCumulativeSummary(true);
+        //     setShowAllPeriodicSummary(false);
+        //     setShowAllCumulativeSummary(false);
+        //     setShowCumulativeSummary(false);
+        //     setFromDate("");
+        //     setToDate("");
+        //     setShowPeriodicSummary(false);
+        //     setShowNonTechPeriodicSummary(false);
+        //     setError('');
+        // } else if (nonTechnicalSelected && periodicSelected) {
+        //     // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+        //     if (fromDate && toDate) {
+        //         // If both dates are provided, show the summary report
+        //         setShowNonTechPeriodicSummary(true);
+        //         setShowAllPeriodicSummary(false);
+        //         setShowAllCumulativeSummary(false);
+        //         setShowPeriodicSummary(false);
+        //         setShowCumulativeSummary(false);
+        //         setShowNonTechCumulativeSummary(false);
+        //         setError('');
+        //     }
+        // } else if (allSelected && cumulativeSelected) {
+        //     setShowAllCumulativeSummary(true);
+        //     setShowCumulativeSummary(false);
+        //     setFromDate("");
+        //     setToDate("");
+        //     setShowPeriodicSummary(false);
+        //     setShowAllPeriodicSummary(false);
+        //     setShowNonTechPeriodicSummary(false);
+        //     setShowNonTechCumulativeSummary(false);
+        //     setError('');
+        // } else if (allSelected && periodicSelected) {
+        //     // If "Periodic" is selected, check if both "From Date" and "To Date" are provided
+        //     if (fromDate && toDate) {
+        //         // If both dates are provided, show the summary report
+        //         setShowAllPeriodicSummary(true);
+        //         setShowPeriodicSummary(false);
+        //         setShowCumulativeSummary(false);
+        //         setShowAllCumulativeSummary(false);
+        //         setShowNonTechPeriodicSummary(false);
+        //         setShowNonTechCumulativeSummary(false);
+        //         setError('');
+        //     } else {
+        //         // If any date is missing, show an error message
+        //         setError('Please provide both "From Date" and "To Date".');
+        //     }
+        // } else {
+        //     setError('Please choose an option.');
+        // }
     };
     useEffect(() => {
         // Set "Periodic" as selected by default when component mounts
@@ -412,13 +418,9 @@ const UPDCDashboard = () => {
                                 </h6>
                             </div>
                             <div className='row ms-0 mt-2 search-report-card'>
-                                <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
+                                {/* <div className='row' style={{ marginTop: '0px', marginBottom: '-10px' }}>
                                     <div className='col-1'><h5>Filter<button style={{ border: 'none', backgroundColor: 'white', padding: "0px" }} onClick={handleShowFilter}>{showFilter ? <FaRegSquareMinus /> : <FaRegSquarePlus />}</button> </h5></div>
-                                    {/* <div className='col-11'></div> */}
-                                    {/* </div> */}
-
-                                    {/* <div className='row' style={{ marginTop: '10px', marginBottom: '-10px' }}> */}
-                                    {/* <div className='col-1'></div> */}
+                                   
                                     <div className='col-1'>
                                         <input type='radio' id='all' name='filterType' value='all' onChange={handleChange} checked={allSelected} />
                                         <label htmlFor='all' className='ms-1'>All</label>
@@ -441,9 +443,9 @@ const UPDCDashboard = () => {
 
 
                                 </div>
-                                {showFilter && (<>
+                                {showFilter && (<> */}
                                     <div className='row mt-2' style={{ marginBottom: '-10px' }}>
-                                        <div className='col-1'></div>
+                                    <div className='col-1'><h4>Filter</h4></div>
                                         <div className='col-2'>
                                             <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
                                             <label htmlFor='cumulative' className='ms-1'>Cumulative</label>
@@ -468,10 +470,10 @@ const UPDCDashboard = () => {
                                             <button className='btn btn-success' style={{ marginTop: '-5px', paddingTop: '0px', paddingBottom: '0px', height: '28px' }} onClick={handleSubmit}>Submit</button>
                                         </div>
                                     </div>
-                                </>)}
+                                {/* </>)} */}
                                 {error && <p className='text-danger'>{error}</p>}
                             </div>
-                            {allSelected && (
+                            {/* {allSelected && (
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
@@ -508,8 +510,8 @@ const UPDCDashboard = () => {
                                     </table>
 
                                 </div>
-                            )}
-                            {technicalSelected && (
+                            )} */}
+                            {/* {technicalSelected && ( */}
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
@@ -542,8 +544,8 @@ const UPDCDashboard = () => {
                                     </table>
 
                                 </div>
-                            )}
-                            {nonTechnicalSelected && (
+                            {/* )} */}
+                            {/* {nonTechnicalSelected && (
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
@@ -574,17 +576,17 @@ const UPDCDashboard = () => {
                                     </table>
 
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>
             </div>
             {showPeriodicSummary && <PeriodicSummaryReport multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData} />}
             {showCumulativeSummary && <CumulativeSummaryReport multipliedData={multipliedData} editedPrices={editedPrices} prices={prices} userData={userData} />}
-            {shownonTechCumulativeSummary && <NonTechCumulative userData={userData} />}
+            {/* {shownonTechCumulativeSummary && <NonTechCumulative userData={userData} />}
             {shownonTechPeriodicSummary && <NonTechPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData} />}
             {showAllCumulativeSummary && <AllCummulative userData={userData} />}
-            {showAllPeriodicSummary && <AllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData} />}
+            {showAllPeriodicSummary && <AllPeriodic multipliedData={multipliedData} prices={prices} editedPrices={editedPrices} startDate={fromDate} endDate={toDate} userData={userData} />} */}
             {showCalculator && <CalculatorModal onClose={handleCloseCalculator} />}
             {isModalOpen && <NonTechModal onClose={handleCloseModal} userInfo={userData} />}
             <ToastContainer />

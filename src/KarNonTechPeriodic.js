@@ -337,7 +337,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate, userData }) =>
           return date.toISOString().split('T')[0];
         };
     
-        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/summaryreportnontechkarnataka`;
     
         // Check conditions for including locationName
@@ -379,7 +379,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate, userData }) =>
           return date.toISOString().split('T')[0];
         };
     
-        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
         let apiUrl = `${API_URL}/detailedreportcummulativenontechkarnataka`;
     
         // Check if userData meets the conditions to include the locationName parameter
@@ -413,7 +413,7 @@ const KarNonTechPeriodic = ({ multipliedData, startDate, endDate, userData }) =>
         return date.toISOString().split('T')[0];
       };
     
-      const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+      const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       let apiUrl = `${API_URL}/detailedreportcummulativecsvnontechkarnataka`;
     
       // Check if userData meets the conditions to include the locationName parameter

@@ -227,10 +227,10 @@ const KarNonTechCommulative = ({userData}) => {
         const hasSingleProject = Array.isArray(userData.projects) && userData.projects[0] === 3;
       
         // Ensure locationName is extracted from the second location
-        const locationName = userData.locations.length > 1 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 1 ? userData.locations[0].name : "";
       
         // Check if locationName matches the second location's name
-        const hasMatchingLocation = userData.locations.length > 1 && userData.locations[1].name === locationName;
+        const hasMatchingLocation = userData.locations.length > 1 && userData.locations[0].name === locationName;
       
         console.log("LocationName:", locationName);
         console.log("isCBSLUser:", isCBSLUser);
@@ -265,7 +265,7 @@ const KarNonTechCommulative = ({userData}) => {
         let apiUrl = `${API_URL}/detailedreportcummulativenontechkarnataka`;
   
         // Dynamic locationName assignment
-        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
   
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = Array.isArray(userData.user_roles) && userData.user_roles.includes("CBSL Site User");
@@ -324,7 +324,7 @@ const KarNonTechCommulative = ({userData}) => {
         }
       
         // Dynamic locationName assignment
-        const locationName = userData.locations.length > 0 ? userData.locations[1].name : "";
+        const locationName = userData.locations.length > 0 ? userData.locations[0].name : "";
       
         // Check if userData meets the conditions to include the locationName parameter
         const isCBSLUser = userData.user_roles.includes("CBSL Site User");
