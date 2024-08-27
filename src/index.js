@@ -39,6 +39,8 @@ import TaskTray from './TaskTray';
 import UploadNonTechModal from './uploadNonTechnical';
 import KarTaskTray from './KarTaskTray';
 import DynamicDashboard from './Dashboard';
+import MainOptions from './MainOptions';
+import ProjectGraph from './projectGraph';
 
 const App = () => {
  
@@ -49,6 +51,8 @@ const App = () => {
           <Route path="/projects" element={<PrivateRoute element={<Projects />} />} />
           <Route path="/home" element={<PrivateRoute element={<Home/>} />} />
           <Route path="/Dashboard/:projectId" element={<PrivateRoute element={<DynamicDashboard />} />} />
+          <Route path="/MainOptions" element={<PrivateRoute element={<MainOptions />} />} />
+          <Route path="/projectGraph" element={<PrivateRoute element={<ProjectGraph />} />} />
           <Route path="/TaskTray" element={<PrivateRoute element={<TaskTray/>} />} />
           <Route path="/KarTaskTray" element={<PrivateRoute element={<KarTaskTray/>} />} />
           <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>

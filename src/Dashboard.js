@@ -17,6 +17,9 @@ const DynamicDashboard = () => {
     const [downloadExcel, setDownloadExcel] = useState(null);
 
     const projects = [
+        { id: 1, name: 'UPDC', description: 'Details about Nimhans project...' },
+        { id: 2, name: 'Telangana', description: 'Details about Nimhans project...' },
+        { id: 3, name: 'Karnataka', description: 'Details about Nimhans project...' },
         { id: 4, name: 'Nimhans', description: 'Details about Nimhans project...' },
         { id: 5, name: 'LIC', description: 'Details about LIC project...' },
         { id: 6, name: 'NMML', description: 'Details about NMML project...' },
