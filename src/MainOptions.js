@@ -41,7 +41,7 @@ const MainOptions = () => {
         };
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${API_URL}/fetchexcel`);
+                const response = await axios.get(`${API_URL}/fetchdelivereddata`);
                 setProjectData(response.data);
             } catch (error) {
                 console.error('Error fetching project data:', error);
@@ -100,7 +100,7 @@ const MainOptions = () => {
             (karSums[category] || 0);
     });
     const allcategories = [
-         'Scanned', 'CBSL_QA', 'Client_QC'
+         'Scanned',  'Client_QC'
     ];
     const projects = [
         { id: 1, name: 'UPDC' },
