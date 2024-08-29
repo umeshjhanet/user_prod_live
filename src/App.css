@@ -285,7 +285,9 @@ font-weight: 500;
   background-color: #FFF;
   color: #5f5f5f;
 }
-
+.project-graph  p{
+  line-height: 0.9;
+}
 .project-card{
   border: 3px solid #46b9a6;
   border-radius: 8px;

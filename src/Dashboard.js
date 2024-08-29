@@ -71,7 +71,14 @@ const DynamicDashboard = () => {
         formData.append('file', file);
 
         try {
-            const response = await axios.post(`${API_URL}/uploadExcelLIC/${projectId}`, formData, {
+            let uploadEndpoint = `${API_URL}/uploadExcelLIC/${projectId}`; // Default endpoint
+
+            // Conditionally change the upload endpoint based on the projectId
+            if (projectId === '6') { // NMML project
+                uploadEndpoint = `${API_URL}/uploadExcelNMML`;
+            }
+
+            const response = await axios.post(uploadEndpoint, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -85,21 +92,30 @@ const DynamicDashboard = () => {
             setUploading(false);
         }
     };
+
     useEffect(() => {
-        const fetchDownloadExcel = () => {
-            let apiUrl = `${API_URL}/downloadformatlic`;
-            axios.get(apiUrl, { responseType: "blob" })
-                .then((response) => {
-                    const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-                    const url = window.URL.createObjectURL(blob);
-                    setDownloadExcel(url);
-                })
-                .catch((error) => {
-                    console.error("Error in exporting data:", error);
-                });
+        const fetchDownloadExcel = async () => {
+            let apiUrl;
+    
+            if (projectId === '6') {
+                apiUrl = `${API_URL}/downloadformatnmml`;
+            } else {
+                apiUrl = `${API_URL}/downloadformatlic`;
+            }
+    
+            try {
+                const response = await axios.get(apiUrl, { responseType: "blob" });
+                const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                const url = window.URL.createObjectURL(blob);
+                setDownloadExcel(url);
+            } catch (error) {
+                console.error("Error in exporting data:", error);
+            }
         };
-        fetchDownloadExcel();
-    }, []);
+    
+        fetchDownloadExcel(projectId);
+    }, [projectId]);
+    
 
     const handleFromDateChange = (event) => {
         const selectedFromDate = event.target.value;
@@ -141,36 +157,36 @@ const DynamicDashboard = () => {
                     <div className='col-10'>
                         <div className='row mt-5 me-1'>
                             <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                                <Link to='/projects' style={{textDecoration:'none'}}>
-                                <h6 className="ms-2" style={{ color: "white" }}>
-                                    <FaHome/> /{project.name}
-                                </h6>
+                                <Link to='/projects' style={{ textDecoration: 'none' }}>
+                                    <h6 className="ms-2" style={{ color: "white" }}>
+                                        <FaHome /> /{project.name}
+                                    </h6>
                                 </Link>
-                                
+
                             </div>
                             <div className='row search-report-card mt-3 ms-1'>
                                 <div className='col-3'>
-                                <input type='file' onChange={handleFileChange} />
+                                    <input type='file' onChange={handleFileChange} />
                                 </div>
                                 <div className='col-6'>
-                                <button
-                                    className='btn btn-success'
-                                    style={{ width: '200px' }}
-                                    onClick={handleUpload}
-                                    disabled={uploading}
-                                >
-                                    {uploading ? 'Uploading...' : 'Upload'}
-                                </button>
-                                {message && <div className="mt-3">{message}</div>}
+                                    <button
+                                        className='btn btn-success'
+                                        style={{ width: '200px' }}
+                                        onClick={handleUpload}
+                                        disabled={uploading}
+                                    >
+                                        {uploading ? 'Uploading...' : 'Upload'}
+                                    </button>
+                                    {message && <div className="mt-3">{message}</div>}
                                 </div>
                                 <div className='col-2'>
-                                <button className="btn btn-primary d-flex align-items-center ms-5" style={{ width: '120px' }} onClick={handleDownloadFormat}>
-                                    <FiDownload className="me-2" />Format
-                                </button>
+                                    <button className="btn btn-primary d-flex align-items-center ms-5" style={{ width: '120px' }} onClick={handleDownloadFormat}>
+                                        <FiDownload className="me-2" />Format
+                                    </button>
                                 </div>
                             </div>
                             {/* Table to display fetched data */}
-                            <div className='row search-report-card mt-5 ms-1'>
+                            <div className='row search-report-card mt-2 ms-1'>
                                 <div className='row'>
                                     <div className='col-3'>
                                         <label className='me-1'>From Date:</label>
@@ -185,23 +201,27 @@ const DynamicDashboard = () => {
                                     <table className="table table-bordered mt-4">
                                         <thead>
                                             <tr>
+                                                <th>Received</th>
                                                 <th>Scanned</th>
                                                 <th>QC</th>
                                                 <th>Flagging</th>
                                                 <th>Indexing</th>
                                                 <th>CBSL QA</th>
                                                 <th>Client QC</th>
+                                                <th>Export</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {tableData.map((row, index) => (
                                                 <tr key={index}>
+                                                    <td>{row.Received}</td>
                                                     <td>{row.Scanned}</td>
                                                     <td>{row.QC}</td>
                                                     <td>{row.Flagging}</td>
                                                     <td>{row.Indexing}</td>
                                                     <td>{row.CBSL_QA}</td>
                                                     <td>{row.Client_QC}</td>
+                                                    <td>{row.Export}</td>
                                                 </tr>
                                             ))}
                                         </tbody>

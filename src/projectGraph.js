@@ -80,7 +80,7 @@ const ProjectGraph = () => {
                                 const data = categories.map(category => project[category] || 0);
 
                                 return (
-                                    <div className='col-6 mt-2 mb-2' key={index}>
+                                    <div className='col-4 mt-2 mb-2' key={index}>
                                         <Card className='project-graph'>
                                             <CardBody>
                                                 <div className='row'>
@@ -103,14 +103,12 @@ const ProjectGraph = () => {
                                                         <Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69', textDecoration: 'none' }}>
                                                             More...
                                                         </Link>
-                                                    </div>
-                                                    <div className='col-6'>
-                                                        {/* Line Chart Section */}
+
                                                         <Chart
                                                             options={chartOptions(categories, data)}
                                                             series={[{ data }]}
                                                             type="line"
-                                                            height={350}
+                                                            height={150}
                                                         />
                                                     </div>
                                                 </div>
