@@ -10,6 +10,7 @@ const Header = () => {
     localStorage.removeItem('user');
     navigate('/');
   };
+  
   return (
     <>
       
