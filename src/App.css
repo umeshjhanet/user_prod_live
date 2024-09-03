@@ -356,6 +356,22 @@ font-weight: 500;
   height: 4px; /* Adjust border height as needed */
   background: linear-gradient(to right, #4BC0C0 30%, rgb(148, 78, 99) 70%);
 }
+.calendar-wrapper {
+  width: 800px; /* Increase the width as needed */
+  max-width: 100%;
+  margin: 0 auto; /* Center the calendar */
+}
+
+.attendance-info {
+  margin-top: 5px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.in-time, .out-time {
+  margin: 0;
+  padding: 0;
+}
 
 
 /* .login-card {

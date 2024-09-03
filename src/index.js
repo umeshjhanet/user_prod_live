@@ -41,6 +41,8 @@ import KarTaskTray from './KarTaskTray';
 import DynamicDashboard from './Dashboard';
 import MainOptions from './MainOptions';
 import ProjectGraph from './projectGraph';
+import Attendance from './attendance';
+import AllTaskTray from './allTaskTray';
 
 
 const App = () => {
@@ -51,6 +53,8 @@ const App = () => {
       <Route path="/" element={<Login />} />
           <Route path="/projects" element={<PrivateRoute element={<Projects />} />} />
           <Route path="/home" element={<PrivateRoute element={<Home/>} />} />
+          <Route path="/attendance" element={<PrivateRoute element={<Attendance/>} />} />
+          <Route path="/allTaskTray" element={<PrivateRoute element={<AllTaskTray/>} />} />
           <Route path="/Dashboard/:projectId" element={<PrivateRoute element={<DynamicDashboard />} />} />
           <Route path="/MainOptions" element={<PrivateRoute element={<MainOptions />} />} />
           <Route path="/projectGraph" element={<PrivateRoute element={<ProjectGraph />} />} />

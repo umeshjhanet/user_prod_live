@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { toast, ToastContainer } from 'react-toastify';
+import SideBar from './Components/SideBar';
 
 const KarTaskTray = () => {
     const [approvalStatus, setApprovalStatus] = useState([]);
@@ -290,9 +291,9 @@ const KarTaskTray = () => {
                             <th>Indexing</th>
                             <th>CBSL QA</th>
                             <th>Client QC</th>
-                            <th>Working Days</th>
-                            <th>Remarks</th>
+                            <th>Working Days</th>    
                             <th>Actions</th>
+                            <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -309,33 +310,59 @@ const KarTaskTray = () => {
                                 <td>{elem.CBSL_QA}</td>
                                 <td>{elem.Client_QC}</td>
                                 <td>{elem.DistinctDateCount}</td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.Remarks}</td>
-                                <td>
-                                    <div className='row mt-2'>
-                                        <div className='col-6'>
-                                            {(isRejectedCard || isPendingCard) && (
-                                                <button
-                                                    className='btn btn-success'
-                                                    onClick={() => handleApprove(index)}
-                                                    disabled={isApprovedCard}
-                                                >
-                                                    Approve
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className='col-6'>
-                                            {(isApprovedCard || isPendingCard) && (
-                                                <button
+                                <td style={{whiteSpace:'nowrap'}}>
+                                {(isApprovedCard) && (
+                                        <div className='row mt-2'>
+                                             <button
                                                     className='btn btn-danger'
                                                     onClick={() => handleReject(index)}
                                                     disabled={isRejectedCard}
+                                                    style={{width:'59px',padding:'5px 0px',fontSize:'12px',marginLeft:'12px'}}
                                                 >
                                                     Reject
                                                 </button>
-                                            )}
                                         </div>
+                                    )}
+                                    {(isRejectedCard) && (
+                                        <div className='row mt-2'>
+                                             <button
+                                                    className='btn btn-success'
+                                                    onClick={() => handleApprove(index)}
+                                                    disabled={isApprovedCard}
+                                                    style={{width:'59px',padding:'5px 0px',fontSize:'12px',marginLeft:'11px'}}
+                                                >
+                                                    Approve
+                                                </button>
+                                        </div>
+                                    )}
+                                    {(isPendingCard) && (
+                                    <div className='row mt-2 ms-1'>
+                                        {/* <div className='col-6'> */}
+                                                <button
+                                                    className='btn btn-success'
+                                                    onClick={() => handleApprove(index)}
+                                                    style={{width: '45px',
+                                                        fontSize: '11px',
+                                                        padding: '5px 0px'}}
+                                                >
+                                                    Approve
+                                                </button>
+                                        {/* </div> */}
+                                        {/* <div className='col-6'> */}
+                                                <button
+                                                    className='btn btn-danger mt-1'
+                                                    onClick={() => handleReject(index)}
+                                                    style={{width: '45px',
+                                                        fontSize: '11px',
+                                                        padding: '5px 0px'}}
+                                                >
+                                                    Reject
+                                                </button>
+                                        {/* </div> */}
                                     </div>
+                                     )}
                                 </td>
+                                <td style={{whiteSpace:'nowrap'}}>{elem.Remarks}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -352,12 +379,15 @@ const KarTaskTray = () => {
         <>
             <ToastContainer />
             <Header />
-            <div className='container'>
-                <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+            <div className='container-fluid'>
+                <div className='row'>
+                    <div className='col-2'><SideBar/></div>
+                    <div className='col-10'>
+
+                   
+                    <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                     <h6 className="ms-2" style={{ color: "white" }}>
-                        <Link to='/home' style={{ color: 'white' }}>
-                            <FaHome size={25} />
-                        </Link> / Task Tray
+                        Task Tray
                     </h6>
                 </div>
                 <div className="row mt-4">
@@ -368,7 +398,7 @@ const KarTaskTray = () => {
                             style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'approved' ? 'lightgray' : 'white' }}
                         >
                             <h5>Approved Tasks</h5>
-                            <p>Count: {getCount('approved')}</p>
+                            <h6>Count: {getCount('approved')}</h6>
                         </div>
                     </div>
                     <div className="col-4">
@@ -378,7 +408,7 @@ const KarTaskTray = () => {
                             style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'pending' ? 'lightgray' : 'white' }}
                         >
                             <h5>Pending Tasks</h5>
-                            <p>Count: {getCount('pending')}</p>
+                            <h6>Count: {getCount('pending')}</h6>
                         </div>
                     </div>
                     <div className="col-4">
@@ -388,12 +418,14 @@ const KarTaskTray = () => {
                             style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'rejected' ? 'lightgray' : 'white' }}
                         >
                             <h5>Rejected Tasks</h5>
-                            <p>Count: {getCount('rejected')}</p>
+                            <h6>Count: {getCount('rejected')}</h6>
                         </div>
                     </div>
                 </div>
                 <div className='mt-4'>
                 {renderTable()}
+                </div>
+                </div>
                 </div>
             </div>
         </>

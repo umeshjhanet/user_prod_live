@@ -386,7 +386,7 @@ const TaskTray = () => {
                 <div className='col-2'>
                 <SideBar />
                 </div>
-            <div className='col-9 ms-5'>
+            <div className='col-10'>
                 <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                     <h6 className="ms-2" style={{ color: "white" }}>
                         Task Tray
