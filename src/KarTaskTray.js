@@ -107,8 +107,6 @@ const KarTaskTray = () => {
         return [];
     };
     
-
-   
     const handleApprove = async (index) => {
         const elem = getFilteredTasks(selectedCard)[index];
         const user = JSON.parse(localStorage.getItem('user'));
