@@ -144,7 +144,7 @@ const AllTaskTray = () => {
                 <button className='btn success-btn' onClick={handleSubmit}>Submit</button>
               </div>
               <div className='col-2 mt-3'>
-                <button className='btn btn-primary me-2' onClick={() => handleExport('csv')}>Export as CSV</button>
+                <button className='btn btn-primary me-2' onClick={() => handleExport('csv')}>Export CSV</button>
               </div>
               {Object.keys(data).length > 0 && (
               <div className='mt-3'>

@@ -9,6 +9,7 @@ import SideBar from './Components/SideBar'
 const Projects = () => {
     const [updcprojectDetails, setUPDCProjectDetails] = useState([]);
     const [telprojectDetails, setTelProjectDetails] = useState([]);
+    const [licprojectDetails, setLicProjectDetails] = useState([]);
     const [karprojectDetails, setKarProjectDetails] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [projectData, setProjectData] = useState([]);
@@ -39,6 +40,14 @@ const Projects = () => {
                 })
                 .catch(error => console.error(error));
         };
+        const fetchLicProjectDetails = () => {
+            axios.get(`${API_URL}/licSummary`)
+                .then(response => {
+                    console.log('Karnataka Project Details:', response.data);
+                    setLicProjectDetails(response.data);
+                })
+                .catch(error => console.error(error));
+        };
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/fetchexcel`);
@@ -53,6 +62,7 @@ const Projects = () => {
         fetchUPDCProjectDetails();
         fetchTelProjectDetails();
         fetchKarProjectDetails();
+        fetchLicProjectDetails();
     }, []);
 
     const computeSums = (details) => {
