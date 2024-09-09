@@ -24,7 +24,6 @@ import NonTechModal from './Components/NonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
 import SideBar from './Components/SideBar';
 
-
 const KarDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
     const [showCumulativeSummary, setShowCumulativeSummary] = useState(false);
@@ -406,9 +405,9 @@ const KarDashboard = () => {
             <div className='container-fluid'>
                 <div className='row'>
                     <div className='col-2'>
-                        <SideBar />
+                        <SideBar/>
                     </div>
-                    <div className='col-9 ms-5'>
+                    <div className='col-10'>
                         <div className='row mt-3'>
                             <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                                 <h6 className="ms-2" style={{ color: "white" }}>

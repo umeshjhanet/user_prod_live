@@ -128,7 +128,7 @@ const TaskTray = () => {
                 LocationCode: elem.locationId,
                 UserName: elem.user_type,
                 InMonth: elem.MonthNumber,
-                UserID: elem.user_type,
+                UserID: elem.user_id|| 0,
                 userProfile: elem.userProfile || 0,
                 role: roleObj // Ensure this is correct
             };
@@ -181,7 +181,7 @@ const TaskTray = () => {
         const userRoles = user?.user_roles || [];
         const locationCode = user?.locations[0]?.id || '';
         const userID = user?.user_id || 0;
-        
+
         // Determine role
         const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
         if (!roleObj) {
@@ -243,7 +243,7 @@ const TaskTray = () => {
                 LocationCode: elem.locationId,
                 UserName: elem.user_type || 'defaultUser',
                 InMonth: elem.MonthNumber,
-                UserID: elem.user_type || 0,
+                UserID: elem.user_id || 0,
                 userProfile: elem.userProfile || 0,
                 role: roleObj
             };
@@ -386,7 +386,7 @@ const TaskTray = () => {
                 <div className='col-2'>
                 <SideBar />
                 </div>
-            <div className='col-9 ms-5'>
+            <div className='col-10'>
                 <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                     <h6 className="ms-2" style={{ color: "white" }}>
                         Task Tray

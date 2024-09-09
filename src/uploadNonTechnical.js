@@ -5,6 +5,8 @@ import { IoMdCloseCircle } from "react-icons/io";
 import axios from 'axios';
 import { API_URL } from './API';
 import { FiDownload } from 'react-icons/fi';
+import SideBar from './Components/SideBar';
+import Header from './Components/Header';
 
 const UploadNonTechModal = () => {
     const userInfo = JSON.parse(localStorage.getItem('user'));
@@ -12,10 +14,10 @@ const UploadNonTechModal = () => {
   const projectId = projects[0];
   
   const selectedLocation = projectId === 1 || projectId === 2 ? `${locations[0].name} District Court` 
-                        : projectId === 3 ? locations[1].name 
+                        : projectId === 3 ? locations[0].name 
                         : "";
   const selectedLocationId = projectId === 1 || projectId === 2 ? locations[0].id 
-                        : projectId === 3 ? locations[1].id 
+                        : projectId === 3 ? locations[0].id 
                         : "";
 
   const [excelSelected, setExcelSelected] = useState(true);
@@ -117,14 +119,18 @@ const UploadNonTechModal = () => {
 
   return (
     <>
-      
-      <div className="">
-      <div className="" style={{ overflowY: 'auto' }}>
-        <div className="" style={{ padding: '5px', backgroundColor: '#4BC0C0' }}>
+     <Header />
+     <div className='container-fluid'>
+      <div className='row'>
+       <div className='col-2'>
+                        <SideBar />
+                    </div>
+      <div className="col-9 ms-5">
+      <div className="row mt-3" style={{ overflowY: 'auto' }}>
+        <div className="card" style={{ padding: '5px', backgroundColor: '#4BC0C0' }}>
           <h6 className="ms-2" style={{ color: 'white' }}>
           Upload Non Technical Data
           </h6>
-         
         </div>
         <div className=" mb-5">
           <div className="row">
@@ -227,6 +233,8 @@ const UploadNonTechModal = () => {
           </div>
         </div>
       </div>
+    </div>
+    </div>
     </div>
     </>
   );

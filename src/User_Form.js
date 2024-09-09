@@ -4,6 +4,7 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { API_URL } from './API';
+import SideBar from './Components/SideBar';
 
 
 const User_Form = () => {
@@ -444,7 +445,7 @@ const User_Form = () => {
       <ToastContainer />
       <div className='container-fluid'>
         <div className='row'>
-          <div className='col-lg-2 col-md-0'></div>
+          <div className='col-lg-2 col-md-0'><SideBar/></div>
           <div className='col-lg-10 col-md-12'>
             <div
               className="card mt-3"

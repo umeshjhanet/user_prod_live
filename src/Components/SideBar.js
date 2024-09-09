@@ -5,13 +5,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'; // Assuming y
 const SideBar = () => {
     const userLog = JSON.parse(localStorage.getItem('user'));
     const projects = userLog ? userLog.projects : [];
+    const Role = userLog ? userLog.user_roles : [];
     const location = useLocation();
     const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/');
-      };
-    
+    };
+
     const getDashboardLink = () => {
         if (projects.includes(1)) {
             return '/UPDCDashboard';
@@ -22,16 +23,19 @@ const SideBar = () => {
         }
         return '/projects'; // Default case if no project is assigned or project ID doesn't match
     };
-    
+
     const getTaskTrayLink = () => {
         if (projects.includes(1) || projects.includes(2)) {
             return '/TaskTray';
         } else if (projects.includes(3)) {
             return '/KarTaskTray';
+        } else if ( Role.includes('HR')) {
+            return '/allTaskTray';
         }
         return ''; // Default case if no project is assigned or project ID doesn't match
     };
     
+
     const getUploadNonTechLink = () => {
         if (projects.includes(1) || projects.includes(2) || projects.includes(3)) {
             return '/uploadNonTechnical';
@@ -51,7 +55,7 @@ const SideBar = () => {
     );
 
     const superAdmin = () => (
-        <div className="sidebar bg-light" style={{ width: '200px',height:'100%' }}>
+        <div className="sidebar bg-light" style={{ width: '200px', height: '100%' }}>
             <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
                 <span className="fs-4">{userLog ? userLog.first_name : 'Guest'}</span>
             </a>
@@ -62,7 +66,7 @@ const SideBar = () => {
                 {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')}
                 {renderLink(getTaskTrayLink(), 'Approval Workflow')}
                 {renderLink('/user_form', 'Add User')}
-                
+
             </ul>
             <hr />
         </div>
@@ -130,7 +134,6 @@ const SideBar = () => {
             {iscbslAdmin && cbslAdmin()}
             {isCbslUser && cbslUser()}
             {isHR && cbslHR()}
-            
         </>
     );
 };
