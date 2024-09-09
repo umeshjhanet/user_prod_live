@@ -12,6 +12,7 @@ const DynamicDashboard = () => {
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState('');
     const [tableData, setTableData] = useState(null);
+    const [licData, setLicData] = useState(null);
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [downloadExcel, setDownloadExcel] = useState(null);
@@ -35,6 +36,7 @@ const DynamicDashboard = () => {
     useEffect(() => {
         if (projectId) {
             fetchTableData();
+            fetchLICData();
         }
     }, [projectId, fromDate, toDate]);
 
@@ -46,9 +48,24 @@ const DynamicDashboard = () => {
             if (fromDate && toDate) {
                 url += `?startDate=${fromDate}&endDate=${toDate}`;
             }
-
             const response = await axios.get(url);
             setTableData(response.data);
+        } catch (error) {
+            console.error('Error fetching table data:', error);
+        }
+    };
+
+    const fetchLICData = async () => {
+        try {
+            let url = `${API_URL}/licSummary/${projectId}`;
+
+            // Append fromDate and toDate as query parameters if selected
+            if (fromDate && toDate) {
+                url += `?startDate=${fromDate}&endDate=${toDate}`;
+            }
+
+            const response = await axios.get(url);
+            setLicData(response.data);
         } catch (error) {
             console.error('Error fetching table data:', error);
         }
@@ -71,7 +88,7 @@ const DynamicDashboard = () => {
         formData.append('file', file);
 
         try {
-            let uploadEndpoint = `${API_URL}/uploadExcelLIC/${projectId}`; // Default endpoint
+            let uploadEndpoint = `${API_URL}/uploadExcelLic/${projectId}`; // Default endpoint
 
             // Conditionally change the upload endpoint based on the projectId
             if (projectId === '6') { // NMML project
