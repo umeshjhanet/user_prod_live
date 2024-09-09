@@ -155,7 +155,7 @@ const NonTechForm = () => {
       <Header />
       <div className='container'>
         <div className='row'>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleForm}>
             <div className="row mt-2 me-1 search-report-card">
               <label>Select Project</label>
               <input
