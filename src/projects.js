@@ -5,7 +5,6 @@ import axios from 'axios'
 import { API_URL } from './API'
 import SideBar from './Components/SideBar'
 
-
 const Projects = () => {
     const [updcprojectDetails, setUPDCProjectDetails] = useState([]);
     const [telprojectDetails, setTelProjectDetails] = useState([]);
