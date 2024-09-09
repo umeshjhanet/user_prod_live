@@ -48,7 +48,6 @@ const DynamicDashboard = () => {
             if (fromDate && toDate) {
                 url += `?startDate=${fromDate}&endDate=${toDate}`;
             }
-
             const response = await axios.get(url);
             setTableData(response.data);
         } catch (error) {
