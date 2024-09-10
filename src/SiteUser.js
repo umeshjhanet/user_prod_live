@@ -980,20 +980,22 @@ const SiteUser = ({ onClose }) => {
                     <>
                       <div className="row mt-1">
                         <div className="col-2">
-                          <label className="mt-0">Upload Excel:</label>
+                          <label className="mt-1">Upload Excel:</label>
                         </div>
-                        <div className="col-8 mt-0">
+                        <div className="col-3 mt-1">
                           <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
                         </div>
                         <div className='col-2'>
-                        <button className="non-tech mt-1 d-flex align-items-center" onClick={handleDownloadFormat}>
+                        <button type="submit">Submit</button>
+                        </div>
+                        <div className='col-3'></div>
+                        <div className='col-2'>
+                        <button className="non-tech d-flex align-items-center" onClick={handleDownloadFormat}>
                            <FiDownload className="me-2" />Format
                          </button>
                         </div>
                       </div>
-                      <div className="row mt-3 ms-4">
-                        <button type="submit">Submit</button>
-                      </div>
+                      
                     </>
                   )}
                   {manualSelected && (

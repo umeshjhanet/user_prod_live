@@ -16,7 +16,6 @@ const TaskTray = () => {
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
-        // Fetch user info including role and location code
         const fetchUserInfo = () => {
             const user = JSON.parse(localStorage.getItem('user'));
             if (user) {
@@ -26,12 +25,10 @@ const TaskTray = () => {
                 setProjects(user.projects || []);
             }
         };
-
         fetchUserInfo();
-    }, []); // Empty dependency array to run only once on mount
+    }, []);
 
     useEffect(() => {
-        // Fetch approval status if locationName or projects change
         const fetchApprovalStatus = () => {
             let url = `${API_URL}/merged-report`;
             let params = {};
@@ -50,7 +47,6 @@ const TaskTray = () => {
                     setApprovalStatus([]);
                 });
         };
-
         if (locationName || projects.length) {
             fetchApprovalStatus();
         }
@@ -107,14 +103,12 @@ const TaskTray = () => {
     
         return [];
     };
-    
-
-   
     const handleApprove = async (index) => {
         const elem = getFilteredTasks(selectedCard)[index];
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
         const locationCode = user?.locations[0]?.id || '';
+        const projectId = user?.projects[0] || '';
         const userID = user?.user_id || 0;
     
         // Determine role
@@ -130,7 +124,8 @@ const TaskTray = () => {
                 InMonth: elem.MonthNumber,
                 UserID: elem.user_id|| 0,
                 userProfile: elem.userProfile || 0,
-                role: roleObj // Ensure this is correct
+                role: roleObj,
+                project: projectId 
             };
     
             console.log('Approval request data:', postData); // Debug log
@@ -156,7 +151,6 @@ const TaskTray = () => {
             toast.error('Error processing approval.');
         }
     };
-    
     const roleHierarchy = ['CBSL Site User', 'PM', 'PO', 'HR'];
     const canReject = (role, status) => {
         if (!status) return false;
@@ -173,8 +167,6 @@ const TaskTray = () => {
             return false;
         }
       };
-      
-   
     const handleReject = async (index) => {
         const elem = getFilteredTasks(selectedCard)[index];
         const user = JSON.parse(localStorage.getItem('user'));
@@ -270,7 +262,6 @@ const TaskTray = () => {
             toast.error('Error processing rejection.');
         }
     };
-    
     const renderTable = () => {
         const filteredTasks = getFilteredTasks(selectedCard);
 
@@ -372,11 +363,9 @@ const TaskTray = () => {
             </div>
         );
     };
-
     const getCount = (cardType) => {
         return getFilteredTasks(cardType).length;
     };
-
     return (
         <>
             <ToastContainer />
