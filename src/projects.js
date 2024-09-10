@@ -51,6 +51,7 @@ const Projects = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/fetchexcel`);
+                console.log("fetch excel",response.data);
                 setProjectData(response.data);
             } catch (error) {
                 console.error('Error fetching project data:', error);
@@ -76,39 +77,57 @@ const Projects = () => {
             Client_QC: 0,
             Export: 0
         };
+    
+        // Loop through each category in project details
         Object.keys(details).forEach(category => {
             if (Array.isArray(details[category])) {
+                // Case 1: If details[category] is an array, loop through it
                 details[category].forEach(project => {
                     Object.keys(project).forEach(key => {
                         if (sum.hasOwnProperty(key)) {
-                            sum[key] += parseInt(project[key], 8) || 0;
+                            const value = parseInt(project[key], 10);
+                            sum[key] += value || 0; // Add values to the respective sum key
                         }
                     });
                 });
+            } else if (typeof details[category] === 'object' && details[category] !== null) {
+                // Case 2: If details[category] is a single object
+                Object.keys(details[category]).forEach(key => {
+                    if (sum.hasOwnProperty(key)) {
+                        const value = parseInt(details[category][key], 10);
+                        sum[key] += value || 0; // Add values to the respective sum key
+                    }
+                });
             } else {
-                console.warn(`Expected array for ${category}, got:`, details[category]);
+                console.warn(`Unexpected data type for ${category}:`, details[category]);
             }
         });
-
+    
         return sum;
     };
-
+    
+    // Compute sums for individual project categories
     const updcSums = computeSums(updcprojectDetails);
     const telSums = computeSums(telprojectDetails);
     const karSums = computeSums(karprojectDetails);
-    console.log(updcSums);
+    const fetchSums=computeSums(projectData);
+    
+    // Aggregate all sums into one object
     const allSums = {};
-    const categories = [
-        "Received", "Scanned",
-        "QC", "Flagging", "Indexing", "CBSL_QA", "Client_QC", "Export"
-    ];
-
+    const categories = ["Received", "Scanned", "QC", "Flagging", "Indexing", "CBSL_QA", "Client_QC", "Export"];
+    
     categories.forEach(category => {
         allSums[category] =
             (updcSums[category] || 0) +
             (telSums[category] || 0) +
-            (karSums[category] || 0);
+            (karSums[category] || 0) +
+            (fetchSums[category] || 0); // Summing the category from all projects
     });
+    
+    console.log("All Projects Sums:", allSums);
+    
+
+
     const allcategories = [
         'Received', 'Scanned', 'QC',
         'Flagging', 'Indexing', 'CBSL_QA',
@@ -132,11 +151,8 @@ const Projects = () => {
                     <div className='col-2'></div>
                     <div className='col-9 ms-5'>
                         <SideBar />
-                        {/* <div className='row mt-5'>
-                                <div className="border-left"></div>
-                                <div className="border-right"></div>
-                                <div className="border-top"></div>
-                                <div className="border-bottom"></div>
+                         <div className='row mt-3 mb-2'>
+                         <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
                                     <Link to="/AllProjectDashboard" style={{ textDecoration: 'none', color: 'black' }}>
                                         <h3 style={{ textDecoration: 'none', color: 'black' }}>All Projects</h3>
@@ -160,8 +176,13 @@ const Projects = () => {
                                         </div>
                                         <div className='col-1'></div>
                                     </div>
+                                    
                                 </Link>
-                        </div> */}
+                        </div> 
+                        </div>
+                 
+
+
                         <div className='row mt-3 mb-2'>
                             <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
@@ -311,6 +332,7 @@ const Projects = () => {
                 </div>
             </div>
         </>
+     
     );
 }
 
