@@ -108,6 +108,7 @@ const TaskTray = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
         const locationCode = user?.locations[0]?.id || '';
+        const projectId = user?.projects[0] || '';
         const userID = user?.user_id || 0;
     
         // Determine role
@@ -123,7 +124,8 @@ const TaskTray = () => {
                 InMonth: elem.MonthNumber,
                 UserID: elem.user_id|| 0,
                 userProfile: elem.userProfile || 0,
-                role: roleObj // Ensure this is correct
+                role: roleObj,
+                project: projectId 
             };
     
             console.log('Approval request data:', postData); // Debug log

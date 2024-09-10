@@ -178,12 +178,12 @@ const Projects = () => {
                                                 ))
                                             }
                                         </div>
-                                        <div className='col-4' style={{ padding: '0' }}>
+                                        <div className='col-4' style={{ padding: '0' ,textAlign:'right'}}>
                                             {updcprojectDetails && updcprojectDetails.length > 0 &&
                                                 Object.values(updcprojectDetails[0]).map((value, valueIndex) => (
                                                     <p
                                                         key={valueIndex}
-                                                        style={{ color: '#2A629A' }}
+                                                        style={{ color: '#2A629A',textAlign:'right' }}
                                                     >
                                                         <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                                     </p>
@@ -216,7 +216,7 @@ const Projects = () => {
                                                 Object.values(telprojectDetails[0]).map((value, valueIndex) => (
                                                     <p
                                                         key={valueIndex}
-                                                        style={{ color: '#2A629A' }}
+                                                        style={{ color: '#2A629A',textAlign:'right' }}
                                                     >
                                                         <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                                     </p>
@@ -249,7 +249,7 @@ const Projects = () => {
                                                 Object.values(karprojectDetails[0]).map((value, valueIndex) => (
                                                     <p
                                                         key={valueIndex}
-                                                        style={{ color: '#2A629A' }}
+                                                        style={{ color: '#2A629A',textAlign:'right' }}
                                                     >
                                                         <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                                     </p>
@@ -290,7 +290,7 @@ const Projects = () => {
                                                 </div>
                                                 <div className='col-4' style={{ padding: '0' }}>
                                                     {allcategories.map(category => (
-                                                        <p key={category} style={{ color: '#508D69' }}>
+                                                        <p key={category} style={{ color: '#508D69',textAlign:'right' }}>
                                                             <b>{project[category]?.toLocaleString()}</b>
                                                         </p>
                                                     ))}
