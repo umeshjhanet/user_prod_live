@@ -101,7 +101,7 @@ const Projects = () => {
                 console.warn(`Unexpected data type for ${category}:`, details[category]);
             }
         });
-
+    
         return sum;
     };
 
@@ -178,6 +178,7 @@ const Projects = () => {
                                         ))}
                                         <div className='col-1'></div>
                                     </div>
+                                    
                                 </Link>
                             </div>
                         </div>
