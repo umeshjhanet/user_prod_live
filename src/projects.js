@@ -178,7 +178,6 @@ const Projects = () => {
                                         ))}
                                         <div className='col-1'></div>
                                     </div>
-                                    
                                 </Link>
                             </div>
                         </div>
