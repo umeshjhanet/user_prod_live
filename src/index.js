@@ -44,7 +44,6 @@ import ProjectGraph from './projectGraph';
 import Attendance from './attendance';
 import AllTaskTray from './allTaskTray';
 
-
 const App = () => {
  
   return (
