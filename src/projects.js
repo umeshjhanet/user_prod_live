@@ -151,14 +151,14 @@ const Projects = () => {
                     <div className='col-9 ms-5'>
                         <SideBar />
                         <div className='row mt-3 mb-2'>
-                            <div className='col-12 all-project-card mt-2 mb-2 ms-3' style={{ borderColor: '#193860' }}>
+                            <div className='col-12 all-project-card mt-2 mb-2' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
                                     <Link to="/AllProjectDashboard" style={{ textDecoration: 'none', color: 'black' }}>
                                         <h3 style={{ textDecoration: 'none', color: 'black' }}>All Projects</h3>
                                     </Link>
                                 </div>
                                 <Link to="/AllProjectDashboard" style={{ textDecoration: 'none', color: '#5f5f5f' }}>
-                                    <div className='row mb-2'>
+                                    <div className='row mb-2 me-5 mt-1'>
                                         {/* Grouping items into columns with two rows each */}
                                         {categories.reduce((rows, category, index) => {
                                             // Every two items, create a new column
@@ -168,9 +168,9 @@ const Projects = () => {
                                             rows[rows.length - 1].push(category);
                                             return rows;
                                         }, []).map((group, groupIndex) => (
-                                            <div key={groupIndex} className='col-3'>
+                                            <div key={groupIndex} className='col-3' style={{lineHeight:'0.5'}}>
                                                 {group.map(category => (
-                                                    <p key={category} style={{ textAlign: 'left' }}>
+                                                    <p key={category} style={{ textAlign: 'right' }}>
                                                         <b><span style={{color:'#0288b1'}}>{category}:</span> <span style={{color:'#619389'}}>{(allSums[category] || 0).toLocaleString()}</span></b>
                                                     </p>
                                                 ))}
@@ -181,19 +181,15 @@ const Projects = () => {
                                 </Link>
                             </div>
                         </div>
-
-
-
-
-                        <div className='row mt-3 mb-2'>
-                            <div className='col-4 project-card mt-2 mb-2 ms-4' style={{ borderColor: '#193860' }}>
+                        <div className='row mt-2 mb-2'>
+                            <div className='col-3 project-card mt-2 mb-2 ms-1' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
                                     <Link to='/UPDCDashboard' style={{ textDecoration: 'none' }}>
                                         <h3 style={{ color: '#193860' }}>UPDC</h3>
                                     </Link>
                                 </div>
                                 <Link to='/UPDCDashboard' style={{ textDecoration: 'none', color: '#5f5f5f' }}>
-                                    <div className='row mt-2 mb-2'>
+                                    <div className='row mt-2 mb-2' style={{textAlign:"right"}}>
                                         <div className='col-1'></div>
                                         <div className='col-5' style={{ textAlign: 'right' }}>
                                             {updcprojectDetails && updcprojectDetails.length > 0 &&
@@ -202,12 +198,12 @@ const Projects = () => {
                                                 ))
                                             }
                                         </div>
-                                        <div className='col-4' style={{ padding: '0', textAlign: 'right' }}>
+                                        <div className='col-5' style={{ padding: '0', textAlign: 'right' }}>
                                             {updcprojectDetails && updcprojectDetails.length > 0 &&
                                                 Object.values(updcprojectDetails[0]).map((value, valueIndex) => (
                                                     <p
                                                         key={valueIndex}
-                                                        style={{ color: '#2A629A', textAlign: 'right' }}
+                                                        style={{ color: '#2A629A' }}
                                                     >
                                                         <b>{isNaN(parseInt(value)) ? "0" : parseInt(value).toLocaleString()}</b>
                                                     </p>
@@ -219,7 +215,7 @@ const Projects = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: '#4BC0C0' }}>
+                            <div className='col-3 project-card mt-2 mb-2 ms-4' style={{ borderColor: '#4BC0C0' }}>
                                 <div className='row text-center'>
                                     <Link to='/TelDashboard' style={{ textDecoration: 'none' }}>
                                         <h3 style={{ color: '#4BC0C0' }}>Telangana</h3>
@@ -235,7 +231,7 @@ const Projects = () => {
                                                 ))
                                             }
                                         </div>
-                                        <div className='col-4' style={{ padding: '0' }}>
+                                        <div className='col-5' style={{ padding: '0' }}>
                                             {telprojectDetails && telprojectDetails.length > 0 &&
                                                 Object.values(telprojectDetails[0]).map((value, valueIndex) => (
                                                     <p
@@ -252,7 +248,7 @@ const Projects = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className='col-4 project-card mt-2 mb-2 ms-3' style={{ borderColor: 'rgb(148, 78, 99)' }}>
+                            <div className='col-3 project-card mt-2 mb-2 ms-4' style={{ borderColor: 'rgb(148, 78, 99)' }}>
                                 <div className='row text-center'>
                                     <Link to='/KarDashboard' style={{ textDecoration: 'none' }}>
                                         <h3 style={{ color: 'rgb(148, 78, 99)' }}>Karnataka</h3>
@@ -268,7 +264,7 @@ const Projects = () => {
                                                 ))
                                             }
                                         </div>
-                                        <div className='col-4' style={{ padding: '0' }}>
+                                        <div className='col-5' style={{ padding: '0' }}>
                                             {karprojectDetails && karprojectDetails.length > 0 &&
                                                 Object.values(karprojectDetails[0]).map((value, valueIndex) => (
                                                     <p
@@ -285,13 +281,13 @@ const Projects = () => {
                                     </div>
                                 </Link>
                             </div>
-                            {projectData.map((project, index) => {
+                            {projectData.slice(0,1).map((project, index) => {
                                 // Ensure that the project names align with project data
                                 const projectID = projects[index]?.id || 'Unknown Project';
                                 const projectName = projects[index]?.name || 'Unknown Project';
 
                                 return (
-                                    <div className='col-4 project-card mt-2 mb-2 ms-3' key={index}>
+                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index}>
                                         <div className="border-left"></div>
                                         <div className="border-right"></div>
                                         <div className="border-top"></div>
@@ -312,7 +308,7 @@ const Projects = () => {
                                                         <p key={category}><b>{category}:</b></p>
                                                     ))}
                                                 </div>
-                                                <div className='col-4' style={{ padding: '0' }}>
+                                                <div className='col-5' style={{ padding: '0' }}>
                                                     {allcategories.map(category => (
                                                         <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
                                                             <b>{project[category]?.toLocaleString()}</b>
@@ -328,7 +324,176 @@ const Projects = () => {
                             })}
                         </div>
                         <div className='row mt-2 mb-2'>
+                        <div className='col-3 project-card mt-2 mb-2 ' >
+                        {projectData.slice(1,2).map((project, index) => {
+                                // Ensure that the project names align with project data
+                                const projectID = projects[index+1]?.id || 'Unknown Project';
+                                const projectName = projects[index+1]?.name || 'Unknown Project';
 
+                                return (
+                                    <div  key={index+1}>
+                                        <div className="border-left"></div>
+                                        <div className="border-right"></div>
+                                        <div className="border-top"></div>
+                                        <div className="border-bottom"></div>
+                                        <div className='row text-center'>
+                                            <Link
+                                                to={`/Dashboard/${projectID}`}
+                                                style={{ textDecoration: 'none', color: 'black' }}
+                                            >
+                                                <h3>{projectName}</h3>
+                                            </Link>
+                                        </div>
+                                        <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
+                                            <div className='row mt-2 mb-2'>
+                                                <div className='col-1'></div>
+                                                <div className='col-5' style={{ textAlign: 'right' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category}><b>{category}:</b></p>
+                                                    ))}
+                                                </div>
+                                                <div className='col-5' style={{ padding: '0' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
+                                                            <b>{project[category]?.toLocaleString()}</b>
+                                                        </p>
+                                                    ))}
+                                                    <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
+                                                </div>
+                                                <div className='col-1'></div>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                            </div>
+                            {projectData.slice(2,5).map((project, index) => {
+                                // Ensure that the project names align with project data
+                                const projectID = projects[index+2]?.id || 'Unknown Project';
+                                const projectName = projects[index+2]?.name || 'Unknown Project';
+
+                                return (
+                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index+2}>
+                                        <div className="border-left"></div>
+                                        <div className="border-right"></div>
+                                        <div className="border-top"></div>
+                                        <div className="border-bottom"></div>
+                                        <div className='row text-center'>
+                                            <Link
+                                                to={`/Dashboard/${projectID}`}
+                                                style={{ textDecoration: 'none', color: 'black' }}
+                                            >
+                                                <h3>{projectName}</h3>
+                                            </Link>
+                                        </div>
+                                        <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
+                                            <div className='row mt-2 mb-2'>
+                                                <div className='col-1'></div>
+                                                <div className='col-5' style={{ textAlign: 'right' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category}><b>{category}:</b></p>
+                                                    ))}
+                                                </div>
+                                                <div className='col-5' style={{ padding: '0' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
+                                                            <b>{project[category]?.toLocaleString()}</b>
+                                                        </p>
+                                                    ))}
+                                                    <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
+                                                </div>
+                                                <div className='col-1'></div>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className='row mt-2 mb-2'>
+                        <div className='col-3 project-card mt-2 mb-2'>
+                        {projectData.slice(5,6).map((project, index) => {
+                                // Ensure that the project names align with project data
+                                const projectID = projects[index+5]?.id || 'Unknown Project';
+                                const projectName = projects[index+5]?.name || 'Unknown Project';
+
+                                return (
+                                    <div className='' key={index+5}>
+                                        <div className="border-left"></div>
+                                        <div className="border-right"></div>
+                                        <div className="border-top"></div>
+                                        <div className="border-bottom"></div>
+                                        <div className='row text-center'>
+                                            <Link
+                                                to={`/Dashboard/${projectID}`}
+                                                style={{ textDecoration: 'none', color: 'black' }}
+                                            >
+                                                <h3>{projectName}</h3>
+                                            </Link>
+                                        </div>
+                                        <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
+                                            <div className='row mt-2 mb-2'>
+                                                <div className='col-1'></div>
+                                                <div className='col-5' style={{ textAlign: 'right' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category}><b>{category}:</b></p>
+                                                    ))}
+                                                </div>
+                                                <div className='col-5' style={{ padding: '0' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
+                                                            <b>{project[category]?.toLocaleString()}</b>
+                                                        </p>
+                                                    ))}
+                                                    <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
+                                                </div>
+                                                <div className='col-1'></div>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {projectData.slice(6,10).map((project, index) => {
+                                // Ensure that the project names align with project data
+                                const projectID = projects[index+6]?.id || 'Unknown Project';
+                                const projectName = projects[index+6]?.name || 'Unknown Project';
+
+                                return (
+                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index+6}>
+                                        <div className="border-left"></div>
+                                        <div className="border-right"></div>
+                                        <div className="border-top"></div>
+                                        <div className="border-bottom"></div>
+                                        <div className='row text-center'>
+                                            <Link
+                                                to={`/Dashboard/${projectID}`}
+                                                style={{ textDecoration: 'none', color: 'black' }}
+                                            >
+                                                <h3>{projectName}</h3>
+                                            </Link>
+                                        </div>
+                                        <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
+                                            <div className='row mt-2 mb-2'>
+                                                <div className='col-1'></div>
+                                                <div className='col-5' style={{ textAlign: 'right' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category}><b>{category}:</b></p>
+                                                    ))}
+                                                </div>
+                                                <div className='col-5' style={{ padding: '0' }}>
+                                                    {allcategories.map(category => (
+                                                        <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
+                                                            <b>{project[category]?.toLocaleString()}</b>
+                                                        </p>
+                                                    ))}
+                                                    <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
+                                                </div>
+                                                <div className='col-1'></div>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
