@@ -175,7 +175,6 @@ const Projects = () => {
                                         </div>
                                         <div className='col-1'></div>
                                     </div>
-                                    
                                 </Link>
                         </div> 
                         </div>
