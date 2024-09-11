@@ -287,7 +287,7 @@ const Projects = () => {
                                 const projectName = projects[index]?.name || 'Unknown Project';
 
                                 return (
-                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index}>
+                                    <div className='col-3 project-card mt-2 mb-2 ms-3' key={index}>
                                         <div className="border-left"></div>
                                         <div className="border-right"></div>
                                         <div className="border-top"></div>
