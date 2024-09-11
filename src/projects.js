@@ -285,7 +285,6 @@ const Projects = () => {
                                 // Ensure that the project names align with project data
                                 const projectID = projects[index]?.id || 'Unknown Project';
                                 const projectName = projects[index]?.name || 'Unknown Project';
-
                                 return (
                                     <div className='col-3 project-card mt-2 mb-2 ms-3' key={index}>
                                         <div className="border-left"></div>
