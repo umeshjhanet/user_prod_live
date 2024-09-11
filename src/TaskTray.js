@@ -167,13 +167,14 @@ const TaskTray = () => {
             return false;
         }
       };
-    const handleReject = async (index) => {
+      const handleReject = async (index) => {
         const elem = getFilteredTasks(selectedCard)[index];
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
+        const projectId = user?.projects[0] || '';
         const locationCode = user?.locations[0]?.id || '';
         const userID = user?.user_id || 0;
-
+    
         // Determine role
         const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
         if (!roleObj) {
@@ -181,8 +182,6 @@ const TaskTray = () => {
         }
     
         console.log('Selected Role:', roleObj);
-        
-        
     
         try {
             // Fetch the approval status
@@ -190,7 +189,8 @@ const TaskTray = () => {
                 params: {
                     LocationCode: elem.locationId,
                     UserName: elem.user_type,
-                    InMonth: elem.MonthNumber
+                    InMonth: elem.MonthNumber,
+                    project: projectId
                 }
             });
     
@@ -199,8 +199,36 @@ const TaskTray = () => {
             console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
     
             if (!approvedData || approvedData.length === 0) {
+                // No approval data found, directly send rejection request
                 console.log('No approval data found for user:', elem.user_type);
-                return toast.error('You are not eligible to reject.');
+                const postData = {
+                    LocationCode: elem.locationId,
+                    UserName: elem.user_type || 'defaultUser',
+                    InMonth: elem.MonthNumber,
+                    UserID: elem.user_id || 0,
+                    userProfile: elem.userProfile || 0,
+                    role: roleObj,
+                    project: projectId
+                };
+    
+                console.log('No data found. Sending direct rejection:', postData);
+    
+                const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
+                console.log('Reject response:', rejectResponse.data);
+    
+                setApprovalStatus(prevStatus => {
+                    const updatedStatus = {
+                        ...prevStatus,
+                        [elem.user_type]: {
+                            ...prevStatus[elem.user_type],
+                            [roleObj]: 2 // Set rejection status
+                        }
+                    };
+                    console.log('Updated rejection status:', updatedStatus);
+                    return updatedStatus;
+                });
+    
+                return toast.success('Rejected successfully, even without approval data.');
             }
     
             const userStatus = approvedData[0];
@@ -230,21 +258,22 @@ const TaskTray = () => {
                 return toast.error(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
             }
     
-            // Send rejection request
+            // Send rejection request with the available data
             const postData = {
                 LocationCode: elem.locationId,
                 UserName: elem.user_type || 'defaultUser',
                 InMonth: elem.MonthNumber,
                 UserID: elem.user_id || 0,
                 userProfile: elem.userProfile || 0,
-                role: roleObj
+                role: roleObj,
+                project: projectId
             };
     
             console.log('Post data to be sent:', postData);
     
-            // Send rejection request
             const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
             console.log('Reject response:', rejectResponse.data);
+    
             setApprovalStatus(prevStatus => {
                 const updatedStatus = {
                     ...prevStatus,
@@ -256,12 +285,14 @@ const TaskTray = () => {
                 console.log('Updated rejection status:', updatedStatus);
                 return updatedStatus;
             });
+    
             toast.success('Rejected successfully');
         } catch (error) {
             console.error('Error processing rejection:', error);
             toast.error('Error processing rejection.');
         }
     };
+    
     const renderTable = () => {
         const filteredTasks = getFilteredTasks(selectedCard);
 
