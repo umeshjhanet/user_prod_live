@@ -72,6 +72,7 @@ const AllTaskTray = () => {
             });
 
             const fetchedData = response.data;
+            console.log("dataa",fetchedData)
             const transformedData = {};
             const dates = new Set();
 
@@ -229,7 +230,7 @@ const AllTaskTray = () => {
                         currentStatus.IsApprovedCBSL === 1 &&
                         currentStatus.IsApprovedPM === 1 &&
                         currentStatus.IsApprovedPO === 1 &&
-                        currentStatus.IsApprovedHR === 1
+                        currentStatus.IsApprovedHR === 0
                     ) {
                         const rejectData = {
                             LocationCode: currentStatus.LocationCode,
@@ -263,6 +264,7 @@ const AllTaskTray = () => {
             }
         }
     };
+    
     const filterData = (data) => {
         if (statusFilter === 'All') {
             return data;
@@ -282,6 +284,104 @@ const AllTaskTray = () => {
         }, {});
     };
 
+
+// const fileHeaders = ['User', 'Status']; 
+
+// function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
+//     if (fetchedData.length === 0) return '';
+
+//     // Add the dynamic date headers
+//     const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
+
+//     // Build rows for each user
+//     const rows = Object.keys(fetchedData).map(user => {
+//         // Extract user status (Pending, Approved, etc.)
+//         const status = fetchedData[user].some(entry => entry.status === 0)
+//             ? 'Pending'
+//             : fetchedData[user].some(entry => entry.status === 1)
+//             ? 'Approved'
+//             : fetchedData[user].some(entry => entry.status === 2)
+//             ? 'Rejected'
+//             : 'Not Approved by PO';
+
+//         // Extract expense data for each date, defaulting to '0' if no data is present
+//         const expenseData = datesOfMonth.map(date => {
+//             const entry = fetchedData[user].find(record => record.Date === date);
+//             return entry ? entry.TotalExpense : '0'; // If no entry, display '0'
+//         });
+
+//         // Combine the user, status, and expense data into a single CSV row
+//         return [user, status, ...expenseData].join(',');
+//     }).join('\n');
+
+//     return headers + rows;
+// }
+
+// function downloadCSV(fetchedData, headers, datesOfMonth,selectedLocation,month) {
+//     const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
+//     if (csvData === '') {
+//         alert('No data to export');
+//     } else {
+//         // Create the file name using the location name, year, and month
+//         const fileName = `${selectedLocation}-${month}.csv`;
+
+//         const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+//         const link = document.createElement('a');
+//         link.href = URL.createObjectURL(blob);
+//         link.setAttribute('download', fileName);
+//         document.body.appendChild(link);
+//         link.click();
+//         document.body.removeChild(link);
+//     }
+// }
+
+const fileHeaders = ['Sr No','User', 'Status']; 
+
+function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
+    if (Object.keys(fetchedData).length === 0) return '';
+
+    
+    const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
+
+    const rows = Object.keys(fetchedData).map((user, index) => {
+        const status = fetchedData[user].some(entry => entry.status === 0)
+            ? 'Pending'
+            : fetchedData[user].some(entry => entry.status === 1)
+            ? 'Approved'
+            : fetchedData[user].some(entry => entry.status === 2)
+            ? 'Rejected'
+            : 'Not Approved by PO';
+        
+        const expenseData = datesOfMonth.map(date => {
+            const entry = fetchedData[user].find(record => record.Date === date);
+            return entry ? entry.TotalExpense : '0'; 
+        });
+        return [index + 1, user, status, ...expenseData].join(',');
+    }).join('\n');
+
+    return headers + rows;
+}
+
+function downloadCSV(fetchedData, headers, datesOfMonth, selectedLocation, month) {
+    const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
+    if (csvData === '') {
+        alert('No data to export');
+    } else {
+        const fileName = `${selectedLocation}-${month}.csv`;
+        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month, statusFilter) {
+    const filteredData = filterData(data, statusFilter);
+    downloadCSV(filteredData, headers, datesOfMonth, selectedLocation, month);
+}
 
     return (
         <>
@@ -331,7 +431,11 @@ const AllTaskTray = () => {
                                 </div>
                                 <div className='col-8'></div>
                                 <div className='col-2'>
-                                <button className='btn btn-primary' onClick={() => handleExport('excel')}>Export as Excel</button>
+                                <button 
+    className='btn btn-primary' 
+    onClick={() => exportFilteredCSV(data, fileHeaders, datesOfMonth, selectedLocation, month, statusFilter)}>
+    Export
+</button>
                                 </div>
                             </div>
                             <div className='col-12'>
