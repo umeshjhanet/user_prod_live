@@ -63,10 +63,7 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
-                {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')}
-                {renderLink(getTaskTrayLink(), 'Approval Workflow')}
                 {renderLink('/user_form', 'Add User')}
-
             </ul>
             <hr />
         </div>
@@ -81,14 +78,10 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
-                {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')}
-                {renderLink(getTaskTrayLink(), 'Approval Workflow')}
-                {renderLink('#', 'Log Out')}
             </ul>
-            <hr />
+            <hr/>
         </div>
     );
-
     const cbslHR = () => (
         <div className="sidebar bg-light" style={{ width: '220px' }}>
             <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
@@ -98,14 +91,11 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
-                {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')}
                 {renderLink(getTaskTrayLink(), 'Approval Workflow')}
-                {renderLink('#', 'Log Out')}
             </ul>
             <hr />
         </div>
     );
-
     const cbslUser = () => (
         <div className="sidebar bg-light" style={{ width: '220px' }}>
             <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
@@ -115,19 +105,16 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
-                {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')}
+                {/* {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')} */}
                 {renderLink(getTaskTrayLink(), 'Approval Workflow')}
-                {renderLink('#', 'Log Out')}
             </ul>
             <hr />
         </div>
     );
-
     const isSuperAdmin = userLog && userLog.user_roles.includes('Super Admin');
     const isCbslUser = userLog && userLog.user_roles.some(role => ['CBSL Site User', 'PM', 'PO'].includes(role));
     const isHR = userLog && userLog.user_roles.includes('HR');
     const iscbslAdmin = userLog && userLog.user_roles.includes('CBSL Admin');
-
     return (
         <>
             {isSuperAdmin && superAdmin()}
@@ -137,5 +124,4 @@ const SideBar = () => {
         </>
     );
 };
-
 export default SideBar;

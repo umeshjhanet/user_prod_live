@@ -3,8 +3,7 @@ import axios from 'axios';
 import Header from './Components/Header';
 import SideBar from './Components/SideBar';
 import { API_URL } from './API';
-import { toast, ToastContainer } from 'react-toastify'; // Assuming you're using react-toastify for notifications
-
+import { toast, ToastContainer } from 'react-toastify'; 
 const AllTaskTray = () => {
     const [projects, setProjects] = useState([]);
     const [projectId, setProjectID] = useState([]);
@@ -17,7 +16,10 @@ const AllTaskTray = () => {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [error, setError] = useState(null);
     const [statusFilter, setStatusFilter] = useState('All');
-
+    const [showConfirmationApprovalBox, setShowConfirmationApprovalBox] = useState(false);
+    const [showConfirmationRejectionBox, setShowConfirmationRejectionBox] = useState(false);
+    const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
+    const [currentIndex, setCurrentIndex] = useState(null);
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -27,40 +29,30 @@ const AllTaskTray = () => {
                 console.error('Error fetching projects:', error);
             }
         };
-
         const fetchLocations = async (selectedProject) => {
             try {
-                // Ensure selectedProject is defined
                 if (!selectedProject) {
-                    setLocations([]); // Clear locations if no project is selected
+                    setLocations([]); 
                     return;
                 }
-
-                // Append the project parameter to the request URL
                 const response = await axios.get(`${API_URL}/locations`, {
                     params: { project: selectedProject }
                 });
-
                 setLocations(response.data);
             } catch (error) {
                 console.error('Error fetching locations:', error);
             }
         };
-
         fetchProjects();
-        // Fetch locations whenever selectedProject changes
         if (selectedProject) {
             fetchLocations(selectedProject);
         } else {
-            setLocations([]); // Clear locations if no project is selected
+            setLocations([]); 
         }
     }, [selectedProject]);
-
     const handleProjectChange = (e) => setSelectedProject(e.target.value);
     const handleLocationChange = (e) => setSelectedLocation(e.target.value);
     const handleMonthChange = (e) => setMonth(e.target.value);
-
-
     const handleSubmit = async () => {
         try {
             const response = await axios.get(`${API_URL}/api/userdetailedreportdatewise`, {
@@ -70,11 +62,9 @@ const AllTaskTray = () => {
                     project: selectedProject,
                 },
             });
-
             const fetchedData = response.data;
             const transformedData = {};
             const dates = new Set();
-
             fetchedData.forEach((item) => {
                 const { user_type, Date, TotalExpense, IsApprovedHR } = item;
                 if (!transformedData[user_type]) {
@@ -87,9 +77,7 @@ const AllTaskTray = () => {
                 });
                 dates.add(Date);
             });
-
             const sortedDates = Array.from(dates).sort((a, b) => new Date(a) - new Date(b));
-
             setData(transformedData);
             setDatesOfMonth(sortedDates);
             setError(null);
@@ -98,7 +86,6 @@ const AllTaskTray = () => {
             setError('An error occurred while fetching data.');
         }
     };
-
     const handleExport = async (format) => {
         try {
             const response = await axios.get(`${API_URL}/downloadcsv`, {
@@ -109,7 +96,6 @@ const AllTaskTray = () => {
                 },
                 responseType: 'blob',
             });
-
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -123,8 +109,6 @@ const AllTaskTray = () => {
             setError(`An error occurred while exporting as ${format}.`);
         }
     };
-
-
     const handleUserSelection = (user, isSelected) => {
         setSelectedUsers((prevSelected) => {
             if (isSelected) {
@@ -139,16 +123,41 @@ const AllTaskTray = () => {
         const [year, month] = monthStr.split('-');
         return parseInt(month, 10);
     };
+    const handleShowConfirmationApprovalBox = (index) => {
+        setActionType('approve');
+        setCurrentIndex(index);
+        setShowConfirmationApprovalBox(true);
+    };
 
+    const handleCloseConfirmationApprovalBox = () => {
+        setShowConfirmationApprovalBox(false);
+    };
+
+    const handleShowConfirmationRejectionBox = (index) => {
+        setActionType('reject');
+        setCurrentIndex(index);
+        setShowConfirmationRejectionBox(true);
+    };
+
+    const handleCloseConfirmationRejectionBox = () => {
+        setShowConfirmationRejectionBox(false);
+    };
+
+    const handleConfirmAction = () => {
+        if (actionType === 'approve') {
+            handleApproval(currentIndex);
+        } else if (actionType === 'reject') {
+            handleReject(currentIndex);
+        }
+        setShowConfirmationApprovalBox(false);
+        setShowConfirmationRejectionBox(false);
+    };
     const handleApproval = async () => {
         const user = JSON.parse(localStorage.getItem('user'));
-        const userRoles = user?.user_roles || []; // Ensure this is an array
-
+        const userRoles = user?.user_roles || []; 
         const monthNumber = extractMonthNumber(month);
-
         for (const selectedUser of selectedUsers) {
             try {
-                // Fetch the current approval status
                 const fetchResponse = await axios.get(`${API_URL}/fetch-approved`, {
                     params: {
                         UserName: selectedUser,
@@ -156,19 +165,15 @@ const AllTaskTray = () => {
                         project: selectedProject,
                     },
                 });
-
-                const currentStatus = fetchResponse.data[0]; // Assuming only one record is returned
+                const currentStatus = fetchResponse.data[0]; 
                 console.log('Current status:', currentStatus);
-
-                // Check if the record exists
                 if (currentStatus) {
-                    // Validate hierarchical approval process
                     if (
                         userRoles.includes('HR') &&
                         currentStatus.IsApprovedCBSL === 1 &&
                         currentStatus.IsApprovedPM === 1 &&
                         currentStatus.IsApprovedPO === 1 &&
-                        currentStatus.IsApprovedHR === 0
+                        (currentStatus.IsApprovedHR === 0 || currentStatus.IsApprovedHR === 2)
                     ) {
                         const userData = {
                             LocationCode: currentStatus.LocationCode,
@@ -179,9 +184,7 @@ const AllTaskTray = () => {
                             role: 'HR',
                             project: selectedProject,
                         };
-
                         console.log('Sending approval request with data:', userData);
-
                         try {
                             const approvalResponse = await axios.post(`${API_URL}/approve`, userData);
                             console.log('Approval response:', approvalResponse.data);
@@ -191,7 +194,7 @@ const AllTaskTray = () => {
                             toast.error('An error occurred while approving.');
                         }
                     } else {
-                        toast.error('Record does not meet the criteria for approval.');
+                        toast.error('PO approval is pending.');
                     }
                 } else {
                     toast.error('No record found for the given criteria.');
@@ -206,10 +209,8 @@ const AllTaskTray = () => {
         const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
         const userRoles = userFromLocalStorage?.user_roles || [];
         const monthNumber = extractMonthNumber(month);
-
         for (const selectedUser of selectedUsers) {
             try {
-                // Fetch the current approval status
                 const fetchResponse = await axios.get(`${API_URL}/fetch-approved`, {
                     params: {
                         UserName: selectedUser,
@@ -217,19 +218,15 @@ const AllTaskTray = () => {
                         project: selectedProject,
                     },
                 });
-
-                const currentStatus = fetchResponse.data[0]; // Assuming only one record is returned
+                const currentStatus = fetchResponse.data[0]; 
                 console.log('Current status:', currentStatus);
-
-                // Check if the record exists
                 if (currentStatus) {
-                    // Validate hierarchical approval process
                     if (
                         userRoles.includes('HR') &&
                         currentStatus.IsApprovedCBSL === 1 &&
                         currentStatus.IsApprovedPM === 1 &&
                         currentStatus.IsApprovedPO === 1 &&
-                        currentStatus.IsApprovedHR === 1
+                        (currentStatus.IsApprovedHR === 0 || currentStatus.IsApprovedHR === 1)
                     ) {
                         const rejectData = {
                             LocationCode: currentStatus.LocationCode,
@@ -240,9 +237,7 @@ const AllTaskTray = () => {
                             role: 'HR',
                             project: selectedProject,
                         };
-
                         console.log('Sending rejection request with data:', rejectData);
-
                         try {
                             const rejectionResponse = await axios.post(`${API_URL}/reject`, rejectData);
                             console.log('Rejection response:', rejectionResponse.data);
@@ -263,6 +258,7 @@ const AllTaskTray = () => {
             }
         }
     };
+
     const filterData = (data) => {
         if (statusFilter === 'All') {
             return data;
@@ -272,7 +268,7 @@ const AllTaskTray = () => {
             const hasStatus = userEntries.some(entry => {
                 const status = entry.status;
                 return (statusFilter === 'Approved' && status === 1) ||
-                    (statusFilter === 'Pending' && status === 0) ||
+                    (statusFilter === 'Pending' && (status === 0 || status === 'null')) ||
                     (statusFilter === 'Rejected' && status === 2);
             });
             if (hasStatus) {
@@ -281,8 +277,7 @@ const AllTaskTray = () => {
             return filteredData;
         }, {});
     };
-
-
+   
     return (
         <>
             <ToastContainer />
@@ -381,8 +376,6 @@ const AllTaskTray = () => {
                                                                         ? 'Rejected'
                                                                         : 'Not Approved by PO'}
                                                         </td>
-
-
                                                         {datesOfMonth.map((date) => (
                                                             <td key={date}>
                                                                 {data[user].find((entry) => entry.Date === date)?.TotalExpense || 'N/A'}
@@ -402,21 +395,39 @@ const AllTaskTray = () => {
                                 <div className='row mt-3'>
                                     <div className='col-10'></div>
                                     <div className='col-1'>
-                                        <button className='btn success-btn' onClick={handleApproval}>Approve</button>
+                                        <button className='btn success-btn' onClick={handleShowConfirmationApprovalBox}>Approve</button>
                                     </div>
                                     <div className='col-1'>
-                                        <button className='btn danger-btn' onClick={handleReject}>Reject</button>
+                                        <button className='btn danger-btn' onClick={handleShowConfirmationRejectionBox}>Reject</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {/* Confirmation Approval Box */}
+                {showConfirmationApprovalBox && (
+                    <div className="confirmation-dialog">
+                      <div className="confirmation-content">
+                        <p>Are you sure you want to approve this task?</p>
+                        <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
+                        <button onClick={handleCloseConfirmationApprovalBox} className='btn btn-danger'>No</button>
+                    </div>
+                    </div>
+                )}
+
+                {/* Confirmation Rejection Box */}
+                {showConfirmationRejectionBox && (
+                    <div className="confirmation-dialog">
+                      <div className="confirmation-content">
+                        <p>Are you sure you want to reject this task?</p>
+                        <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
+                        <button onClick={handleCloseConfirmationRejectionBox} className='btn btn-danger'>No</button>
+                    </div>
+                    </div>
+                )}
                     </div>
                 </div>
             </div>
         </>
     );
 };
-
 export default AllTaskTray;
-
-

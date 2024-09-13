@@ -14,6 +14,10 @@ const TaskTray = () => {
     const [locationID, setLocationID] = useState('');
     const [locationName, setLocationName] = useState('');
     const [projects, setProjects] = useState([]);
+    const [showConfirmationApprovalBox, setShowConfirmationApprovalBox] = useState(false);
+    const [showConfirmationRejectionBox, setShowConfirmationRejectionBox] = useState(false);
+    const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
+    const [currentIndex, setCurrentIndex] = useState(null);
 
     useEffect(() => {
         const fetchUserInfo = () => {
@@ -50,14 +54,14 @@ const TaskTray = () => {
         if (locationName || projects.length) {
             fetchApprovalStatus();
         }
-    }, [locationName, projects, userRole]); 
+    }, [locationName, projects, userRole]);
 
     const handleCardClick = (cardType) => {
         setSelectedCard(cardType);
     };
     const getFilteredTasks = (cardType) => {
         let statusKey = '';
-        
+
         // Determine the status key based on the user role
         switch (userRole) {
             case 'CBSL Site User':
@@ -75,32 +79,30 @@ const TaskTray = () => {
             default:
                 return []; // Return an empty array if the user role is invalid
         }
-    
-        const order = {
-            'PM': ['IsApprovedCBSL'],
-            'PO': ['IsApprovedPM', 'IsApprovedCBSL'],
-            'HR': ['IsApprovedPO', 'IsApprovedPM', 'IsApprovedCBSL']
-        };
-    
-        // Initialize filteredTasks with approvalStatus and ensure it's an array
+
+        // Initialize filteredTasks with the approvalStatus (make sure it's an array)
         let filteredTasks = Array.isArray(approvalStatus) ? approvalStatus : [];
-        
-        // Filter tasks based on the role hierarchy
-        Object.entries(order).forEach(([key, values]) => {
-            if (userRole === key) {
-                values.forEach(value => {
-                    filteredTasks = filteredTasks.filter(task => task[value] === 1);
-                });
-            }
-        });
-        
-        console.log("Filtered Tasks", filteredTasks);
-    
-        // Filter tasks based on the card type
+
+        // Hierarchy for approval
+        const order = {
+            'PM': ['IsApprovedCBSL'],         // PM needs CBSL approval first
+            'PO': ['IsApprovedPM', 'IsApprovedCBSL'],  // PO needs PM and CBSL approval
+            'HR': ['IsApprovedPO', 'IsApprovedPM', 'IsApprovedCBSL'] // HR needs PO, PM, and CBSL approval
+        };
+
+        // Filter tasks based on role hierarchy
+        if (userRole in order) {
+            order[userRole].forEach((approvalKey) => {
+                filteredTasks = filteredTasks.filter(task => task[approvalKey] === 1);
+            });
+        }
+
+        // Filter based on card type (approved, pending, or rejected)
+        if (cardType === 'all') return filteredTasks.filter(task => task[statusKey] === 0 || task[statusKey] === 1 || task[statusKey] === 2);
         if (cardType === 'approved') return filteredTasks.filter(task => task[statusKey] === 1);
         if (cardType === 'pending') return filteredTasks.filter(task => task[statusKey] === null || task[statusKey] === 0);
         if (cardType === 'rejected') return filteredTasks.filter(task => task[statusKey] === 2);
-    
+
         return [];
     };
     const handleApprove = async (index) => {
@@ -110,29 +112,24 @@ const TaskTray = () => {
         const locationCode = user?.locations[0]?.id || '';
         const projectId = user?.projects[0] || '';
         const userID = user?.user_id || 0;
-    
         // Determine role
         const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
         if (!roleObj) {
             return toast.error('Role not found.');
         }
-    
         try {
             const postData = {
                 LocationCode: elem.locationId,
                 UserName: elem.user_type,
                 InMonth: elem.MonthNumber,
-                UserID: elem.user_id|| 0,
+                UserID: elem.user_id || 0,
                 userProfile: elem.userProfile || 0,
                 role: roleObj,
-                project: projectId 
+                project: projectId
             };
-    
             console.log('Approval request data:', postData); // Debug log
-    
             const response = await axios.post(`${API_URL}/approve`, postData);
             console.log('Approval response:', response.data);
-    
             // Update state
             setApprovalStatus(prevStatus => {
                 const updatedStatus = [...prevStatus];
@@ -155,34 +152,31 @@ const TaskTray = () => {
     const canReject = (role, status) => {
         if (!status) return false;
         switch (role) {
-          case 'CBSL Site User':
-            return !status.IsApprovedPM && !status.IsApprovedPO && !status.IsApprovedHR; // CBSL Site User can reject only if no higher role has approved
-          case 'PM':
-            return !status.IsApprovedPO && !status.IsApprovedHR; // PM can reject only if PO and HR have not approved
-          case 'PO':
-            return !status.IsApprovedHR; // PO can reject only if HR has not approved
-          case 'HR':
-            return true; // HR can always reject
-          default:
-            return false;
+            case 'CBSL Site User':
+                return !status.IsApprovedPM && !status.IsApprovedPO && !status.IsApprovedHR; // CBSL Site User can reject only if no higher role has approved
+            case 'PM':
+                return !status.IsApprovedPO && !status.IsApprovedHR; // PM can reject only if PO and HR have not approved
+            case 'PO':
+                return !status.IsApprovedHR; // PO can reject only if HR has not approved
+            case 'HR':
+                return true; // HR can always reject
+            default:
+                return false;
         }
-      };
-      const handleReject = async (index) => {
+    };
+    const handleReject = async (index) => {
         const elem = getFilteredTasks(selectedCard)[index];
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
         const projectId = user?.projects[0] || '';
         const locationCode = user?.locations[0]?.id || '';
         const userID = user?.user_id || 0;
-    
         // Determine role
         const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
         if (!roleObj) {
             return toast.error('Role not found.');
         }
-    
         console.log('Selected Role:', roleObj);
-    
         try {
             // Fetch the approval status
             const response = await axios.get(`${API_URL}/fetch-approved`, {
@@ -193,11 +187,9 @@ const TaskTray = () => {
                     project: projectId
                 }
             });
-    
             const approvedData = response.data;
             console.log('Response received from API:', response);
             console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
-    
             if (!approvedData || approvedData.length === 0) {
                 // No approval data found, directly send rejection request
                 console.log('No approval data found for user:', elem.user_type);
@@ -210,12 +202,9 @@ const TaskTray = () => {
                     role: roleObj,
                     project: projectId
                 };
-    
                 console.log('No data found. Sending direct rejection:', postData);
-    
                 const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
                 console.log('Reject response:', rejectResponse.data);
-    
                 setApprovalStatus(prevStatus => {
                     const updatedStatus = {
                         ...prevStatus,
@@ -227,20 +216,14 @@ const TaskTray = () => {
                     console.log('Updated rejection status:', updatedStatus);
                     return updatedStatus;
                 });
-    
                 return toast.success('Rejected successfully, even without approval data.');
             }
-    
             const userStatus = approvedData[0];
             console.log('Current approval status:', userStatus);
-    
             if (!userStatus) {
                 return toast.error('Error: User status data is missing.');
             }
-    
-            // Check if rejection is allowed based on the role hierarchy
             const canUserReject = canReject(roleObj, userStatus);
-    
             if (!canUserReject) {
                 const approvedRoles = roleHierarchy.slice(roleHierarchy.indexOf(roleObj) + 1).filter(role => {
                     switch (role) {
@@ -257,7 +240,6 @@ const TaskTray = () => {
                 const firstApprovedRole = approvedRoles[0];
                 return toast.error(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
             }
-    
             // Send rejection request with the available data
             const postData = {
                 LocationCode: elem.locationId,
@@ -268,12 +250,9 @@ const TaskTray = () => {
                 role: roleObj,
                 project: projectId
             };
-    
             console.log('Post data to be sent:', postData);
-    
             const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
             console.log('Reject response:', rejectResponse.data);
-    
             setApprovalStatus(prevStatus => {
                 const updatedStatus = {
                     ...prevStatus,
@@ -285,17 +264,44 @@ const TaskTray = () => {
                 console.log('Updated rejection status:', updatedStatus);
                 return updatedStatus;
             });
-    
             toast.success('Rejected successfully');
         } catch (error) {
             console.error('Error processing rejection:', error);
             toast.error('Error processing rejection.');
         }
     };
-    
+    const handleShowConfirmationApprovalBox = (index) => {
+        setActionType('approve');
+        setCurrentIndex(index);
+        setShowConfirmationApprovalBox(true);
+    };
+
+    const handleCloseConfirmationApprovalBox = () => {
+        setShowConfirmationApprovalBox(false);
+    };
+
+    const handleShowConfirmationRejectionBox = (index) => {
+        setActionType('reject');
+        setCurrentIndex(index);
+        setShowConfirmationRejectionBox(true);
+    };
+
+    const handleCloseConfirmationRejectionBox = () => {
+        setShowConfirmationRejectionBox(false);
+    };
+
+    const handleConfirmAction = () => {
+        if (actionType === 'approve') {
+            handleApprove(currentIndex);
+        } else if (actionType === 'reject') {
+            handleReject(currentIndex);
+        }
+        setShowConfirmationApprovalBox(false);
+        setShowConfirmationRejectionBox(false);
+    };
+
     const renderTable = () => {
         const filteredTasks = getFilteredTasks(selectedCard);
-
         const isApprovedCard = selectedCard === 'approved';
         const isPendingCard = selectedCard === 'pending';
         const isRejectedCard = selectedCard === 'rejected';
@@ -315,82 +321,103 @@ const TaskTray = () => {
                             <th>Indexing</th>
                             <th>CBSL QA</th>
                             <th>Client QC</th>
-                            <th>Working Days</th>    
+                            <th>Working Days</th>
                             <th>Actions</th>
                             <th>Remarks</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTasks.map((elem, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.locationName}</td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.user_type}</td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.MonthYear}</td>
-                                <td>{elem.Scanned}</td>
-                                <td>{elem.QC}</td>
-                                <td>{elem.Flagging}</td>
-                                <td>{elem.Indexing}</td>
-                                <td>{elem.CBSL_QA}</td>
-                                <td>{elem.Client_QC}</td>
-                                <td>{elem.DistinctDateCount}</td>
-                                <td style={{whiteSpace:'nowrap'}}>
-                                {(isApprovedCard) && (
-                                        <div className='row mt-2'>
-                                             <button
-                                                    className='btn btn-danger'
-                                                    onClick={() => handleReject(index)}
-                                                    disabled={isRejectedCard}
-                                                    style={{width:'59px',padding:'5px 0px',fontSize:'12px',marginLeft:'12px'}}
+                        {filteredTasks.map((elem, index) => {
+                            // Check if approve button should be disabled
+                            const isDisabledApprovePM = userRole === 'PM' && elem.IsApprovedCBSL !== 1;
+                            const isDisabledApprovePO = userRole === 'PO' && (elem.IsApprovedPM !== 1 || elem.IsApprovedCBSL !== 1);
+
+                            return (
+                                <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>{elem.locationName}</td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>{elem.user_type}</td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>{elem.MonthYear}</td>
+                                    <td>{elem.Scanned}</td>
+                                    <td>{elem.QC}</td>
+                                    <td>{elem.Flagging}</td>
+                                    <td>{elem.Indexing}</td>
+                                    <td>{elem.CBSL_QA}</td>
+                                    <td>{elem.Client_QC}</td>
+                                    <td>{elem.DistinctDateCount}</td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>
+                                        {/* Rejected Tasks */}
+                                        {isRejectedCard && (
+                                            <div className='row mt-2'>
+                                                <button
+                                                    className='btn btn-success'
+                                                    onClick={() => handleShowConfirmationApprovalBox(index)}
+                                                    disabled={userRole === 'PM' ? isDisabledApprovePM : isDisabledApprovePO}
+                                                    style={{ width: '59px', padding: '5px 0px', fontSize: '12px', marginLeft: '11px' }}
+                                                >
+                                                    Approve
+                                                </button>
+                                            </div>
+                                        )}
+                                        {/* Approved Tasks */}
+                                        {isApprovedCard && (
+                                            <div className='row mt-2'>
+                                                <button
+                                                    className='btn btn-success'
+                                                    onClick={() => handleShowConfirmationRejectionBox(index)}
+                                                    style={{ width: '59px', padding: '5px 0px', fontSize: '12px', marginLeft: '11px' }}
                                                 >
                                                     Reject
                                                 </button>
-                                        </div>
-                                    )}
-                                    {(isRejectedCard) && (
-                                        <div className='row mt-2'>
-                                             <button
-                                                    className='btn btn-success'
-                                                    onClick={() => handleApprove(index)}
-                                                    disabled={isApprovedCard}
-                                                    style={{width:'59px',padding:'5px 0px',fontSize:'12px',marginLeft:'11px'}}
-                                                >
-                                                    Approve
-                                                </button>
-                                        </div>
-                                    )}
-                                    {(isPendingCard) && (
-                                    <div className='row mt-2 ms-1'>
-                                        {/* <div className='col-6'> */}
+                                            </div>
+                                        )}
+                                        {/* Pending Tasks */}
+                                        {isPendingCard && (
+                                            <div className='row mt-2 ms-1'>
                                                 <button
                                                     className='btn btn-success'
-                                                    onClick={() => handleApprove(index)}
-                                                    style={{width: '45px',
-                                                        fontSize: '11px',
-                                                        padding: '5px 0px'}}
+                                                    onClick={() => handleShowConfirmationApprovalBox(index)}
+                                                    style={{ width: '45px', fontSize: '11px', padding: '5px 0px' }}
                                                 >
                                                     Approve
                                                 </button>
-                                        {/* </div> */}
-                                        {/* <div className='col-6'> */}
                                                 <button
                                                     className='btn btn-danger mt-1'
-                                                    onClick={() => handleReject(index)}
-                                                    style={{width: '45px',
-                                                        fontSize: '11px',
-                                                        padding: '5px 0px'}}
+                                                    onClick={() => handleShowConfirmationRejectionBox(index)}
+                                                    style={{ width: '45px', fontSize: '11px', padding: '5px 0px' }}
                                                 >
                                                     Reject
                                                 </button>
-                                        {/* </div> */}
-                                    </div>
-                                     )}
-                                </td>
-                                <td style={{whiteSpace:'nowrap'}}>{elem.Remarks}</td>
-                            </tr>
-                        ))}
+                                            </div>
+                                        )}
+                                    </td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>{elem.Remarks}</td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
+                {/* Confirmation Approval Box */}
+                {showConfirmationApprovalBox && (
+                    <div className="confirmation-dialog">
+                      <div className="confirmation-content">
+                        <p>Are you sure you want to approve this task?</p>
+                        <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
+                        <button onClick={handleCloseConfirmationApprovalBox} className='btn btn-danger'>No</button>
+                    </div>
+                    </div>
+                )}
+
+                {/* Confirmation Rejection Box */}
+                {showConfirmationRejectionBox && (
+                    <div className="confirmation-dialog">
+                      <div className="confirmation-content">
+                        <p>Are you sure you want to reject this task?</p>
+                        <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
+                        <button onClick={handleCloseConfirmationRejectionBox} className='btn btn-danger'>No</button>
+                    </div>
+                    </div>
+                )}
             </div>
         );
     };
@@ -402,52 +429,63 @@ const TaskTray = () => {
             <ToastContainer />
             <Header />
             <div className='container-fluid'>
-            <div className='row'>
-                <div className='col-2'>
-                <SideBar />
-                </div>
-            <div className='col-10'>
-                <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                    <h6 className="ms-2" style={{ color: "white" }}>
-                        Task Tray
-                    </h6>
-                </div>
-                <div className="row mt-4">
-                    <div className="col-4">
-                        <div
-                            className={`approved-card ${selectedCard === 'approved' ? 'active-card' : ''}`}
-                            onClick={() => handleCardClick('approved')}
-                            style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'approved' ? 'lightgray' : 'white' }}
-                        >
-                            <h5>Approved Tasks</h5>
-                            <h6>Count: {getCount('approved')}</h6>
+                <div className='row'>
+                    <div className='col-2'>
+                        <SideBar />
+                    </div>
+                    <div className='col-10'>
+                        <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                            <h6 className="" style={{ color: "white" }}>
+                                Task Tray
+                            </h6>
+                        </div>
+                        <div className="row mt-4">
+                            <div className='col-3'>
+                                <div
+                                    className={`all-card ${selectedCard === 'all' ? 'active-card' : ''}`}
+                                    onClick={() => handleCardClick('all')}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'all' ? '#d3d2d2' : 'white' }}
+                                >
+                                    <h5>All Tasks</h5>
+                                    <h6>Count: {getCount('all')}</h6>
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div
+                                    className={`approved-card ${selectedCard === 'approved' ? 'active-card' : ''}`}
+                                    onClick={() => handleCardClick('approved')}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'approved' ? '#d3d2d2' : 'white' }}
+                                >
+                                    <h5>Approved Tasks</h5>
+                                    <h6>Count: {getCount('approved')}</h6>
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div
+                                    className={`pending-card ${selectedCard === 'pending' ? 'active-card' : ''}`}
+                                    onClick={() => handleCardClick('pending')}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'pending' ? '#d3d2d2' : 'white' }}
+                                >
+                                    <h5>Pending Tasks</h5>
+                                    <h6>Count: {getCount('pending')}</h6>
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div
+                                    className={`rejected-card ${selectedCard === 'rejected' ? 'active-card' : ''}`}
+                                    onClick={() => handleCardClick('rejected')}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'rejected' ? '#d3d2d2' : 'white' }}
+                                >
+                                    <h5>Rejected Tasks</h5>
+                                    <h6>Count: {getCount('rejected')}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='mt-4'>
+                            {renderTable()}
+                            
                         </div>
                     </div>
-                    <div className="col-4">
-                        <div
-                            className={`pending-card ${selectedCard === 'pending' ? 'active-card' : ''}`}
-                            onClick={() => handleCardClick('pending')}
-                            style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'pending' ? 'lightgray' : 'white' }}
-                        >
-                            <h5>Pending Tasks</h5>
-                            <h6>Count: {getCount('pending')}</h6>
-                        </div>
-                    </div>
-                    <div className="col-4">
-                        <div
-                            className={`rejected-card ${selectedCard === 'rejected' ? 'active-card' : ''}`}
-                            onClick={() => handleCardClick('rejected')}
-                            style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'rejected' ? 'lightgray' : 'white' }}
-                        >
-                            <h5>Rejected Tasks</h5>
-                            <h6>Count: {getCount('rejected')}</h6>
-                        </div>
-                    </div>
-                </div>
-                <div className='mt-4'>
-                {renderTable()}
-                </div>
-                </div>
                 </div>
             </div>
         </>
@@ -455,8 +493,3 @@ const TaskTray = () => {
 };
 
 export default TaskTray;
-
-
-
-
-

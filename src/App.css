@@ -583,6 +583,15 @@ font-weight: 500;
   height: 500px;
   overflow-y: auto;
 }
+.all-card{
+  background-color: white;
+  width: 250px;
+  height: 100px;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  color: #093f7c;
+}
 .approved-card{
   background-color: white;
   width: 250px;
@@ -599,7 +608,7 @@ font-weight: 500;
   border-radius: 12px;
   padding: 10px;
   text-align: center;
-  color: orange;
+  color: rgb(243, 127, 19);
 }
 .rejected-card{
   background-color: white;
