@@ -25,22 +25,27 @@ const SideBar = () => {
     };
 
     const getTaskTrayLink = () => {
-        if (projects.includes(1) || projects.includes(2)) {
+        if (projects.includes(1)) {
+            return '/UPDCTaskTray';
+        } else if (projects.includes(2)) {
             return '/TaskTray';
         } else if (projects.includes(3)) {
             return '/KarTaskTray';
-        } else if ( Role.includes('HR')) {
+        } else if (Role.includes('HR')) {
             return '/allTaskTray';
         }
         return ''; // Default case if no project is assigned or project ID doesn't match
     };
-    
+
 
     const getUploadNonTechLink = () => {
         if (projects.includes(1) || projects.includes(2) || projects.includes(3)) {
             return '/uploadNonTechnical';
         }
         return ''; // Default case if no project is assigned or project ID doesn't match
+    };
+    const getDeliveredData = () => {
+            return '/MainOptions';
     };
 
     const renderLink = (to, label) => (
@@ -63,6 +68,7 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
+                {renderLink(getDeliveredData(), 'Delivered Data')}
                 {renderLink('/user_form', 'Add User')}
             </ul>
             <hr />
@@ -79,7 +85,7 @@ const SideBar = () => {
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
             </ul>
-            <hr/>
+            <hr />
         </div>
     );
     const cbslHR = () => (

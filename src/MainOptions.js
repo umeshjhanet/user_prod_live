@@ -100,7 +100,7 @@ const MainOptions = () => {
             (karSums[category] || 0);
     });
     const allcategories = [
-         'Scanned',  'Client_QC'
+         'Scanned',  'Export'
     ];
     const projects = [
         { id: 1, name: 'UPDC' },
