@@ -118,7 +118,7 @@ const MainOptions = () => {
     return (
         <>
             <Header />
-            <div className='container-fluid'>
+            <div className='container-fluid mt-5'>
                 <div className='row'>
                     <div className='col-2'></div>
                     <div className='col-9 ms-5'>

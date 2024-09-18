@@ -459,7 +459,7 @@ const UPDCTaskTray = () => {
         <>
             <ToastContainer />
             <Header />
-            <div className='container-fluid'>
+            <div className='container-fluid mt-5'>
                 <div className='row'>
                     <div className='col-2'><SideBar/></div>
                     <div className='col-10'>

@@ -123,10 +123,12 @@ const SideBar = () => {
     const iscbslAdmin = userLog && userLog.user_roles.includes('CBSL Admin');
     return (
         <>
+        <div className='sidebar'>
             {isSuperAdmin && superAdmin()}
             {iscbslAdmin && cbslAdmin()}
             {isCbslUser && cbslUser()}
             {isHR && cbslHR()}
+            </div>
         </>
     );
 };
