@@ -350,8 +350,7 @@ function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
             ? 'Approved'
             : fetchedData[user].some(entry => entry.status === 2)
             ? 'Rejected'
-            : 'Not Approved by PO';
-        
+            : 'Not Approved by PO';   
         const expenseData = datesOfMonth.map(date => {
             const entry = fetchedData[user].find(record => record.Date === date);
             return entry ? entry.TotalExpense : '0'; 
