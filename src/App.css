@@ -5,6 +5,7 @@ body {
   flex-direction: column;
   /* font-family: 'Montserrat'; */
 }
+
 /* Loader styles */
 .loader-overlay {
   position: fixed;
@@ -12,30 +13,41 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7); /* semi-transparent white */
+  background-color: rgba(255, 255, 255, 0.7);
+  /* semi-transparent white */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensure the loader is on top of everything */
+  z-index: 9999;
+  /* Ensure the loader is on top of everything */
 }
 
 .loader {
-  border: 8px solid #f3f3f3; /* Light grey */
-  border-top: 8px solid #3498db; /* Blue */
+  border: 8px solid #f3f3f3;
+  /* Light grey */
+  border-top: 8px solid #3498db;
+  /* Blue */
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  animation: spin 1s linear infinite; /* Apply animation */
+  animation: spin 1s linear infinite;
+  /* Apply animation */
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Blur effect */
 .blur {
-  filter: blur(1px); /* Adjust blur intensity as needed */
+  filter: blur(1px);
+  /* Adjust blur intensity as needed */
 }
 
 
@@ -51,7 +63,8 @@ body {
 
 /* Modal container */
 .modal {
-  display: block; /* Hide modal by default */
+  display: block;
+  /* Hide modal by default */
   position: fixed;
   z-index: 999;
   left: 0;
@@ -59,18 +72,21 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent background */
 }
 
 /* Modal content */
 .modal-content {
   background-color: #fefefe;
-  margin: 10% auto; /* Center modal vertically and horizontally */
+  margin: 10% auto;
+  /* Center modal vertically and horizontally */
   padding: 20px;
   border: 1px solid black;
   border-radius: 5px;
   width: 80%;
-  max-width: 800px; /* Maximum width of the modal */
+  max-width: 800px;
+  /* Maximum width of the modal */
 }
 
 /* Close button */
@@ -131,28 +147,28 @@ body {
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   background-color: #f8f9fd;
 }
-form
-input[type="text"],
+
+form input[type="text"],
 input[type="email"],
 input[type="password"] {
   height: 35px;
   border: none;
 }
-form
-input[type="submit"] {
-  margin-top:10px;
+
+form input[type="submit"] {
+  margin-top: 10px;
   cursor: pointer;
   font-size: 15px;
-  background: rgb(107,183,194);
-  border: 1px solid rgb(107,183,194);
+  background: rgb(107, 183, 194);
+  border: 1px solid rgb(107, 183, 194);
   color: #fff;
   padding: 8px 10px;
   width: 320px;
   margin-left: 35px;
 }
-form
-input[type="submit"]:hover {
-  background: rgb(107,183,194);
+
+form input[type="submit"]:hover {
+  background: rgb(107, 183, 194);
   color: white;
 }
 
@@ -188,21 +204,27 @@ input[type="submit"]:hover {
   background-repeat: no-repeat;
   object-fit: fill;
 }
-.first-card{
+
+.first-card {
   background-color: #aaa;
   padding: 10px;
   border: 1px solid #aaa;
 }
+
 /* CumulativeSummaryReport.css */
 
 .clicked-row {
-  background-color: #f0f0f0; /* Change background color of clicked row */
-  cursor: pointer; /* Change cursor to pointer on hover */
+  background-color: #f0f0f0;
+  /* Change background color of clicked row */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
 }
 
 .clicked-row:hover {
-  background-color: #e0e0e0; /* Change background color of clicked row on hover */
+  background-color: #e0e0e0;
+  /* Change background color of clicked row on hover */
 }
+
 .video-background {
   position: relative;
   width: 100%;
@@ -232,11 +254,13 @@ input[type="submit"]:hover {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
-.hover-text:hover{
-color: steelblue;
-cursor: pointer;
-font-weight: 500;
+
+.hover-text:hover {
+  color: steelblue;
+  cursor: pointer;
+  font-weight: 500;
 }
+
 .login-card-content {
   max-width: 400px;
 }
@@ -244,32 +268,37 @@ font-weight: 500;
 .password-field {
   position: relative;
 }
-.upload-options{
+
+.upload-options {
   border: 1px solid #4BC0C0;
   background-color: white;
   padding-top: 5px;
   height: 40px;
 }
 
-.non-tech input[type=text],[type=number],[type=date]{
+.non-tech input[type=text],
+[type=number],
+[type=date] {
   border: 1px solid black;
   /* background-color: gray; */
   width: 200px;
   height: 30px;
 }
-.non-tech button{
+
+.non-tech button {
   width: 100px;
   background-color: #4BC0C0;
   border: none;
   height: 40px;
 }
 
-.non-tech-excel button{
+.non-tech-excel button {
   width: 200px;
   background-color: #4BC0C0;
   border: none;
 
 }
+
 .password-inputbox:focus {
   border-bottom: 1px solid #007bff;
 }
@@ -278,29 +307,35 @@ font-weight: 500;
   color: red;
   font-size: 14px;
 }
-.project-graph{
+
+.project-graph {
   border: 3px solid #46b9a6;
   border-radius: 8px;
   /* width: 50%; */
   background-color: #FFF;
   color: #5f5f5f;
 }
-.project-graph  p{
+
+.project-graph p {
   line-height: 0.9;
 }
-.project-card{
+
+.project-card {
   border: 3px solid #46b9a6;
   border-radius: 8px;
   width: 23%;
   background-color: #FFF;
   color: #5f5f5f;
 }
-.allproject-card p{
+
+.allproject-card p {
   line-height: 0.4;
 }
-.project-card  p{
+
+.project-card p {
   line-height: 0.4;
 }
+
 .allproject-card {
   width: 22%;
   color: #5f5f5f;
@@ -326,7 +361,8 @@ font-weight: 500;
   bottom: 0;
   left: 0;
   border-radius: 12px 0 0 12px;
-  width: 4px; /* Adjust border width as needed */
+  width: 4px;
+  /* Adjust border width as needed */
   background: linear-gradient(to bottom, #193860 60%, #4BC0C0 40%);
 }
 
@@ -335,7 +371,8 @@ font-weight: 500;
   bottom: 0;
   right: 0;
   border-radius: 0 12px 12px 0;
-  width: 4px; /* Adjust border width as needed */
+  width: 4px;
+  /* Adjust border width as needed */
   background: linear-gradient(to bottom, #4BC0C0 30%, rgb(148, 78, 99) 70%);
 }
 
@@ -344,7 +381,8 @@ font-weight: 500;
   left: 0;
   right: 0;
   border-radius: 12px 12px 0 0;
-  height: 4px; /* Adjust border height as needed */
+  height: 4px;
+  /* Adjust border height as needed */
   background: linear-gradient(to right, #193860 40%, #4BC0C0 60%);
 }
 
@@ -353,13 +391,17 @@ font-weight: 500;
   left: 0;
   right: 0;
   border-radius: 0 0 12px 12px;
-  height: 4px; /* Adjust border height as needed */
+  height: 4px;
+  /* Adjust border height as needed */
   background: linear-gradient(to right, #4BC0C0 30%, rgb(148, 78, 99) 70%);
 }
+
 .calendar-wrapper {
-  width: 800px; /* Increase the width as needed */
+  width: 800px;
+  /* Increase the width as needed */
   max-width: 100%;
-  margin: 0 auto; /* Center the calendar */
+  margin: 0 auto;
+  /* Center the calendar */
 }
 
 .attendance-info {
@@ -368,12 +410,13 @@ font-weight: 500;
   text-align: center;
 }
 
-.in-time, .out-time {
+.in-time,
+.out-time {
   margin: 0;
   padding: 0;
 }
 
-.all-project-card{
+.all-project-card {
   width: 100%;
   height: 100px;
   background-color: white;
@@ -381,6 +424,7 @@ font-weight: 500;
   border: 3px solid brown;
 
 }
+
 /* .login-card {
   width: 400px;
   margin-left: 850px;
@@ -395,6 +439,7 @@ font-weight: 500;
 .password-field {
   width: 100%;
 }
+
 /* .group-card{
   position: relative;
   height: 400px;
@@ -411,7 +456,8 @@ font-weight: 500;
 }
 
 .group-dropdown {
-  max-height: 200px; /* Adjust as needed */
+  max-height: 200px;
+  /* Adjust as needed */
   overflow-y: auto;
   border: 1px solid lightgray;
   border-radius: 2px;
@@ -432,7 +478,8 @@ font-weight: 500;
 .password-inputbox:active {
   border: none;
 }
-.password-inputbox{
+
+.password-inputbox {
   width: 320px;
   /* padding: 10px; */
   border: none;
@@ -442,6 +489,9 @@ font-weight: 500;
 
 .navbar {
   height: 45px !important;
+  position: fixed;
+  top: 0;
+  width: 100%;
 }
 
 .header-image {
@@ -524,6 +574,7 @@ font-weight: 500;
   margin-bottom: 70px;
   border-radius: 4px;
 }
+
 .pagination .active .page-link {
   background-color: black;
   border-color: black;
@@ -538,14 +589,16 @@ font-weight: 500;
   height: 2.5rem;
   /* margin-left: 200px; */
 }
-.user-list-card{
+
+.user-list-card {
   height: 100%;
   background-color: white;
   padding: 20px;
   border-top: 4px solid #4BC0C0;
   border-radius: 4px;
 }
-.all-tables{
+
+.all-tables {
   max-height: 500px;
   overflow-y: auto;
 }
@@ -557,9 +610,11 @@ font-weight: 500;
   border-top: 4px solid #4BC0C0;
   border-radius: 4px;
 }
-.search-report-card table tr td{
+
+.search-report-card table tr td {
   margin-left: 10px;
 }
+
 .search-file-card {
   height: 100%;
   background-color: white;
@@ -567,6 +622,7 @@ font-weight: 500;
   border-top: 4px solid #4BC0C0;
   border-radius: 4px;
 }
+
 .user-form-card {
   height: 100%;
   background-color: white;
@@ -574,16 +630,28 @@ font-weight: 500;
   border-top: 4px solid #4BC0C0;
   border-radius: 4px;
 }
+
 /* .search-bar {
   width: 400px;
   
 } */
 
-.task-table{
+.task-table {
   height: 500px;
   overflow-y: auto;
 }
-.approved-card{
+
+.all-card {
+  background-color: white;
+  width: 250px;
+  height: 100px;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  color: #093f7c;
+}
+
+.approved-card {
   background-color: white;
   width: 250px;
   height: 100px;
@@ -592,16 +660,18 @@ font-weight: 500;
   text-align: center;
   color: #1e7e34;
 }
-.pending-card{
+
+.pending-card {
   background-color: white;
   width: 250px;
   height: 100px;
   border-radius: 12px;
   padding: 10px;
   text-align: center;
-  color: orange;
+  color: rgb(243, 127, 19);
 }
-.rejected-card{
+
+.rejected-card {
   background-color: white;
   width: 250px;
   height: 100px;
@@ -610,22 +680,21 @@ font-weight: 500;
   text-align: center;
   color: red;
 }
+
 .active-card {
   background-color: lightgray;
 }
 
 .sidebar {
-  height: 100vh; /* Full viewport height */
-  width: 220px; /* Sidebar width */
-  position: fixed; /* Keep it fixed on the side */
+  height: 100vh;
+  position: fixed;
   top: 45px;
   left: 0;
-  background-color: #f8f9fa; /* Light background color */
-  padding: 20px; /* Add padding inside the sidebar */
+  padding: 20px;
 }
 
-.confirmation-dialog{
-  display: block; /* Hide modal by default */
+.confirmation-dialog {
+  display: block;
   position: fixed;
   z-index: 999;
   left: 0;
@@ -635,25 +704,31 @@ font-weight: 500;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.confirmation-content{
+
+.confirmation-content {
   background-color: #fefefe;
-  margin: 10% auto; /* Center modal vertically and horizontally */
+  margin: 10% auto;
+  /* Center modal vertically and horizontally */
   padding: 20px;
   border: 1px solid black;
   border-radius: 5px;
   width: 80%;
   max-width: 300px;
   height: 150px;
- 
-  
+
+
 }
 
 .confirmation-text {
   /* Add your desired styles for the paragraph */
-  font-weight: bold;  /* Since you have fw-bold class */
-  margin-bottom: 30px; /* Ensure there's space below the text */
-  font-size: 1.2rem;   /* Increase font size for better readability */
-  color: #333;        /* Change color as needed */
+  font-weight: bold;
+  /* Since you have fw-bold class */
+  margin-bottom: 30px;
+  /* Ensure there's space below the text */
+  font-size: 1.2rem;
+  /* Increase font size for better readability */
+  color: #333;
+  /* Change color as needed */
 }
 
 .location-card {
@@ -666,6 +741,7 @@ font-weight: 500;
   top: 0px;
   z-index: 999;
 }
+
 .date-field {
   height: 40px !important;
   margin-top: 4px;
@@ -674,36 +750,45 @@ font-weight: 500;
 .horizontal-calendar .react-datepicker__month {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Optional: centers the dates horizontally */
+  justify-content: center;
+  /* Optional: centers the dates horizontally */
 }
 
 .horizontal-calendar .react-datepicker__week {
   flex-basis: calc(100% / 7);
 }
-.data-table tbody.scrollable{
-  height:200px !important;
-  overflow-y:auto !important;
-  width: 100%;
-  }
 
-  .container-fluid.loading {
-    opacity: 0.5; /* Adjust the opacity value as needed */
-  }
-  
+.data-table tbody.scrollable {
+  height: 200px !important;
+  overflow-y: auto !important;
+  width: 100%;
+}
+
+.container-fluid.loading {
+  opacity: 0.5;
+  /* Adjust the opacity value as needed */
+}
+
 
 .location-card p:hover {
   background-color: #61dafb;
 }
-.user-tables{
+
+.user-tables {
   border: 1px solid lightgray;
 }
-tr:nth-child(even) {background-color: #f2f2f2;}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
 .search-btn {
   width: 100px;
   height: 40px;
   background-color: #4BC0C0;
   margin-left: 20px;
 }
+
 .add-btn {
   width: 150px;
   height: 40px;
@@ -755,37 +840,44 @@ tr:nth-child(even) {background-color: #f2f2f2;}
   color: red;
   font-weight: bold;
 }
-.location-btn{
+
+.location-btn {
   background-color: #107393;
   width: 200px;
   text-align: left;
   color: white;
 }
-.process-card{
+
+.process-card {
   border: 1px solid gray;
   padding: 10px;
   /* height: 212px; */
   margin-left: 10px;
 }
-.master-card{
+
+.master-card {
   border: 1px solid black;
   padding: 10px;
   height: 312px;
 }
-.scanned-chart{
+
+.scanned-chart {
   background-color: #f87979;
 }
-.btn-row{
+
+.btn-row {
   display: flex;
   justify-content: end;
   align-items: end;
 }
-.process-btn{
+
+.process-btn {
   background-color: #107393;
   color: white;
   width: 150px;
 }
-.locations-card{
+
+.locations-card {
   max-height: 200px;
   width: 200px;
   padding: 5px;
@@ -794,6 +886,7 @@ tr:nth-child(even) {background-color: #f2f2f2;}
   background-color: white;
   z-index: 999;
 }
+
 .locations-card {
   position: relative;
   background-color: white;
@@ -805,11 +898,12 @@ tr:nth-child(even) {background-color: #f2f2f2;}
   top: 0px;
 }
 
-.main-updc{
+.main-updc {
   border: 1px solid gray;
   padding: 10px;
 }
-.dropdown-card{
+
+.dropdown-card {
   background-color: white;
   position: relative;
   top: 0;
@@ -820,13 +914,13 @@ tr:nth-child(even) {background-color: #f2f2f2;}
   height: 300px;
   overflow-y: auto;
 }
-form
-input[type="submit"] {
-  margin-top:10px;
+
+form input[type="submit"] {
+  margin-top: 10px;
   cursor: pointer;
   font-size: 15px;
-  background: rgb(43,117,127);
-  border: 1px solid rgb(43,117,127);
+  background: rgb(43, 117, 127);
+  border: 1px solid rgb(43, 117, 127);
   color: #fff;
   padding: 8px 10px;
   width: 355px;
@@ -834,11 +928,11 @@ input[type="submit"] {
 }
 
 input[type="submit"] {
-  margin-top:10px;
+  margin-top: 10px;
   cursor: pointer;
   font-size: 15px;
-  background: rgb(43,117,127);
-  border: 1px solid rgb(43,117,127);
+  background: rgb(43, 117, 127);
+  border: 1px solid rgb(43, 117, 127);
   color: #fff;
   padding: 8px 10px;
   width: 200px;
@@ -855,127 +949,134 @@ input[type="submit"] {
     padding-bottom: 20px;
     background-color: white;
   }
+
   .password-field {
     width: 100%;
   }
+
   .password-inputbox:active {
     border: none;
   }
-  .password-inputbox{
+
+  .password-inputbox {
     width: 220px;
     border: none;
   }
- 
-
-form
-input[type="text"],
-input[type="password"] {
-  height: 35px;
-  border: none;
-}
-form
-input[type="submit"] {
-  margin-top:10px;
-  cursor: pointer;
-  font-size: 15px;
-  background: #359d53;
-  border: 1px solid #2a8c64;
-  color: #fff;
-  padding: 8px 10px;
-  width: 200px;
-  margin-left: 90px;
-}
-form
-input[type="submit"]:hover {
-  background: #2a8c64;
-  color: white;
-}
-
-form
-input[type="submit"] {
-  margin-top:10px;
-  cursor: pointer;
-  font-size: 15px;
-  background: #359d53;
-  border: 1px solid #2a8c64;
-  color: #fff;
-  padding: 8px 10px;
-  width: 200px;
-  margin-left: 40px;
-}
-input[type="submit"] {
-  margin-top:10px;
-  cursor: pointer;
-  font-size: 15px;
-  background: #359d53;
-  border: 1px solid #2a8c64;
-  color: #fff;
-  padding: 8px 10px;
-  width: 200px;
-  margin-left: 40px;
-}
-.btn{
-  height: 20px;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-}
-
-.login-form {
-  background-color: white;
-  padding: 2rem;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-.list-container {
-  display: flex;
-}
-
-.all-tables table tbody tr:hover{
-  color: #007bff;
-}
-
-.error {
-  color: red;
-  font-size: 12px;
-}
-
-.title {
-  font-size: 25px;
-  margin-bottom: 20px;
-}
 
 
+  form input[type="text"],
+  input[type="password"] {
+    height: 35px;
+    border: none;
+  }
 
-.login-card {
-  width: 400px;
-  margin: auto;
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-bottom: 20px;
-  background-color: white;
-}
-.login-page-container {
-  display: flex;
-  /* justify-content: center; /* Center horizontally */
-  /* align-items: center; Center vertically */ 
-  height: 100vh; /* Make the container full height of the viewport */
-}
-.sign-in {
-  background-color: #107393;
-  padding: 10px;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  form input[type="submit"] {
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    background: #359d53;
+    border: 1px solid #2a8c64;
+    color: #fff;
+    padding: 8px 10px;
+    width: 200px;
+    margin-left: 90px;
+  }
 
-.password-field {
-  width: 100%;
-}
-/* .group-card{
+  form input[type="submit"]:hover {
+    background: #2a8c64;
+    color: white;
+  }
+
+  form input[type="submit"] {
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    background: #359d53;
+    border: 1px solid #2a8c64;
+    color: #fff;
+    padding: 8px 10px;
+    width: 200px;
+    margin-left: 40px;
+  }
+
+  input[type="submit"] {
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    background: #359d53;
+    border: 1px solid #2a8c64;
+    color: #fff;
+    padding: 8px 10px;
+    width: 200px;
+    margin-left: 40px;
+  }
+
+  .btn {
+    height: 20px;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .login-form {
+    background-color: white;
+    padding: 2rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+  .list-container {
+    display: flex;
+  }
+
+  .all-tables table tbody tr:hover {
+    color: #007bff;
+  }
+
+  .error {
+    color: red;
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 25px;
+    margin-bottom: 20px;
+  }
+
+
+
+  .login-card {
+    width: 400px;
+    margin: auto;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 20px;
+    background-color: white;
+  }
+
+  .login-page-container {
+    display: flex;
+    /* justify-content: center; /* Center horizontally */
+    /* align-items: center; Center vertically */
+    height: 100vh;
+    /* Make the container full height of the viewport */
+  }
+
+  .sign-in {
+    background-color: #107393;
+    padding: 10px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .password-field {
+    width: 100%;
+  }
+
+  /* .group-card{
   position: relative;
   height: 400px;
   overflow-y: auto;
@@ -984,34 +1085,37 @@ input[type="submit"] {
 } */
 
 
-.confirmation-dialog{
-  display: block; /* Hide modal by default */
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.confirmation-content{
-  background-color: #fefefe;
-  margin: 10% auto; /* Center modal vertically and horizontally */
-  padding: 20px;
-  border: 1px solid black;
-  border-radius: 5px;
-  width: 80%;
-  max-width: 300px;
-  height: 150px;
-}
+  .confirmation-dialog {
+    display: block;
+    /* Hide modal by default */
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 
-.form-control {
-  width: 100%;
-  height: 25px;
-  border: 1px solid lightgray;
-  border-radius: 2px;
-}
+  .confirmation-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    /* Center modal vertically and horizontally */
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 300px;
+    height: 150px;
+  }
+
+  .form-control {
+    width: 100%;
+    height: 25px;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+  }
 
   .data-table {
     width: 300px;
@@ -1032,7 +1136,7 @@ input[type="submit"] {
   .search-bar {
     width: 242px;
     overflow-x: auto;
-  height: 40px;
+    height: 40px;
   }
 
   .search-btn {
@@ -1048,6 +1152,7 @@ input[type="submit"] {
     width: 100px;
     height: 40px;
   }
+
   .location-card {
     background-color: white;
     border: 1px solid gray;
@@ -1080,7 +1185,7 @@ input[type="submit"] {
   .search-bar {
     width: 242px;
     overflow-x: auto;
-  height: 40px;
+    height: 40px;
   }
 
   .search-btn {
@@ -1102,7 +1207,7 @@ input[type="submit"] {
   .search-bar {
     width: 242px;
     overflow-x: auto;
-  height: 40px;
+    height: 40px;
   }
 }
 
@@ -1110,14 +1215,15 @@ input[type="submit"] {
   .search-bar {
     width: 242px;
     overflow-x: auto;
-  height: 40px;
+    height: 40px;
   }
 }
+
 @media only screen and (min-width: 1470px) {
   .search-bar {
     width: 380px;
     overflow-x: auto;
-  height: 40px;
+    height: 40px;
   }
 }
 
@@ -1138,8 +1244,10 @@ input[type="submit"] {
 
 /* Modal Dialog */
 .modal-dialog {
-  max-width: 100%;  /* Increased width */
-  width: 100%;      /* Ensure it uses 90% of the viewport width */
+  max-width: 100%;
+  /* Increased width */
+  width: 100%;
+  /* Ensure it uses 90% of the viewport width */
   margin: auto;
   overflow-x: auto;
 }
@@ -1195,11 +1303,12 @@ input[type="submit"] {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.modal-table{
+.modal-table {
   max-height: 400px;
   overflow-y: auto;
 }
-.table-modal{
+
+.table-modal {
   width: 100%;
   overflow: auto;
   /* margin-bottom: 20rem; */
@@ -1207,11 +1316,14 @@ input[type="submit"] {
   background-color: transparent;
   border-collapse: collapse;
 }
+
 .table-modal th {
   position: sticky;
   top: 0;
-  background-color: #f1f1f1; /* Background color for the sticky header */
-  z-index: 1; /* Ensure the header stays on top */
+  background-color: #f1f1f1;
+  /* Background color for the sticky header */
+  z-index: 1;
+  /* Ensure the header stays on top */
 }
 
 .table-modal th,
@@ -1299,8 +1411,10 @@ input[type="submit"] {
 
 .custom-modal {
   background-color: white;
-  width: 100%; /* Adjust the width percentage as needed */
-  max-width: 1200px; /* Adjust the maximum width as needed */
+  width: 100%;
+  /* Adjust the width percentage as needed */
+  max-width: 1200px;
+  /* Adjust the maximum width as needed */
   height: 90%;
   overflow: hidden;
 }
@@ -1323,4 +1437,3 @@ input[type="submit"] {
   top: 10px;
   right: 10px;
 }
-

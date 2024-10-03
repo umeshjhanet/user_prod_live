@@ -7,7 +7,7 @@ import { FaHome } from "react-icons/fa";
 import { toast, ToastContainer } from 'react-toastify';
 import SideBar from './Components/SideBar';
 
-const TaskTray = () => {
+const UPDCTaskTray = () => {
     const [approvalStatus, setApprovalStatus] = useState([]);
     const [selectedCard, setSelectedCard] = useState('pending'); // Default to 'pending'
     const [userRole, setUserRole] = useState('');
@@ -20,6 +20,7 @@ const TaskTray = () => {
     const [currentIndex, setCurrentIndex] = useState(null);
 
     useEffect(() => {
+        // Fetch user info including role and location code
         const fetchUserInfo = () => {
             const user = JSON.parse(localStorage.getItem('user'));
             if (user) {
@@ -29,21 +30,23 @@ const TaskTray = () => {
                 setProjects(user.projects || []);
             }
         };
+
         fetchUserInfo();
-    }, []);
+    }, []); // Empty dependency array to run only once on mount
 
     useEffect(() => {
+        // Fetch approval status if locationName or projects change
         const fetchApprovalStatus = () => {
-            let url = `${API_URL}/merged-report`;
+            let url = `${API_URL}/updcmerged-report`;
             let params = {};
-
-            // Determine if locationName should be included based on projects and role
+        
+            // Check if locationName should be included and append "District Court"
             if (locationName && !(projects.length > 0 && userRole === 'PM')) {
-                params = { locationName };
+                params = { locationName: `${locationName} District Court` };
             }
-
+        
             console.log('Fetching approval status with params:', params); // Debug log
-
+        
             axios.get(url, { params })
                 .then(response => setApprovalStatus(response.data))
                 .catch(error => {
@@ -51,224 +54,15 @@ const TaskTray = () => {
                     setApprovalStatus([]);
                 });
         };
+        
+
         if (locationName || projects.length) {
             fetchApprovalStatus();
         }
-    }, [locationName, projects, userRole]);
+    }, [locationName, projects, userRole]); 
 
     const handleCardClick = (cardType) => {
         setSelectedCard(cardType);
-    };
-    const getFilteredTasks = (cardType) => {
-        let statusKey = '';
-
-        // Determine the status key based on the user role
-        switch (userRole) {
-            case 'CBSL Site User':
-                statusKey = 'IsApprovedCBSL';
-                break;
-            case 'PM':
-                statusKey = 'IsApprovedPM';
-                break;
-            case 'PO':
-                statusKey = 'IsApprovedPO';
-                break;
-            case 'HR':
-                statusKey = 'IsApprovedHR';
-                break;
-            default:
-                return []; // Return an empty array if the user role is invalid
-        }
-
-        // Initialize filteredTasks with the approvalStatus (make sure it's an array)
-        let filteredTasks = Array.isArray(approvalStatus) ? approvalStatus : [];
-
-        // Hierarchy for approval
-        const order = {
-            'PM': ['IsApprovedCBSL'],         // PM needs CBSL approval first
-            'PO': ['IsApprovedPM', 'IsApprovedCBSL'],  // PO needs PM and CBSL approval
-            'HR': ['IsApprovedPO', 'IsApprovedPM', 'IsApprovedCBSL'] // HR needs PO, PM, and CBSL approval
-        };
-
-        // Filter tasks based on role hierarchy
-        if (userRole in order) {
-            order[userRole].forEach((approvalKey) => {
-                filteredTasks = filteredTasks.filter(task => task[approvalKey] === 1);
-            });
-        }
-
-        // Filter based on card type (approved, pending, or rejected)
-        if (cardType === 'all') return filteredTasks.filter(task => task[statusKey] === 0 || task[statusKey] === 1 || task[statusKey] === 2);
-        if (cardType === 'approved') return filteredTasks.filter(task => task[statusKey] === 1);
-        if (cardType === 'pending') return filteredTasks.filter(task => task[statusKey] === null || task[statusKey] === 0);
-        if (cardType === 'rejected') return filteredTasks.filter(task => task[statusKey] === 2);
-
-        return [];
-    };
-    const handleApprove = async (index) => {
-        const elem = getFilteredTasks(selectedCard)[index];
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userRoles = user?.user_roles || [];
-        const locationCode = user?.locations[0]?.id || '';
-        const projectId = user?.projects[0] || '';
-        const userID = user?.user_id || 0;
-        // Determine role
-        const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
-        if (!roleObj) {
-            return toast.error('Role not found.');
-        }
-        try {
-            const postData = {
-                LocationCode: elem.locationId,
-                UserName: elem.user_type,
-                InMonth: elem.MonthNumber,
-                UserID: elem.user_id || 0,
-                userProfile: elem.userProfile || 0,
-                role: roleObj,
-                project: projectId
-            };
-            console.log('Approval request data:', postData); // Debug log
-            const response = await axios.post(`${API_URL}/approve`, postData);
-            console.log('Approval response:', response.data);
-            // Update state
-            setApprovalStatus(prevStatus => {
-                const updatedStatus = [...prevStatus];
-                const taskIndex = updatedStatus.findIndex(task => task.user_type === elem.user_type && task.MonthNumber === elem.MonthNumber);
-                if (taskIndex !== -1) {
-                    updatedStatus[taskIndex] = {
-                        ...updatedStatus[taskIndex],
-                        [roleObj]: 1
-                    };
-                }
-                return updatedStatus;
-            });
-            toast.success('Approved successfully');
-        } catch (error) {
-            console.error('Error processing approval:', error);
-            toast.error('Error processing approval.');
-        }
-    };
-    const roleHierarchy = ['CBSL Site User', 'PM', 'PO', 'HR'];
-    const canReject = (role, status) => {
-        if (!status) return false;
-        switch (role) {
-            case 'CBSL Site User':
-                return !status.IsApprovedPM && !status.IsApprovedPO && !status.IsApprovedHR; // CBSL Site User can reject only if no higher role has approved
-            case 'PM':
-                return !status.IsApprovedPO && !status.IsApprovedHR; // PM can reject only if PO and HR have not approved
-            case 'PO':
-                return !status.IsApprovedHR; // PO can reject only if HR has not approved
-            case 'HR':
-                return true; // HR can always reject
-            default:
-                return false;
-        }
-    };
-    const handleReject = async (index) => {
-        const elem = getFilteredTasks(selectedCard)[index];
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userRoles = user?.user_roles || [];
-        const projectId = user?.projects[0] || '';
-        const locationCode = user?.locations[0]?.id || '';
-        const userID = user?.user_id || 0;
-        // Determine role
-        const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
-        if (!roleObj) {
-            return toast.error('Role not found.');
-        }
-        console.log('Selected Role:', roleObj);
-        try {
-            // Fetch the approval status
-            const response = await axios.get(`${API_URL}/fetch-approved`, {
-                params: {
-                    LocationCode: elem.locationId,
-                    UserName: elem.user_type,
-                    InMonth: elem.MonthNumber,
-                    project: projectId
-                }
-            });
-            const approvedData = response.data;
-            console.log('Response received from API:', response);
-            console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
-            if (!approvedData || approvedData.length === 0) {
-                // No approval data found, directly send rejection request
-                console.log('No approval data found for user:', elem.user_type);
-                const postData = {
-                    LocationCode: elem.locationId,
-                    UserName: elem.user_type || 'defaultUser',
-                    InMonth: elem.MonthNumber,
-                    UserID: elem.user_id || 0,
-                    userProfile: elem.userProfile || 0,
-                    role: roleObj,
-                    project: projectId
-                };
-                console.log('No data found. Sending direct rejection:', postData);
-                const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
-                console.log('Reject response:', rejectResponse.data);
-                setApprovalStatus(prevStatus => {
-                    const updatedStatus = {
-                        ...prevStatus,
-                        [elem.user_type]: {
-                            ...prevStatus[elem.user_type],
-                            [roleObj]: 2 // Set rejection status
-                        }
-                    };
-                    console.log('Updated rejection status:', updatedStatus);
-                    return updatedStatus;
-                });
-                return toast.success('Rejected successfully, even without approval data.');
-            }
-            const userStatus = approvedData[0];
-            console.log('Current approval status:', userStatus);
-            if (!userStatus) {
-                return toast.error('Error: User status data is missing.');
-            }
-            const canUserReject = canReject(roleObj, userStatus);
-            if (!canUserReject) {
-                const approvedRoles = roleHierarchy.slice(roleHierarchy.indexOf(roleObj) + 1).filter(role => {
-                    switch (role) {
-                        case 'PM':
-                            return userStatus.IsApprovedPM === 1;
-                        case 'PO':
-                            return userStatus.IsApprovedPO === 1;
-                        case 'HR':
-                            return userStatus.IsApprovedHR === 1;
-                        default:
-                            return false;
-                    }
-                });
-                const firstApprovedRole = approvedRoles[0];
-                return toast.error(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
-            }
-            // Send rejection request with the available data
-            const postData = {
-                LocationCode: elem.locationId,
-                UserName: elem.user_type || 'defaultUser',
-                InMonth: elem.MonthNumber,
-                UserID: elem.user_id || 0,
-                userProfile: elem.userProfile || 0,
-                role: roleObj,
-                project: projectId
-            };
-            console.log('Post data to be sent:', postData);
-            const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
-            console.log('Reject response:', rejectResponse.data);
-            setApprovalStatus(prevStatus => {
-                const updatedStatus = {
-                    ...prevStatus,
-                    [elem.user_type]: {
-                        ...prevStatus[elem.user_type],
-                        [roleObj]: 2 // Set rejection status
-                    }
-                };
-                console.log('Updated rejection status:', updatedStatus);
-                return updatedStatus;
-            });
-            toast.success('Rejected successfully');
-        } catch (error) {
-            console.error('Error processing rejection:', error);
-            toast.error('Error processing rejection.');
-        }
     };
     const handleShowConfirmationApprovalBox = (index) => {
         setActionType('approve');
@@ -299,7 +93,242 @@ const TaskTray = () => {
         setShowConfirmationApprovalBox(false);
         setShowConfirmationRejectionBox(false);
     };
-
+    const getFilteredTasks = (cardType) => {
+        let statusKey = '';
+    
+        // Determine the status key based on the user role
+        switch (userRole) {
+            case 'CBSL Site User':
+                statusKey = 'IsApprovedCBSL';
+                break;
+            case 'PM':
+                statusKey = 'IsApprovedPM';
+                break;
+            case 'PO':
+                statusKey = 'IsApprovedPO';
+                break;
+            case 'HR':
+                statusKey = 'IsApprovedHR';
+                break;
+            default:
+                return []; // Return an empty array if the user role is invalid
+        }
+    
+        // Initialize filteredTasks with the approvalStatus (make sure it's an array)
+        let filteredTasks = Array.isArray(approvalStatus) ? approvalStatus : [];
+    
+        // Hierarchy for approval
+        const order = {
+            'PM': ['IsApprovedCBSL'],         // PM needs CBSL approval first
+            'PO': ['IsApprovedPM', 'IsApprovedCBSL'],  // PO needs PM and CBSL approval
+            'HR': ['IsApprovedPO', 'IsApprovedPM', 'IsApprovedCBSL'] // HR needs PO, PM, and CBSL approval
+        };
+    
+        // Filter tasks based on role hierarchy
+        if (userRole in order) {
+            order[userRole].forEach((approvalKey) => {
+                filteredTasks = filteredTasks.filter(task => task[approvalKey] === 1);
+            });
+        }
+    
+        // Filter based on card type (approved, pending, or rejected)
+        if (cardType === 'all') return filteredTasks.filter(task =>  task[statusKey] === 0 || task[statusKey] === 1 || task[statusKey] === 2);
+        if (cardType === 'approved') return filteredTasks.filter(task => task[statusKey] === 1);
+        if (cardType === 'pending') return filteredTasks.filter(task => task[statusKey] === null || task[statusKey] === 0);
+        if (cardType === 'rejected') return filteredTasks.filter(task => task[statusKey] === 2);
+        
+        return [];
+    };
+    const handleApprove = async (index) => {
+        const elem = getFilteredTasks(selectedCard)[index];
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userRoles = user?.user_roles || [];
+        const locationCode = user?.locations[0]?.id || '';
+        const projectId = user?.projects[0] || '';
+        const userID = user?.user_id || 0;
+    
+        // Determine role
+        const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+        if (!roleObj) {
+            return toast.error('Role not found.');
+        }
+    
+        try {
+            const postData = {
+                LocationCode: elem.locationId,
+                UserName: elem.user_type,
+                InMonth: elem.MonthNumber,
+                UserID: elem.user_id|| 0,
+                userProfile: elem.userProfile || 0,
+                role: roleObj,
+                project: projectId 
+            };
+    
+            console.log('Approval request data:', postData); // Debug log
+    
+            const response = await axios.post(`${API_URL}/approve`, postData);
+            console.log('Approval response:', response.data);
+    
+            // Update state
+            setApprovalStatus(prevStatus => {
+                const updatedStatus = [...prevStatus];
+                const taskIndex = updatedStatus.findIndex(task => task.user_type === elem.user_type && task.MonthNumber === elem.MonthNumber);
+                if (taskIndex !== -1) {
+                    updatedStatus[taskIndex] = {
+                        ...updatedStatus[taskIndex],
+                        [roleObj]: 1
+                    };
+                }
+                return updatedStatus;
+            });
+            toast.success('Approved successfully');
+        } catch (error) {
+            console.error('Error processing approval:', error);
+            toast.error('Error processing approval.');
+        }
+    };
+    const roleHierarchy = ['CBSL Site User', 'PM', 'PO', 'HR'];
+    const canReject = (role, status) => {
+        if (!status) return false;
+        switch (role) {
+          case 'CBSL Site User':
+            return !status.IsApprovedPM && !status.IsApprovedPO && !status.IsApprovedHR; // CBSL Site User can reject only if no higher role has approved
+          case 'PM':
+            return !status.IsApprovedPO && !status.IsApprovedHR; // PM can reject only if PO and HR have not approved
+          case 'PO':
+            return !status.IsApprovedHR; // PO can reject only if HR has not approved
+          case 'HR':
+            return true; // HR can always reject
+          default:
+            return false;
+        }
+      };
+      const handleReject = async (index) => {
+        const elem = getFilteredTasks(selectedCard)[index];
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userRoles = user?.user_roles || [];
+        const projectId = user?.projects[0] || '';
+        const locationCode = user?.locations[0]?.id || '';
+        const userID = user?.user_id || 0;
+    
+        // Determine role
+        const roleObj = userRoles.find(role => ['CBSL Site User', 'PM', 'PO', 'HR'].includes(role));
+        if (!roleObj) {
+            return toast.error('Role not found.');
+        }
+    
+        console.log('Selected Role:', roleObj);
+    
+        try {
+            // Fetch the approval status
+            const response = await axios.get(`${API_URL}/fetch-approved`, {
+                params: {
+                    LocationCode: elem.locationId,
+                    UserName: elem.user_type,
+                    InMonth: elem.MonthNumber,
+                    project: projectId
+                }
+            });
+    
+            const approvedData = response.data;
+            console.log('Response received from API:', response);
+            console.log('Approved data fetched:', JSON.stringify(approvedData, null, 2));
+    
+            if (!approvedData || approvedData.length === 0) {
+                // No approval data found, directly send rejection request
+                console.log('No approval data found for user:', elem.user_type);
+                const postData = {
+                    LocationCode: elem.locationId,
+                    UserName: elem.user_type || 'defaultUser',
+                    InMonth: elem.MonthNumber,
+                    UserID: elem.user_id || 0,
+                    userProfile: elem.userProfile || 0,
+                    role: roleObj,
+                    project: projectId
+                };
+    
+                console.log('No data found. Sending direct rejection:', postData);
+    
+                const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
+                console.log('Reject response:', rejectResponse.data);
+    
+                setApprovalStatus(prevStatus => {
+                    const updatedStatus = {
+                        ...prevStatus,
+                        [elem.user_type]: {
+                            ...prevStatus[elem.user_type],
+                            [roleObj]: 2 // Set rejection status
+                        }
+                    };
+                    console.log('Updated rejection status:', updatedStatus);
+                    return updatedStatus;
+                });
+    
+                return toast.success('Rejected successfully, even without approval data.');
+            }
+    
+            const userStatus = approvedData[0];
+            console.log('Current approval status:', userStatus);
+    
+            if (!userStatus) {
+                return toast.error('Error: User status data is missing.');
+            }
+    
+            // Check if rejection is allowed based on the role hierarchy
+            const canUserReject = canReject(roleObj, userStatus);
+    
+            if (!canUserReject) {
+                const approvedRoles = roleHierarchy.slice(roleHierarchy.indexOf(roleObj) + 1).filter(role => {
+                    switch (role) {
+                        case 'PM':
+                            return userStatus.IsApprovedPM === 1;
+                        case 'PO':
+                            return userStatus.IsApprovedPO === 1;
+                        case 'HR':
+                            return userStatus.IsApprovedHR === 1;
+                        default:
+                            return false;
+                    }
+                });
+                const firstApprovedRole = approvedRoles[0];
+                return toast.error(`You cannot reject this task because ${firstApprovedRole} has already approved the task.`);
+            }
+    
+            // Send rejection request with the available data
+            const postData = {
+                LocationCode: elem.locationId,
+                UserName: elem.user_type || 'defaultUser',
+                InMonth: elem.MonthNumber,
+                UserID: elem.user_id || 0,
+                userProfile: elem.userProfile || 0,
+                role: roleObj,
+                project: projectId
+            };
+    
+            console.log('Post data to be sent:', postData);
+    
+            const rejectResponse = await axios.post(`${API_URL}/reject`, postData);
+            console.log('Reject response:', rejectResponse.data);
+    
+            setApprovalStatus(prevStatus => {
+                const updatedStatus = {
+                    ...prevStatus,
+                    [elem.user_type]: {
+                        ...prevStatus[elem.user_type],
+                        [roleObj]: 2 // Set rejection status
+                    }
+                };
+                console.log('Updated rejection status:', updatedStatus);
+                return updatedStatus;
+            });
+    
+            toast.success('Rejected successfully');
+        } catch (error) {
+            console.error('Error processing rejection:', error);
+            toast.error('Error processing rejection.');
+        }
+    };
+    
     const renderTable = () => {
         const filteredTasks = getFilteredTasks(selectedCard);
         const isApprovedCard = selectedCard === 'approved';
@@ -421,30 +450,32 @@ const TaskTray = () => {
             </div>
         );
     };
+
     const getCount = (cardType) => {
         return getFilteredTasks(cardType).length;
     };
+
     return (
         <>
             <ToastContainer />
             <Header />
             <div className='container-fluid mt-5'>
                 <div className='row'>
-                    <div className='col-2'>
-                        <SideBar />
-                    </div>
+                    <div className='col-2'><SideBar/></div>
                     <div className='col-10'>
-                        <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                            <h6 className="" style={{ color: "white" }}>
-                                Task Tray
-                            </h6>
-                        </div>
-                        <div className="row mt-4">
+
+                   
+                    <div className="row mt-5" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
+                    <h6 className="" style={{ color: "white" }}>
+                        Task Tray
+                    </h6>
+                </div>
+                <div className="row mt-4">
                             <div className='col-3'>
-                                <div
+                            <div
                                     className={`all-card ${selectedCard === 'all' ? 'active-card' : ''}`}
                                     onClick={() => handleCardClick('all')}
-                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'all' ? '#d3d2d2' : 'white' }}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'all' ? 'lightgray' : 'white' }}
                                 >
                                     <h5>All Tasks</h5>
                                     <h6>Count: {getCount('all')}</h6>
@@ -454,7 +485,7 @@ const TaskTray = () => {
                                 <div
                                     className={`approved-card ${selectedCard === 'approved' ? 'active-card' : ''}`}
                                     onClick={() => handleCardClick('approved')}
-                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'approved' ? '#d3d2d2' : 'white' }}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'approved' ? 'lightgray' : 'white' }}
                                 >
                                     <h5>Approved Tasks</h5>
                                     <h6>Count: {getCount('approved')}</h6>
@@ -464,7 +495,7 @@ const TaskTray = () => {
                                 <div
                                     className={`pending-card ${selectedCard === 'pending' ? 'active-card' : ''}`}
                                     onClick={() => handleCardClick('pending')}
-                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'pending' ? '#d3d2d2' : 'white' }}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'pending' ? 'lightgray' : 'white' }}
                                 >
                                     <h5>Pending Tasks</h5>
                                     <h6>Count: {getCount('pending')}</h6>
@@ -474,22 +505,26 @@ const TaskTray = () => {
                                 <div
                                     className={`rejected-card ${selectedCard === 'rejected' ? 'active-card' : ''}`}
                                     onClick={() => handleCardClick('rejected')}
-                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'rejected' ? '#d3d2d2' : 'white' }}
+                                    style={{ cursor: 'pointer', padding: '10px', borderRadius: '8px', backgroundColor: selectedCard === 'rejected' ? 'lightgray' : 'white' }}
                                 >
                                     <h5>Rejected Tasks</h5>
                                     <h6>Count: {getCount('rejected')}</h6>
                                 </div>
                             </div>
                         </div>
-                        <div className='mt-4'>
-                            {renderTable()}
-                            
-                        </div>
-                    </div>
+                <div className='mt-4'>
+                {renderTable()}
+                </div>
+                </div>
                 </div>
             </div>
         </>
     );
 };
 
-export default TaskTray;
+export default UPDCTaskTray;
+
+
+
+
+

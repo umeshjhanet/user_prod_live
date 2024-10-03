@@ -271,7 +271,7 @@ const TelDashboard = () => {
     const handleSave = async (id, index) => {
         try {
             const updatedPrice = prices[index];
-            const response = await axios.put(
+            const response = await axios.post(
                 `${API_URL}/telupdatebusinessrate/${id}`,
                 updatedPrice
             );
@@ -454,7 +454,7 @@ const TelDashboard = () => {
         <>
             <Header />
             
-            <div className='container-fluid'>
+            <div className='container-fluid mt-5'>
                 <div className='row'>
                 <div className='col-2'>
                 <SideBar />
