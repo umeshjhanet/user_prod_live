@@ -36,7 +36,6 @@ const DynamicDashboard = () => {
     useEffect(() => {
         if (projectId) {
             fetchTableData();
-            fetchLICData();
         }
     }, [projectId, fromDate, toDate]);
 
@@ -55,21 +54,7 @@ const DynamicDashboard = () => {
         }
     };
 
-    const fetchLICData = async () => {
-        try {
-            let url = `${API_URL}/licSummary/${projectId}`;
-
-            // Append fromDate and toDate as query parameters if selected
-            if (fromDate && toDate) {
-                url += `?startDate=${fromDate}&endDate=${toDate}`;
-            }
-
-            const response = await axios.get(url);
-            setLicData(response.data);
-        } catch (error) {
-            console.error('Error fetching table data:', error);
-        }
-    };
+   
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -93,6 +78,8 @@ const DynamicDashboard = () => {
             // Conditionally change the upload endpoint based on the projectId
             if (projectId === '6') { // NMML project
                 uploadEndpoint = `${API_URL}/uploadExcelNMML`;
+            } else if (projectId === '5') { // NMML project
+                uploadEndpoint = `${API_URL}/uploadExcelLIC`;
             }
 
             const response = await axios.post(uploadEndpoint, formData, {
@@ -116,9 +103,11 @@ const DynamicDashboard = () => {
     
             if (projectId === '6') {
                 apiUrl = `${API_URL}/downloadformatnmml`;
-            } else {
+            } else if(projectId === '5') {
                 apiUrl = `${API_URL}/downloadformatlic`;
-            }
+            } else {
+                apiUrl = `${API_URL}/downloadformat`;
+            } 
     
             try {
                 const response = await axios.get(apiUrl, { responseType: "blob" });
@@ -166,7 +155,7 @@ const DynamicDashboard = () => {
     return (
         <>
             <Header />
-            <div className='container-fluid'>
+            <div className='container-fluid  mt-5'>
                 <div className='row'>
                     <div className='col-2'>
                         <SideBar />

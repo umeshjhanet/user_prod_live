@@ -43,7 +43,7 @@ import MainOptions from './MainOptions';
 import ProjectGraph from './projectGraph';
 import Attendance from './attendance';
 import AllTaskTray from './allTaskTray';
-
+import UPDCTaskTray from './UPDCTaskTray';
 
 const App = () => {
  
@@ -58,6 +58,7 @@ const App = () => {
           <Route path="/Dashboard/:projectId" element={<PrivateRoute element={<DynamicDashboard />} />} />
           <Route path="/MainOptions" element={<PrivateRoute element={<MainOptions />} />} />
           <Route path="/projectGraph" element={<PrivateRoute element={<ProjectGraph />} />} />
+          <Route path="/UPDCTaskTray" element={<PrivateRoute element={<UPDCTaskTray/>} />} />
           <Route path="/TaskTray" element={<PrivateRoute element={<TaskTray/>} />} />
           <Route path="/KarTaskTray" element={<PrivateRoute element={<KarTaskTray/>} />} />
           <Route path="/AllProjectDashboard"element={<PrivateRoute element={<AllProjectDashboard />} />}/>

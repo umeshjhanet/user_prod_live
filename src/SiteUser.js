@@ -947,7 +947,7 @@ const SiteUser = ({ onClose }) => {
   return (
     <>
       <Header />
-      <div className="container-fluid mt-3">
+      <div className="container-fluid mt-5">
         <div className='row'>
           <div className='col-2'>
             <SideBar />
@@ -956,7 +956,9 @@ const SiteUser = ({ onClose }) => {
             <div className="row" style={{ overflowY: 'auto' }}>
               <div className="row" style={{ padding: '5px', backgroundColor: '#4BC0C0' }}>
                 <h6 className="ms-2" style={{ color: 'white' }}>
-                  Upload Employee Details
+                  <Link to='' style={{ color: 'white' }}>
+                    <FaHome style={{ marginTop: '-2px' }} />
+                  </Link> / Upload Employee Details
                 </h6>
               </div>
 
@@ -980,20 +982,22 @@ const SiteUser = ({ onClose }) => {
                     <>
                       <div className="row mt-1">
                         <div className="col-2">
-                          <label className="mt-0">Upload Excel:</label>
+                          <label className="mt-1">Upload Excel:</label>
                         </div>
-                        <div className="col-8 mt-0">
+                        <div className="col-3 mt-1">
                           <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
                         </div>
                         <div className='col-2'>
-                        <button className="non-tech mt-1 d-flex align-items-center" onClick={handleDownloadFormat}>
-                           <FiDownload className="me-2" />Format
-                         </button>
+                          <button type="submit">Submit</button>
+                        </div>
+                        <div className='col-3'></div>
+                        <div className='col-2'>
+                          <button className="non-tech d-flex align-items-center" onClick={handleDownloadFormat}>
+                            <FiDownload className="me-2" />Format
+                          </button>
                         </div>
                       </div>
-                      <div className="row mt-3 ms-4">
-                        <button type="submit">Submit</button>
-                      </div>
+
                     </>
                   )}
                   {manualSelected && (
@@ -1142,49 +1146,51 @@ const SiteUser = ({ onClose }) => {
               </form>
 
             </div>
-            <div className="row search-report-card mb-3"style={{ overflow: 'auto', height: '500px' }}>
+            <div className="row search-report-card mb-3" style={{ overflow: 'auto', height: '500px' }}>
               <div >
-              <h3>Site User Details</h3>
+                <h3>Site User Details</h3>
                 {isLoading ? (
                   <div className="text-center">Loading...</div>
                 ) : (
                   <table className="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>User ID</th>
-                        <th>User Name</th>
-                        <th>Father Name</th>
-                        <th>Biomatrix No</th>
-                        <th>Emp. Reference No</th>
-                        <th>DOJ</th>
-                        <th>Fixed Salary</th>
-                        <th>Project</th>
-                        <th>Location</th>
-                        <th>HR cum Admin Name</th>
-                        <th>Project Manager</th>
-                        <th>Project Owner</th>
-                        <th>Is Active</th>
-                        <th>Last Update Date</th>
-                        <th>Actions</th>
+                        <th style={{ whiteSpace: "nowrap" }}>User ID</th>
+                        <th style={{ whiteSpace: "nowrap" }}>User Name</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Father Name</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Biomatrix No</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Adhaar No</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Emp. Reference No</th>
+                        <th style={{ whiteSpace: "nowrap" }}>DOJ</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Fixed Salary</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Project</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Location</th>
+                        <th style={{ whiteSpace: "nowrap" }}>HR cum Admin Name</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Project Manager</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Project Owner</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Is Active</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Last Update Date</th>
+                        <th style={{ whiteSpace: "nowrap" }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {employee.map((elem, index) => (
                         <tr key={index}>
-                          <td>{elem.userid}</td>
-                          <td>{elem.UserName}</td>
-                          <td>{elem.FatherName}</td>
-                          <td>{elem.BiomatrixNo}</td>
-                          <td>{elem.EmpReferenceNo}</td>
-                          <td>{elem.DOJ}</td>
-                          <td>{elem.FixedSalary}</td>
-                          <td>{elem.Project}</td>
-                          <td>{elem.Location}</td>
-                          <td>{elem.HRcumAdminName}</td>
-                          <td>{elem.ProjectManager}</td>
-                          <td>{elem.ProjectOwner}</td>
-                          <td>{elem.IsActive}</td>
-                          <td>{elem.LastUpdateDate}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.userid}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.UserName}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.FatherName}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.BiomatrixNo}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.AdhaarNo}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.EmpReferenceNo}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.DOJ}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.FixedSalary}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.Project}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.Location}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.HRcumAdminName}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectManager}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectOwner}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.IsActive}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.LastUpdateDate}</td>
                           <td>
                             <div className='row'>
                               <div className='col-3'>
