@@ -68,6 +68,7 @@ const AllTaskTray = () => {
     const handleLocationChange = (e) => setSelectedLocation(e.target.value);
     const handleMonthChange = (e) => setMonth(e.target.value);
     const handleSubmit = async () => {
+        setData("");
         try {
             const response = await axios.get(`${API_URL}/api/userdetailedreportdatewise`, {
                 params: {
