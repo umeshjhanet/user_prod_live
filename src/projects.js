@@ -4,6 +4,7 @@ import { Link, Navigate } from 'react-router-dom'
 import axios from 'axios'
 import { API_URL } from './API'
 import SideBar from './Components/SideBar'
+import { useNavigate } from 'react-router-dom'
 
 const Projects = () => {
     const [updcprojectDetails, setUPDCProjectDetails] = useState([]);
@@ -101,7 +102,7 @@ const Projects = () => {
                 console.warn(`Unexpected data type for ${category}:`, details[category]);
             }
         });
-    
+
         return sum;
     };
 
@@ -140,8 +141,20 @@ const Projects = () => {
         { id: 8, name: 'Tata Power' },
         { id: 9, name: 'Allahbad HC' },
         { id: 10, name: 'BLR' },
+        { id: 11, name: 'MVVNL' },
     ];
+    const borderColors = ['#057627', '#763223', '#04568d', '#7a680b', '#874055'];
+    const PIDs = [6290, 6280, 6852, 6254, 7183];
+    const selectedPIDs = [PIDs[3], PIDs[4]];
+    const selectedBorderColors = [borderColors[3], borderColors[4]];
 
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+
+    console.log("UserInfo", user.token);
+    const handleClick = (event, projectID) => {
+        event.preventDefault();
+        window.open(`https://dms.cbslgroup.in/login?id=MjE%3D&token=&jwt=${user.token}&pid=${projectID}`, '_blank');
+    };
     return (
         <>
             <Header />
@@ -168,10 +181,10 @@ const Projects = () => {
                                             rows[rows.length - 1].push(category);
                                             return rows;
                                         }, []).map((group, groupIndex) => (
-                                            <div key={groupIndex} className='col-3' style={{lineHeight:'0.5'}}>
+                                            <div key={groupIndex} className='col-3' style={{ lineHeight: '0.5' }}>
                                                 {group.map(category => (
                                                     <p key={category} style={{ textAlign: 'right' }}>
-                                                        <b><span style={{color:'#0288b1'}}>{category}:</span> <span style={{color:'#619389'}}>{(allSums[category] || 0).toLocaleString()}</span></b>
+                                                        <b><span style={{ color: '#0288b1' }}>{category}:</span> <span style={{ color: '#619389' }}>{(allSums[category] || 0).toLocaleString()}</span></b>
                                                     </p>
                                                 ))}
                                             </div>
@@ -179,17 +192,18 @@ const Projects = () => {
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
+
                             </div>
                         </div>
                         <div className='row mt-2 mb-2'>
-                            <div className='col-3 project-card mt-2 mb-2 ms-1' style={{ borderColor: '#193860' }}>
+                            <div className='col-3 project-card mt-2 mb-2' style={{ borderColor: '#193860' }}>
                                 <div className='row text-center'>
                                     <Link to='/UPDCDashboard' style={{ textDecoration: 'none' }}>
                                         <h3 style={{ color: '#193860' }}>UPDC</h3>
                                     </Link>
                                 </div>
                                 <Link to='/UPDCDashboard' style={{ textDecoration: 'none', color: '#5f5f5f' }}>
-                                    <div className='row mt-2 mb-2' style={{textAlign:"right"}}>
+                                    <div className='row mt-2 mb-2' style={{ textAlign: "right" }}>
                                         <div className='col-1'></div>
                                         <div className='col-5' style={{ textAlign: 'right' }}>
                                             {updcprojectDetails && updcprojectDetails.length > 0 &&
@@ -214,6 +228,9 @@ const Projects = () => {
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
+                                <div className='row text-center'>
+                                    <Link to="#" onClick={(event) => handleClick(event, 6262)} style={{ color: '#2A629A', fontWeight: 'bold', textDecoration: 'none' }}>Project Documents</Link>
+                                </div>
                             </div>
                             <div className='col-3 project-card mt-2 mb-2 ms-4' style={{ borderColor: '#4BC0C0' }}>
                                 <div className='row text-center'>
@@ -247,6 +264,9 @@ const Projects = () => {
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
+                                <div className='row text-center' >
+                                    <Link to="#" onClick={(event) => handleClick(event, 7159)} style={{ color: '#4bc0c0', fontWeight: 'bold', textDecoration: 'none' }} >Project Documents</Link>
+                                </div>
                             </div>
                             <div className='col-3 project-card mt-2 mb-2 ms-4' style={{ borderColor: 'rgb(148, 78, 99)' }}>
                                 <div className='row text-center'>
@@ -280,13 +300,16 @@ const Projects = () => {
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>
+                                <div className='row text-center'>
+                                    <Link to="#" onClick={(event) => handleClick(event, 6975)} style={{ color: '#944e63', fontWeight: 'bold', textDecoration: 'none' }}>Project Documents</Link>
+                                </div>
                             </div>
-                            {projectData.slice(0,1).map((project, index) => {
+                            {projectData.slice(0, 1).map((project, index) => {
                                 // Ensure that the project names align with project data
                                 const projectID = projects[index]?.id || 'Unknown Project';
                                 const projectName = projects[index]?.name || 'Unknown Project';
                                 return (
-                                    <div className='col-3 project-card mt-2 mb-2 ms-3' key={index}>
+                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index} style={{ borderColor: '#346059' }}>
                                         <div className="border-left"></div>
                                         <div className="border-right"></div>
                                         <div className="border-top"></div>
@@ -294,7 +317,7 @@ const Projects = () => {
                                         <div className='row text-center'>
                                             <Link
                                                 to={`/Dashboard/${projectID}`}
-                                                style={{ textDecoration: 'none', color: 'black' }}
+                                                style={{ textDecoration: 'none', color: '#346059' }}
                                             >
                                                 <h3>{projectName}</h3>
                                             </Link>
@@ -318,61 +341,68 @@ const Projects = () => {
                                                 <div className='col-1'></div>
                                             </div>
                                         </Link>
+                                        <div className='row text-center'>
+                                            <Link to="#" onClick={(event) => handleClick(event, 6293)} style={{ color: '#346059', fontWeight: 'bold', textDecoration: 'none' }} >Project Documents</Link>
+                                        </div>
                                     </div>
                                 );
                             })}
                         </div>
                         <div className='row mt-2 mb-2'>
-                        <div className='col-3 project-card mt-2 mb-2 ' >
-                        {projectData.slice(1,2).map((project, index) => {
-                                // Ensure that the project names align with project data
-                                const projectID = projects[index+1]?.id || 'Unknown Project';
-                                const projectName = projects[index+1]?.name || 'Unknown Project';
+                            <div className='col-3 project-card mt-2 mb-2 ' style={{ borderColor: '#39bce3' }}>
+                                {projectData.slice(1, 2).map((project, index) => {
+                                    // Ensure that the project names align with project data
+                                    const projectID = projects[index + 1]?.id || 'Unknown Project';
+                                    const projectName = projects[index + 1]?.name || 'Unknown Project';
 
-                                return (
-                                    <div  key={index+1}>
-                                        <div className="border-left"></div>
-                                        <div className="border-right"></div>
-                                        <div className="border-top"></div>
-                                        <div className="border-bottom"></div>
-                                        <div className='row text-center'>
-                                            <Link
-                                                to={`/Dashboard/${projectID}`}
-                                                style={{ textDecoration: 'none', color: 'black' }}
-                                            >
-                                                <h3>{projectName}</h3>
-                                            </Link>
-                                        </div>
-                                        <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
-                                            <div className='row mt-2 mb-2'>
-                                                <div className='col-1'></div>
-                                                <div className='col-5' style={{ textAlign: 'right' }}>
-                                                    {allcategories.map(category => (
-                                                        <p key={category}><b>{category}:</b></p>
-                                                    ))}
-                                                </div>
-                                                <div className='col-5' style={{ padding: '0' }}>
-                                                    {allcategories.map(category => (
-                                                        <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
-                                                            <b>{project[category]?.toLocaleString()}</b>
-                                                        </p>
-                                                    ))}
-                                                    <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
-                                                </div>
-                                                <div className='col-1'></div>
+                                    return (
+                                        <div key={index + 1}>
+                                            <div className="border-left"></div>
+                                            <div className="border-right"></div>
+                                            <div className="border-top"></div>
+                                            <div className="border-bottom"></div>
+                                            <div className='row text-center'>
+                                                <Link
+                                                    to={`/Dashboard/${projectID}`}
+                                                    style={{ textDecoration: 'none', color: '#39bce3' }}
+                                                >
+                                                    <h3>{projectName}</h3>
+                                                </Link>
                                             </div>
-                                        </Link>
-                                    </div>
-                                );
-                            })}
+                                            <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
+                                                <div className='row mt-2 mb-2'>
+                                                    <div className='col-1'></div>
+                                                    <div className='col-5' style={{ textAlign: 'right' }}>
+                                                        {allcategories.map(category => (
+                                                            <p key={category}><b>{category}:</b></p>
+                                                        ))}
+                                                    </div>
+                                                    <div className='col-5' style={{ padding: '0' }}>
+                                                        {allcategories.map(category => (
+                                                            <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
+                                                                <b>{project[category]?.toLocaleString()}</b>
+                                                            </p>
+                                                        ))}
+                                                        <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
+                                                    </div>
+                                                    <div className='col-1'></div>
+                                                </div>
+                                            </Link>
+                                            <div className='row text-center'>
+                                                <Link to="#" onClick={(event) => handleClick(event, 6425)} style={{ color: '#39bce3', fontWeight: 'bold', textDecoration: 'none' }} >Project Documents</Link>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
-                            {projectData.slice(2,5).map((project, index) => {
+                            {projectData.slice(2, 5).map((project, index) => {
                                 // Ensure that the project names align with project data
-                                const projectID = projects[index+2]?.id || 'Unknown Project';
-                                const projectName = projects[index+2]?.name || 'Unknown Project';
-
+                                const projectID = projects[index + 2]?.id || 'Unknown Project';
+                                const projectName = projects[index + 2]?.name || 'Unknown Project';
+                                const borderColor = borderColors[index % borderColors.length];
+                                const proID = PIDs[index % PIDs.length];
                                 return (
-                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index+2}>
+                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index + 2} style={{ borderColor: borderColor }}>
                                         <div className="border-left"></div>
                                         <div className="border-right"></div>
                                         <div className="border-top"></div>
@@ -380,7 +410,7 @@ const Projects = () => {
                                         <div className='row text-center'>
                                             <Link
                                                 to={`/Dashboard/${projectID}`}
-                                                style={{ textDecoration: 'none', color: 'black' }}
+                                                style={{ textDecoration: 'none', color: borderColor }}
                                             >
                                                 <h3>{projectName}</h3>
                                             </Link>
@@ -404,19 +434,68 @@ const Projects = () => {
                                                 <div className='col-1'></div>
                                             </div>
                                         </Link>
+                                        <div className='row text-center'>
+                                                <Link to="#" onClick={(event) => handleClick(event, proID)} style={{ color: borderColor, fontWeight: 'bold', textDecoration: 'none' }} >Project Documents</Link>
+                                            </div>
                                     </div>
                                 );
                             })}
                         </div>
                         <div className='row mt-2 mb-2'>
-                        <div className='col-3 project-card mt-2 mb-2'>
-                        {projectData.slice(5,6).map((project, index) => {
-                                // Ensure that the project names align with project data
-                                const projectID = projects[index+5]?.id || 'Unknown Project';
-                                const projectName = projects[index+5]?.name || 'Unknown Project';
+                            <div className='col-3 project-card mt-2 mb-2' style={{ borderColor: '#850516' }}>
+                                {projectData.slice(5, 6).map((project, index) => {
+                                    // Ensure that the project names align with project data
+                                    const projectID = projects[index + 5]?.id || 'Unknown Project';
+                                    const projectName = projects[index + 5]?.name || 'Unknown Project';
 
+                                    return (
+                                        <div className='' key={index + 5}>
+                                            <div className="border-left"></div>
+                                            <div className="border-right"></div>
+                                            <div className="border-top"></div>
+                                            <div className="border-bottom"></div>
+                                            <div className='row text-center'>
+                                                <Link
+                                                    to={`/Dashboard/${projectID}`}
+                                                    style={{ textDecoration: 'none', color: '#850516' }}
+                                                >
+                                                    <h3>{projectName}</h3>
+                                                </Link>
+                                            </div>
+                                            <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
+                                                <div className='row mt-2 mb-2'>
+                                                    <div className='col-1'></div>
+                                                    <div className='col-5' style={{ textAlign: 'right' }}>
+                                                        {allcategories.map(category => (
+                                                            <p key={category}><b>{category}:</b></p>
+                                                        ))}
+                                                    </div>
+                                                    <div className='col-5' style={{ padding: '0' }}>
+                                                        {allcategories.map(category => (
+                                                            <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
+                                                                <b>{project[category]?.toLocaleString()}</b>
+                                                            </p>
+                                                        ))}
+                                                        <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
+                                                    </div>
+                                                    <div className='col-1'></div>
+                                                </div>
+                                            </Link>
+                                            <div className='row text-center'>
+                                                <Link to="#" onClick={(event) => handleClick(event, 6261)} style={{ color: '#850516', fontWeight: 'bold', textDecoration: 'none' }} >Project Documents</Link>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            {projectData.slice(6, 10).map((project, index) => {
+                                // Ensure that the project names align with project data
+                                const projectID = projects[index + 6]?.id || 'Unknown Project';
+                                const projectName = projects[index + 6]?.name || 'Unknown Project';
+                                const borderColor = selectedBorderColors[index % selectedBorderColors.length];
+                                const proID = selectedPIDs[index % selectedPIDs.length];
                                 return (
-                                    <div className='' key={index+5}>
+                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index + 6} style={{ borderColor: borderColor }}>
                                         <div className="border-left"></div>
                                         <div className="border-right"></div>
                                         <div className="border-top"></div>
@@ -424,7 +503,7 @@ const Projects = () => {
                                         <div className='row text-center'>
                                             <Link
                                                 to={`/Dashboard/${projectID}`}
-                                                style={{ textDecoration: 'none', color: 'black' }}
+                                                style={{ textDecoration: 'none', color: borderColor }}
                                             >
                                                 <h3>{projectName}</h3>
                                             </Link>
@@ -448,48 +527,9 @@ const Projects = () => {
                                                 <div className='col-1'></div>
                                             </div>
                                         </Link>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        {projectData.slice(6,10).map((project, index) => {
-                                // Ensure that the project names align with project data
-                                const projectID = projects[index+6]?.id || 'Unknown Project';
-                                const projectName = projects[index+6]?.name || 'Unknown Project';
-
-                                return (
-                                    <div className='col-3 project-card mt-2 mb-2 ms-4' key={index+6}>
-                                        <div className="border-left"></div>
-                                        <div className="border-right"></div>
-                                        <div className="border-top"></div>
-                                        <div className="border-bottom"></div>
                                         <div className='row text-center'>
-                                            <Link
-                                                to={`/Dashboard/${projectID}`}
-                                                style={{ textDecoration: 'none', color: 'black' }}
-                                            >
-                                                <h3>{projectName}</h3>
-                                            </Link>
-                                        </div>
-                                        <Link to={`/Dashboard/${projectID}`} style={{ textDecoration: 'none', color: '#5f5f5f' }}>
-                                            <div className='row mt-2 mb-2'>
-                                                <div className='col-1'></div>
-                                                <div className='col-5' style={{ textAlign: 'right' }}>
-                                                    {allcategories.map(category => (
-                                                        <p key={category}><b>{category}:</b></p>
-                                                    ))}
-                                                </div>
-                                                <div className='col-5' style={{ padding: '0' }}>
-                                                    {allcategories.map(category => (
-                                                        <p key={category} style={{ color: '#508D69', textAlign: 'right' }}>
-                                                            <b>{project[category]?.toLocaleString()}</b>
-                                                        </p>
-                                                    ))}
-                                                    <p><Link to={`/Dashboard/${projectID}`} style={{ color: '#508D69' }}>More...</Link></p>
-                                                </div>
-                                                <div className='col-1'></div>
+                                                <Link to="#" onClick={(event) => handleClick(event, proID)} style={{ color: borderColor, fontWeight: 'bold', textDecoration: 'none' }} >Project Documents</Link>
                                             </div>
-                                        </Link>
                                     </div>
                                 );
                             })}

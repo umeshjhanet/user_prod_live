@@ -32,13 +32,27 @@ const AllTaskTray = () => {
         const fetchLocations = async (selectedProject) => {
             try {
                 if (!selectedProject) {
-                    setLocations([]); 
+                    setLocations([]);
                     return;
                 }
+        
                 const response = await axios.get(`${API_URL}/locations`, {
                     params: { project: selectedProject }
                 });
-                setLocations(response.data);
+                console.log("selectedproject", selectedProject);
+                // Log the response to check the structure
+                console.log("Fetched Locations Data:", response.data);
+        
+                // Map over the data and conditionally append "District Court" to LocationName
+                const modifiedLocations = response.data.map(location => ({
+                    ...location,
+                    LocationName: selectedProject === "1"
+                        ? (location.LocationName ? `${location.LocationName} District Court` : 'Unknown District Court') 
+                        : location.LocationName
+                }));
+        
+                console.log("Modified Locations:", modifiedLocations);
+                setLocations(modifiedLocations);
             } catch (error) {
                 console.error('Error fetching locations:', error);
             }
@@ -66,6 +80,7 @@ const AllTaskTray = () => {
             console.log("dataa",fetchedData)
             const transformedData = {};
             const dates = new Set();
+            console.log("Before Transformation", transformedData);
             fetchedData.forEach((item) => {
                 const { user_type, Date, TotalExpense, IsApprovedHR } = item;
                 if (!transformedData[user_type]) {
@@ -78,6 +93,7 @@ const AllTaskTray = () => {
                 });
                 dates.add(Date);
             });
+            console.log("Transformed Data", transformedData);
             const sortedDates = Array.from(dates).sort((a, b) => new Date(a) - new Date(b));
             setData(transformedData);
             setDatesOfMonth(sortedDates);

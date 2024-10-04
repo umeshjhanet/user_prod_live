@@ -70,6 +70,7 @@ const SideBar = () => {
                 {renderLink('/SiteUser', 'Manage Employee Details')}
                 {renderLink(getDeliveredData(), 'Delivered Data')}
                 {renderLink('/user_form', 'Add User')}
+                {renderLink('/setTarget', 'Set Target')}
             </ul>
             <hr />
         </div>

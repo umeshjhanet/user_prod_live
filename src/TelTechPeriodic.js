@@ -357,79 +357,8 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
           console.error("Error in exporting data:", error);
         });
     };
-    // const fetchSummaryReport = async () => {
-    //   setIsLoading(true);
-    //   try {
-    //     const formattedStartDate = startDate ? new Date(startDate) : null;
-    //     const formattedEndDate = endDate ? new Date(endDate) : null;
-    //     const formatDate = (date) => {
-    //       return date.toISOString().split('T')[0];
-    //     };
-
-    //     let apiUrl = `${API_URL}/telsummaryreport`;
-    //     const queryParams = {};
-    //     if (formattedStartDate && formattedEndDate) {
-    //       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    //     }
-
-    //     const response = await axios.get(apiUrl, { params: queryParams });
-    //     setSummaryReport(response.data);
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     console.error("Error fetching summary data:", error);
-    //     setIsLoading(false);
-    //   }
-    // };
-
-    // const fetchLocationReport = async () => {
-    //   setIsLoading(true);
-    //   try {
-    //     const formattedStartDate = startDate ? new Date(startDate) : null;
-    //     const formattedEndDate = endDate ? new Date(endDate) : null;
-    //     const formatDate = (date) => {
-    //       return date.toISOString().split('T')[0];
-    //     };
-
-    //     let apiUrl = `${API_URL}/teldetailedreport`;
-    //     const queryParams = {};
-    //     if (formattedStartDate && formattedEndDate) {
-    //       apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    //     }
-
-    //     const response = await axios.get(apiUrl, { params: queryParams });
-    //     setLocationReport(response.data);
-    //     setIsLoading(false);
-    //   } catch (error) {
-    //     console.error("Error fetching summary data:", error);
-    //     setIsLoading(false);
-    //   }
-    // };
-
-    // const fetchDetailedReportCsvFile = (startDate, endDate) => {
-    //   const formattedStartDate = startDate ? new Date(startDate) : null;
-    //   const formattedEndDate = endDate ? new Date(endDate) : null;
-    //   const formatDate = (date) => {
-    //     return date.toISOString().split('T')[0];
-    //   };
-
-    //   let apiUrl = `${API_URL}/teldetailedreportcsv`;
-
-    //   if (formattedStartDate && formattedEndDate) {
-    //     apiUrl += `?startDate=${formatDate(formattedStartDate)}&endDate=${formatDate(formattedEndDate)}`;
-    //   }
-
-    //   axios.get(apiUrl, { responseType: "blob" })
-    //     .then((response) => {
-    //       const blob = new Blob([response.data], { type: "text/csv" });
-    //       const url = window.URL.createObjectURL(blob);
-    //       setDetailedCsv(url);
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error in exporting data:", error);
-    //     });
-    // };
     const fetchPrices = () => {
-      setIsLoading(true); // Set loading to true when fetching data
+      setIsLoading(true); 
       axios
         .get(`${API_URL}/telgetbusinessrate`)
         .then((response) => {
@@ -482,22 +411,6 @@ const TelTechPeriodic = ({ multipliedData, startDate, endDate, userData }) => {
   };
 
   const multipliedUserWiseData = multiplyUserWiseData(detailedReportLocationWise, priceCount());
-
-  // const multiplyUserData = (userData, priceData) => {
-  //   if (!userData || !priceData) return []; // Ensure both data arrays are provided
-
-  //   return userData.map((report) => {
-  //     const multipliedValues = priceData.map((price) => {
-  //       const multipliedValue = parseFloat(report[price.name]) * parseFloat(price.value);
-  //       return isNaN(multipliedValue) ? 0 : multipliedValue; // Handle NaN values
-  //     });
-  //     return { multipliedValues };
-  //   });
-  // };
-
-  // const multipliedUserData = multiplyUserData(detailedUserReport, priceCount());
-  // const totalPrice = 0.141;
-
   console.log("Location Data", multipliedLocationData);
   const Loader = () => (
     <div className="loader-overlay">

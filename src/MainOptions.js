@@ -113,6 +113,7 @@ const MainOptions = () => {
         { id: 8, name: 'Tata Power' },
         { id: 9, name: 'Allahbad HC' },
         {id:10, name: 'BLR'},
+        {id:11, name: 'MVVNL'},
     ];
 
     return (

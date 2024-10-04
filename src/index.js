@@ -44,6 +44,7 @@ import ProjectGraph from './projectGraph';
 import Attendance from './attendance';
 import AllTaskTray from './allTaskTray';
 import UPDCTaskTray from './UPDCTaskTray';
+import SetTarget from './setTarget';
 
 const App = () => {
  
@@ -89,6 +90,7 @@ const App = () => {
           <Route path="/PriceRateForm"element={<PrivateRoute element={<PriceRateForm />} />}/>
           <Route path="/nontechForm"element={<PrivateRoute element={<NonTechForm />} />}/>
           <Route path="/TaskForm"element={<PrivateRoute element={<TaskForm/>}/>}/>
+          <Route path="/setTarget"element={<PrivateRoute element={<SetTarget/>}/>}/>
           </Routes>
           </Router>
   );

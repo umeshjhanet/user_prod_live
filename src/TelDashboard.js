@@ -73,11 +73,7 @@ const TelDashboard = () => {
             elem.IndexRate +
             elem.FlagRate +
             elem.CbslQaRate +
-            elem.ClientQcRate +
-            elem.CountingRate +
-            elem.InventoryRate +
-            elem.DocPreparationRate +
-            elem.GuardRate
+            elem.ClientQcRate 
         ).toFixed(3);
     };
 
@@ -603,38 +599,43 @@ const TelDashboard = () => {
                             </div>
                         )} */}
                         {/* {technicalSelected && ( */}
-                            <div className='row mt-2 ms-0 me-0 search-report-card'>
+                        {userData && userData.user_roles.includes("CBSL Site User")? (
                                 <div className='row'>
-                                    <div className='col-3'>
-                                        <h5 >Expense Rate(per image)</h5>
-                                    </div>
-                                    <div className='col-8'></div>
-                                    <div className='col-1'>
-                                        <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
-                                    </div>
                                 </div>
+                                 ):(
+                                    <div className='row mt-2 ms-0 me-0 search-report-card'>
+                                    <div className='row'>
+                                        <div className='col-3'>
+                                            <h5 >Expense Rate(per image)</h5>
+                                        </div>
+                                        <div className='col-8'></div>
+                                        <div className='col-1'>
+                                            <button style={{ border: 'none', backgroundColor: 'white' }} title={showFullTable ? 'Show Less' : 'Show More'} onClick={handleShowFullTable}>{showFullTable ? <TiArrowUpThick /> : <TiArrowDownThick />}</button>
+                                        </div>
+                                    </div>
 
-                                <table className='table-bordered' style={{ paddingLeft: '5px' }}>
-                                    <thead>
-                                        <tr>
-                                            <th>Location</th>
-                                            <th>Scanned</th>
-                                            <th>QC</th>
-                                            <th>Flagging</th>
-                                            <th>Indexing</th>
-                                            <th>CBSL-QA</th>
-                                            <th>Client-QA</th>
-                                            <th>Total Price</th>
-                                            <th>Edit Price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                        {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
-                                    </tbody>
-                                </table>
+                                    <table className='table-bordered' style={{ paddingLeft: '5px' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>Location</th>
+                                                <th>Scanned</th>
+                                                <th>QC</th>
+                                                <th>Flagging</th>
+                                                <th>Indexing</th>
+                                                <th>CBSL-QA</th>
+                                                <th>Client-QA</th>
+                                                <th>Total Price</th>
+                                                <th>Edit Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {prices && prices.slice(0, 1).map((elem, index) => renderRow(elem, index, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                            {showFullTable && prices && prices.slice(1).map((elem, index) => renderRow(elem, index + 1, ['ScanRate', 'QcRate', 'FlagRate', 'IndexRate', 'CbslQaRate', 'ClientQcRate']))}
+                                        </tbody>
+                                    </table>
 
-                            </div>
+                                </div> 
+                                 )} 
                         {/* )} */}
                         {/* {nonTechnicalSelected && (
                             <div className='row mt-2 ms-0 me-0 search-report-card'>

@@ -27,7 +27,8 @@ const DynamicDashboard = () => {
         { id: 7, name: 'CAG', description: 'Details about CAG project...' },
         { id: 8, name: 'Tata Power', description: 'Details about Tata Power project...' },
         { id: 9, name: 'Allahbad HC', description: 'Details about Allahbad HC project...' },
-        { id: 10, name: 'BLR', description: 'Details about Allahbad HC project...' },
+        { id: 10, name: 'BLR', description: 'Details about BLR project...' },
+        { id: 11, name: 'MVVNL', description: 'Details about MVVNL project...' },
     ];
 
     const { projectId } = useParams();
@@ -106,7 +107,7 @@ const DynamicDashboard = () => {
             } else if(projectId === '5') {
                 apiUrl = `${API_URL}/downloadformatlic`;
             } else {
-                apiUrl = `${API_URL}/downloadformat`;
+                apiUrl = `${API_URL}/downloadformatexcel`;
             } 
     
             try {

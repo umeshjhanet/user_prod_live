@@ -69,11 +69,7 @@ const KarDashboard = () => {
             elem.IndexRate +
             elem.FlagRate +
             elem.CbslQaRate +
-            elem.ClientQcRate +
-            elem.CountingRate +
-            elem.InventoryRate +
-            elem.DocPreparationRate +
-            elem.GuardRate
+            elem.ClientQcRate 
         ).toFixed(3);
     };
 
@@ -515,7 +511,11 @@ const KarDashboard = () => {
                                 </div>
                             )} */}
                             {/* {technicalSelected && ( */}
-                                <div className='row mt-2 ms-0 me-0 search-report-card'>
+                            {userData && userData.user_roles.includes("CBSL Site User")? (
+                                <div className='row'>
+                                </div>
+                                 ):(
+                                    <div className='row mt-2 ms-0 me-0 search-report-card'>
                                     <div className='row'>
                                         <div className='col-3'>
                                             <h5 >Expense Rate(per image)</h5>
@@ -546,7 +546,8 @@ const KarDashboard = () => {
                                         </tbody>
                                     </table>
 
-                                </div>
+                                </div> 
+                                 )} 
                              {/* )} */}
                             {/* {nonTechnicalSelected && (
                                 <div className='row mt-2 ms-0 me-0 search-report-card'>

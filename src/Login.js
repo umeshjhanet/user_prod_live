@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from 'react-icons-kit';
@@ -82,6 +79,7 @@ const Login = () => {
     const data = JSON.parse(localStorage.getItem('user'));
     navigateToDestination(data);
   };
+
 
   const navigateToDestination = (data) => {
     if (data.projects && data.projects.includes(1)) {
