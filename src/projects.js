@@ -225,6 +225,7 @@ const Projects = () => {
                                             }
                                             <p><Link to="/UPDCDashboard" style={{ color: '#193860' }}>More...</Link></p>
                                         </div>
+                                        
                                         <div className='col-1'></div>
                                     </div>
                                 </Link>

@@ -33,6 +33,8 @@ const SideBar = () => {
             return '/KarTaskTray';
         } else if (Role.includes('HR')) {
             return '/allTaskTray';
+        }else if (Role.includes('PO')) {
+            return '/POTaskTray';
         }
         return ''; // Default case if no project is assigned or project ID doesn't match
     };
@@ -112,15 +114,29 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
-                {/* {renderLink(getUploadNonTechLink(), 'Upload Non-Technical')} */}
+                
+            </ul>
+            <hr />
+        </div>
+    );
+    const cbslPO = () => (
+        <div className="sidebar bg-light" style={{ width: '220px' }}>
+            <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+                <span className="fs-4">{userLog ? userLog.first_name : 'Guest'}</span>
+            </a>
+            <hr />
+            <ul className="nav nav-pills flex-column mb-auto">
+                {renderLink(getDashboardLink(), 'Dashboard')}
+                {renderLink('/SiteUser', 'Manage Employee Details')}
                 {renderLink(getTaskTrayLink(), 'Approval Workflow')}
             </ul>
             <hr />
         </div>
     );
     const isSuperAdmin = userLog && userLog.user_roles.includes('Super Admin');
-    const isCbslUser = userLog && userLog.user_roles.some(role => ['CBSL Site User', 'PM', 'PO'].includes(role));
+    const isCbslUser = userLog && userLog.user_roles.some(role => ['CBSL Site User', 'PM'].includes(role));
     const isHR = userLog && userLog.user_roles.includes('HR');
+    const isPO = userLog && userLog.user_roles.includes('PO');
     const iscbslAdmin = userLog && userLog.user_roles.includes('CBSL Admin');
     return (
         <>
@@ -129,6 +145,7 @@ const SideBar = () => {
             {iscbslAdmin && cbslAdmin()}
             {isCbslUser && cbslUser()}
             {isHR && cbslHR()}
+            {isPO && cbslPO()}
             </div>
         </>
     );
