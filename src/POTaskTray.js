@@ -15,6 +15,8 @@ const POTaskTray = () => {
     const [datesOfMonth, setDatesOfMonth] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [error, setError] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState();
+    const [selectedUser, setSelectedUser] =useState();
     const [statusFilter, setStatusFilter] = useState('All');
     const [showConfirmationApprovalBox, setShowConfirmationApprovalBox] = useState(false);
     const [showConfirmationRejectionBox, setShowConfirmationRejectionBox] = useState(false);
@@ -174,22 +176,8 @@ const POTaskTray = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
         const monthNumber = extractMonthNumber(month);
-        for (const selectedUser of selectedUsers) {
-            try {
-                const fetchResponse = await axios.get(`${API_URL}/fetch-approved`, {
-                    params: {
-                        UserName: selectedUser,
-                        InMonth: monthNumber,
-                        project: selectedProject,
-                    },
-                });
-                const currentStatus = fetchResponse.data[0];
-                console.log('Current status:', currentStatus);
-                if (currentStatus) {
-                    if (
-                        userRoles.includes('PO') &&
-                        (currentStatus.IsApprovedPO === 0 || currentStatus.IsApprovedPO === 2)
-                    ) {
+        
+               
                         const userData = {
                             LocationCode: currentStatus.LocationCode,
                             UserName: selectedUser,
@@ -208,18 +196,8 @@ const POTaskTray = () => {
                             console.error('Error approving:', error.response.data); // Debugging info
                             toast.error('An error occurred while approving.');
                         }
-                    } else {
-                        toast.error('PO approval is pending.');
-                    }
-                } else {
-                    toast.error('No record found for the given criteria.');
-                }
-            } catch (error) {
-                console.error('Error fetching approval status:', error.response.data); // Debugging info
-                toast.error('An error occurred while checking approval status.');
-            }
-        }
-    };
+                    } 
+                
     const handleReject = async () => {
         const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
         const userRoles = userFromLocalStorage?.user_roles || [];
@@ -300,9 +278,7 @@ const POTaskTray = () => {
                 ? 'Pending'
                 : fetchedData[user].some(entry => entry.status === 1)
                     ? 'Approved'
-                    : fetchedData[user].some(entry => entry.status === 2)
-                        ? 'Rejected'
-                        : 'Not Approved by PO';
+                    : 'Rejected';
             const expenseData = datesOfMonth.map(date => {
                 const entry = fetchedData[user].find(record => record.Date === date);
                 return entry ? entry.TotalExpense : '0';
@@ -334,7 +310,7 @@ const POTaskTray = () => {
         downloadCSV(filteredData, headers, datesOfMonth, selectedLocation, month);
     }
 
-    return (
+return (
         <>
             <ToastContainer />
             <Header />
@@ -424,17 +400,14 @@ const POTaskTray = () => {
                                                                 ? 'orange' // Pending
                                                                 : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 1)
                                                                     ? 'green' // Approved
-                                                                    : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 2)
-                                                                        ? 'red' // Rejected
-                                                                        : 'gray' // Not Approved by PO
+                                                                    : 'red' 
                                                         }}>
-                                                            {Array.isArray(data[user]) && data[user].some((entry) => entry.status === 0)
+                                                            {Array.isArray(data[user]) && data[user].some((entry) => entry.status === 0 || entry.status === null)
                                                                 ? 'Pending'
                                                                 : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 1)
                                                                     ? 'Approved'
-                                                                    : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 2)
-                                                                        ? 'Rejected'
-                                                                        : 'Not Approved by PO'}
+                                                                    :  'Rejected'
+                                                                      }
                                                         </td>
                                                         {datesOfMonth.map((date) => (
                                                             <td key={date}>

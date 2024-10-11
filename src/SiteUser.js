@@ -19,8 +19,10 @@ const SiteUser = ({ onClose }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [employee, setEmployee] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [excelData, setExcelData] = useState(null);
-  const [location, setLocation] = useState();
+  const [location, setLocation] = useState([]);
   const [project, setProject] = useState([]);
   const [locationDropdown, setLocationDropdown] = useState();
   const [projectDropdown, setProjectDropdown] = useState();
@@ -31,6 +33,7 @@ const SiteUser = ({ onClose }) => {
   const [showLocation, setShowLocation] = useState(false);
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedLocationName, setSelectedLocationName] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [downloadExcel, setDownloadExcel] = useState(null);
   const [newFormData, setNewFormData] = useState({
     UserName: '',
@@ -124,19 +127,8 @@ const SiteUser = ({ onClose }) => {
           console.error("Error in exporting data:", error);
         });
     };
-    const fetchEmployeeDetails = () => {
-      setIsLoading(true);
-      axios
-        .get(`${API_URL}/employeeDetails`)
-        .then((response) => {
-          setEmployee(response.data);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setIsLoading(false);
-        });
-    };
+   
+
 
     const fetchDetailedEmployeeCsvFile = () => {
       let apiUrl = `${API_URL}/downloademployee`;
@@ -151,28 +143,81 @@ const SiteUser = ({ onClose }) => {
         });
     };
 
-    const fetchLocation = () => {
-      fetch(`${API_URL}/locations`)
-        .then(response => response.json())
-        .then(data => setLocation(data))
-        .catch(error => console.error(error))
-    }
+    const fetchProject = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/getproject`);
+        setProject(response.data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+    const fetchLocation = async (selectedProject) => {
+      try {
+        if (!selectedProject) {
+          setLocation([]);
+          return;
+        }
 
-    const fetchProject = () => {
-      fetch(`${API_URL}/getproject`)
-        .then(response => response.json())
-        .then(data => setProject(data))
-        .catch(error => console.error(error))
-    }
+        const response = await axios.get(`${API_URL}/locations`, {
+          params: { project: selectedProject }
+        });
+        console.log("selectedproject", selectedProject);
+        // Log the response to check the structure
+        console.log("Fetched Locations Data:", response.data);
 
-    fetchDownloadExcel();
-    fetchEmployeeDetails();
-    fetchDetailedEmployeeCsvFile();
-    fetchLocation();
+        // Map over the data and conditionally append "District Court" to LocationName
+        const modifiedLocations = response.data.map(location => ({
+          ...location,
+          LocationName: selectedProject === "1"
+            ? (location.LocationName ? `${location.LocationName} District Court` : 'Unknown District Court')
+            : location.LocationName
+        }));
+
+        console.log("Modified Locations:", modifiedLocations);
+        setLocation(modifiedLocations);
+      } catch (error) {
+        console.error('Error fetching locations:', error);
+      }
+    };
     fetchProject();
-  }, []);
+    if (selectedProject) {
+      fetchLocation(selectedProject);
+    } else {
+      setLocation([]);
+    }
+    fetchDownloadExcel();
+    
+    fetchDetailedEmployeeCsvFile();
+  }, [selectedProject]);
 
+  useEffect(()=> {
+    fetchEmployeeDetails();
+  },[]);
 
+  const fetchEmployeeDetails = (isFiltered = false) => {
+    setIsLoading(true);
+    let params = {};
+
+    // If a location is selected, add it to the params object
+    if (isFiltered && selectedLocation) {
+      params.locationname = selectedLocation;  // Add location filter if provided
+    }
+    axios
+      .get(`${API_URL}/fetch-users-with-designation`,{params})
+      .then((response) => {
+        // Ensure you're setting the correct part of the response (e.g., response.data.users if the array is nested)
+        if (response.data && response.data.users) {
+          setUsers(response.data.users);  // Assuming response contains { users: [...] }
+        } else {
+          setUsers([]);  // Handle case where users array is not present
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setIsLoading(false);
+      });
+  };
   const handleKeyDown = (e) => {
     if (e.keyCode === 8 && !e.target.value) {
       switch (e.target.name) {
@@ -329,6 +374,44 @@ const SiteUser = ({ onClose }) => {
       toast.error("Error deleting employee. Please try again.");
     }
   };
+  const handleProjectChange = (e) => setSelectedProject(e.target.value);
+  const handleLocationChange = (e) => setSelectedLocation(e.target.value);
+
+//   const handleSubmitFilter = (e) => {
+//     console.log("button clicked")
+//     e.preventDefault(); // Prevent form submission reload
+
+//     // Define a mapping of project IDs to project names
+//     const projectMapping = {
+//         1: "UPDC",
+//         2: "Telangana",
+//         3: "Karnataka"
+//     };
+
+//     // Get the project name from the selectedProject
+//     const projectName = projectMapping[selectedProject];
+
+//     // Apply filtering logic
+//     const filtered = users.filter(user => {
+
+//         // Check if project and location match the selected values
+//         const matchesProject = selectedProject ? user.project === projectName : true;
+//         const matchesLocation = selectedLocation ? user.locationname === selectedLocation : true;
+        
+//         console.log(matchesLocation, matchesProject);
+
+//         return matchesProject && matchesLocation;
+//     });
+
+//     // Do something with the filtered data
+//     console.log(filtered);
+//     setFilteredUsers(filtered);
+
+// };
+
+const handleSubmitFilter = () => {
+  fetchEmployeeDetails(true);
+}  
 
   return (
     <>
@@ -532,146 +615,175 @@ const SiteUser = ({ onClose }) => {
               </form>
 
             </div>
-            <div className="row search-report-card mb-3" style={{ overflow: 'auto', height: '500px' }}>
-              <div >
-                <h3>Site User Details</h3>
-                {isLoading ? (
-                  <div className="text-center">Loading...</div>
-                ) : (
-                  <table className="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th style={{ whiteSpace: "nowrap" }}>User ID</th>
-                        <th style={{ whiteSpace: "nowrap" }}>User Name</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Father Name</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Biomatrix No</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Adhaar No</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Emp. Reference No</th>
-                        <th style={{ whiteSpace: "nowrap" }}>DOJ</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Fixed Salary</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Project</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Location</th>
-                        <th style={{ whiteSpace: "nowrap" }}>HR cum Admin Name</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Project Manager</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Project Owner</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Is Active</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Last Update Date</th>
-                        <th style={{ whiteSpace: "nowrap" }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {employee.map((elem, index) => (
-                        <tr key={index}>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.userid}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.UserName}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.FatherName}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.BiomatrixNo}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.AdhaarNo}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.EmpReferenceNo}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.DOJ}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.FixedSalary}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.Project}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.Location}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.HRcumAdminName}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectManager}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectOwner}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.IsActive}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.LastUpdateDate}</td>
-                          <td>
-                            <div className='row'>
-                              <div className='col-3'>
-                                <button className='btn' onClick={() => handleEdit(elem)}>
-                                  <BiSolidEditAlt />
-                                </button>
-                              </div>
-                              <div className='col-2'></div>
-                              <div className='col-3'>
-                                <button className='btn' onClick={() => handleDelete(elem.userid)}>
-                                  <RiDeleteBin6Line />
-                                </button>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
+            <div className='row search-report-card' style={{ height:'120px' }}>
+              <h5>Filters</h5>
+                <div className='col-3'>
+                  <select className='form-select' value={selectedProject} onChange={handleProjectChange}>
+                    <option value=''>Select Project</option>
+                    {project.map((projects) => (
+                      <option key={projects.id} value={projects.id} onChange={handleProjectChange}>
+                        {projects.ProjectName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className='col-3'>
+                  <select className='form-select' value={selectedLocation} onChange={handleLocationChange}>
+                    <option value=''>Select Location</option>
+                    {location.map((locations) => (
+                      <option key={locations.LocationName} value={locations.LocationName}>
+                        {locations.LocationName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className='col-3'>
+                  <input type='submit' onClick={handleSubmitFilter} style={{height:"37px",marginTop:'0px'}}/>
+                </div>
               </div>
+            <div className="row search-report-card mt-2 mb-3" style={{ overflow: 'auto', height: '500px' }}>
+            <div >
+              <h3>Site User Details</h3>
+              {isLoading ? (
+                <div className="text-center">Loading...</div>
+              ) : (
+                <table className="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th style={{ whiteSpace: "nowrap" }}>User ID</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Emp. Reference No</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Biomatrix No</th>
+                      <th style={{ whiteSpace: "nowrap" }}>User Name</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Father Name</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Adhaar No</th>
+                      <th style={{ whiteSpace: "nowrap" }}>DOJ</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Designation</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Fixed Salary</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Project</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Location</th>
+                      <th style={{ whiteSpace: "nowrap" }}>HR cum Admin Name</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Project Manager</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Project Owner</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Is Active</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Last Update Date</th>
+                      <th style={{ whiteSpace: "nowrap" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users && Array.isArray(users) && users.map((elem, index) => (
+                      <tr key={index}>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.userid || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.EmpReferenceNo || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.BiomatrixNo || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.username || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.FatherName || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.AdhaarNo || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.DOJ || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.designation || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.FixedSalary || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.project || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.locationname || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.HRcumAdminName || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectManager || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectOwner || ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.IsActive || "Yes"}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{elem.LastUpdateDate || ""}</td>
+                        <td>
+                          <div className='row'>
+                            <div className='col-3'>
+                              <button className='btn' onClick={() => handleEdit(elem)}>
+                                <BiSolidEditAlt />
+                              </button>
+                            </div>
+                            <div className='col-2'></div>
+                            <div className='col-3'>
+                              <button className='btn' onClick={() => handleDelete(elem.userid)}>
+                                <RiDeleteBin6Line />
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+             
             </div>
           </div>
         </div>
-        {/* Modal for editing employee details */}
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Employee Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmit}>
-              <Form.Group controlId="formBasicUsername">
-                <Form.Label>User Name</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="UserName" value={newFormData.UserName} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicFatherName">
-                <Form.Label>Father Name</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="FatherName" value={newFormData.FatherName} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicBiomatrixNo">
-                <Form.Label>Biomatrix No</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="BiomatrixNo" value={newFormData.BiomatrixNo} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicEmpReferenceNo">
-                <Form.Label>Emp Reference No</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="EmpReferenceNo" value={newFormData.EmpReferenceNo} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicDOJ">
-                <Form.Label>DOJ</Form.Label>
-                <Form.Control type="date" style={{ border: '1px solid black' }} name="DOJ" value={newFormData.DOJ} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicFixedSalary">
-                <Form.Label>Fixed Salary</Form.Label>
-                <Form.Control type="number" style={{ border: '1px solid black' }} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicProject">
-                <Form.Label>Project</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="Project" value={newFormData.Project} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicLocation">
-                <Form.Label>Location</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="Location" value={newFormData.Location} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicHRcumAdminName">
-                <Form.Label>HR cum Admin Name</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="HRcumAdminName" value={newFormData.HRcumAdminName} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicProjectManager">
-                <Form.Label>Project Manager</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="ProjectManager" value={newFormData.ProjectManager} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicProjectOwner">
-                <Form.Label>Project Owner</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="ProjectOwner" value={newFormData.ProjectOwner} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicIsActive">
-                <Form.Label>Is Active</Form.Label>
-                <Form.Control type="text" style={{ border: '1px solid black' }} name="IsActive" value={newFormData.IsActive} onChange={handleInputChange} />
-              </Form.Group>
-              <Form.Group controlId="formBasicLastUpdateDate">
-                <Form.Label>Last Update Date</Form.Label>
-                <Form.Control type="date" style={{ border: '1px solid black' }} name="LastUpdateDate" value={newFormData.LastUpdateDate} onChange={handleInputChange} />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                Save Changes
-              </Button>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
       </div>
+      {/* Modal for editing employee details */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Employee Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formBasicUsername">
+              <Form.Label>User Name</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="UserName" value={newFormData.UserName} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicFatherName">
+              <Form.Label>Father Name</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="FatherName" value={newFormData.FatherName} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicBiomatrixNo">
+              <Form.Label>Biomatrix No</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="BiomatrixNo" value={newFormData.BiomatrixNo} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicEmpReferenceNo">
+              <Form.Label>Emp Reference No</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="EmpReferenceNo" value={newFormData.EmpReferenceNo} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicDOJ">
+              <Form.Label>DOJ</Form.Label>
+              <Form.Control type="date" style={{ border: '1px solid black' }} name="DOJ" value={newFormData.DOJ} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicFixedSalary">
+              <Form.Label>Fixed Salary</Form.Label>
+              <Form.Control type="number" style={{ border: '1px solid black' }} name="FixedSalary" value={newFormData.FixedSalary} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicProject">
+              <Form.Label>Project</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="Project" value={newFormData.Project} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicLocation">
+              <Form.Label>Location</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="Location" value={newFormData.Location} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicHRcumAdminName">
+              <Form.Label>HR cum Admin Name</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="HRcumAdminName" value={newFormData.HRcumAdminName} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicProjectManager">
+              <Form.Label>Project Manager</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="ProjectManager" value={newFormData.ProjectManager} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicProjectOwner">
+              <Form.Label>Project Owner</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="ProjectOwner" value={newFormData.ProjectOwner} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicIsActive">
+              <Form.Label>Is Active</Form.Label>
+              <Form.Control type="text" style={{ border: '1px solid black' }} name="IsActive" value={newFormData.IsActive} onChange={handleInputChange} />
+            </Form.Group>
+            <Form.Group controlId="formBasicLastUpdateDate">
+              <Form.Label>Last Update Date</Form.Label>
+              <Form.Control type="date" style={{ border: '1px solid black' }} name="LastUpdateDate" value={newFormData.LastUpdateDate} onChange={handleInputChange} />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Save Changes
+            </Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+</div>
       <ToastContainer />
     </>
   );

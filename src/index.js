@@ -92,7 +92,7 @@ const App = () => {
           <Route path="/nontechForm"element={<PrivateRoute element={<NonTechForm />} />}/>
           <Route path="/TaskForm"element={<PrivateRoute element={<TaskForm/>}/>}/>
           <Route path="/setTarget"element={<PrivateRoute element={<SetTarget/>}/>}/>
-          <Route path="/POTaskTray"element={<PrivateRoute element={<POTaskTray/>}/>}/>
+          {/* <Route path="/POTaskTray"element={<PrivateRoute element={<POTaskTray/>}/>}/> */}
           </Routes>
           </Router>
   );

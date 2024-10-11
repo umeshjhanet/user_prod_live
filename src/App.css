@@ -508,6 +508,23 @@ form input[type="submit"]:hover {
   width: 65px;
 }
 
+.table-container {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1; /* Ensure header stays above table rows when scrolling */
+  background-color: white; /* Ensure the background of the header is visible */
+}
+
+.table th, .table td {
+  white-space: nowrap;
+}
+
+
 .mobile-sidebar {
   bottom: 25px;
   height: 100%;
