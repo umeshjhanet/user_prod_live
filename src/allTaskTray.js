@@ -3,7 +3,7 @@ import axios from 'axios';
 import Header from './Components/Header';
 import SideBar from './Components/SideBar';
 import { API_URL } from './API';
-import { toast, ToastContainer } from 'react-toastify'; 
+import { toast, ToastContainer } from 'react-toastify';
 const AllTaskTray = () => {
     const [projects, setProjects] = useState([]);
     const [projectId, setProjectID] = useState([]);
@@ -35,22 +35,22 @@ const AllTaskTray = () => {
                     setLocations([]);
                     return;
                 }
-        
+
                 const response = await axios.get(`${API_URL}/locations`, {
                     params: { project: selectedProject }
                 });
                 console.log("selectedproject", selectedProject);
                 // Log the response to check the structure
                 console.log("Fetched Locations Data:", response.data);
-        
+
                 // Map over the data and conditionally append "District Court" to LocationName
                 const modifiedLocations = response.data.map(location => ({
                     ...location,
                     LocationName: selectedProject === "1"
-                        ? (location.LocationName ? `${location.LocationName} District Court` : 'Unknown District Court') 
+                        ? (location.LocationName ? `${location.LocationName} District Court` : 'Unknown District Court')
                         : location.LocationName
                 }));
-        
+
                 console.log("Modified Locations:", modifiedLocations);
                 setLocations(modifiedLocations);
             } catch (error) {
@@ -61,7 +61,7 @@ const AllTaskTray = () => {
         if (selectedProject) {
             fetchLocations(selectedProject);
         } else {
-            setLocations([]); 
+            setLocations([]);
         }
     }, [selectedProject]);
     const handleProjectChange = (e) => setSelectedProject(e.target.value);
@@ -78,7 +78,7 @@ const AllTaskTray = () => {
                 },
             });
             const fetchedData = response.data;
-            console.log("dataa",fetchedData)
+            console.log("dataa", fetchedData)
             const transformedData = {};
             const dates = new Set();
             console.log("Before Transformation", transformedData);
@@ -172,7 +172,7 @@ const AllTaskTray = () => {
     };
     const handleApproval = async () => {
         const user = JSON.parse(localStorage.getItem('user'));
-        const userRoles = user?.user_roles || []; 
+        const userRoles = user?.user_roles || [];
         const monthNumber = extractMonthNumber(month);
         for (const selectedUser of selectedUsers) {
             try {
@@ -183,7 +183,7 @@ const AllTaskTray = () => {
                         project: selectedProject,
                     },
                 });
-                const currentStatus = fetchResponse.data[0]; 
+                const currentStatus = fetchResponse.data[0];
                 console.log('Current status:', currentStatus);
                 if (currentStatus) {
                     if (
@@ -236,7 +236,7 @@ const AllTaskTray = () => {
                         project: selectedProject,
                     },
                 });
-                const currentStatus = fetchResponse.data[0]; 
+                const currentStatus = fetchResponse.data[0];
                 console.log('Current status:', currentStatus);
                 if (currentStatus) {
                     if (
@@ -297,102 +297,102 @@ const AllTaskTray = () => {
     };
 
 
-// const fileHeaders = ['User', 'Status']; 
+    // const fileHeaders = ['User', 'Status']; 
 
-// function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
-//     if (fetchedData.length === 0) return '';
+    // function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
+    //     if (fetchedData.length === 0) return '';
 
-//     // Add the dynamic date headers
-//     const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
+    //     // Add the dynamic date headers
+    //     const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
 
-//     // Build rows for each user
-//     const rows = Object.keys(fetchedData).map(user => {
-//         // Extract user status (Pending, Approved, etc.)
-//         const status = fetchedData[user].some(entry => entry.status === 0)
-//             ? 'Pending'
-//             : fetchedData[user].some(entry => entry.status === 1)
-//             ? 'Approved'
-//             : fetchedData[user].some(entry => entry.status === 2)
-//             ? 'Rejected'
-//             : 'Not Approved by PO';
+    //     // Build rows for each user
+    //     const rows = Object.keys(fetchedData).map(user => {
+    //         // Extract user status (Pending, Approved, etc.)
+    //         const status = fetchedData[user].some(entry => entry.status === 0)
+    //             ? 'Pending'
+    //             : fetchedData[user].some(entry => entry.status === 1)
+    //             ? 'Approved'
+    //             : fetchedData[user].some(entry => entry.status === 2)
+    //             ? 'Rejected'
+    //             : 'Not Approved by PO';
 
-//         // Extract expense data for each date, defaulting to '0' if no data is present
-//         const expenseData = datesOfMonth.map(date => {
-//             const entry = fetchedData[user].find(record => record.Date === date);
-//             return entry ? entry.TotalExpense : '0'; // If no entry, display '0'
-//         });
+    //         // Extract expense data for each date, defaulting to '0' if no data is present
+    //         const expenseData = datesOfMonth.map(date => {
+    //             const entry = fetchedData[user].find(record => record.Date === date);
+    //             return entry ? entry.TotalExpense : '0'; // If no entry, display '0'
+    //         });
 
-//         // Combine the user, status, and expense data into a single CSV row
-//         return [user, status, ...expenseData].join(',');
-//     }).join('\n');
+    //         // Combine the user, status, and expense data into a single CSV row
+    //         return [user, status, ...expenseData].join(',');
+    //     }).join('\n');
 
-//     return headers + rows;
-// }
+    //     return headers + rows;
+    // }
 
-// function downloadCSV(fetchedData, headers, datesOfMonth,selectedLocation,month) {
-//     const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
-//     if (csvData === '') {
-//         alert('No data to export');
-//     } else {
-//         // Create the file name using the location name, year, and month
-//         const fileName = `${selectedLocation}-${month}.csv`;
+    // function downloadCSV(fetchedData, headers, datesOfMonth,selectedLocation,month) {
+    //     const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
+    //     if (csvData === '') {
+    //         alert('No data to export');
+    //     } else {
+    //         // Create the file name using the location name, year, and month
+    //         const fileName = `${selectedLocation}-${month}.csv`;
 
-//         const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-//         const link = document.createElement('a');
-//         link.href = URL.createObjectURL(blob);
-//         link.setAttribute('download', fileName);
-//         document.body.appendChild(link);
-//         link.click();
-//         document.body.removeChild(link);
-//     }
-// }
+    //         const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    //         const link = document.createElement('a');
+    //         link.href = URL.createObjectURL(blob);
+    //         link.setAttribute('download', fileName);
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //     }
+    // }
 
-const fileHeaders = ['Sr No','User', 'Status']; 
+    const fileHeaders = ['Sr No', 'User', 'Status'];
 
-function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
-    if (Object.keys(fetchedData).length === 0) return '';
+    function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
+        if (Object.keys(fetchedData).length === 0) return '';
 
-    
-    const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
 
-    const rows = Object.keys(fetchedData).map((user, index) => {
-        const status = fetchedData[user].some(entry => entry.status === 0)
-            ? 'Pending'
-            : fetchedData[user].some(entry => entry.status === 1)
-            ? 'Approved'
-            : fetchedData[user].some(entry => entry.status === 2)
-            ? 'Rejected'
-            : 'Not Approved by PO';   
-        const expenseData = datesOfMonth.map(date => {
-            const entry = fetchedData[user].find(record => record.Date === date);
-            return entry ? entry.TotalExpense : '0'; 
-        });
-        return [index + 1, user, status, ...expenseData].join(',');
-    }).join('\n');
+        const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
 
-    return headers + rows;
-}
+        const rows = Object.keys(fetchedData).map((user, index) => {
+            const status = fetchedData[user].some(entry => entry.status === 0)
+                ? 'Pending'
+                : fetchedData[user].some(entry => entry.status === 1)
+                    ? 'Approved'
+                    : fetchedData[user].some(entry => entry.status === 2)
+                        ? 'Rejected'
+                        : 'Not Approved by PO';
+            const expenseData = datesOfMonth.map(date => {
+                const entry = fetchedData[user].find(record => record.Date === date);
+                return entry ? entry.TotalExpense : '0';
+            });
+            return [index + 1, user, status, ...expenseData].join(',');
+        }).join('\n');
 
-function downloadCSV(fetchedData, headers, datesOfMonth, selectedLocation, month) {
-    const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
-    if (csvData === '') {
-        alert('No data to export');
-    } else {
-        const fileName = `${selectedLocation}-${month}.csv`;
-        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        return headers + rows;
     }
-}
 
-function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month, statusFilter) {
-    const filteredData = filterData(data, statusFilter);
-    downloadCSV(filteredData, headers, datesOfMonth, selectedLocation, month);
-}
+    function downloadCSV(fetchedData, headers, datesOfMonth, selectedLocation, month) {
+        const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
+        if (csvData === '') {
+            alert('No data to export');
+        } else {
+            const fileName = `${selectedLocation}-${month}.csv`;
+            const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month, statusFilter) {
+        const filteredData = filterData(data, statusFilter);
+        downloadCSV(filteredData, headers, datesOfMonth, selectedLocation, month);
+    }
 
     return (
         <>
@@ -426,7 +426,7 @@ function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month,
                                 </select>
                             </div>
                             <div className='col-3'>
-                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{height:'38px'}}/>
+                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{ height: '38px' }} />
                             </div>
                             <div className='col-3'>
                                 <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
@@ -442,16 +442,16 @@ function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month,
                                 </div>
                                 <div className='col-8'></div>
                                 <div className='col-2'>
-                                <button 
-    className='btn btn-primary' 
-    onClick={() => exportFilteredCSV(data, fileHeaders, datesOfMonth, selectedLocation, month, statusFilter)}>
-    Export
-</button>
+                                    <button
+                                        className='btn btn-primary'
+                                        onClick={() => exportFilteredCSV(data, fileHeaders, datesOfMonth, selectedLocation, month, statusFilter)}>
+                                        Export
+                                    </button>
                                 </div>
                             </div>
                             <div className='col-12'>
                                 {Object.keys(data).length > 0 && (
-                                    <div className='col-12 mt-3'>
+                                    <div className='col-12 mt-3' style={{maxHeight:'500px', overflow:'auto'}}>
                                         <table className='table table-bordered'>
                                             <thead>
                                                 <tr>
@@ -524,26 +524,26 @@ function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month,
                             </div>
                         </div>
                         {/* Confirmation Approval Box */}
-                {showConfirmationApprovalBox && (
-                    <div className="confirmation-dialog">
-                      <div className="confirmation-content">
-                        <p>Are you sure you want to approve this task?</p>
-                        <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
-                        <button onClick={handleCloseConfirmationApprovalBox} className='btn btn-danger'>No</button>
-                    </div>
-                    </div>
-                )}
+                        {showConfirmationApprovalBox && (
+                            <div className="confirmation-dialog">
+                                <div className="confirmation-content">
+                                    <p>Are you sure you want to approve this task?</p>
+                                    <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
+                                    <button onClick={handleCloseConfirmationApprovalBox} className='btn btn-danger'>No</button>
+                                </div>
+                            </div>
+                        )}
 
-                {/* Confirmation Rejection Box */}
-                {showConfirmationRejectionBox && (
-                    <div className="confirmation-dialog">
-                      <div className="confirmation-content">
-                        <p>Are you sure you want to reject this task?</p>
-                        <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
-                        <button onClick={handleCloseConfirmationRejectionBox} className='btn btn-danger'>No</button>
-                    </div>
-                    </div>
-                )}
+                        {/* Confirmation Rejection Box */}
+                        {showConfirmationRejectionBox && (
+                            <div className="confirmation-dialog">
+                                <div className="confirmation-content">
+                                    <p>Are you sure you want to reject this task?</p>
+                                    <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
+                                    <button onClick={handleCloseConfirmationRejectionBox} className='btn btn-danger'>No</button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
