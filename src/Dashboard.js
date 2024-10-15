@@ -79,9 +79,11 @@ const DynamicDashboard = () => {
             // Conditionally change the upload endpoint based on the projectId
             if (projectId === '6') { // NMML project
                 uploadEndpoint = `${API_URL}/uploadExcelNMML`;
-            } else if (projectId === '5') { // NMML project
+            } else if (projectId === '5') { // LIC project
                 uploadEndpoint = `${API_URL}/uploadExcelLIC`;
-            }
+            } else if (projectId === '4') { // Nimhans project
+                uploadEndpoint = `${API_URL}/uploadNimhans`;
+            } 
 
             const response = await axios.post(uploadEndpoint, formData, {
                 headers: {
