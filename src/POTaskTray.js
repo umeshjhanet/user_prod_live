@@ -10,8 +10,11 @@ const POTaskTray = () => {
     const [locations, setLocations] = useState([]);
     const [selectedProject, setSelectedProject] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [selectedLocationID, setSelectedLocationID] = useState('');
     const [month, setMonth] = useState('');
     const [data, setData] = useState({});
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const [datesOfMonth, setDatesOfMonth] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [error, setError] = useState(null);
@@ -22,6 +25,24 @@ const POTaskTray = () => {
     const [showConfirmationRejectionBox, setShowConfirmationRejectionBox] = useState(false);
     const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
     const [currentIndex, setCurrentIndex] = useState(null);
+    const calculateDates = () => {
+        const today = new Date();
+        
+        // Set startDate to the 26th of the last month
+        const start = new Date(today.getFullYear(), today.getMonth(), 26);
+        if (start.getDate() < 26) {
+            start.setMonth(start.getMonth() - 1); // Go back to the last month if today is before 26th
+        }
+        setStartDate(start.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+
+        // Set endDate to the 25th of the current month
+        const end = new Date(today.getFullYear(), today.getMonth() + 1, 25);
+        setEndDate(end.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+    };
+
+    useEffect(() => {
+        calculateDates(); // Calculate dates when component mounts
+    }, []);
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -68,14 +89,16 @@ const POTaskTray = () => {
     }, [selectedProject]);
     const handleProjectChange = (e) => setSelectedProject(e.target.value);
     const handleLocationChange = (e) => setSelectedLocation(e.target.value);
+    
     const handleMonthChange = (e) => setMonth(e.target.value);
     const handleSubmit = async () => {
         setData("");
         try {
-            const response = await axios.get(`${API_URL}/api/userdetailedreportdatewise`, {
+            const response = await axios.get(`${API_URL}/api/userdetailedreportmonthwise`, {
                 params: {
                     locationName: selectedLocation,
-                    month,
+                    startDate: startDate,
+                    endDate: endDate,
                     project: selectedProject,
                 },
             });
@@ -175,15 +198,13 @@ const POTaskTray = () => {
     const handleApproval = async () => {
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
-        const monthNumber = extractMonthNumber(month);
-        
-               
                         const userData = {
-                            LocationCode: currentStatus.LocationCode,
-                            UserName: selectedUser,
-                            InMonth: monthNumber,
-                            UserID: currentStatus.UserID,
-                            userProfile: currentStatus.userProfile,
+                            LocationCode: '103',
+                            UserName: selectedUsers,
+                            startDate: startDate,
+                            endDate: endDate,
+                            UserID: selectedUsers,
+                            userProfile: "user",
                             role: 'PO',
                             project: selectedProject,
                         };
@@ -220,7 +241,7 @@ const POTaskTray = () => {
                     ) {
                         const rejectData = {
                             LocationCode: currentStatus.LocationCode,
-                            UserName: selectedUser,
+                            UserName: selectedUsers,
                             InMonth: monthNumber,
                             UserID: currentStatus.UserID,
                             userProfile: '0',
@@ -309,6 +330,14 @@ const POTaskTray = () => {
         const filteredData = filterData(data, statusFilter);
         downloadCSV(filteredData, headers, datesOfMonth, selectedLocation, month);
     }
+    const handleDateChange = (e) => {
+        const { name, value } = e.target; // Destructure name and value from the event target
+        if (name === 'startDate') {
+            setStartDate(value); // Update startDate if input is for start date
+        } else if (name === 'endDate') {
+            setEndDate(value); // Update endDate if input is for end date
+        }
+    };
 
 return (
         <>
@@ -341,10 +370,31 @@ return (
                                     ))}
                                 </select>
                             </div>
-                            <div className='col-3'>
-                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{ height: '38px' }} />
+                            <div className='col-2'>
+                                <input
+                                    type='date'
+                                    className='form-control'
+                                    name='startDate' // Add name attribute
+                                    value={startDate}
+                                    onChange={handleDateChange}
+                                    style={{ height: '38px' }}
+                                />
                             </div>
-                            <div className='col-3'>
+                            <div className='col-2'>
+                                <input
+                                    type='date'
+                                    className='form-control'
+                                    name='endDate' // Add name attribute
+                                    value={endDate}
+                                    onChange={handleDateChange}
+                                    style={{ height: '38px' }}
+                                />
+                            </div>
+
+                            {/* <div className='col-3'>
+                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{ height: '38px' }} />
+                            </div> */}
+                            <div className='col-2'>
                                 <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
                             </div>
                             <div className='row mt-4'>
@@ -367,7 +417,7 @@ return (
                             </div>
                             <div className='col-12'>
                                 {Object.keys(data).length > 0 && (
-                                    <div className='col-12 mt-3'>
+                                    <div className='col-12 mt-3' style={{ maxHeight: '500px', overflow: 'auto' }}>
                                         <table className='table table-bordered'>
                                             <thead>
                                                 <tr>

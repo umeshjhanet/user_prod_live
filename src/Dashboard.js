@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Components/Header';
 import SideBar from './Components/SideBar';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from './API';
 import { FiDownload } from 'react-icons/fi';
@@ -16,6 +16,9 @@ const DynamicDashboard = () => {
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [downloadExcel, setDownloadExcel] = useState(null);
+    const [selectedProject, setSelectedProject] = useState('');
+    const [projectDropdown, setProjectDropdown] = useState([]);
+    const navigate = useNavigate();
 
     const projects = [
         { id: 1, name: 'UPDC', description: 'Details about Nimhans project...' },
@@ -121,6 +124,15 @@ const DynamicDashboard = () => {
                 console.error("Error in exporting data:", error);
             }
         };
+        const fetchProjects = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/getproject`);
+                setProjectDropdown(response.data);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        };
+        fetchProjects();
     
         fetchDownloadExcel(projectId);
     }, [projectId]);
@@ -154,6 +166,20 @@ const DynamicDashboard = () => {
     if (!project) {
         return <h2>Project not found!</h2>;
     }
+    const handleProjectChange = (e) => setSelectedProject(Number(e.target.value));
+    const handleSearch = () => {
+        if (selectedProject === 1) {
+            navigate('/UPDCDashboard');
+        } else if (selectedProject === 2) {
+            navigate('/TelDashboard');
+        } else if (selectedProject === 3) {
+            navigate('/KarDashboard');
+        } else if ([4, 5, 6, 7, 8, 9, 10].includes(selectedProject)) {
+            navigate(`/Dashboard/${selectedProject}`);
+        } else {
+            navigate('/UPDCDashboard');
+        }
+    };
 
     return (
         <>
@@ -163,15 +189,27 @@ const DynamicDashboard = () => {
                     <div className='col-2'>
                         <SideBar />
                     </div>
-                    <div className='col-10'>
-                        <div className='row mt-5 me-1'>
+                    <div className='col-9 ms-5'>
+                    <div className='row mt-2 search-report-card' style={{height:"60px",padding:'10px 0px',borderRadius:'0px'}}>
+                        <div className='col-3'>
+                                <select className='form-select' value={selectedProject} onChange={handleProjectChange}>
+                                    <option value=''>Select Project</option>
+                                    {projectDropdown.map((project) => (
+                                        <option key={project.id} value={project.id} onChange={handleProjectChange}>
+                                            {project.ProjectName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className='col-3'>
+                                <button className='btn btn-primary' onClick={handleSearch}>Search</button>
+                            </div>
+                        </div>
+                        <div className='row mt-2 me-1'>
                             <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
-                                <Link to='/projects' style={{ textDecoration: 'none' }}>
                                     <h6 className="ms-2" style={{ color: "white" }}>
-                                        <FaHome /> /{project.name}
+                                    {project.name}
                                     </h6>
-                                </Link>
-
                             </div>
                             <div className='row search-report-card mt-3 ms-1'>
                                 <div className='col-3'>

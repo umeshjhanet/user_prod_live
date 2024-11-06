@@ -46,6 +46,7 @@ import AllTaskTray from './allTaskTray';
 import UPDCTaskTray from './UPDCTaskTray';
 import SetTarget from './setTarget';
 import POTaskTray from './POTaskTray';
+import FaceAttendance from './faceAttendance';
 
 const App = () => {
  
@@ -92,7 +93,8 @@ const App = () => {
           <Route path="/nontechForm"element={<PrivateRoute element={<NonTechForm />} />}/>
           <Route path="/TaskForm"element={<PrivateRoute element={<TaskForm/>}/>}/>
           <Route path="/setTarget"element={<PrivateRoute element={<SetTarget/>}/>}/>
-          {/* <Route path="/POTaskTray"element={<PrivateRoute element={<POTaskTray/>}/>}/> */}
+          <Route path="/faceAttendance"element={<PrivateRoute element={<FaceAttendance/>}/>}/>
+          <Route path="/POTaskTray"element={<PrivateRoute element={<POTaskTray/>}/>}/>
           </Routes>
           </Router>
   );

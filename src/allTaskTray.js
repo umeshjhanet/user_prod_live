@@ -11,6 +11,8 @@ const AllTaskTray = () => {
     const [selectedProject, setSelectedProject] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
     const [month, setMonth] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const [data, setData] = useState({});
     const [datesOfMonth, setDatesOfMonth] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -20,6 +22,24 @@ const AllTaskTray = () => {
     const [showConfirmationRejectionBox, setShowConfirmationRejectionBox] = useState(false);
     const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
     const [currentIndex, setCurrentIndex] = useState(null);
+    const calculateDates = () => {
+        const today = new Date();
+        
+        // Set startDate to the 26th of the last month
+        const start = new Date(today.getFullYear(), today.getMonth(), 26);
+        if (start.getDate() < 26) {
+            start.setMonth(start.getMonth() - 1); // Go back to the last month if today is before 26th
+        }
+        setStartDate(start.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+
+        // Set endDate to the 25th of the current month
+        const end = new Date(today.getFullYear(), today.getMonth() + 1, 25);
+        setEndDate(end.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+    };
+
+    useEffect(() => {
+        calculateDates(); // Calculate dates when component mounts
+    }, []);
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -63,30 +83,81 @@ const AllTaskTray = () => {
         } else {
             setLocations([]);
         }
-    }, [selectedProject]);
+    }, [selectedProject, startDate, endDate]);
     const handleProjectChange = (e) => setSelectedProject(e.target.value);
     const handleLocationChange = (e) => setSelectedLocation(e.target.value);
     const handleMonthChange = (e) => setMonth(e.target.value);
-    const handleSubmit = async () => {
-        setData("");
+    const handleDateChange = (e) => {
+        const { name, value } = e.target; // Destructure name and value from the event target
+        if (name === 'startDate') {
+            setStartDate(value); // Update startDate if input is for start date
+        } else if (name === 'endDate') {
+            setEndDate(value); // Update endDate if input is for end date
+        }
+    };
+    
+    const handleInsertWages = async () => {
+        const tableData = Object.keys(data).map((user) => {
+                const totalWages = data[user].reduce((sum, entry) => {
+                    // Ensure TotalExpense is a number, defaulting to 0 if undefined or not a number
+                    const expense = parseFloat(entry.TotalExpense) || 0;
+                    return sum + expense;
+                }, 0); // Initialize sum to 0
+            return {
+                project: selectedProject,
+                locationname: selectedLocation,
+                username: user,
+                fromDate: datesOfMonth[0], // Assuming first date of the month
+                toDate: datesOfMonth[datesOfMonth.length - 1], // Last date of the month
+                total_wages: totalWages.toFixed(2)
+            };
+        });
+    
         try {
-            const response = await axios.get(`${API_URL}/api/userdetailedreportdatewise`, {
+            // Call the API to insert the data
+            const response = await axios.post(`${API_URL}/insert-wages`, {
+                tableData
+            });
+            
+            if (response.status === 200) {
+                alert('Data inserted successfully!');
+            }
+        } catch (error) {
+            console.error('Error inserting data:', error);
+            alert('Failed to insert data');
+        }
+    };
+
+    const handleSubmit = async () => {
+        setData(""); // Clear previous data
+
+        // Debugging: Log the date values before making the API request
+        console.log("Start Date:", startDate);
+        console.log("End Date:", endDate);
+
+        try {
+            const response = await axios.get(`${API_URL}/api/userdetailedreportmonthwise`, {
                 params: {
-                    locationName: selectedLocation,
-                    month,
-                    project: selectedProject,
+                    locationName: selectedLocation, // The selected location
+                    startDate: startDate ? startDate : null, // Pass the startDate
+                    endDate: endDate ? endDate : null, // Pass the endDate
+                    project: selectedProject, // The selected project ID
                 },
             });
+
             const fetchedData = response.data;
-            console.log("dataa", fetchedData)
+            console.log("Fetched Data:", fetchedData);
+
+            // Transform data and set the state as before
             const transformedData = {};
             const dates = new Set();
-            console.log("Before Transformation", transformedData);
+
             fetchedData.forEach((item) => {
                 const { user_type, Date, TotalExpense, IsApprovedHR } = item;
                 if (!transformedData[user_type]) {
                     transformedData[user_type] = [];
                 }
+
                 transformedData[user_type].push({
                     Date,
                     TotalExpense: TotalExpense.toFixed(2),
@@ -94,7 +165,7 @@ const AllTaskTray = () => {
                 });
                 dates.add(Date);
             });
-            console.log("Transformed Data", transformedData);
+
             const sortedDates = Array.from(dates).sort((a, b) => new Date(a) - new Date(b));
             setData(transformedData);
             setDatesOfMonth(sortedDates);
@@ -104,6 +175,8 @@ const AllTaskTray = () => {
             setError('An error occurred while fetching data.');
         }
     };
+
+
     const handleExport = async (format) => {
         try {
             const response = await axios.get(`${API_URL}/downloadcsv`, {
@@ -425,10 +498,31 @@ const AllTaskTray = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div className='col-3'>
-                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{ height: '38px' }} />
+                            <div className='col-2'>
+                                <input
+                                    type='date'
+                                    className='form-control'
+                                    name='startDate' // Add name attribute
+                                    value={startDate}
+                                    onChange={handleDateChange}
+                                    style={{ height: '38px' }}
+                                />
                             </div>
-                            <div className='col-3'>
+                            <div className='col-2'>
+                                <input
+                                    type='date'
+                                    className='form-control'
+                                    name='endDate' // Add name attribute
+                                    value={endDate}
+                                    onChange={handleDateChange}
+                                    style={{ height: '38px' }}
+                                />
+                            </div>
+
+                            {/* <div className='col-3'>
+                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{ height: '38px' }} />
+                            </div> */}
+                            <div className='col-2'>
                                 <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
                             </div>
                             <div className='row mt-4'>
@@ -440,7 +534,10 @@ const AllTaskTray = () => {
                                         <option value='Rejected'>Rejected</option>
                                     </select>
                                 </div>
-                                <div className='col-8'></div>
+                                <div className='col-6'></div>
+                                <div className='col-2'>
+                                    <button className='btn btn-primary' type='submit' onClick={handleInsertWages}>Verify</button>
+                                </div>
                                 <div className='col-2'>
                                     <button
                                         className='btn btn-primary'
@@ -451,7 +548,7 @@ const AllTaskTray = () => {
                             </div>
                             <div className='col-12'>
                                 {Object.keys(data).length > 0 && (
-                                    <div className='col-12 mt-3' style={{maxHeight:'500px', overflow:'auto'}}>
+                                    <div className='col-12 mt-3' style={{ maxHeight: '500px', overflow: 'auto' }}>
                                         <table className='table table-bordered'>
                                             <thead>
                                                 <tr>

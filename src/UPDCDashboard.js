@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './Components/Header';
 import './App.css';
 import PeriodicSummaryReport from './periodicSummaryReport';
@@ -47,6 +48,8 @@ const UPDCDashboard = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
+    const [selectedProject, setSelectedProject] = useState('');
+    const [projects, setProjects] = useState([]);
 
     useEffect(() => {
         setLocalPrices(prices);
@@ -246,6 +249,15 @@ const UPDCDashboard = () => {
         const day = String(currentDate.getDate()).padStart(2, "0");
         const formattedCurrentDate = `${year}-${month}-${day}`;
         setToDate(formattedCurrentDate);
+        const fetchProjects = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/getproject`);
+                setProjects(response.data);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        };
+        fetchProjects();
     }, []);
 
 
@@ -392,6 +404,22 @@ const UPDCDashboard = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     }
+    const navigate = useNavigate();
+    const handleProjectChange = (e) => setSelectedProject(Number(e.target.value));
+    const handleSearch = () => {
+        if (selectedProject === 1) {
+            navigate('/UPDCDashboard');
+        } else if (selectedProject === 2) {
+            navigate('/TelDashboard');
+        } else if (selectedProject === 3) {
+            navigate('/KarDashboard');
+        } else if ([4, 5, 6, 7, 8, 9, 10].includes(selectedProject)) {
+            navigate(`/Dashboard/${selectedProject}`);
+        } else {
+            navigate('/UPDCDashboard');
+        }
+    };
+    
 
     return (
         <>
@@ -402,16 +430,29 @@ const UPDCDashboard = () => {
                         <SideBar />
                     </div>
                     <div className='col-9 ms-5'>
+                        <div className='row mt-2 search-report-card' style={{height:"60px",padding:'10px 0px',borderRadius:'0px'}}>
+                        <div className='col-3'>
+                                <select className='form-select' value={selectedProject} onChange={handleProjectChange}>
+                                    <option value=''>Select Project</option>
+                                    {projects.map((project) => (
+                                        <option key={project.id} value={project.id} onChange={handleProjectChange}>
+                                            {project.ProjectName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className='col-3'>
+                                <button className='btn btn-primary' onClick={handleSearch}>Search</button>
+                            </div>
+                        </div>
                         <div className='row mt-3'>
                             <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                                 <h6 className="ms-2" style={{ color: "white" }}>
                                     {userData && userData.projects && userData.projects.includes(1) ? (
                                         <span style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></span>
                                     ) : (
-                                        <Link to='/projects' style={{ color: 'white' }} title="Back to Home">
-                                            <FaHome style={{ marginTop: '-2px' }} />
-                                        </Link>
-                                    )} / Uttar Pradesh Courts
+                                       <></>
+                                    )} Uttar Pradesh Courts
                                 </h6>
                             </div>
                             <div className='row ms-0 mt-2 search-report-card'>
@@ -442,7 +483,7 @@ const UPDCDashboard = () => {
                                 </div>
                                 {showFilter && (<> */}
                                     <div className='row mt-2' style={{ marginBottom: '-10px' }}>
-                                    <div className='col-1'><h4>Filter</h4></div>
+                                    <div className='col-1'><h5 style={{marginTop:'-2px'}}>Filter</h5></div>
                                         <div className='col-2'>
                                             <input type='radio' id='cumulative' name='reportType' value='cumulative' onChange={handleRadioChange} checked={cumulativeSelected} />
                                             <label htmlFor='cumulative' className='ms-1'>Cumulative</label>

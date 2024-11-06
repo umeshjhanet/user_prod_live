@@ -90,7 +90,7 @@ const Login = () => {
     } else if (data.projects && data.projects.includes(3)) {
       navigate('/KarDashboard');
     } else {
-      navigate('/projects');
+      navigate('/UPDCDashboard');
     }
   };
 

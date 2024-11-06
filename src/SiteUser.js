@@ -37,17 +37,18 @@ const SiteUser = ({ onClose }) => {
   const [downloadExcel, setDownloadExcel] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [newFormData, setNewFormData] = useState({
-    UserName: '',
-    FatherName: '',
     BiomatrixNo: '',
     EmpReferenceNo: '',
+    UserName: '',
+    FatherName: '',
     DOJ: '',
     FixedSalary: '',
     Project: '',
-    Location: '',
+    locationname: '',
     HRcumAdminName: '',
     ProjectManager: '',
     ProjectOwner: '',
+    AdhaarNo: '',
     IsActive: '',
     LastUpdateDate: '',
   });
@@ -204,7 +205,7 @@ const SiteUser = ({ onClose }) => {
       params.locationname = selectedLocation;  // Add location filter if provided
     }
     axios
-      .get(`${API_URL}/fetch-users-with-designation`, { params })
+      .get(`${API_URL}/fetch-unique-users`, { params })
       .then((response) => {
         // Ensure you're setting the correct part of the response (e.g., response.data.users if the array is nested)
         if (response.data && response.data.users) {
@@ -464,9 +465,9 @@ const SiteUser = ({ onClose }) => {
       user.FatherName || '',
       user.AdhaarNo || '',
       user.DOJ || '',
-      user.designation || 'Data Entry Operator',
+      user.designations || 'Data Entry Operator',
       user.FixedSalary || '',
-      user.project || '',
+      user.project || 'UPDC',
       user.locationname || '',
       user.HRcumAdminName || '',
       user.ProjectManager || '',
@@ -494,6 +495,11 @@ const SiteUser = ({ onClose }) => {
     // Clean up the URL and the link element
     window.URL.revokeObjectURL(url);
   };
+  const Loader = () => (
+    <div className="loader-overlay">
+      <div className="loader"></div>
+    </div>
+  );
 
   return (
     <>
@@ -731,15 +737,15 @@ const SiteUser = ({ onClose }) => {
               </div>
             </div>
             <div className="row search-report-card mt-2 mb-3" style={{ overflow: 'auto', height: '500px' }}>
-              <div className='d-flex justify-content-between align-items-center' >
+              <div className='d-flex justify-content-between'style={{height:'60px'}} >
                 <h3>Site User Details</h3>
-                <button className='btn btn-primary' onClick={exportToCSV} style={{ marginBottom: '20px' }}>
+                <button className='btn btn-primary' onClick={exportToCSV} style={{ marginBottom: '20px',height:'40px' }}>
                   Export as CSV
                 </button>
                 </div>
                 <div>
                 {isLoading ? (
-                  <div className="text-center">Loading...</div>
+                  <Loader/>
                 ) : (
                   <table className="table table-striped table-bordered">
                     <thead>
@@ -775,9 +781,9 @@ const SiteUser = ({ onClose }) => {
                           <td style={{ whiteSpace: "nowrap" }}>{elem.FatherName || ""}</td>
                           <td style={{ whiteSpace: "nowrap" }}>{elem.AdhaarNo || ""}</td>
                           <td style={{ whiteSpace: "nowrap" }}>{elem.DOJ || ""}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.designation || "Data Entry Operator"}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.designations || "Data Entry Operator"}</td>
                           <td style={{ whiteSpace: "nowrap" }}>{elem.FixedSalary || ""}</td>
-                          <td style={{ whiteSpace: "nowrap" }}>{elem.project || ""}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>{elem.project || "UPDC"}</td>
                           <td style={{ whiteSpace: "nowrap" }}>{elem.locationname || ""}</td>
                           <td style={{ whiteSpace: "nowrap" }}>{elem.HRcumAdminName || ""}</td>
                           <td style={{ whiteSpace: "nowrap" }}>{elem.ProjectManager || ""}</td>

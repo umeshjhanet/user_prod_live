@@ -21,7 +21,7 @@ const SideBar = () => {
         } else if (projects.includes(3)) {
             return '/KarDashboard';
         }
-        return '/projects'; // Default case if no project is assigned or project ID doesn't match
+        return '/UPDCDashboard'; // Default case if no project is assigned or project ID doesn't match
     };
 
     const getTaskTrayLink = () => {
@@ -100,6 +100,7 @@ const SideBar = () => {
             <ul className="nav nav-pills flex-column mb-auto">
                 {renderLink(getDashboardLink(), 'Dashboard')}
                 {renderLink('/SiteUser', 'Manage Employee Details')}
+                {renderLink('/faceAttendance', 'Face Attendance')}
                 {renderLink(getTaskTrayLink(), 'Approval Workflow')}
             </ul>
             <hr />

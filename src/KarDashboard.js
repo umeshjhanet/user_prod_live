@@ -23,6 +23,7 @@ import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import NonTechModal from './Components/NonTechModal';
 import KarNonTechModal from './Components/KarNonTechModal';
 import SideBar from './Components/SideBar';
+import { useNavigate } from 'react-router-dom';
 
 const KarDashboard = () => {
     const [showPeriodicSummary, setShowPeriodicSummary] = useState(false);
@@ -51,6 +52,8 @@ const KarDashboard = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localPrices, setLocalPrices] = useState([]);
+    const [selectedProject, setSelectedProject] = useState('');
+    const [projects, setProjects] = useState([]);
 
     useEffect(() => {
         setLocalPrices(prices);
@@ -337,6 +340,15 @@ const KarDashboard = () => {
         if (userData) {
             fetchBusinessRate(userData); // Fetch business rates when userData is available
         }
+        const fetchProjects = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/getproject`);
+                setProjects(response.data);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        };
+        fetchProjects();
     }, [userData]);
 
     console.log("Summary Data", summaryReport);
@@ -394,6 +406,23 @@ const KarDashboard = () => {
     // Use multipliedData in your component as needed
     console.log("Business Rate", prices);
     console.log("Business Rate", prices);
+    const navigate = useNavigate();
+    const handleProjectChange = (e) => setSelectedProject(Number(e.target.value));
+    console.log("Project Id Check",selectedProject);
+    const handleSearch = () => {
+        if (selectedProject === 1) {
+            navigate('/UPDCDashboard');
+        } else if (selectedProject === 2) {
+            navigate('/TelDashboard');
+        } else if (selectedProject === 3) {
+            navigate('/KarDashboard');
+        } else if ([4, 5, 6, 7, 8, 9, 10].includes(selectedProject)) {
+            navigate(`/Dashboard/${selectedProject}`);
+        } else {
+            navigate('/UPDCDashboard');
+        }
+    };
+    
 
     return (
         <>
@@ -403,17 +432,30 @@ const KarDashboard = () => {
                     <div className='col-2'>
                         <SideBar/>
                     </div>
-                    <div className='col-10'>
+                    <div className='col-9 ms-5'>
+                    <div className='row mt-2 search-report-card' style={{height:"60px",padding:'10px 0px',borderRadius:'0px'}}>
+                        <div className='col-3'>
+                                <select className='form-select' value={selectedProject} onChange={handleProjectChange}>
+                                    <option value=''>Select Project</option>
+                                    {projects.map((project) => (
+                                        <option key={project.id} value={project.id} onChange={handleProjectChange}>
+                                            {project.ProjectName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className='col-3'>
+                                <button className='btn btn-primary' onClick={handleSearch}>Search</button>
+                            </div>
+                        </div>
                         <div className='row mt-3'>
                             <div className="card" style={{ padding: "5px", backgroundColor: "#4BC0C0" }}>
                                 <h6 className="ms-2" style={{ color: "white" }}>
                                     {userData && userData.projects && userData.projects.includes(3) ? (
                                         <span style={{ color: 'white' }}><FaHome style={{ marginTop: '-2px' }} /></span>
                                     ) : (
-                                        <Link to='/projects' style={{ color: 'white' }}>
-                                            <FaHome style={{ marginTop: '-2px' }} />
-                                        </Link>
-                                    )} / Karnataka Courts
+                                        <></>
+                                    )} Karnataka Courts
                                 </h6>
                             </div>
                             <div className='row ms-0 mt-2 search-report-card'>
