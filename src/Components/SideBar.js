@@ -32,7 +32,7 @@ const SideBar = () => {
         } else if (projects.includes(3)) {
             return '/KarTaskTray';
         } else if (Role.includes('HR')) {
-            return '/allTaskTray';
+            return '/hrView';
         }else if (Role.includes('PO')) {
             return '/POTaskTray';
         }

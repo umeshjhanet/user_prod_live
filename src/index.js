@@ -47,6 +47,7 @@ import UPDCTaskTray from './UPDCTaskTray';
 import SetTarget from './setTarget';
 import POTaskTray from './POTaskTray';
 import FaceAttendance from './faceAttendance';
+import HRView from './hrView';
 
 const App = () => {
  
@@ -95,6 +96,7 @@ const App = () => {
           <Route path="/setTarget"element={<PrivateRoute element={<SetTarget/>}/>}/>
           <Route path="/faceAttendance"element={<PrivateRoute element={<FaceAttendance/>}/>}/>
           <Route path="/POTaskTray"element={<PrivateRoute element={<POTaskTray/>}/>}/>
+          <Route path="/hrView"element={<PrivateRoute element={<HRView/>}/>}/>
           </Routes>
           </Router>
   );
