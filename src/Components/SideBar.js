@@ -25,13 +25,7 @@ const SideBar = () => {
     };
 
     const getTaskTrayLink = () => {
-        if (projects.includes(1)) {
-            return '/UPDCTaskTray';
-        } else if (projects.includes(2)) {
-            return '/TaskTray';
-        } else if (projects.includes(3)) {
-            return '/KarTaskTray';
-        } else if (Role.includes('HR')) {
+         if (Role.includes('HR')) {
             return '/hrView';
         }else if (Role.includes('PO')) {
             return '/POTaskTray';

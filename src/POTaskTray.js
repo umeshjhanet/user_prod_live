@@ -4,13 +4,10 @@ import Header from './Components/Header';
 import SideBar from './Components/SideBar';
 import { API_URL } from './API';
 import { toast, ToastContainer } from 'react-toastify';
+import { IoDownload } from 'react-icons/io5';
 const POTaskTray = () => {
-    const [projects, setProjects] = useState([]);
-    const [projectId, setProjectID] = useState([]);
-    const [locations, setLocations] = useState([]);
     const [selectedProject, setSelectedProject] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
-    const [selectedLocationID, setSelectedLocationID] = useState('');
     const [month, setMonth] = useState('');
     const [data, setData] = useState({});
     const [startDate, setStartDate] = useState('');
@@ -18,95 +15,67 @@ const POTaskTray = () => {
     const [datesOfMonth, setDatesOfMonth] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [error, setError] = useState(null);
-    const [currentStatus, setCurrentStatus] = useState();
-    const [selectedUser, setSelectedUser] =useState();
     const [statusFilter, setStatusFilter] = useState('All');
     const [showConfirmationApprovalBox, setShowConfirmationApprovalBox] = useState(false);
     const [showConfirmationRejectionBox, setShowConfirmationRejectionBox] = useState(false);
     const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
     const [currentIndex, setCurrentIndex] = useState(null);
+    const userLog = JSON.parse(localStorage.getItem('user'));
+    const [reason, setReason] = useState("");
+    const locations = userLog ? userLog.locations : [];
+    const projectId = userLog ? userLog.projects[0] : null;
+
     const calculateDates = () => {
         const today = new Date();
-        
+
         // Set startDate to the 26th of the last month
-        const start = new Date(today.getFullYear(), today.getMonth(), 26);
+        const start = new Date(today.getFullYear(), today.getMonth() - 1, 27);
         if (start.getDate() < 26) {
             start.setMonth(start.getMonth() - 1); // Go back to the last month if today is before 26th
         }
         setStartDate(start.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
 
         // Set endDate to the 25th of the current month
-        const end = new Date(today.getFullYear(), today.getMonth() + 1, 25);
+        const end = new Date(today.getFullYear(), today.getMonth(), 26);
         setEndDate(end.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
     };
 
     useEffect(() => {
         calculateDates(); // Calculate dates when component mounts
     }, []);
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/getproject`);
-                setProjects(response.data);
-            } catch (error) {
-                console.error('Error fetching projects:', error);
-            }
-        };
-        const fetchLocations = async (selectedProject) => {
-            try {
-                if (!selectedProject) {
-                    setLocations([]);
-                    return;
-                }
 
-                const response = await axios.get(`${API_URL}/locations`, {
-                    params: { project: selectedProject }
-                });
-                console.log("selectedproject", selectedProject);
-                // Log the response to check the structure
-                console.log("Fetched Locations Data:", response.data);
-
-                // Map over the data and conditionally append "District Court" to LocationName
-                const modifiedLocations = response.data.map(location => ({
-                    ...location,
-                    LocationName: selectedProject === "1"
-                        ? (location.LocationName ? `${location.LocationName} District Court` : 'Unknown District Court')
-                        : location.LocationName
-                }));
-
-                console.log("Modified Locations:", modifiedLocations);
-                setLocations(modifiedLocations);
-            } catch (error) {
-                console.error('Error fetching locations:', error);
-            }
-        };
-        fetchProjects();
-        if (selectedProject) {
-            fetchLocations(selectedProject);
-        } else {
-            setLocations([]);
-        }
-    }, [selectedProject]);
     const handleProjectChange = (e) => setSelectedProject(e.target.value);
     const handleLocationChange = (e) => setSelectedLocation(e.target.value);
-    
+
     const handleMonthChange = (e) => setMonth(e.target.value);
     const handleSubmit = async () => {
         setData("");
         try {
+            // Retrieve projectId from userLog
+            const userLog = JSON.parse(localStorage.getItem('user'));
+            const projectId = userLog ? userLog.projects[0] : null; // Assuming the first project ID is used
+
+            // Modify locationName if projectId is 1
+            const locationNameWithSuffix = projectId === 1
+                ? `${selectedLocation} District Court`
+                : selectedLocation;
+
             const response = await axios.get(`${API_URL}/api/userdetailedreportmonthwise`, {
                 params: {
-                    locationName: selectedLocation,
+                    locationName: locationNameWithSuffix,
                     startDate: startDate,
                     endDate: endDate,
-                    project: selectedProject,
+                    project: projectId,
                 },
             });
+
             const fetchedData = response.data;
-            console.log("dataa", fetchedData)
+            console.log("Data fetched:", fetchedData);
+
             const transformedData = {};
             const dates = new Set();
             console.log("Before Transformation", transformedData);
+
             fetchedData.forEach((item) => {
                 const { user_type, Date, TotalExpense, IsApprovedPO } = item;
                 if (!transformedData[user_type]) {
@@ -119,16 +88,20 @@ const POTaskTray = () => {
                 });
                 dates.add(Date);
             });
+
             console.log("Transformed Data", transformedData);
             const sortedDates = Array.from(dates).sort((a, b) => new Date(a) - new Date(b));
+
             setData(transformedData);
             setDatesOfMonth(sortedDates);
             setError(null);
+
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('An error occurred while fetching data.');
         }
     };
+
     const handleExport = async (format) => {
         try {
             const response = await axios.get(`${API_URL}/downloadcsv`, {
@@ -161,31 +134,22 @@ const POTaskTray = () => {
             }
         });
     };
-    const extractMonthNumber = (monthStr) => {
-        if (!monthStr) return '';
-        const [year, month] = monthStr.split('-');
-        return parseInt(month, 10);
-    };
     const handleShowConfirmationApprovalBox = (index) => {
         setActionType('approve');
         setCurrentIndex(index);
         setShowConfirmationApprovalBox(true);
     };
-
     const handleCloseConfirmationApprovalBox = () => {
         setShowConfirmationApprovalBox(false);
     };
-
     const handleShowConfirmationRejectionBox = (index) => {
         setActionType('reject');
         setCurrentIndex(index);
         setShowConfirmationRejectionBox(true);
     };
-
     const handleCloseConfirmationRejectionBox = () => {
         setShowConfirmationRejectionBox(false);
     };
-
     const handleConfirmAction = () => {
         if (actionType === 'approve') {
             handleApproval(currentIndex);
@@ -198,74 +162,77 @@ const POTaskTray = () => {
     const handleApproval = async () => {
         const user = JSON.parse(localStorage.getItem('user'));
         const userRoles = user?.user_roles || [];
-                        const userData = {
-                            LocationCode: '103',
-                            UserName: selectedUsers,
-                            startDate: startDate,
-                            endDate: endDate,
-                            UserID: selectedUsers,
-                            userProfile: "user",
-                            role: 'PO',
-                            project: selectedProject,
-                        };
-                        console.log('Sending approval request with data:', userData);
-                        try {
-                            const approvalResponse = await axios.post(`${API_URL}/approve`, userData);
-                            console.log('Approval response:', approvalResponse.data);
-                            toast.success("Approved Successfully");
-                        } catch (error) {
-                            console.error('Error approving:', error.response.data); // Debugging info
-                            toast.error('An error occurred while approving.');
-                        }
-                    } 
-                
+        const locationNameWithSuffix = projectId === 1
+            ? `${selectedLocation} District Court`
+            : selectedLocation;
+
+        // Check if the user has the 'PO' role
+        if (!userRoles.includes('PO')) {
+            toast.error('User does not have the required role to perform approval.');
+            return;
+        }
+
+        const userData = {
+            LocationCode: locationNameWithSuffix,
+            UserName: selectedUsers, // Send all selected users as an array
+            startDate: startDate,
+            endDate: endDate,
+            UserID: '0', // Assuming `user.user_id` is correct
+            userProfile: '0',
+            role: 'PO',
+            project: projectId,
+        };
+
+        console.log('Sending approval request with data:', JSON.stringify(userData, null, 2));
+
+        try {
+            const approvalResponse = await axios.post(`${API_URL}/approve`, userData);
+            console.log('Approval response:', approvalResponse.data);
+            toast.success("Approved Successfully");
+        } catch (error) {
+            console.error('Error approving:', error.response?.data || error.message); // Include error message if no response data
+            toast.error('An error occurred while approving.');
+        }
+        handleSubmit();
+    };
+
+    const handleReasonChange = (e) => {
+        setReason(e.target.value);  // Update reason state
+    };
     const handleReject = async () => {
-        const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
-        const userRoles = userFromLocalStorage?.user_roles || [];
-        const monthNumber = extractMonthNumber(month);
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userRoles = user?.user_roles || [];
+        const locationNameWithSuffix = projectId === 1
+            ? `${selectedLocation} District Court`
+            : selectedLocation;
+
         for (const selectedUser of selectedUsers) {
-            try {
-                const fetchResponse = await axios.get(`${API_URL}/fetch-approved`, {
-                    params: {
-                        UserName: selectedUser,
-                        InMonth: monthNumber,
-                        project: selectedProject,
-                    },
-                });
-                const currentStatus = fetchResponse.data[0];
-                console.log('Current status:', currentStatus);
-                if (currentStatus) {
-                    if (
-                        userRoles.includes('PO') &&
-                        (currentStatus.IsApprovedPO === 0 || currentStatus.IsApprovedPO === 1)
-                    ) {
-                        const rejectData = {
-                            LocationCode: currentStatus.LocationCode,
-                            UserName: selectedUsers,
-                            InMonth: monthNumber,
-                            UserID: currentStatus.UserID,
-                            userProfile: '0',
-                            role: 'PO',
-                            project: selectedProject,
-                        };
-                        console.log('Sending rejection request with data:', rejectData);
-                        try {
-                            const rejectionResponse = await axios.post(`${API_URL}/reject`, rejectData);
-                            console.log('Rejection response:', rejectionResponse.data);
-                            toast.success("Rejection status updated successfully");
-                        } catch (error) {
-                            console.error('Error rejecting:', error.response.data); // Debugging info
-                            toast.error('An error occurred while rejecting.');
-                        }
-                    } else {
-                        toast.error('Record does not meet the criteria for rejection.');
-                    }
-                } else {
-                    toast.error('No record found for the given criteria.');
+            // Check if the user has the 'PO' role
+            if (userRoles.includes('PO')) {
+                const rejectData = {
+                    LocationCode: locationNameWithSuffix,
+                    UserName: selectedUser,
+                    startDate: startDate,
+                    endDate: endDate,
+                    UserID: '0', // If needed, replace with actual user ID
+                    userProfile: '0', // Replace with actual user profile if necessary
+                    role: 'PO',
+                    project: projectId,
+                    remarks: reason, // Add the rejection reason
+                };
+
+                console.log('Sending rejection request with data:', rejectData);
+
+                try {
+                    const rejectionResponse = await axios.post(`${API_URL}/reject`, rejectData);
+                    console.log('Rejection response:', rejectionResponse.data);
+                    toast.success("Rejection status updated successfully");
+                } catch (error) {
+                    console.error('Error rejecting:', error.response?.data || error);
+                    toast.error('An error occurred while rejecting.');
                 }
-            } catch (error) {
-                console.error('Error fetching approval status:', error.response?.data || error); // Debugging info
-                toast.error('An error occurred while checking approval status.');
+            } else {
+                toast.error('User does not have the required role to perform rejection.');
             }
         }
     };
@@ -279,7 +246,7 @@ const POTaskTray = () => {
             const hasStatus = userEntries.some(entry => {
                 const status = entry.status;
                 return (statusFilter === 'Approved' && status === 1) ||
-                    (statusFilter === 'Pending' && (status === 0 || status === 'null')) ||
+                    (statusFilter === 'Pending' && (status === 0 || status === null)) ||
                     (statusFilter === 'Rejected' && status === 2);
             });
             if (hasStatus) {
@@ -290,7 +257,6 @@ const POTaskTray = () => {
     };
 
     const fileHeaders = ['Sr No', 'User', 'Status'];
-
     function convertJSONToCSV(fetchedData, columnHeaders, datesOfMonth) {
         if (Object.keys(fetchedData).length === 0) return '';
         const headers = [...columnHeaders, ...datesOfMonth].join(',') + '\n';
@@ -309,7 +275,6 @@ const POTaskTray = () => {
 
         return headers + rows;
     }
-
     function downloadCSV(fetchedData, headers, datesOfMonth, selectedLocation, month) {
         const csvData = convertJSONToCSV(fetchedData, headers, datesOfMonth);
         if (csvData === '') {
@@ -325,7 +290,6 @@ const POTaskTray = () => {
             document.body.removeChild(link);
         }
     }
-
     function exportFilteredCSV(data, headers, datesOfMonth, selectedLocation, month, statusFilter) {
         const filteredData = filterData(data, statusFilter);
         downloadCSV(filteredData, headers, datesOfMonth, selectedLocation, month);
@@ -338,8 +302,10 @@ const POTaskTray = () => {
             setEndDate(value); // Update endDate if input is for end date
         }
     };
+    const remarks = [...new Set(Array.isArray(data) ? data.map(entry => entry.Remarks) : [])];
+    const isSubmitDisabled = !reason.trim();
 
-return (
+    return (
         <>
             <ToastContainer />
             <Header />
@@ -350,22 +316,13 @@ return (
                     </div>
                     <div className='col-10'>
                         <div className='row mt-2 search-report-card' style={{ overflow: 'auto' }}>
-                            <div className='col-3'>
-                                <select className='form-select' value={selectedProject} onChange={handleProjectChange}>
-                                    <option value=''>Select Project</option>
-                                    {projects.map((project) => (
-                                        <option key={project.id} value={project.id} onChange={handleProjectChange}>
-                                            {project.ProjectName}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+
                             <div className='col-3'>
                                 <select className='form-select' value={selectedLocation} onChange={handleLocationChange}>
                                     <option value=''>Select Location</option>
                                     {locations.map((location) => (
-                                        <option key={location.LocationName} value={location.LocationName}>
-                                            {location.LocationName}
+                                        <option key={location.id} value={location.name}>
+                                            {location.name}
                                         </option>
                                     ))}
                                 </select>
@@ -390,100 +347,108 @@ return (
                                     style={{ height: '38px' }}
                                 />
                             </div>
-
-                            {/* <div className='col-3'>
-                                <input type='month' className='form-control' value={month} onChange={handleMonthChange} style={{ height: '38px' }} />
-                            </div> */}
                             <div className='col-2'>
                                 <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
                             </div>
-                            <div className='row mt-4'>
-                                <div className='col-2'>
-                                    <select className='form-select' value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                                        <option value='All'>All</option>
-                                        <option value='Approved'>Approved</option>
-                                        <option value='Pending'>Pending</option>
-                                        <option value='Rejected'>Rejected</option>
-                                    </select>
-                                </div>
-                                <div className='col-8'></div>
-                                <div className='col-2'>
-                                    <button
-                                        className='btn btn-primary'
-                                        onClick={() => exportFilteredCSV(data, fileHeaders, datesOfMonth, selectedLocation, month, statusFilter)}>
-                                        Export
-                                    </button>
-                                </div>
-                            </div>
                             <div className='col-12'>
                                 {Object.keys(data).length > 0 && (
-                                    <div className='col-12 mt-3' style={{ maxHeight: '500px', overflow: 'auto' }}>
-                                        <table className='table table-bordered'>
-                                            <thead>
-                                                <tr>
-                                                    <th style={{ width: '50px' }}>
-                                                        <input
-                                                            type='checkbox'
-                                                            onChange={(e) => setSelectedUsers(e.target.checked ? Object.keys(data) : [])}
-                                                        />
-                                                    </th>
-                                                    <th>User</th>
-                                                    <th>Status</th>
-                                                    {datesOfMonth.map((date) => (
-                                                        <th key={date}>{date}</th>
-                                                    ))}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {Object.keys(filterData(data)).map((user, index) => (
-                                                    <tr key={user}>
-                                                        <td style={{ width: '50px' }}>
-                                                            <input
-                                                                type='checkbox'
-                                                                data-index={index}
-                                                                onChange={(e) => handleUserSelection(user, e.target.checked)}
-                                                            />
-                                                        </td>
-                                                        <td>{user}</td>
-                                                        <td style={{
-                                                            color: Array.isArray(data[user]) && data[user].some((entry) => entry.status === 0)
-                                                                ? 'orange' // Pending
-                                                                : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 1)
-                                                                    ? 'green' // Approved
-                                                                    : 'red' 
-                                                        }}>
-                                                            {Array.isArray(data[user]) && data[user].some((entry) => entry.status === 0 || entry.status === null)
-                                                                ? 'Pending'
-                                                                : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 1)
-                                                                    ? 'Approved'
-                                                                    :  'Rejected'
-                                                                      }
-                                                        </td>
+                                    <>
+                                        <div className='row mt-3 d-flex justify-content-between align-items-right'>
+                                            <div className='col-3'>
+                                                <select
+                                                    className='form-select'
+                                                    value={statusFilter}
+                                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                                >
+                                                    <option value='All'>All</option>
+                                                    <option value='Pending'>Pending</option>
+                                                    <option value='Rejected'>Rejected</option>
+                                                    <option value='Approved'>Approved</option>
+                                                </select>
+                                            </div>
+                                            <div className='col-8'></div>
+                                            <div className='col-1'>
+                                                <button
+                                                    className='btn text-end ms-4'
+                                                    style={{ backgroundColor: '#4BC0C0' }}
+                                                    onClick={() => exportFilteredCSV(data, fileHeaders, datesOfMonth, selectedLocation, month, statusFilter)}
+                                                >
+                                                    <IoDownload style={{ color: 'white' }} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className='col-12 mt-3' style={{ maxHeight: '500px', overflow: 'auto' }}>
+                                            <table className='table table-bordered'>
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{ width: '50px' }}>
+                                                           Select
+                                                        </th>
+                                                        <th>User</th>
+                                                        <th>Status</th>
+                                                        <th>Remarks</th>
                                                         {datesOfMonth.map((date) => (
-                                                            <td key={date}>
-                                                                {data[user].find((entry) => entry.Date === date)?.TotalExpense || 'N/A'}
-                                                            </td>
+                                                            <th key={date}>{date}</th>
                                                         ))}
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </thead>
+                                                <tbody>
+                                                    {Object.keys(filterData(data)).map((user, index) => {
+                                                         const userEntries = filterData[user] || [];
+                                                        const userRemark = userEntries.find(entry => entry.Remarks) ? userEntries[0].Remarks : '-';
+                                                        return (
+                                                            <tr key={user}>
+                                                                <td style={{ width: '50px' }}>
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        data-index={index}
+                                                                        onChange={(e) => handleUserSelection(user, e.target.checked)}
+                                                                    />
+                                                                </td>
+                                                                <td>{user}</td>
+                                                                <td style={{
+                                                                    color: Array.isArray(data[user]) && data[user].some((entry) => entry.status === 0)
+                                                                        ? 'orange' // Pending
+                                                                        : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 1)
+                                                                            ? 'green' // Approved
+                                                                            : 'red'
+                                                                }}>
+                                                                    {Array.isArray(data[user]) && data[user].some((entry) => entry.status === 0 || entry.status === null)
+                                                                        ? 'Pending'
+                                                                        : Array.isArray(data[user]) && data[user].some((entry) => entry.status === 1)
+                                                                            ? 'Approved'
+                                                                            : 'Rejected'
+                                                                    }
+                                                                </td>
+                                                                <td>{userRemark}</td>
+                                                                {datesOfMonth.map((date) => (
+                                                                    <td key={date}>
+                                                                        {data[user].find((entry) => entry.Date === date)?.TotalExpense || 'N/A'}
+                                                                    </td>
+                                                                ))}
+                                                            </tr>
+                                                        )
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className='row mt-3'>
+                                            <div className='col-10'></div>
+                                            <div className='col-1'>
+                                                <button className='btn success-btn' onClick={handleShowConfirmationApprovalBox}>Approve</button>
+                                            </div>
+                                            <div className='col-1'>
+                                                <button className='btn danger-btn' onClick={handleShowConfirmationRejectionBox}>Reject</button>
+                                            </div>
+                                        </div>
+                                    </>
                                 )}
                                 {error && (
                                     <div className='col-12 mt-3'>
                                         <div className='alert alert-danger'>{error}</div>
                                     </div>
                                 )}
-                                <div className='row mt-3'>
-                                    <div className='col-10'></div>
-                                    <div className='col-1'>
-                                        <button className='btn success-btn' onClick={handleShowConfirmationApprovalBox}>Approve</button>
-                                    </div>
-                                    <div className='col-1'>
-                                        <button className='btn danger-btn' onClick={handleShowConfirmationRejectionBox}>Reject</button>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                         {/* Confirmation Approval Box */}
@@ -501,9 +466,30 @@ return (
                         {showConfirmationRejectionBox && (
                             <div className="confirmation-dialog">
                                 <div className="confirmation-content">
-                                    <p>Are you sure you want to reject this task?</p>
-                                    <button onClick={handleConfirmAction} className='btn btn-success'>Yes</button>
-                                    <button onClick={handleCloseConfirmationRejectionBox} className='btn btn-danger'>No</button>
+                                    <div className='row'>
+                                        <label>Give valid reason for rejection.</label>
+                                        <input
+                                            type='text'
+                                            placeholder='Reason for rejection'
+                                            value={reason}
+                                            onChange={handleReasonChange}
+                                        />
+                                    </div>
+                                    <div className='mt-2'>
+                                        <button
+                                            onClick={handleConfirmAction}
+                                            className='btn btn-success me-5'
+                                            disabled={isSubmitDisabled}  // Disable the button if no reason is entered
+                                        >
+                                            Submit
+                                        </button>
+                                        <button
+                                            onClick={handleCloseConfirmationRejectionBox}
+                                            className='btn btn-danger'
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}

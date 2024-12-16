@@ -180,12 +180,13 @@ const User_Form = () => {
         .then(data => setGroup(data))
         .catch(error => console.error(error))
     }
-    const fetchLocation = () => {
-      fetch(`${API_URL}/locations`)
+    const fetchLocation = (selectedProject) => {
+      fetch(`${API_URL}/locations?project=${selectedProjectId}`)
+      
         .then(response => response.json())
         .then(data => setLocation(data))
-        .catch(error => console.error(error))
-    }
+        .catch(error => console.error(error));
+    };
     const fetchPrivilege = () => {
       fetch(`${API_URL}/privilege`)
         .then(response => response.json())
@@ -228,26 +229,21 @@ const User_Form = () => {
     fetchReporting();
   }, [])
 
-
   const handleGroupDropdown = () => {
     setGroupDropdown(!groupDropdown);
   }
-
 
   const handleLocationDropdown = () => {
     setLocationDropdown(!locationDropdown);
   }
 
-
   const handlePrivilegeDropdown = () => {
     setPrivilegeDropdown(!privilegeDropdown);
   }
 
-
   const handleStorageDropdown = () => {
     setStorageDropdown(!storageDropdown);
   }
-
 
   const handleReportingDropdown = () => {
     setReportingDropdown(!reportingDropdown);
@@ -255,7 +251,6 @@ const User_Form = () => {
   const handleProjectDropdown = () => {
         setProjectDropdown(!projectDropdown);
       }
-
 
   const handleSelectLocation = (id, name) => {
     const index = selectedLocations.findIndex(loc => loc.id === id);
@@ -273,8 +268,6 @@ const User_Form = () => {
         setShowProject(!showProject);
         setProjectDropdown(false);
       };
-
-
 
   const handleSelectGroup = (id, name) => {
     setSelectedGroup(name);

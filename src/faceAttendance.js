@@ -12,8 +12,8 @@ const FaceAttendance = () => {
     const fetchData = async () => {
         const apiUrl = 'https://face.softhris.com/api/mis-attendance-log'; 
         const apiKey = '2392ca6c9612a475addaa7302c1b0304';  
-        const param1 = 'High Court';  
-        const param2 = '2024-09-17';  
+        const param1 = 'DC';  
+        const param2 = '2024-11-11';  
     
         try {
           const response = await axios.post(apiUrl,
